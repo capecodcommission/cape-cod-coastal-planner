@@ -1,19 +1,38 @@
 module Main exposing (..)
 
+import Navigation
 import Html exposing (Html, text, div, h1, img)
 import Html.Attributes exposing (src)
+import Routes exposing (Route(..), parseRoute)
+import Ports exposing (..)
 
 
 ---- MODEL ----
 
 
 type alias Model =
-    {}
+    { state : Maybe Route
+    }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( {}, Cmd.none )
+defaultModel : Model
+defaultModel =
+    Model <| Just Blank
+
+
+init : Navigation.Location -> ( Model, Cmd Msg )
+init location =
+    let
+        ( updatedModel, routeFx ) =
+            update (UrlChange location) defaultModel
+
+        msgs =
+            Cmd.batch
+                [ Cmd.none --initMapCmd ()
+                , routeFx
+                ]
+    in
+        ( updatedModel, msgs )
 
 
 
@@ -22,11 +41,23 @@ init =
 
 type Msg
     = NoOp
+    | UrlChange Navigation.Location
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
+        UrlChange location ->
+            let
+                newState =
+                    parseRoute location
+            in
+                ( { model | state = newState }
+                , Cmd.none
+                )
 
 
 
@@ -47,7 +78,7 @@ view model =
 
 main : Program Never Model Msg
 main =
-    Html.program
+    Navigation.program UrlChange
         { view = view
         , init = init
         , update = update
