@@ -1288,8 +1288,8 @@ assert@^1.1.1:
     util "0.10.3"
 
 assets-webpack-plugin@^3.5.1:
-  version "3.8.3"
-  resolved "https://registry.yarnpkg.com/assets-webpack-plugin/-/assets-webpack-plugin-3.8.3.tgz#18189bb5de2908b981832f1a013bc2b934746671"
+  version "3.8.4"
+  resolved "https://registry.yarnpkg.com/assets-webpack-plugin/-/assets-webpack-plugin-3.8.4.tgz#4b96a69850563ab36b54206741ef372901569597"
   dependencies:
     camelcase "^5.0.0"
     escape-string-regexp "^1.0.3"
@@ -2621,6 +2621,13 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+cross-fetch@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-2.0.0.tgz#a17475449561e0f325146cea636a8619efb9b382"
+  dependencies:
+    node-fetch "2.0.0"
+    whatwg-fetch "2.0.3"
+
 cross-spawn@4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-4.0.0.tgz#8254774ab4786b8c5b3cf4dfba66ce563932c252"
@@ -3031,8 +3038,8 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
 electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.47:
-  version "1.3.48"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.48.tgz#d3b0d8593814044e092ece2108fc3ac9aea4b900"
+  version "1.3.50"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.50.tgz#7438b76f92b41b919f3fbdd350fbd0757dacddf7"
 
 elliptic@^6.0.0:
   version "6.4.0"
@@ -3066,6 +3073,12 @@ elm-analyse@^0.14.2:
 elm-format@^0.6.1-alpha:
   version "0.6.1-alpha"
   resolved "https://registry.yarnpkg.com/elm-format/-/elm-format-0.6.1-alpha.tgz#daeffe95238cb8ce0d7fc6afb5047bcdd14ad7d7"
+  dependencies:
+    binwrap "^0.1.4"
+
+elm-format@^0.7.0-exp:
+  version "0.7.0-exp"
+  resolved "https://registry.yarnpkg.com/elm-format/-/elm-format-0.7.0-exp.tgz#75b9d9f3f0b67195b44e804fce5a6be0f45af408"
   dependencies:
     binwrap "^0.1.4"
 
@@ -3916,6 +3929,22 @@ graceful-fs@~3.0.2:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-3.0.11.tgz#7613c778a1afea62f25c630a086d7f3acbbdd818"
   dependencies:
     natives "^1.1.0"
+
+graphqelm@^3.1.12:
+  version "3.1.12"
+  resolved "https://registry.yarnpkg.com/graphqelm/-/graphqelm-3.1.12.tgz#fe98be8318c881fb26e0715f77c9e4d728be3a3b"
+  dependencies:
+    elm-format "^0.7.0-exp"
+    glob "^7.1.2"
+    graphql-request "^1.4.0"
+    minimist "^1.2.0"
+    request "^2.83.0"
+
+graphql-request@^1.4.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/graphql-request/-/graphql-request-1.6.0.tgz#afe87cf2a336acabb0cc2a875900202eda89f412"
+  dependencies:
+    cross-fetch "2.0.0"
 
 gzip-size@3.0.0:
   version "3.0.0"
@@ -5246,6 +5275,10 @@ node-elm-compiler@^4.5.0:
     lodash "4.14.2"
     temp "^0.8.3"
 
+node-fetch@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.0.0.tgz#982bba43ecd4f2922a29cc186a6bbb0bb73fcba6"
+
 node-forge@0.7.5:
   version "0.7.5"
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-0.7.5.tgz#6c152c345ce11c52f465c2abd957e8639cd674df"
@@ -6013,8 +6046,8 @@ postcss@^5.0.10, postcss@^5.0.11, postcss@^5.0.12, postcss@^5.0.13, postcss@^5.0
     supports-color "^3.2.3"
 
 postcss@^6.0.0, postcss@^6.0.1, postcss@^6.0.22:
-  version "6.0.22"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-6.0.22.tgz#e23b78314905c3b90cbd61702121e7a78848f2a3"
+  version "6.0.23"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-6.0.23.tgz#61c82cc328ac60e677645f979054eb98bc0e3324"
   dependencies:
     chalk "^2.4.1"
     source-map "^0.6.1"
@@ -6588,7 +6621,7 @@ request@2.83.0:
     tunnel-agent "^0.6.0"
     uuid "^3.1.0"
 
-request@^2.81.0:
+request@^2.81.0, request@^2.83.0:
   version "2.87.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.87.0.tgz#32f00235cd08d482b4d0d68db93a829c0ed5756e"
   dependencies:
@@ -7872,6 +7905,10 @@ websocket-driver@>=0.5.1:
 websocket-extensions@>=0.1.1:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
+
+whatwg-fetch@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz#9c84ec2dcf68187ff00bc64e1274b442176e1c84"
 
 whet.extend@~0.9.9:
   version "0.9.9"

@@ -35,6 +35,7 @@
     "elm-webpack-loader": "^4.4.0",
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.6",
+    "graphqelm": "^3.1.12",
     "html-webpack-plugin": "^2.30.1",
     "http-proxy-middleware": "^0.17.4",
     "minimist": "1.2.0",
@@ -56,6 +57,7 @@
     "repl": "elm-repl",
     "reactor": "elm-reactor",
     "test": "elm-test",
-    "analyse": "elm-analyse -s"
+    "analyse": "elm-analyse -s",
+    "api": "graphqelm api/endpoint --base SchemaName"
   }
 }
