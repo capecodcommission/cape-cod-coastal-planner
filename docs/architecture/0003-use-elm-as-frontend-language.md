@@ -28,6 +28,12 @@ Some of Elm's key benefits include:
 - Enforced Semantic Versioning: Elm can detect all API changes automatically which is used to force the Elm package catalog to follow semver precicely. This means you can guarantee you aren't getting a hidden breaking change when upgrading a library to a minor version bump!
 
 Some thigns developers will need to be aware of:
-- Though it's being used in production by many companies now for several years, it has not yet reached 1.0 status. 
-
+- Though it's being used in production by many companies now for several years, it has not yet reached 1.0 status. Although 0.18 is very stable and is being used successfully in many production apps (NoRedInk has over 200k lines of Elm and still zero runtime errors), it is missing some features common to implementing a SPA and does not have 100% coverage of web platform APIs (ie: LocalStorage). Elm 0.19 has been under development for some time now and has recently been released in Alpha. It brings many new features and improvements to the ecosystem including but not limited to: 
+    - Server-side rendering - sending HTML with the initial response
+    - Tree shaking - trimming out unused code (ie: dead code elimination)
+    - Code splitting - cutting up code into smaller chunks for better caching
+    - Lazy loading - only sending the code chunks needed for a particular page
+    - Significant improvements to compiler speed
+- As mentioned, there isn't yet total coverage of the web platform. As such, when you need to use a feature that isn't natively supported yet, like LocalStorage, you will need to interface with that API in JavaScript through Elm's Ports interop mechanism, which you can think of like an event bus with border patrol. It's not bad, it's just not as easy or idiomatic as it will be when the web platform APIs are finished in Elm.
+- As with other functional and immutable languages, there is a learning curve for someone coming from an OOP/mutable background. A learning curve well worth traveling, but a learning nonetheless.
 
