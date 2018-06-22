@@ -68,11 +68,12 @@ update msg model =
 
 ---- VIEW ----
 
-type MainStyles 
+
+type MainStyles
     = None
     | Body
     | Header
-    | MapContainer
+    | PlanningLayers
 
 
 stylesheet =
@@ -85,25 +86,28 @@ stylesheet =
             [ Color.text white
             , Color.background darkGrey
             , Font.size 35
-            ] 
-        , Style.style MapContainer
-            [ Color.text white
-            , Color.background lightRed
             ]
-        ]
+        , Style.style PlanningLayers
+            [ Color.background <| Color.rgba 0 0 0 0.7
 
+            ]        
+        ]
 
 
 view : Model -> Html Msg
 view model =
     Element.viewport stylesheet <|
-        column Body 
+        column Body
             [ height (percent 100) ]
-            [ header Header [ height (px 45) ] <| 
-                text "Coastal Hazard Impact Planner"
-            , mainContent MapContainer [ height fill ] <| 
-                el None [ id "map" ] <| empty
+            [ header Header [ height (px 45) ] <|
+                text "Example"
+            , mainContent None [ height fill, clip ] <|
+                column None [ height fill ] <|
+                    [ el None [ id "map", height fill ] empty
+                    , screen (sidebar PlanningLayers [ height fill, width (px 100) ] [ empty ])
+                    ]
             ]
+
 
 
 ---- PROGRAM ----
