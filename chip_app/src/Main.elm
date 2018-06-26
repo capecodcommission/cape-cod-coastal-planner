@@ -26,39 +26,53 @@ type alias Model =
     }
 
 
-type Openness = Open | Closed
+type Openness
+    = Open
+    | Closed
 
 
-type alias OpennessAnimations =
-    { open: List Animation.Property
-    , closed: List Animation.Property
+type alias PlanningLayersAnimations =
+    { openFull : List Animation.Property
+    , closedFull : List Animation.Property
+    , openShort : List Animation.Property
+    , closedShort : List Animation.Property
     }
 
 
-planningLayersAnimations : OpennessAnimations
+planningLayersAnimations : PlanningLayersAnimations
 planningLayersAnimations =
-    { open =
-        [ Animation.left (Animation.px 0.0) ]
-    , closed =
-        [ Animation.left (Animation.px -70.0) ]
+    { openFull =
+        [ Animation.left (Animation.px 0.0), Animation.paddingBottom (Animation.px 0.0) ]
+    , closedFull =
+        [ Animation.left (Animation.px -70.0), Animation.paddingBottom (Animation.px 0.0) ]
+    , openShort =
+        [ Animation.left (Animation.px 0.0), Animation.paddingBottom (Animation.px 100.0) ]
+    , closedShort =
+        [ Animation.left (Animation.px -70.0), Animation.paddingBottom (Animation.px 100.0) ]
     }
 
 
-drawerAnimations : OpennessAnimations
+type alias DrawerAnimations =
+    { open : List Animation.Property
+    , closed : List Animation.Property
+    }
+
+
+drawerAnimations : DrawerAnimations
 drawerAnimations =
     { open =
         [ Animation.top (Animation.px 0.0) ]
-    , closed = 
-        [ Animation.top (Animation.px 100.0)]
+    , closed =
+        [ Animation.top (Animation.px 100.0) ]
     }
 
 
 defaultModel : Model
 defaultModel =
-    Model 
-        (Just Blank) 
-        Open 
-        (Animation.style planningLayersAnimations.open)
+    Model
+        (Just Blank)
+        Open
+        (Animation.style planningLayersAnimations.openFull)
         Closed
         (Animation.style drawerAnimations.closed)
 
@@ -76,7 +90,7 @@ init location =
                 ]
     in
         ( updatedModel
-        , msgs 
+        , msgs
         )
 
 
@@ -123,58 +137,103 @@ update msg model =
                 Closed ->
                     ( expandDrawer model, Cmd.none )
 
-
         Animate animMsg ->
-            ( { model 
+            ( { model
                 | planningLayersAnimations = Animation.update animMsg model.planningLayersAnimations
-                , drawerAnimations = Animation.update animMsg model.drawerAnimations                    
-            }
+                , drawerAnimations = Animation.update animMsg model.drawerAnimations
+              }
             , Cmd.none
             )
 
 
 expandPlanningLayers : Model -> Model
 expandPlanningLayers model =
-    { model 
+    let
+        animations =
+            case model.drawerOpenness of
+                Open ->
+                    planningLayersAnimations.openShort
+
+                Closed ->
+                    planningLayersAnimations.openFull
+    in
+    { model
         | planningLayersOpenness = Open
         , planningLayersAnimations =
-            Animation.interrupt 
-                [ Animation.to planningLayersAnimations.open ] 
+            Animation.interrupt
+                [ Animation.to animations ]
                 model.planningLayersAnimations
     }
 
 
 collapsePlanningLayers : Model -> Model
 collapsePlanningLayers model =
-    { model 
+    let
+        animations = 
+            case model.drawerOpenness of
+                Open ->
+                    planningLayersAnimations.closedShort
+
+                Closed ->
+                    planningLayersAnimations.closedFull
+    in
+    { model
         | planningLayersOpenness = Closed
         , planningLayersAnimations =
             Animation.interrupt
-                [ Animation.to planningLayersAnimations.closed ]
+                [ Animation.to animations ]
                 model.planningLayersAnimations
     }
 
 
 expandDrawer : Model -> Model
 expandDrawer model =
-    { model 
+    { model
         | drawerOpenness = Open
         , drawerAnimations =
-            Animation.interrupt 
-                [ Animation.to drawerAnimations.open ] 
+            Animation.interrupt
+                [ Animation.to drawerAnimations.open ]
                 model.drawerAnimations
+        , planningLayersAnimations =
+            let
+                animations =
+                    case model.planningLayersOpenness of
+                        Open -> 
+                            planningLayersAnimations.openShort
+
+                        Closed ->
+                            planningLayersAnimations.closedShort
+            in
+            Animation.interrupt
+                [ Animation.to animations ]
+                model.planningLayersAnimations
     }
 
 
 collapseDrawer : Model -> Model
 collapseDrawer model =
-    { model 
+    { model
         | drawerOpenness = Closed
         , drawerAnimations =
             Animation.interrupt
                 [ Animation.to drawerAnimations.closed ]
                 model.drawerAnimations
+        , planningLayersAnimations =
+            let
+                animations =
+                    case model.planningLayersOpenness of
+                        Open ->
+                            planningLayersAnimations.openFull
+
+                        Closed ->
+                            planningLayersAnimations.closedFull
+
+            in
+            Animation.interrupt
+                [ Animation.to animations ]
+                model.planningLayersAnimations
     }
+
 
 
 ---- VIEW ----
@@ -228,8 +287,8 @@ view model =
             , mainContent None [ height fill, clip ] <|
                 column None [ height fill ] <|
                     [ el None [ id "map", height fill ] empty
-                        |> within 
-                            [ planningLayersView model 
+                        |> within
+                            [ planningLayersView model
                             , drawerView model
                             ]
                     ]
@@ -238,21 +297,22 @@ view model =
 
 planningLayersView : Model -> Element MainStyles variation Msg
 planningLayersView model =
-    el None 
+    el None
         (renderAnimation model.planningLayersAnimations
             [ height fill
             , width content
-            , paddingTop 20.0 
+            , paddingTop 20.0
             ]
         )
-        (sidebar PlanningLayers 
-            [ height fill, width (px 100) ] 
+        (sidebar PlanningLayers
+            [ height fill, width (px 100) ]
             [ el Toggle
                 [ height (px 30)
                 , width (px 30)
-                , alignRight 
+                , alignRight
                 , onClick TogglePlanningLayers
-                ] empty
+                ]
+                empty
             ]
         )
 
@@ -271,15 +331,17 @@ drawerView model =
         )
 
 
+
 ---- SUBSCRIPTIONS ----
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Animation.subscription Animate 
-        [ model.planningLayersAnimations 
+    Animation.subscription Animate
+        [ model.planningLayersAnimations
         , model.drawerAnimations
         ]
+
 
 
 ---- PROGRAM ----
