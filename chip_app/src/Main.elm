@@ -4,10 +4,12 @@ import Navigation
 import Html exposing (Html)
 import Element exposing (..)
 import Element.Attributes exposing (..)
+import Element.Events exposing (..)
 import Style exposing (..)
 import Style.Color as Color
 import Style.Font as Font
 import Color exposing (..)
+import Animation
 import Routes exposing (Route(..), parseRoute)
 import Ports exposing (..)
 
@@ -16,13 +18,49 @@ import Ports exposing (..)
 
 
 type alias Model =
-    { state : Maybe Route
+    { urlState : Maybe Route
+    , planningLayersOpenness : Openness
+    , planningLayersAnimations : Animation.State
+    , drawerOpenness : Openness
+    , drawerAnimations : Animation.State
+    }
+
+
+type Openness = Open | Closed
+
+
+type alias OpennessAnimations =
+    { open: List Animation.Property
+    , closed: List Animation.Property
+    }
+
+
+planningLayersAnimations : OpennessAnimations
+planningLayersAnimations =
+    { open =
+        [ Animation.left (Animation.px 0.0) ]
+    , closed =
+        [ Animation.left (Animation.px -70.0) ]
+    }
+
+
+drawerAnimations : OpennessAnimations
+drawerAnimations =
+    { open =
+        [ Animation.top (Animation.px 0.0) ]
+    , closed = 
+        [ Animation.top (Animation.px 100.0)]
     }
 
 
 defaultModel : Model
 defaultModel =
-    Model <| Just Blank
+    Model 
+        (Just Blank) 
+        Open 
+        (Animation.style planningLayersAnimations.open)
+        Closed
+        (Animation.style drawerAnimations.closed)
 
 
 init : Navigation.Location -> ( Model, Cmd Msg )
@@ -37,7 +75,9 @@ init location =
                 , routeFx
                 ]
     in
-        ( updatedModel, msgs )
+        ( updatedModel
+        , msgs 
+        )
 
 
 
@@ -47,6 +87,9 @@ init location =
 type Msg
     = Noop
     | UrlChange Navigation.Location
+    | TogglePlanningLayers
+    | ToggleDrawer
+    | Animate Animation.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -60,10 +103,78 @@ update msg model =
                 newState =
                     parseRoute location
             in
-                ( { model | state = newState }
+                ( { model | urlState = newState }
                 , Cmd.none
                 )
 
+        TogglePlanningLayers ->
+            case model.planningLayersOpenness of
+                Open ->
+                    ( collapsePlanningLayers model, Cmd.none )
+
+                Closed ->
+                    ( expandPlanningLayers model, Cmd.none )
+
+        ToggleDrawer ->
+            case model.drawerOpenness of
+                Open ->
+                    ( collapseDrawer model, Cmd.none )
+
+                Closed ->
+                    ( expandDrawer model, Cmd.none )
+
+
+        Animate animMsg ->
+            ( { model 
+                | planningLayersAnimations = Animation.update animMsg model.planningLayersAnimations
+                , drawerAnimations = Animation.update animMsg model.drawerAnimations                    
+            }
+            , Cmd.none
+            )
+
+
+expandPlanningLayers : Model -> Model
+expandPlanningLayers model =
+    { model 
+        | planningLayersOpenness = Open
+        , planningLayersAnimations =
+            Animation.interrupt 
+                [ Animation.to planningLayersAnimations.open ] 
+                model.planningLayersAnimations
+    }
+
+
+collapsePlanningLayers : Model -> Model
+collapsePlanningLayers model =
+    { model 
+        | planningLayersOpenness = Closed
+        , planningLayersAnimations =
+            Animation.interrupt
+                [ Animation.to planningLayersAnimations.closed ]
+                model.planningLayersAnimations
+    }
+
+
+expandDrawer : Model -> Model
+expandDrawer model =
+    { model 
+        | drawerOpenness = Open
+        , drawerAnimations =
+            Animation.interrupt 
+                [ Animation.to drawerAnimations.open ] 
+                model.drawerAnimations
+    }
+
+
+collapseDrawer : Model -> Model
+collapseDrawer model =
+    { model 
+        | drawerOpenness = Closed
+        , drawerAnimations =
+            Animation.interrupt
+                [ Animation.to drawerAnimations.closed ]
+                model.drawerAnimations
+    }
 
 
 ---- VIEW ----
@@ -74,6 +185,8 @@ type MainStyles
     | Body
     | Header
     | PlanningLayers
+    | Drawer
+    | Toggle
 
 
 stylesheet =
@@ -89,9 +202,20 @@ stylesheet =
             ]
         , Style.style PlanningLayers
             [ Color.background <| Color.rgba 0 0 0 0.7
-
-            ]        
+            ]
+        , Style.style Drawer
+            [ Color.background <| Color.rgba 0 0 0 0.3
+            ]
+        , Style.style Toggle
+            [ Color.background white
+            , Style.cursor "pointer"
+            ]
         ]
+
+
+renderAnimation : Animation.State -> List (Element.Attribute variation Msg) -> List (Element.Attribute variation Msg)
+renderAnimation animations otherAttrs =
+    (List.map Element.Attributes.toAttr <| Animation.render animations) ++ otherAttrs
 
 
 view : Model -> Html Msg
@@ -104,10 +228,58 @@ view model =
             , mainContent None [ height fill, clip ] <|
                 column None [ height fill ] <|
                     [ el None [ id "map", height fill ] empty
-                    , screen (sidebar PlanningLayers [ height fill, width (px 100) ] [ empty ])
+                        |> within 
+                            [ planningLayersView model 
+                            , drawerView model
+                            ]
                     ]
             ]
 
+
+planningLayersView : Model -> Element MainStyles variation Msg
+planningLayersView model =
+    el None 
+        (renderAnimation model.planningLayersAnimations
+            [ height fill
+            , width content
+            , paddingTop 20.0 
+            ]
+        )
+        (sidebar PlanningLayers 
+            [ height fill, width (px 100) ] 
+            [ el Toggle
+                [ height (px 30)
+                , width (px 30)
+                , alignRight 
+                , onClick TogglePlanningLayers
+                ] empty
+            ]
+        )
+
+
+drawerView : Model -> Element MainStyles variation Msg
+drawerView model =
+    footer Drawer
+        (renderAnimation model.drawerAnimations
+            [ width fill
+            , height content
+            , alignBottom
+            ]
+        )
+        (column None [ width fill, height (px 100) ] [ empty ]
+            |> above [ el Toggle [ height (px 30), width (px 60), center, onClick ToggleDrawer ] empty ]
+        )
+
+
+---- SUBSCRIPTIONS ----
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Animation.subscription Animate 
+        [ model.planningLayersAnimations 
+        , model.drawerAnimations
+        ]
 
 
 ---- PROGRAM ----
@@ -119,5 +291,5 @@ main =
         { view = view
         , init = init
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = subscriptions
         }
