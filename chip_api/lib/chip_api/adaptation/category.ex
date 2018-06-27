@@ -1,0 +1,24 @@
+defmodule ChipApi.Adaptation.Category do
+  use Ecto.Schema
+  import Ecto.Changeset
+  alias ChipApi.Adaptation.Category
+
+
+  schema "adaptation_categories" do
+    field :description, :string
+    field :name, :string
+
+    many_to_many :adaptation_strategies, ChipApi.Adaptation.Strategy,
+      join_through: "strategy_categories"
+
+    timestamps()
+  end
+
+  @doc false
+  def changeset(category, attrs) do
+    category
+    |> cast(attrs, [:name, :description])
+    |> validate_required([:name])
+    |> unique_constraint(:name)
+  end
+end

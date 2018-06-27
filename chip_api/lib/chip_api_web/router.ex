@@ -13,14 +13,14 @@ defmodule ChipApiWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", ChipApiWeb do
-    pipe_through :browser # Use the default browser stack
+  scope "/" do
+    pipe_through :api
 
-    get "/", PageController, :index
+    forward "/api", Absinthe.Plug,
+      schema: ChipApiWeb.Schema
+
+    forward "/graphiql", Absinthe.Plug.GraphiQL,
+      schema: ChipApiWeb.Schema,
+      interface: :smiple
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", ChipApiWeb do
-  #   pipe_through :api
-  # end
 end

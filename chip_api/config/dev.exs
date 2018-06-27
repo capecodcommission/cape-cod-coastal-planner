@@ -1,5 +1,14 @@
 use Mix.Config
 
+# Create a `dev.secret.exs` file on your dev machine and add the following
+# in order to use a local db instance:
+#
+# use Mix.Config
+# 
+# config :chip_api, db_password: "dev_password"
+#
+import_config "#{Mix.env}.secret.exs"
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -48,10 +57,11 @@ config :logger, :console, format: "[$level] $message\n"
 config :phoenix, :stacktrace_depth, 20
 
 # Configure your database
+# 
 config :chip_api, ChipApi.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
-  password: "postgres",
+  password: :db_password,
   database: "chip_api_dev",
   hostname: "localhost",
   pool_size: 10

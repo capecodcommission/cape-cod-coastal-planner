@@ -1,5 +1,7 @@
 use Mix.Config
 
+import_config "#{Mix.env}.secret.exs"
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :chip_api, ChipApiWeb.Endpoint,
@@ -13,7 +15,7 @@ config :logger, level: :warn
 config :chip_api, ChipApi.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
-  password: "postgres",
+  password: :db_password,
   database: "chip_api_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
