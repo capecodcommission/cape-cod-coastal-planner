@@ -89,7 +89,7 @@ defmodule ChipApi.Seeds do
             surges and sea level rise to provide natural flood protection.
             """,
             adaptation_categories: [protect],
-            coastal_hazards: [erosion, storm, sea_level_rise],
+            coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood]
         }
         |> Repo.insert!

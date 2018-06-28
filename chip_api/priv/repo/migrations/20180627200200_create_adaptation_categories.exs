@@ -4,7 +4,7 @@ defmodule ChipApi.Repo.Migrations.CreateAdaptationCategories do
   def change do
     create table(:adaptation_categories) do
       add :name, :string, null: false
-      add :description, :string
+      add :description, :text
 
       timestamps()
     end

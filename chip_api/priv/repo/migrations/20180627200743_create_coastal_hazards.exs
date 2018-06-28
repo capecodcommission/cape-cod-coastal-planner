@@ -4,7 +4,7 @@ defmodule ChipApi.Repo.Migrations.CreateCoastalHazards do
   def change do
     create table(:coastal_hazards) do
       add :name, :string, null: false
-      add :description, :string
+      add :description, :text
 
       timestamps()
     end

@@ -4,7 +4,7 @@ defmodule ChipApi.Repo.Migrations.CreateImpactScales do
   def change do
     create table(:impact_scales) do
       add :name, :string, null: false
-      add :description, :string
+      add :description, :text
       add :impact, :integer, null: false
 
       timestamps()

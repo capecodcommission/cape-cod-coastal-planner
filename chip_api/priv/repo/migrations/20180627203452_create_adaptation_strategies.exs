@@ -4,7 +4,7 @@ defmodule ChipApi.Repo.Migrations.CreateAdaptationStrategies do
   def change do
     create table(:adaptation_strategies) do
       add :name, :string
-      add :description, :string
+      add :description, :text
 
       timestamps()
     end
