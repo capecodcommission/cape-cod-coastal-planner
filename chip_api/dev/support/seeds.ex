@@ -161,13 +161,70 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
-        # living_shoreline = %Adaptation.Strategy{
-        #     name: "Do Nothing",
-        #     adaptation_categories: [],
-        #     coastal_hazards: [],
-        #     impact_scales: []
-        # }
-        # |> Repo.insert!
+        living_shoreline_vegetation = %Adaptation.Strategy{
+            name: "Living Shoreline: Vegetation Only",
+            description: """
+            Shoreline stabilization techniques along estuarine coasts, bays, sheltered
+            coastlines, and tributaries. A living shoreline has a footprint that is made
+            up mostly of native material. It incorporates vegetation or other living, natural
+            "soft" elements alone or in combination with some other type of harder shoreline
+            structures (e.g. oyster reefs or rock sills) for added stability. Using vegetation
+            alone is one approach. Roots hold soil in place to reduce erosion. Provides a
+            buffer to upload areas and breaks small waves.
+            """,
+            adaptation_categories: [protect],
+            coastal_hazards: [erosion, storm_surge],
+            impact_scales: [site, neighborhood]
+        }
+        |> Repo.insert!
 
+        living_shoreline_vegetation_structural = %Adaptation.Strategy{
+            name: "Living Shoreline: Combined Vegetation and Structural Measures",
+            description: """
+            Shoreline stabilization techniques along estuarine coasts, bays, sheltered
+            coastlines, and tributaries. A living shoreline has a footprint that is made
+            up mostly of native material. It incorporates vegetation or other living, natural
+            "soft" elements alone or in combination with some other type of harder shoreline
+            structures (e.g. oyster reefs or rock sills) for added stability. A combined
+            approach integrates living components, such as plantings, with strategically
+            placed structural elements, such as sills, or breakwaters.
+            """,
+            adaptation_categories: [protect],
+            coastal_hazards: [erosion, storm_surge],
+            impact_scales: [site, neighborhood]
+        }
+        |> Repo.insert!
+
+        living_shoreline_breakwater_oyster = %Adaptation.Strategy{
+            name: "Living Shoreline: Living Breakwater/Oyster Reefs",
+            description: """
+            Shoreline stabilization techniques along estuarine coasts, bays, sheltered
+            coastlines, and tributaries. A living shoreline has a footprint that is made
+            up mostly of native material. It incorporates vegetation or other living, natural
+            "soft" elements alone or in combination with some other type of harder shoreline
+            structures (e.g. oyster reefs or rock sills) for added stability. Restoring or
+            creating oyster reefs or reef balls to serve as natural breakwaters, attenuate
+            wave energy, and slow inland water transfer.
+            """,
+            adaptation_categories: [protect],
+            coastal_hazards: [erosion, storm_surge],
+            impact_scales: [site, neighborhood]
+        }
+        |> Repo.insert!
+
+        beach_nourishment = %Adaptation.Strategy{
+            name: "Beach Nourishment",
+            description: """
+            The process of adding sediment (sand) to an eroding beach to widen or elevate
+            the beach to maintain or advance the shoreline seaward. Sediment can be sourced
+            from inland mining, dredging from navigation channels, and/or offshore mining.
+            """,
+            adaptation_categories: [protect],
+            coastal_hazards: [erosion, storm_surge],
+            impact_scales: [site, neighborhood]
+        }
+        |> Repo.insert!
+
+        :ok
     end
 end

@@ -5,9 +5,8 @@ use Mix.Config
 #
 # use Mix.Config
 # 
-# config :chip_api, db_password: "dev_password"
-#
-import_config "#{Mix.env}.secret.exs"
+
+
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -61,7 +60,8 @@ config :phoenix, :stacktrace_depth, 20
 config :chip_api, ChipApi.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
-  password: :db_password,
   database: "chip_api_dev",
   hostname: "localhost",
   pool_size: 10
+
+import_config "#{Mix.env}.secret.exs"
