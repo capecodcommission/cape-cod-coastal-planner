@@ -1,5 +1,12 @@
 use Mix.Config
 
+# Create a `test.secret.exs` file on your dev and/or build machine and add the following
+# in order to use a local test db instance:
+#
+# use Mix.Config
+# 
+# config :chip_api, ChipApi.Repo,
+#    password: "local_db_password"
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.

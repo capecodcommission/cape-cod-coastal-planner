@@ -5,7 +5,8 @@ use Mix.Config
 #
 # use Mix.Config
 # 
-
+# config :chip_api, ChipApi.Repo,
+#    password: "local_db_password"
 
 
 # For development, we disable any cache and enable
