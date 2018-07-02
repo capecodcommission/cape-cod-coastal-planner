@@ -21,6 +21,6 @@ defmodule ChipApiWeb.Router do
 
     forward "/graphiql", Absinthe.Plug.GraphiQL,
       schema: ChipApiWeb.Schema,
-      interface: :smiple
+      interface: :simple
   end
 end
