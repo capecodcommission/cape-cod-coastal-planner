@@ -9,7 +9,8 @@ defmodule ChipApi.Adaptation.Scale do
     field :name, :string
 
     many_to_many :adaptation_strategies, ChipApi.Adaptation.Strategy,
-      join_through: "strategy_scales"
+      join_through: "strategies_scales",
+      on_delete: :delete_all
 
     timestamps()
   end

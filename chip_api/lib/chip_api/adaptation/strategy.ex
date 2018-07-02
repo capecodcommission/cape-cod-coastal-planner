@@ -8,11 +8,16 @@ defmodule ChipApi.Adaptation.Strategy do
     field :name, :string
 
     many_to_many :adaptation_categories, ChipApi.Adaptation.Category,
-      join_through: "strategy_categories"
+      join_through: "strategies_categories",
+      on_delete: :delete_all
+
     many_to_many :coastal_hazards, ChipApi.Adaptation.Hazard,
-      join_through: "strategy_hazards"
+      join_through: "strategies_hazards",
+      on_delete: :delete_all
+
     many_to_many :impact_scales, ChipApi.Adaptation.Scale,
-      join_through: "strategy_scales"
+      join_through: "strategies_scales",
+      on_delete: :delete_all
 
     timestamps()
   end

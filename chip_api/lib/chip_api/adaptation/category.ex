@@ -9,7 +9,8 @@ defmodule ChipApi.Adaptation.Category do
     field :name, :string
 
     many_to_many :adaptation_strategies, ChipApi.Adaptation.Strategy,
-      join_through: "strategy_categories"
+      join_through: "strategies_categories",
+      on_delete: :delete_all
 
     timestamps()
   end

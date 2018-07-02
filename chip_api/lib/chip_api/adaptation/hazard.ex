@@ -8,7 +8,8 @@ defmodule ChipApi.Adaptation.Hazard do
     field :name, :string
 
     many_to_many :adaptation_strategies, ChipApi.Adaptation.Strategy,
-      join_through: "strategy_hazards"
+      join_through: "strategies_hazards",
+      on_delete: :delete_all
 
     timestamps()
   end

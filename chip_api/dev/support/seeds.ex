@@ -49,7 +49,7 @@ defmodule ChipApi.Seeds do
         # ADAPTIVE STRATEGIES
         #
 
-        do_nothing = %Adaptation.Strategy{
+        _do_nothing = %Adaptation.Strategy{
             name: "Do Nothing",
             adaptation_categories: [],
             coastal_hazards: [],
@@ -57,168 +57,109 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
         
-        undevelopment = %Adaptation.Strategy{
+        _undevelopment = %Adaptation.Strategy{
             name: "Undevelopment",
-            description: """
-            Removing development from an existing location by land purchase,
-            flood insurance buy-out programs, or other means.
-            """,
+            description: "Removing development from an existing location by land purchase, flood insurance buy-out programs, or other means.",
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site]
         }
         |> Repo.insert!
 
-        open_space_protection = %Adaptation.Strategy{
+        _open_space_protection = %Adaptation.Strategy{
             name: "Open Space Protection",
-            description: """
-            Including protection of existing wetland, drainage system, and buffer
-            zone resources in planning will protect them from development impacts
-            preserving them as a natural defense system.
-            """,
+            description: "Including protection of existing wetland, drainage system, and buffer zone resources in planning will protect them from development impacts preserving them as a natural defense system.",
             adaptation_categories: [protect, retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood, community, regional]
         }
         |> Repo.insert!
 
-        salt_marsh_restoration = %Adaptation.Strategy{
+        _salt_marsh_restoration = %Adaptation.Strategy{
             name: "Salt Marsh Restoration",
-            description: """
-            Protecting, restoring, and creating salt marsh as a buffer to storm
-            surges and sea level rise to provide natural flood protection.
-            """,
+            description: "Protecting, restoring, and creating salt marsh as a buffer to storm surges and sea level rise to provide natural flood protection.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood]
         }
         |> Repo.insert!
 
-        revetment = %Adaptation.Strategy{
+        _revetment = %Adaptation.Strategy{
             name: "Revetment",
-            description: """
-            Sloped wall of boulders constructed along eroding coastal banks designed
-            to reflect wave energy and protect upland structures.
-            """,
+            description: "Sloped wall of boulders constructed along eroding coastal banks designed to reflect wave energy and protect upland structures.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion],
             impact_scales: [site, neighborhood]
         }
         |> Repo.insert!
 
-        seawalls = %Adaptation.Strategy{
+        _seawalls = %Adaptation.Strategy{
             name: "Seawalls",
-            description: """
-            Structures built parallel to the shore with vertical or sloped walls
-            (typically smooth) to reinforce the shoreline against forces of wave
-            action and erosion.
-            """,
+            description: "Structures built parallel to the shore with vertical or sloped walls (typically smooth) to reinforce the shoreline against forces of wave action and erosion.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion],
             impact_scales: [site, neighborhood]
         }
         |> Repo.insert!
 
-        dune_creation = %Adaptation.Strategy{
+        _dune_creation = %Adaptation.Strategy{
             name: "Dune Restoration/Creation",
-            description: """
-            Restoring existing dunes or creating new dunes to protect the shoreline
-            against erosion and flooding.
-            """,
+            description: "Restoring existing dunes or creating new dunes to protect the shoreline against erosion and flooding.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood]
         }
         |> Repo.insert!
 
-        bank_stabilization_fiber_coir_roll = %Adaptation.Strategy{
+        _bank_stabilization_fiber_coir_roll = %Adaptation.Strategy{
             name: "Bank Stabilization: Fiber/Coir Roll",
-            description: """
-            Cylindrical rolls, 12-20 inches in diameter & 10-20 feet long, made of coir
-            (coconut fiber) held together by a fiber mesh, covered with sand, and are
-            planted with salt-tolerant vegetation with extensive root systems. These
-            reinforced banks act as physical barriers to waves, tides, and currents.
-            The rolls typically disintegrate over 5-7 years to allow plants time to
-            grow their root systems to keep sand and soil in place.
-            """,
+            description: "Cylindrical rolls, 12-20 inches in diameter & 10-20 feet long, made of coir (coconut fiber) held together by a fiber mesh, covered with sand, and are planted with salt-tolerant vegetation with extensive root systems. These reinforced banks act as physical barriers to waves, tides, and currents. The rolls typically disintegrate over 5-7 years to allow plants time to grow their root systems to keep sand and soil in place.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood]
         }
         |> Repo.insert!
 
-        bank_stabilization_coir_envelopes = %Adaptation.Strategy{
+        _bank_stabilization_coir_envelopes = %Adaptation.Strategy{
             name: "Bank Stabilization: Coir Envelopes",
-            description: """
-            Envelopes are constructed of coir (coconut fiber) fabric and are filled
-            with local sand. The envelopes are placed in terraces along the beach, are
-            typically covered with sand, and may also be planted with native vegetation
-            to hold sand together and absorb water.
-            """,
+            description: "Envelopes are constructed of coir (coconut fiber) fabric and are filled with local sand. The envelopes are placed in terraces along the beach, are typically covered with sand, and may also be planted with native vegetation to hold sand together and absorb water.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood]
         }
         |> Repo.insert!
 
-        living_shoreline_vegetation = %Adaptation.Strategy{
+        _living_shoreline_vegetation = %Adaptation.Strategy{
             name: "Living Shoreline: Vegetation Only",
-            description: """
-            Shoreline stabilization techniques along estuarine coasts, bays, sheltered
-            coastlines, and tributaries. A living shoreline has a footprint that is made
-            up mostly of native material. It incorporates vegetation or other living, natural
-            "soft" elements alone or in combination with some other type of harder shoreline
-            structures (e.g. oyster reefs or rock sills) for added stability. Using vegetation
-            alone is one approach. Roots hold soil in place to reduce erosion. Provides a
-            buffer to upload areas and breaks small waves.
-            """,
+            description: "Shoreline stabilization techniques along estuarine coasts, bays, sheltered coastlines, and tributaries. A living shoreline has a footprint that is made up mostly of native material. It incorporates vegetation or other living, natural \"soft\" elements alone or in combination with some other type of harder shoreline structures (e.g. oyster reefs or rock sills) for added stability. Using vegetation alone is one approach. Roots hold soil in place to reduce erosion. Provides a buffer to upload areas and breaks small waves.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood]
         }
         |> Repo.insert!
 
-        living_shoreline_vegetation_structural = %Adaptation.Strategy{
+        _living_shoreline_vegetation_structural = %Adaptation.Strategy{
             name: "Living Shoreline: Combined Vegetation and Structural Measures",
-            description: """
-            Shoreline stabilization techniques along estuarine coasts, bays, sheltered
-            coastlines, and tributaries. A living shoreline has a footprint that is made
-            up mostly of native material. It incorporates vegetation or other living, natural
-            "soft" elements alone or in combination with some other type of harder shoreline
-            structures (e.g. oyster reefs or rock sills) for added stability. A combined
-            approach integrates living components, such as plantings, with strategically
-            placed structural elements, such as sills, or breakwaters.
-            """,
+            description: "Shoreline stabilization techniques along estuarine coasts, bays, sheltered coastlines, and tributaries. A living shoreline has a footprint that is made up mostly of native material. It incorporates vegetation or other living, natural \"soft\" elements alone or in combination with some other type of harder shoreline structures (e.g. oyster reefs or rock sills) for added stability. A combined approach integrates living components, such as plantings, with strategically placed structural elements, such as sills, or breakwaters.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood]
         }
         |> Repo.insert!
 
-        living_shoreline_breakwater_oyster = %Adaptation.Strategy{
+        _living_shoreline_breakwater_oyster = %Adaptation.Strategy{
             name: "Living Shoreline: Living Breakwater/Oyster Reefs",
-            description: """
-            Shoreline stabilization techniques along estuarine coasts, bays, sheltered
-            coastlines, and tributaries. A living shoreline has a footprint that is made
-            up mostly of native material. It incorporates vegetation or other living, natural
-            "soft" elements alone or in combination with some other type of harder shoreline
-            structures (e.g. oyster reefs or rock sills) for added stability. Restoring or
-            creating oyster reefs or reef balls to serve as natural breakwaters, attenuate
-            wave energy, and slow inland water transfer.
-            """,
+            description: "Shoreline stabilization techniques along estuarine coasts, bays, sheltered coastlines, and tributaries. A living shoreline has a footprint that is made
+            up mostly of native material. It incorporates vegetation or other living, natural \"soft\" elements alone or in combination with some other type of harder shoreline structures (e.g. oyster reefs or rock sills) for added stability. Restoring or creating oyster reefs or reef balls to serve as natural breakwaters, attenuate wave energy, and slow inland water transfer.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood]
         }
         |> Repo.insert!
 
-        beach_nourishment = %Adaptation.Strategy{
+        _beach_nourishment = %Adaptation.Strategy{
             name: "Beach Nourishment",
-            description: """
-            The process of adding sediment (sand) to an eroding beach to widen or elevate
-            the beach to maintain or advance the shoreline seaward. Sediment can be sourced
-            from inland mining, dredging from navigation channels, and/or offshore mining.
-            """,
+            description: "The process of adding sediment (sand) to an eroding beach to widen or elevate the beach to maintain or advance the shoreline seaward. Sediment can be sourced from inland mining, dredging from navigation channels, and/or offshore mining.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood]

@@ -35,6 +35,11 @@ defmodule ChipApi.DataCase do
     :ok
   end
 
+  def allow(parent, child) do
+    Ecto.Adapters.SQL.Sandbox.allow(ChipApi.Repo, parent, child)
+  end
+
+
   @doc """
   A helper that transform changeset errors to a map of messages.
 
