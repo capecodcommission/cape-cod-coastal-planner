@@ -22,6 +22,14 @@ defmodule ChipApi.Adaptation.Strategies do
         [%Category{}, ...]
 
     """
+    def list_categories(args) do
+        args
+        |> Enum.reduce(Category, fn
+            {:order, order}, query ->
+                query |> order_by({^order, :display_order})
+        end)
+        |> Repo.all
+    end
     def list_categories do
         Repo.all(Category)
     end

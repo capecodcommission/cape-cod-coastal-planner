@@ -6,6 +6,7 @@ defmodule ChipApi.Adaptation.Hazard do
   schema "coastal_hazards" do
     field :description, :string
     field :name, :string
+    field :display_order, :integer
 
     many_to_many :adaptation_strategies, ChipApi.Adaptation.Strategy,
       join_through: "strategies_hazards",
@@ -17,7 +18,7 @@ defmodule ChipApi.Adaptation.Hazard do
   @doc false
   def changeset(hazard, attrs) do
     hazard
-    |> cast(attrs, [:name, :description])
+    |> cast(attrs, [:name, :description, :display_order])
     |> validate_required([:name])
     |> unique_constraint(:name)
   end

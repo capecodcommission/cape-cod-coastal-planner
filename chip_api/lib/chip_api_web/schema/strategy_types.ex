@@ -2,24 +2,30 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
     use Absinthe.Schema.Notation
     alias ChipApiWeb.Resolvers
 
+    import_types ChipApi.Schema.CommonTypes
+
     object :strategies_queries do
         @desc "The list of adaptation strategies"
         field :adaptation_strategies, list_of(:adaptation_strategy) do
+            arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.adaptation_strategies/3
         end
 
         @desc "The list of adaptation categories"
         field :adaptation_categories, list_of(:adaptation_category) do
+            arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.adaptation_categories/3
         end
 
         @desc "The list of coastal hazards"
         field :coastal_hazards, list_of(:coastal_hazard) do
+            arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.coastal_hazards/3
         end
 
         @desc "The list of geographic scales of impact"
         field :impact_scales, list_of(:impact_scale) do
+            arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.impact_scales/3
         end
     end

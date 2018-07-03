@@ -6,6 +6,7 @@ defmodule ChipApi.Adaptation.Strategy do
   schema "adaptation_strategies" do
     field :description, :string
     field :name, :string
+    field :display_order, :integer
 
     many_to_many :adaptation_categories, ChipApi.Adaptation.Category,
       join_through: "strategies_categories",
@@ -25,7 +26,7 @@ defmodule ChipApi.Adaptation.Strategy do
   @doc false
   def changeset(strategy, attrs) do
     strategy
-    |> cast(attrs, [:name, :description])
+    |> cast(attrs, [:name, :description, :display_order])
     |> validate_required([:name])
     |> unique_constraint(:name)
   end

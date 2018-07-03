@@ -7,6 +7,7 @@ defmodule ChipApi.Adaptation.Scale do
     field :description, :string
     field :impact, :integer
     field :name, :string
+    field :display_order, :integer
 
     many_to_many :adaptation_strategies, ChipApi.Adaptation.Strategy,
       join_through: "strategies_scales",

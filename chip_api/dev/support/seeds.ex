@@ -35,13 +35,22 @@ defmodule ChipApi.Seeds do
         #
         # ADAPTATION CATEGORIES
         #
-        protect = %Adaptation.Category{name: "Protect"}
+        protect = %Adaptation.Category{
+            name: "Protect",
+            display_order: 10
+        }
         |> Repo.insert!
 
-        accommodate = %Adaptation.Category{name: "Accommodate"}
+        accommodate = %Adaptation.Category{
+            name: "Accommodate",
+            display_order: 20
+        }
         |> Repo.insert!
 
-        retreat = %Adaptation.Category{name: "Retreat"}
+        retreat = %Adaptation.Category{
+            name: "Retreat",
+            display_order: 30
+        }
         |> Repo.insert!
 
 

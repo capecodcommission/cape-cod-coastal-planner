@@ -5,16 +5,13 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_strategies()}
     end
 
-
     def adaptation_categories(_, args, _) do
-        {:ok, Strategies.list_categories()}
+        {:ok, Strategies.list_categories(args)}
     end
-
     
     def coastal_hazards(_, args, _) do
         {:ok, Strategies.list_hazards()}
     end
-
 
     def impact_scales(_, args, _) do
         {:ok, Strategies.list_scales()}
