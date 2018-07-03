@@ -12,6 +12,7 @@ Elixir is a modern language built on the rock-solid foundation of the Erlang/OTP
 
 ## Consequences
 Some of Elixir's key benefits include:
+
 - It's a functional and immutable language, which bring with it a host of benefits like
     - referential transparency
     - reduced cognitive load in understanding data flow
@@ -20,7 +21,7 @@ Some of Elixir's key benefits include:
     - allows for better optimizations by compiler because it can safely make more assumptions
 - Is arguably the best language/platform for concurrent and distributed programs (ie: the Web!)
     - by using incredibly light-weight, isolated processes that can have thousands upon thousands running concurrently on the same machine (vertical scaling)
-    - by instrinsically using the Actor model, each process can communicate with other processes on any machine within the network, or on a single machien with multiple cores, in a thread-safe manner (distribution & horizontal scaling)
+    - by instrinsically using the Actor model, each process can communicate with other processes on any machine within the network, or on a single machine with multiple cores, in a thread-safe manner (distribution & horizontal scaling)
     - by using Phoenix Channels and Presence (Conflict-free replicated data types) it can easily be used to build reliable distributed real-time systems 
     - by using Nerves it can be embedded into IoT devices and retain all its benefits to allow for sophisticated, modern IoT solutions
 - Unique approach to fault-tolerance with it's "Let it Fail!" mantra
@@ -29,7 +30,8 @@ Some of Elixir's key benefits include:
 - It has an elegant syntax drawn from Ruby, and as such, many veteran Ruby programmers are moving to Elixir for the combination of that familiar syntax and improved horsepower.
 
 Some things developers will need to be aware of:
+
 - Though it's gaining lots of traction and has battle-tested underpinnings, it's still a relatively new language and ecosystem. Finding run-of-the-mill developers at the drop of a hat may be more difficult, but you'll also be more likely to attract better talent that may stick around longer if you can market to them and bear the longer hiring process.
 - Deployments can be a little trickier, requiring some more manual tooling beyond a simple `git push master` style deployment, but are getting easier with tools like Distillery
 - Being a functional, immutable language, developers familiar with the OOP and mutable data paradigm may have to make some more initial effort in order to successfully shift their mindset, and though they are well-defined, Elixir/Erlang/OTP have some unique software patterns that will need to be learned. The rewards of learning this paradigm, however, are most certainly worth the effort.
-- Though unlikely, developers may need to learn a bit of Erlang to do more advanced things or if a library they want to use doesn't exist for Elixir yet. 
+- Though unlikely, developers may need to learn a bit of Erlang to do more advanced things or if a library they want to use doesn't exist for Elixir yet.

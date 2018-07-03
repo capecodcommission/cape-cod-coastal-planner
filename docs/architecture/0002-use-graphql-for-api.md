@@ -14,6 +14,7 @@ The Absinthe library is a fully-featured, spec-compliant GraphQL implementation 
 
 ## Consequences
 Some of GraphQL's key benefits include:
+
 - Declarative approach is all about writing code that says _what_ rather than _how_
 - Rapid iterations on the front-end because you don't have REST endpoints dependent upon your UI/UX
 - Prevents over/under fetching: ask for what you need and get what you need, no more no less
@@ -24,6 +25,7 @@ Some of GraphQL's key benefits include:
 - Provides a foundation for more easily expanding the app with new data and to new platforms
 
 Some things developers will need to be aware of:
+
 - It's not a panacea or silver-bullet, if it makes more sense to create a REST or RPC endpoint to handle a particular request, don't try to force it into GraphQL
 - Though Facebook has been using it for 6 years, it's still a new technology in the grand scheme of things. Many developers still haven't even heard of it, though I expect that will be changing quickly throughout 2018 an 2019.
 
