@@ -21,33 +21,27 @@ defmodule ChipApiWeb.Resolvers.Strategies do
     end
 
     def categories_for_strategy(strategy, args, _) do
-        query = Ecto.assoc(strategy, :adaptation_categories)
-        {:ok, ChipApi.Repo.all(query)}
+        {:ok, Strategies.list_categories_for_strategy(strategy)}
     end
 
     def hazards_for_strategy(strategy, args, _) do
-        query = Ecto.assoc(strategy, :coastal_hazards)
-        {:ok, ChipApi.Repo.all(query)}
+        {:ok, Strategies.list_hazards_for_strategy(strategy)}
     end
 
     def scales_for_strategy(strategy, args, _) do
-        query = Ecto.assoc(strategy, :impact_scales)
-        {:ok, ChipApi.Repo.all(query)}
+        {:ok, Strategies.list_scales_for_strategy(strategy)}
     end
 
     def strategies_for_category(category, args, _) do
-        query = Ecto.assoc(category, :adaptation_strategies)
-        {:ok, ChipApi.Repo.all(query)}
+        {:ok, Strategies.list_strategies_for_category(category)}
     end
 
     def strategies_for_hazard(hazard, args, _) do
-        query = Ecto.assoc(hazard, :adaptation_strategies)
-        {:ok, ChipApi.Repo.all(query)}
+        {:ok, Strategies.list_strategies_for_hazard(hazard)}
     end
 
     def strategies_for_scale(scale, args, _) do
-        query = Ecto.assoc(scale, :adaptation_strategies)
-        {:ok, ChipApi.Repo.all(query)}
+        {:ok, Strategies.list_strategies_for_scale(scale)}
     end
 
 end

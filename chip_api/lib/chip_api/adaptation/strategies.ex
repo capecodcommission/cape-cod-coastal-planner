@@ -26,6 +26,21 @@ defmodule ChipApi.Adaptation.Strategies do
         Repo.all(Category)
     end
 
+    @doc """
+    Returns the list of adaptation strategies associated with 
+    the given category.
+
+    ## Examples
+
+        iex> list_strategies_for_category(category)
+        [%Strategy{}, ...]
+
+    """
+    def list_strategies_for_category(%Category{} = category) do
+        query = Ecto.assoc(category, :adaptation_strategies)
+        Repo.all(query)
+    end
+
 
     @doc """
     Gets a single Category by id. 
@@ -145,6 +160,20 @@ defmodule ChipApi.Adaptation.Strategies do
         Repo.all(Hazard)
     end
 
+    @doc """
+    Returns the list of adaptation strategies associated with 
+    the given coastal hazard.
+
+    ## Examples
+
+        iex> list_strategies_for_hazard(hazard)
+        [%Strategy{}, ...]
+
+    """
+    def list_strategies_for_hazard(%Hazard{} = hazard) do
+        query = Ecto.assoc(hazard, :adaptation_strategies)
+        Repo.all(query)
+    end
 
     @doc """
     Gets a single Hazard by id. 
@@ -263,6 +292,20 @@ defmodule ChipApi.Adaptation.Strategies do
         Repo.all(Scale)
     end
 
+    @doc """
+    Returns the list of adaptation strategies associated with 
+    the given impact scale.
+
+    ## Examples
+
+        iex> list_strategies_for_scale(scale)
+        [%Strategy{}, ...]
+
+    """
+    def list_strategies_for_scale(%Scale{} = scale) do
+        query = Ecto.assoc(scale, :adaptation_strategies)
+        Repo.all(query)
+    end
 
     @doc """
     Gets a single Scale by id. 
@@ -379,6 +422,48 @@ defmodule ChipApi.Adaptation.Strategies do
     """
     def list_strategies do
         Repo.all(Strategy)
+    end
+
+    @doc """
+    Returns the list of categories associated with the given strategy.
+
+    ## Examples
+
+        iex> list_categories_for_strategy(strategy)
+        [%Category{}, ...]
+
+    """
+    def list_categories_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :adaptation_categories)
+        Repo.all(query)
+    end
+
+    @doc """
+    Returns the list of hazards associated with the given strategy.
+
+    ## Examples
+
+        iex> list_hazards_for_strategy(strategy)
+        [%Hazard{}, ...]
+
+    """
+    def list_hazards_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :coastal_hazards)
+        Repo.all(query)
+    end
+
+    @doc """
+    Returns the list of scales associated with the given strategy.
+
+    ## Examples
+
+        iex> list_scales_for_strategy(strategy)
+        [%Scale{}, ...]
+
+    """
+    def list_scales_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :impact_scales)
+        Repo.all(query)
     end
 
 
