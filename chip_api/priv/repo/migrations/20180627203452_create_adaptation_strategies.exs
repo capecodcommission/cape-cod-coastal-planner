@@ -9,5 +9,6 @@ defmodule ChipApi.Repo.Migrations.CreateAdaptationStrategies do
       timestamps()
     end
 
+    create unique_index(:adaptation_strategies, [:name])
   end
 end

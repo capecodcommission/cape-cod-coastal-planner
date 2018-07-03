@@ -115,7 +115,7 @@ defmodule ChipApi.CategoryTest do
     @attrs %{
         name: "Accommodate"
     }
-    test "update_category with to a taken name returns error and changeset" do
+    test "update_category with a taken name returns error and changeset" do
         a_category = from(c in Category, where: c.name == "Protect") |> Repo.one!
 
         assert {:error, changeset} = Strategies.update_category(a_category, @attrs)
