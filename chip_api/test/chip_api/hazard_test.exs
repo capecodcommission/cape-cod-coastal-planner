@@ -42,6 +42,11 @@ defmodule ChipApi.HazardTest do
         assert [data.haz1.name, data.haz2.name] == hazards
     end
 
+    test "list_strategies_for_hazard returns all strategies for a hazard", %{data: data} do
+        strategies = for s <- Strategies.list_strategies_for_hazard(data.haz1), do: s.name
+        assert [data.strat1.name, data.strat2.name] == strategies
+    end
+
     test "get_hazard! with a good id returns the correct hazard", %{data: data} do
         assert data.haz1 == Strategies.get_hazard!(data.haz1.id)
     end

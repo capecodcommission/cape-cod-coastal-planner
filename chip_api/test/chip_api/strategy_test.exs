@@ -54,8 +54,23 @@ defmodule ChipApi.StrategyTest do
     end
 
     test "list_strategies returns all adaptation strategies", %{data: data} do
-        strategies = for c <- Strategies.list_strategies(), do: c.name
+        strategies = for s <- Strategies.list_strategies(), do: s.name
         assert [data.strat1.name, data.strat2.name] == strategies
+    end
+
+    test "list_categories_for_strategy returns all categories for a strategy", %{data: data} do
+        categories = for c <- Strategies.list_categories_for_strategy(data.strat1), do: c.name
+        assert [data.cat1.name, data.cat2.name] == categories
+    end
+
+    test "list_hazards_for_strategy returns all hazards for a strategy", %{data: data} do
+        hazards = for h <- Strategies.list_hazards_for_strategy(data.strat1), do: h.name
+        assert [data.haz1.name, data.haz2.name] == hazards
+    end
+
+    test "list_scales_for_strategy returns all scales for a strategy", %{data: data} do
+        scales = for s <- Strategies.list_scales_for_strategy(data.strat1), do: s.name
+        assert [data.scale1.name, data.scale2.name] == scales
     end
 
     test "get_strategy! with a good id returns the correct strategy", %{data: data} do

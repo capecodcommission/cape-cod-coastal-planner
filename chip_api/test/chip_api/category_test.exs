@@ -42,6 +42,10 @@ defmodule ChipApi.CategoryTest do
         assert [data.cat1.name, data.cat2.name] == categories
     end
 
+    test "list_strategies_for_category returns all strategies for a category", %{data: data} do
+        strategies = for s <- Strategies.list_strategies_for_category(data.cat1), do: s.name
+        assert [data.strat1.name, data.strat2.name] == strategies
+    end
 
     test "get_category! with a good id returns the correct category", %{data: data} do
         assert data.cat1 == Strategies.get_category!(data.cat1.id)

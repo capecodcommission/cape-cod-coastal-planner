@@ -42,6 +42,11 @@ defmodule ChipApi.ScaleTest do
         assert [data.scale1.name, data.scale2.name] == scales
     end
 
+    test "list_strategies_for_scale returns all strategies for a scale", %{data: data} do
+        strategies = for s <- Strategies.list_strategies_for_scale(data.scale1), do: s.name
+        assert [data.strat1.name, data.strat2.name] == strategies
+    end
+
     test "get_scale! with a good id returns the correct scale", %{data: data} do
         assert data.scale1 == Strategies.get_scale!(data.scale1.id)
     end
