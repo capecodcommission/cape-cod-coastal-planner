@@ -62,7 +62,8 @@ defmodule ChipApi.Seeds do
             name: "Do Nothing",
             adaptation_categories: [],
             coastal_hazards: [],
-            impact_scales: []
+            impact_scales: [],
+            is_active: true
         }
         |> Repo.insert!
         
@@ -71,7 +72,8 @@ defmodule ChipApi.Seeds do
             description: "Removing development from an existing location by land purchase, flood insurance buy-out programs, or other means.",
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
-            impact_scales: [site]
+            impact_scales: [site],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -80,7 +82,8 @@ defmodule ChipApi.Seeds do
             description: "Including protection of existing wetland, drainage system, and buffer zone resources in planning will protect them from development impacts preserving them as a natural defense system.",
             adaptation_categories: [protect, retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
-            impact_scales: [site, neighborhood, community, regional]
+            impact_scales: [site, neighborhood, community, regional],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -89,7 +92,8 @@ defmodule ChipApi.Seeds do
             description: "Protecting, restoring, and creating salt marsh as a buffer to storm surges and sea level rise to provide natural flood protection.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
-            impact_scales: [site, neighborhood]
+            impact_scales: [site, neighborhood],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -98,7 +102,8 @@ defmodule ChipApi.Seeds do
             description: "Sloped wall of boulders constructed along eroding coastal banks designed to reflect wave energy and protect upland structures.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion],
-            impact_scales: [site, neighborhood]
+            impact_scales: [site, neighborhood],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -107,7 +112,8 @@ defmodule ChipApi.Seeds do
             description: "Structures built parallel to the shore with vertical or sloped walls (typically smooth) to reinforce the shoreline against forces of wave action and erosion.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion],
-            impact_scales: [site, neighborhood]
+            impact_scales: [site, neighborhood],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -116,7 +122,8 @@ defmodule ChipApi.Seeds do
             description: "Restoring existing dunes or creating new dunes to protect the shoreline against erosion and flooding.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
-            impact_scales: [site, neighborhood]
+            impact_scales: [site, neighborhood],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -125,7 +132,8 @@ defmodule ChipApi.Seeds do
             description: "Cylindrical rolls, 12-20 inches in diameter & 10-20 feet long, made of coir (coconut fiber) held together by a fiber mesh, covered with sand, and are planted with salt-tolerant vegetation with extensive root systems. These reinforced banks act as physical barriers to waves, tides, and currents. The rolls typically disintegrate over 5-7 years to allow plants time to grow their root systems to keep sand and soil in place.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
-            impact_scales: [site, neighborhood]
+            impact_scales: [site, neighborhood],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -134,7 +142,8 @@ defmodule ChipApi.Seeds do
             description: "Envelopes are constructed of coir (coconut fiber) fabric and are filled with local sand. The envelopes are placed in terraces along the beach, are typically covered with sand, and may also be planted with native vegetation to hold sand together and absorb water.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
-            impact_scales: [site, neighborhood]
+            impact_scales: [site, neighborhood],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -143,7 +152,8 @@ defmodule ChipApi.Seeds do
             description: "Shoreline stabilization techniques along estuarine coasts, bays, sheltered coastlines, and tributaries. A living shoreline has a footprint that is made up mostly of native material. It incorporates vegetation or other living, natural \"soft\" elements alone or in combination with some other type of harder shoreline structures (e.g. oyster reefs or rock sills) for added stability. Using vegetation alone is one approach. Roots hold soil in place to reduce erosion. Provides a buffer to upload areas and breaks small waves.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
-            impact_scales: [site, neighborhood]
+            impact_scales: [site, neighborhood],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -152,7 +162,8 @@ defmodule ChipApi.Seeds do
             description: "Shoreline stabilization techniques along estuarine coasts, bays, sheltered coastlines, and tributaries. A living shoreline has a footprint that is made up mostly of native material. It incorporates vegetation or other living, natural \"soft\" elements alone or in combination with some other type of harder shoreline structures (e.g. oyster reefs or rock sills) for added stability. A combined approach integrates living components, such as plantings, with strategically placed structural elements, such as sills, or breakwaters.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
-            impact_scales: [site, neighborhood]
+            impact_scales: [site, neighborhood],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -162,7 +173,8 @@ defmodule ChipApi.Seeds do
             up mostly of native material. It incorporates vegetation or other living, natural \"soft\" elements alone or in combination with some other type of harder shoreline structures (e.g. oyster reefs or rock sills) for added stability. Restoring or creating oyster reefs or reef balls to serve as natural breakwaters, attenuate wave energy, and slow inland water transfer.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
-            impact_scales: [site, neighborhood]
+            impact_scales: [site, neighborhood],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -171,7 +183,8 @@ defmodule ChipApi.Seeds do
             description: "The process of adding sediment (sand) to an eroding beach to widen or elevate the beach to maintain or advance the shoreline seaward. Sediment can be sourced from inland mining, dredging from navigation channels, and/or offshore mining.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
-            impact_scales: [site, neighborhood]
+            impact_scales: [site, neighborhood],
+            is_active: true
         }
         |> Repo.insert!
 

@@ -284,7 +284,7 @@ defmodule ChipApi.Adaptation.Strategies do
         %Ecto.Changeset{source: %Hazard{}}
 
     """
-    def change_category(%Hazard{} = hazard) do
+    def change_hazard(%Hazard{} = hazard) do
         Hazard.changeset(hazard, %{})
     end
 
