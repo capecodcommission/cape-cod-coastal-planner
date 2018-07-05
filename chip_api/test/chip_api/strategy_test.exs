@@ -58,6 +58,12 @@ defmodule ChipApi.StrategyTest do
         assert [data.strat1.name, data.strat2.name] == strategies
     end
 
+    @attrs %{order: :desc}
+    test "list_strategies desc returns all adaptation strategies in descending order", %{data: data} do
+        strategies = for s <- Strategies.list_strategies(@attrs), do: s.name
+        assert [data.strat2.name, data.strat1.name] == strategies
+    end
+
     test "list_categories_for_strategy returns all categories for a strategy", %{data: data} do
         categories = for c <- Strategies.list_categories_for_strategy(data.strat1), do: c.name
         assert [data.cat1.name, data.cat2.name] == categories

@@ -38,8 +38,14 @@ defmodule ChipApi.HazardTest do
     end
 
     test "list_hazards returns all coastal hazards", %{data: data} do
-        hazards = for c <- Strategies.list_hazards(), do: c.name
+        hazards = for h <- Strategies.list_hazards(), do: h.name
         assert [data.haz1.name, data.haz2.name] == hazards
+    end
+
+    @attrs %{order: :desc}
+    test "list_hazards desc returns all coastal hazards in descending order", %{data: data} do
+        hazards = for h <- Strategies.list_hazards(@attrs), do: h.name
+        assert [data.haz2.name, data.haz1.name] == hazards
     end
 
     test "list_strategies_for_hazard returns all strategies for a hazard", %{data: data} do

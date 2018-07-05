@@ -26,7 +26,7 @@ defmodule ChipApi.Adaptation.Strategies do
         args
         |> Enum.reduce(Category, fn
             {:order, order}, query ->
-                query |> order_by({^order, :display_order})
+                query |> order_by([{^order, :display_order}, {^order, :id}])
         end)
         |> Repo.all
     end
@@ -164,6 +164,14 @@ defmodule ChipApi.Adaptation.Strategies do
         [%Hazard{}, ...]
 
     """
+    def list_hazards(args) do
+        args
+        |> Enum.reduce(Hazard, fn
+            {:order, order}, query ->
+                query |> order_by([{^order, :display_order}, {^order, :id}])
+        end)
+        |> Repo.all
+    end
     def list_hazards do
         Repo.all(Hazard)
     end
@@ -296,6 +304,14 @@ defmodule ChipApi.Adaptation.Strategies do
         [%Scale{}, ...]
 
     """
+    def list_scales(args) do
+        args
+        |> Enum.reduce(Scale, fn
+            {:order, order}, query ->
+                query |> order_by([{^order, :display_order}, {^order, :id}])
+        end)
+        |> Repo.all
+    end
     def list_scales do
         Repo.all(Scale)
     end
@@ -428,6 +444,14 @@ defmodule ChipApi.Adaptation.Strategies do
         [%Strategy{}, ...]
 
     """
+    def list_strategies(args) do
+        args
+        |> Enum.reduce(Strategy, fn
+            {:order, order}, query ->
+                query |> order_by([{^order, :display_order}, {^order, :id}])
+        end)
+        |> Repo.all
+    end
     def list_strategies do
         Repo.all(Strategy)
     end

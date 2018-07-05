@@ -38,8 +38,14 @@ defmodule ChipApi.ScaleTest do
     end
 
     test "list_scales returns all impact scales", %{data: data} do
-        scales = for c <- Strategies.list_scales(), do: c.name
+        scales = for s <- Strategies.list_scales(), do: s.name
         assert [data.scale1.name, data.scale2.name] == scales
+    end
+
+    @attrs %{order: :desc}
+    test "list_scales desc returns all impact scales in descending order", %{data: data} do
+        scales = for s <- Strategies.list_scales(@attrs), do: s.name
+        assert [data.scale2.name, data.scale1.name] == scales
     end
 
     test "list_strategies_for_scale returns all strategies for a scale", %{data: data} do
