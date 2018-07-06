@@ -4,9 +4,12 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
     import_types ChipApi.Schema.CommonTypes
 
+    @desc "Available queries for CHIP"
     object :strategies_queries do
+
         @desc "The list of adaptation strategies"
         field :adaptation_strategies, list_of(:adaptation_strategy) do
+            arg :filter, :strategy_filter
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.adaptation_strategies/3
         end
@@ -30,6 +33,15 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         end
     end
 
+    @desc "Filtering options for adaptation strategies"
+    input_object :strategy_filter do
+
+        @desc "Matching a name"
+        field :name, :string
+
+        @desc "Is currently available for planning or not"
+        field :is_active, :boolean
+    end
 
     @desc "An adaptation strategy"
     object :adaptation_strategy do
@@ -39,6 +51,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
         @desc "The description of the strategy"
         field :description, :string
+
+        @desc "Denotes whether this strategy is currently available for planning"
+        field :is_active, :boolean
 
         @desc "The adaptation categories that are associated with the strategy"
         field :categories, list_of(:adaptation_category) do

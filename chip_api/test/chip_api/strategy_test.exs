@@ -28,7 +28,8 @@ defmodule ChipApi.StrategyTest do
             description: "desc1",
             adaptation_categories: [cat1, cat2],
             coastal_hazards: [haz1, haz2],
-            impact_scales: [scale1, scale2]
+            impact_scales: [scale1, scale2],
+            is_active: true
         }
         |> Repo.insert!
 
@@ -37,7 +38,8 @@ defmodule ChipApi.StrategyTest do
             description: "desc2",
             adaptation_categories: [cat1, cat2],
             coastal_hazards: [haz1, haz2],
-            impact_scales: [scale1, scale2]
+            impact_scales: [scale1, scale2],
+            is_active: false
         }
         |> Repo.insert!
 
@@ -62,6 +64,24 @@ defmodule ChipApi.StrategyTest do
     test "list_strategies desc returns all adaptation strategies in descending order", %{data: data} do
         strategies = for s <- Strategies.list_strategies(@attrs), do: s.name
         assert [data.strat2.name, data.strat1.name] == strategies
+    end
+
+    @attrs %{filter: %{is_active: true}}
+    test "list_strategies that are active returns only active strategies", %{data: data} do
+        strategies = for s <- Strategies.list_strategies(@attrs), do: s.name
+        assert [data.strat1.name] == strategies
+    end
+
+    @attrs %{filter: %{is_active: false}}
+    test "list_strategies that are NOT active returns only inactive strategies", %{data: data} do
+        strategies = for s <- Strategies.list_strategies(@attrs), do: s.name
+        assert [data.strat2.name] == strategies
+    end
+
+    @attrs %{filter: %{name: "Strat1"}}
+    test "list_strategies that match name returns only matching strategies", %{data: data} do
+        strategies = for s <- Strategies.list_strategies(@attrs), do: s.name
+        assert [data.strat1.name] == strategies
     end
 
     test "list_categories_for_strategy returns all categories for a strategy", %{data: data} do

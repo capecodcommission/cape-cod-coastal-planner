@@ -14,9 +14,13 @@ defmodule ChipApi.Adaptation.Strategies do
 
 
     @doc """
-    Returns the list of adaptation Categories.
+    Returns the list of adaptation Categories. When ordering by display_order,
+    nulls are returned first.
 
     ## Examples
+
+        iex> list_categories(%{order: :desc})
+        [%Category{}, ...]
 
         iex> list_categories()
         [%Category{}, ...]
@@ -156,9 +160,13 @@ defmodule ChipApi.Adaptation.Strategies do
 
 
     @doc """
-    Returns the list of coastal Hazards.
+    Returns the list of coastal Hazards. When ordering by display_order,
+    nulls are returned first.
 
     ## Examples
+
+        iex> list_hazards(%{order: :desc})
+        [%Hazard{}, ...]
 
         iex> list_hazards()
         [%Hazard{}, ...]
@@ -296,9 +304,13 @@ defmodule ChipApi.Adaptation.Strategies do
 
 
     @doc """
-    Returns the list of impact scales.
+    Returns the list of impact scales. When ordering by display_order,
+    nulls are returned first.
 
     ## Examples
+
+        iex> list_scales(%{order: :desc})
+        [%Scale{}, ...]
 
         iex> list_scales()
         [%Scale{}, ...]
@@ -436,9 +448,16 @@ defmodule ChipApi.Adaptation.Strategies do
 
 
     @doc """
-    Returns the list of adaptation strategies.
+    Returns the list of adaptation strategies. When ordering by display_order,
+    nulls are returned first.
 
     ## Examples
+
+        iex> list_strategies(%{order: :desc})
+        [%Strategy{}, ...]
+
+        iex> list_strategies(%{filter: %{is_active: true}})
+        [%Strategy{}, ...]
 
         iex> list_strategies()
         [%Strategy{}, ...]
@@ -449,11 +468,22 @@ defmodule ChipApi.Adaptation.Strategies do
         |> Enum.reduce(Strategy, fn
             {:order, order}, query ->
                 query |> order_by([{^order, :display_order}, {^order, :id}])
+            {:filter, filter}, query ->
+                query |> filter_strategies_with(filter)
         end)
         |> Repo.all
     end
     def list_strategies do
         Repo.all(Strategy)
+    end
+
+    defp filter_strategies_with(query, filter) do
+        Enum.reduce(filter, query, fn
+            {:name, name}, query ->
+                from q in query, where: ilike(q.name, ^"%#{name}%")
+            {:is_active, is_active}, query ->
+                from q in query, where: q.is_active == ^is_active
+        end)
     end
 
     @doc """

@@ -5,4 +5,5 @@ defmodule ChipApi.Schema.CommonTypes do
         value :asc
         value :desc
     end
+
 end
