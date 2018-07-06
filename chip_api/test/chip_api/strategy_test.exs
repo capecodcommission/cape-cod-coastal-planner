@@ -1,58 +1,11 @@
 defmodule ChipApi.StrategyTest do
     use ChipApi.DataCase, async: true
-    alias ChipApi.Adaptation.{Strategies, Strategy, Category, Hazard, Scale}
+    alias ChipApi.Adaptation.{Strategies, Strategy}
 
     @moduletag :strategy_case
 
     setup do
-        cat1 = %Category{name: "cat1"}
-        |> Repo.insert!
-
-        cat2 = %Category{name: "cat2"}
-        |> Repo.insert!
-
-        haz1 = %Hazard{name: "haz1"}
-        |> Repo.insert!
-
-        haz2 = %Hazard{name: "haz2"}
-        |> Repo.insert!
-
-        scale1 = %Scale{name: "scale1", impact: 1}
-        |> Repo.insert!
-
-        scale2 = %Scale{name: "scale2", impact: 2}
-        |> Repo.insert!
-
-        strat1 = %Strategy{
-            name: "strat1", 
-            description: "desc1",
-            adaptation_categories: [cat1, cat2],
-            coastal_hazards: [haz1, haz2],
-            impact_scales: [scale1, scale2],
-            is_active: true
-        }
-        |> Repo.insert!
-
-        strat2 = %Strategy{
-            name: "strat2", 
-            description: "desc2",
-            adaptation_categories: [cat1, cat2],
-            coastal_hazards: [haz1, haz2],
-            impact_scales: [scale1, scale2],
-            is_active: false
-        }
-        |> Repo.insert!
-
-        {:ok, data: %{
-            cat1: cat1,
-            cat2: cat2,
-            haz1: haz1,
-            haz2: haz2,
-            scale1: scale1,
-            scale2: scale2,
-            strat1: strat1,
-            strat2: strat2
-        }}
+        ChipApi.Fakes.run_all()
     end
 
     test "list_strategies returns all adaptation strategies", %{data: data} do

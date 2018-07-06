@@ -1,40 +1,11 @@
 defmodule ChipApi.HazardTest do
     use ChipApi.DataCase, async: true
-    alias ChipApi.Adaptation.{Strategies, Hazard, Strategy}
+    alias ChipApi.Adaptation.{Strategies, Hazard}
 
     @moduletag :hazard_case
 
     setup do
-        haz1 = %Hazard{name: "haz1"}
-        |> Repo.insert!
-
-        haz2 = %Hazard{name: "haz2"}
-        |> Repo.insert!
-
-        strat1 = %Strategy{
-            name: "strat1", 
-            description: "desc1",
-            adaptation_categories: [],
-            coastal_hazards: [haz1, haz2],
-            impact_scales: []
-        }
-        |> Repo.insert!
-
-        strat2 = %Strategy{
-            name: "strat2", 
-            description: "desc2",
-            adaptation_categories: [],
-            coastal_hazards: [haz1, haz2],
-            impact_scales: []
-        }
-        |> Repo.insert!
-
-        {:ok, data: %{
-            haz1: haz1,
-            haz2: haz2,
-            strat1: strat1,
-            strat2: strat2
-        }}
+        ChipApi.Fakes.run_hazards()
     end
 
     test "list_hazards returns all coastal hazards", %{data: data} do

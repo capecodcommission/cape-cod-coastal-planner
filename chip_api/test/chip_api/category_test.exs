@@ -1,40 +1,11 @@
 defmodule ChipApi.CategoryTest do
     use ChipApi.DataCase, async: true
-    alias ChipApi.Adaptation.{Strategies, Category, Strategy}
+    alias ChipApi.Adaptation.{Strategies, Category}
 
     @moduletag :category_case
 
     setup do
-        cat1 = %Category{name: "cat1"}
-        |> Repo.insert!
-
-        cat2 = %Category{name: "cat2"}
-        |> Repo.insert!
-
-        strat1 = %Strategy{
-            name: "strat1", 
-            description: "desc1",
-            adaptation_categories: [cat1, cat2],
-            coastal_hazards: [],
-            impact_scales: []
-        }
-        |> Repo.insert!
-
-        strat2 = %Strategy{
-            name: "strat2", 
-            description: "desc2",
-            adaptation_categories: [cat1, cat2],
-            coastal_hazards: [],
-            impact_scales: []
-        }
-        |> Repo.insert!
-
-        {:ok, data: %{
-            cat1: cat1,
-            cat2: cat2,
-            strat1: strat1,
-            strat2: strat2
-        }}
+        ChipApi.Fakes.run_categories()
     end
 
     test "list_categories returns all adaptation categories", %{data: data} do
