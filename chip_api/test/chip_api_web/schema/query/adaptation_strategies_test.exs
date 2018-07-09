@@ -128,7 +128,7 @@ defmodule ChipApiWeb.Schema.Query.AdaptationStrategiesTest do
             }
         }
         """
-        test "returns errors when using a bad value", %{data: data} do
+        test "returns errors when using a bad value" do
             response = get build_conn(), "/api", query: @query
             assert %{"errors" => [
                 %{"message" => message}

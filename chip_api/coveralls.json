@@ -1,0 +1,16 @@
+{
+    "skip_files": [
+        "dev/support",
+        "lib/chip_api.ex",
+        "lib/chip_api/application.ex",
+        "lib/chip_api/repo.ex",
+        "lib/chip_api_web.ex",
+        "lib/chip_api_web/channels",
+        "lib/chip_api_web/controllers",
+        "lib/chip_api_web/endpoint.ex",
+        "lib/chip_api_web/gettext.ex",
+        "lib/chip_api_web/router.ex",
+        "lib/chip_api_web/views",
+        "test/support"
+    ]
+}

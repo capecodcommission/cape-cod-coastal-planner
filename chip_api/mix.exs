@@ -10,7 +10,9 @@ defmodule ChipApi.Mixfile do
       compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [coveralls: :test]
     ]
   end
 
@@ -45,6 +47,7 @@ defmodule ChipApi.Mixfile do
       {:absinthe, "~> 1.4.12"},
       {:absinthe_plug, "~> 1.4.5"},
       {:absinthe_phoenix, "~> 1.4.2"},
+      {:excoveralls, "~> 0.9.1", only: :test}
     ]
   end
 
