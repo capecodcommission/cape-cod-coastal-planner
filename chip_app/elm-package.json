@@ -6,7 +6,7 @@
     "source-directories": [
         "./node_modules/elm-phoenix-websocket-ports/lib/elm",
         "src",
-        "src/elm"
+        "src/ChipApi"
     ],
     "exposed-modules": [],
     "dependencies": {
