@@ -15,8 +15,13 @@ use Mix.Config
 # which you typically run after static files are built.
 config :chip_api, ChipApiWeb.Endpoint,
   load_from_system_env: true,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  url: [host: "localhost", port: 80],
+  server: true
+
+# Do not need this unless adding a presentation layer that is
+# served from Phoenix instead of only GraphQL API
+#
+# cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
 config :logger, level: :info
