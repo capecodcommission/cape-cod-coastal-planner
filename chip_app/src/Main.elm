@@ -2,11 +2,14 @@ module Main exposing (..)
 
 import Navigation
 import Html exposing (Html)
+import Dict
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
+import Element.Input as Input exposing (..)
 import Style exposing (..)
 import Style.Color as Color
+import Style.Border as Border
 import Style.Font as Font
 import Color exposing (..)
 import Animation
@@ -16,54 +19,15 @@ import Ports exposing (..)
 
 ---- MODEL ----
 
+type Hazard
+    = SeaLevelRise
+    | StormSurge
+    | Erosion
 
 type alias Model =
     { urlState : Maybe Route
-    , planningLayersOpenness : Openness
-    , planningLayersAnimations : Animation.State
-    , drawerOpenness : Openness
-    , drawerAnimations : Animation.State
-    }
-
-
-type Openness
-    = Open
-    | Closed
-
-
-type alias PlanningLayersAnimations =
-    { openFull : List Animation.Property
-    , closedFull : List Animation.Property
-    , openShort : List Animation.Property
-    , closedShort : List Animation.Property
-    }
-
-
-planningLayersAnimations : PlanningLayersAnimations
-planningLayersAnimations =
-    { openFull =
-        [ Animation.left (Animation.px 0.0), Animation.paddingBottom (Animation.px 0.0) ]
-    , closedFull =
-        [ Animation.left (Animation.px -70.0), Animation.paddingBottom (Animation.px 0.0) ]
-    , openShort =
-        [ Animation.left (Animation.px 0.0), Animation.paddingBottom (Animation.px 100.0) ]
-    , closedShort =
-        [ Animation.left (Animation.px -70.0), Animation.paddingBottom (Animation.px 100.0) ]
-    }
-
-
-type alias DrawerAnimations =
-    { open : List Animation.Property
-    , closed : List Animation.Property
-    }
-
-
-drawerAnimations : DrawerAnimations
-drawerAnimations =
-    { open =
-        [ Animation.top (Animation.px 0.0) ]
-    , closed =
-        [ Animation.top (Animation.px 100.0) ]
+    , hazardMenu : SelectWith Hazard Msg
+    , numHazards : Int
     }
 
 
@@ -71,10 +35,8 @@ defaultModel : Model
 defaultModel =
     Model
         (Just Blank)
-        Open
-        (Animation.style planningLayersAnimations.openFull)
-        Closed
-        (Animation.style drawerAnimations.closed)
+        (Input.dropMenu Nothing SelectHazard)
+        3
 
 
 init : Navigation.Location -> ( Model, Cmd Msg )
@@ -101,8 +63,7 @@ init location =
 type Msg
     = Noop
     | UrlChange Navigation.Location
-    | TogglePlanningLayers
-    | ToggleDrawer
+    | SelectHazard (Input.SelectMsg Hazard)
     | Animate Animation.Msg
 
 
@@ -121,153 +82,82 @@ update msg model =
                 , Cmd.none
                 )
 
-        TogglePlanningLayers ->
-            case model.planningLayersOpenness of
-                Open ->
-                    ( collapsePlanningLayers model, Cmd.none )
-
-                Closed ->
-                    ( expandPlanningLayers model, Cmd.none )
-
-        ToggleDrawer ->
-            case model.drawerOpenness of
-                Open ->
-                    ( collapseDrawer model, Cmd.none )
-
-                Closed ->
-                    ( expandDrawer model, Cmd.none )
-
-        Animate animMsg ->
-            ( { model
-                | planningLayersAnimations = Animation.update animMsg model.planningLayersAnimations
-                , drawerAnimations = Animation.update animMsg model.drawerAnimations
-              }
+        SelectHazard msg ->
+            ( { model | hazardMenu = Input.updateSelection msg model.hazardMenu }
             , Cmd.none
             )
 
-
-expandPlanningLayers : Model -> Model
-expandPlanningLayers model =
-    let
-        animations =
-            case model.drawerOpenness of
-                Open ->
-                    planningLayersAnimations.openShort
-
-                Closed ->
-                    planningLayersAnimations.openFull
-    in
-    { model
-        | planningLayersOpenness = Open
-        , planningLayersAnimations =
-            Animation.interrupt
-                [ Animation.to animations ]
-                model.planningLayersAnimations
-    }
-
-
-collapsePlanningLayers : Model -> Model
-collapsePlanningLayers model =
-    let
-        animations = 
-            case model.drawerOpenness of
-                Open ->
-                    planningLayersAnimations.closedShort
-
-                Closed ->
-                    planningLayersAnimations.closedFull
-    in
-    { model
-        | planningLayersOpenness = Closed
-        , planningLayersAnimations =
-            Animation.interrupt
-                [ Animation.to animations ]
-                model.planningLayersAnimations
-    }
-
-
-expandDrawer : Model -> Model
-expandDrawer model =
-    { model
-        | drawerOpenness = Open
-        , drawerAnimations =
-            Animation.interrupt
-                [ Animation.to drawerAnimations.open ]
-                model.drawerAnimations
-        , planningLayersAnimations =
-            let
-                animations =
-                    case model.planningLayersOpenness of
-                        Open -> 
-                            planningLayersAnimations.openShort
-
-                        Closed ->
-                            planningLayersAnimations.closedShort
-            in
-            Animation.interrupt
-                [ Animation.to animations ]
-                model.planningLayersAnimations
-    }
-
-
-collapseDrawer : Model -> Model
-collapseDrawer model =
-    { model
-        | drawerOpenness = Closed
-        , drawerAnimations =
-            Animation.interrupt
-                [ Animation.to drawerAnimations.closed ]
-                model.drawerAnimations
-        , planningLayersAnimations =
-            let
-                animations =
-                    case model.planningLayersOpenness of
-                        Open ->
-                            planningLayersAnimations.openFull
-
-                        Closed ->
-                            planningLayersAnimations.closedFull
-
-            in
-            Animation.interrupt
-                [ Animation.to animations ]
-                model.planningLayersAnimations
-    }
-
+        Animate animMsg ->
+            ( model, Cmd.none )
+            -- ( { model
+            --     | planningLayersAnimations = Animation.update animMsg model.planningLayersAnimations
+            --     , drawerAnimations = Animation.update animMsg model.drawerAnimations
+            --   }
+            -- , Cmd.none
+            -- )
 
 
 ---- VIEW ----
 
 
+-- Palette colors named using http://chir.ag/projects/name-that-color
+palette =
+    { cornflowerBlue = rgb 97 149 237
+    , mySin = rgb 255 182 18
+    }
+
+
+fontstack : List Font
+fontstack =
+    [ Font.font "Tahoma", Font.font "Verdana", Font.font "Segoe", Font.sansSerif ]
+
+
 type MainStyles
-    = None
-    | Body
-    | Header
-    | PlanningLayers
-    | Drawer
-    | Toggle
+    = NoStyle
+    | Header HeaderStyles
+
+type HeaderStyles
+    = HeaderBackground
+    | HeaderTitle
+    | HeaderMenu
+    | HeaderSubMenu
+    | HeaderMenuItem
 
 
 stylesheet =
     Style.styleSheet
-        [ Style.style None []
-        , Style.style Body
-            [ Color.background black
+        [ Style.style NoStyle []
+        , Style.style (Header HeaderBackground)
+            [ Color.background palette.cornflowerBlue 
             ]
-        , Style.style Header
+        , Style.style (Header HeaderTitle)
             [ Color.text white
-            , Color.background darkGrey
-            , Font.size 35
+            , Font.size 24.0
+            , Font.bold
+            , Font.typeface fontstack
             ]
-        , Style.style PlanningLayers
-            [ Color.background <| Color.rgba 0 0 0 0.7
+        , Style.style (Header HeaderMenu)
+            [ Color.background <| rgba 0 0 0 0.4
+            , Color.text white
+            , Font.size 24.0
+            , Font.typeface fontstack
+            , Border.rounded 8.0
             ]
-        , Style.style Drawer
-            [ Color.background <| Color.rgba 0 0 0 0.3
+        , Style.style (Header HeaderSubMenu)
+            [ Style.opacity 0.65
             ]
-        , Style.style Toggle
-            [ Color.background white
-            , Style.cursor "pointer"
+        , Style.style (Header HeaderMenuItem)
+            [ Color.text white
+            , Font.size 18.0
+            , Font.typeface fontstack
+            , variation Input.Idle
+                [ Color.background black ]
+            , variation Input.Selected
+                [ Color.background red ]
+            , variation Input.Focused
+                [ Color.background green ]
+            , variation Input.SelectedInBox
+                [ Color.background orange ]
             ]
         ]
 
@@ -280,56 +170,53 @@ renderAnimation animations otherAttrs =
 view : Model -> Html Msg
 view model =
     Element.viewport stylesheet <|
-        column Body
+        column NoStyle
             [ height (percent 100) ]
-            [ header Header [ height (px 45) ] <|
-                text "Example"
-            , mainContent None [ height fill, clip ] <|
-                column None [ height fill ] <|
-                    [ el None [ id "map", height fill ] empty
-                        |> within
-                            [ planningLayersView model
-                            , drawerView model
-                            ]
+            [ headerView model
+            , mainContent NoStyle [ height fill, clip ] <|
+                column NoStyle [ height fill ] <|
+                    [ el NoStyle [ id "map", height fill ] empty
+                        |> within []
                     ]
             ]
 
 
-planningLayersView : Model -> Element MainStyles variation Msg
-planningLayersView model =
-    el None
-        (renderAnimation model.planningLayersAnimations
-            [ height fill
-            , width content
-            , paddingTop 20.0
+headerView : Model -> Element MainStyles ChoiceState Msg
+headerView model =
+    header (Header HeaderBackground) [ height (px 80) ] <|
+        row NoStyle [ height fill, paddingXY 54.0 0.0, spacingXY 54.0 0.0 ] <|
+            [ column NoStyle [ verticalCenter ] 
+                [ h1 (Header HeaderTitle) [] <| Element.text "Coastal Hazard Impact Planner" ]
+            , column NoStyle [ verticalCenter, alignRight, width fill ] 
+                [ row NoStyle [] [ headerDropdownView model ] ]
             ]
-        )
-        (sidebar PlanningLayers
-            [ height fill, width (px 100) ]
-            [ el Toggle
-                [ height (px 30)
-                , width (px 30)
-                , alignRight
-                , onClick TogglePlanningLayers
+
+
+headerDropdownView : Model -> Element MainStyles ChoiceState Msg
+headerDropdownView model =
+    Input.select (Header HeaderMenu) 
+        [ height (px 42), width (px 327) ]
+        { label = Input.placeholder <|
+            { text = "select an option"
+            , label = Input.hiddenLabel "Select Hazard"
+            }
+        , with = model.hazardMenu
+        , max = model.numHazards
+        , options = []
+        , menu =            
+            Input.menu (Header HeaderSubMenu)
+                [ width (px 327) ]
+                [ Input.styledSelectChoice SeaLevelRise <| headerMenuItemView "Sea Level Rise"
+                , Input.styledSelectChoice StormSurge <| headerMenuItemView "Storm Surge"
+                , Input.styledSelectChoice Erosion <| headerMenuItemView "Erosion"
                 ]
-                empty
-            ]
-        )
+        }
 
 
-drawerView : Model -> Element MainStyles variation Msg
-drawerView model =
-    footer Drawer
-        (renderAnimation model.drawerAnimations
-            [ width fill
-            , height content
-            , alignBottom
-            ]
-        )
-        (column None [ width fill, height (px 100) ] [ empty ]
-            |> above [ el Toggle [ height (px 30), width (px 60), center, onClick ToggleDrawer ] empty ]
-        )
-
+headerMenuItemView : String -> ChoiceState -> Element MainStyles ChoiceState Msg
+headerMenuItemView itemText state =
+    el (Header HeaderMenuItem) [ vary state True ] <| Element.text itemText
+        
 
 
 ---- SUBSCRIPTIONS ----
@@ -337,10 +224,7 @@ drawerView model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Animation.subscription Animate
-        [ model.planningLayersAnimations
-        , model.drawerAnimations
-        ]
+    Animation.subscription Animate []
 
 
 
