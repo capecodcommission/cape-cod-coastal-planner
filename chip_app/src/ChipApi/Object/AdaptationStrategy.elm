@@ -48,16 +48,16 @@ hazards object =
 
 {-| Denotes whether this strategy is currently available for planning
 -}
-isActive : Field (Maybe Bool) ChipApi.Object.AdaptationStrategy
+isActive : Field Bool ChipApi.Object.AdaptationStrategy
 isActive =
-    Object.fieldDecoder "isActive" [] (Decode.bool |> Decode.nullable)
+    Object.fieldDecoder "isActive" [] Decode.bool
 
 
 {-| The name of the strategy
 -}
-name : Field (Maybe String) ChipApi.Object.AdaptationStrategy
+name : Field String ChipApi.Object.AdaptationStrategy
 name =
-    Object.fieldDecoder "name" [] (Decode.string |> Decode.nullable)
+    Object.fieldDecoder "name" [] Decode.string
 
 
 {-| The geographic scales of impact the strategy can target

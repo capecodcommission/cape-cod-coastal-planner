@@ -34,16 +34,16 @@ description =
 
 {-| The impact is an integer representing the relative scale of impact. A larger number means a larger scale.
 -}
-impact : Field (Maybe Int) ChipApi.Object.ImpactScale
+impact : Field Int ChipApi.Object.ImpactScale
 impact =
-    Object.fieldDecoder "impact" [] (Decode.int |> Decode.nullable)
+    Object.fieldDecoder "impact" [] Decode.int
 
 
 {-| The name of the scale of impact
 -}
-name : Field (Maybe String) ChipApi.Object.ImpactScale
+name : Field String ChipApi.Object.ImpactScale
 name =
-    Object.fieldDecoder "name" [] (Decode.string |> Decode.nullable)
+    Object.fieldDecoder "name" [] Decode.string
 
 
 {-| The adaptation strategies that are associated with the scale of impact.

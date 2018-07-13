@@ -34,9 +34,9 @@ description =
 
 {-| The name of the category
 -}
-name : Field (Maybe String) ChipApi.Object.AdaptationCategory
+name : Field String ChipApi.Object.AdaptationCategory
 name =
-    Object.fieldDecoder "name" [] (Decode.string |> Decode.nullable)
+    Object.fieldDecoder "name" [] Decode.string
 
 
 {-| The adaptation strategies that are associated with the category

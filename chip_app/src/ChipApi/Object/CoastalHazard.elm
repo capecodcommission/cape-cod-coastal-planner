@@ -34,9 +34,9 @@ description =
 
 {-| The name of the hazard
 -}
-name : Field (Maybe String) ChipApi.Object.CoastalHazard
+name : Field String ChipApi.Object.CoastalHazard
 name =
-    Object.fieldDecoder "name" [] (Decode.string |> Decode.nullable)
+    Object.fieldDecoder "name" [] Decode.string
 
 
 {-| The adaptation strategies that are associated with the hazard

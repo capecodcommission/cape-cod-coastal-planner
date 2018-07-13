@@ -8,26 +8,26 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
     object :strategies_queries do
 
         @desc "The list of adaptation strategies"
-        field :adaptation_strategies, list_of(:adaptation_strategy) do
+        field :adaptation_strategies, non_null(list_of(:adaptation_strategy)) do
             arg :filter, :strategy_filter
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.adaptation_strategies/3
         end
 
         @desc "The list of adaptation categories"
-        field :adaptation_categories, list_of(:adaptation_category) do
+        field :adaptation_categories, non_null(list_of(:adaptation_category)) do
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.adaptation_categories/3
         end
 
         @desc "The list of coastal hazards"
-        field :coastal_hazards, list_of(:coastal_hazard) do
+        field :coastal_hazards, non_null(list_of(:coastal_hazard)) do
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.coastal_hazards/3
         end
 
         @desc "The list of geographic scales of impact"
-        field :impact_scales, list_of(:impact_scale) do
+        field :impact_scales, non_null(list_of(:impact_scale)) do
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.impact_scales/3
         end
@@ -47,13 +47,13 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
     object :adaptation_strategy do
         
         @desc "The name of the strategy"
-        field :name, :string
+        field :name, non_null(:string)
 
         @desc "The description of the strategy"
         field :description, :string
 
         @desc "Denotes whether this strategy is currently available for planning"
-        field :is_active, :boolean
+        field :is_active, non_null(:boolean)
 
         @desc "The adaptation categories that are associated with the strategy"
         field :categories, list_of(:adaptation_category) do
@@ -76,7 +76,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
     object :adaptation_category do
         
         @desc "The name of the category"
-        field :name, :string
+        field :name, non_null(:string)
 
         @desc "The description of the category"
         field :description, :string
@@ -91,7 +91,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
     object :coastal_hazard do
         
         @desc "The name of the hazard"
-        field :name, :string
+        field :name, non_null(:string)
 
         @desc "The description of the hazard"
         field :description, :string
@@ -106,13 +106,13 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
     object :impact_scale do
 
         @desc "The name of the scale of impact"        
-        field :name, :string
+        field :name, non_null(:string)
 
         @desc "The description of the scale of impact"
         field :description, :string
 
         @desc "The impact is an integer representing the relative scale of impact. A larger number means a larger scale."
-        field :impact, :integer
+        field :impact, non_null(:integer)
 
         @desc "The adaptation strategies that are associated with the scale of impact."
         field :strategies, list_of(:adaptation_strategy) do

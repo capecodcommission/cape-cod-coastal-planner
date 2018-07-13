@@ -34,7 +34,7 @@ type alias AdaptationCategoriesOptionalArguments =
 
 {-| The list of adaptation categories
 -}
-adaptationCategories : (AdaptationCategoriesOptionalArguments -> AdaptationCategoriesOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.AdaptationCategory -> Field (Maybe (List (Maybe decodesTo))) RootQuery
+adaptationCategories : (AdaptationCategoriesOptionalArguments -> AdaptationCategoriesOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.AdaptationCategory -> Field (List (Maybe decodesTo)) RootQuery
 adaptationCategories fillInOptionals object =
     let
         filledInOptionals =
@@ -44,7 +44,7 @@ adaptationCategories fillInOptionals object =
             [ Argument.optional "order" filledInOptionals.order (Encode.enum ChipApi.Enum.SortOrder.toString) ]
                 |> List.filterMap identity
     in
-    Object.selectionField "adaptationCategories" optionalArgs object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "adaptationCategories" optionalArgs object (identity >> Decode.nullable >> Decode.list)
 
 
 type alias AdaptationStrategiesOptionalArguments =
@@ -53,7 +53,7 @@ type alias AdaptationStrategiesOptionalArguments =
 
 {-| The list of adaptation strategies
 -}
-adaptationStrategies : (AdaptationStrategiesOptionalArguments -> AdaptationStrategiesOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.AdaptationStrategy -> Field (Maybe (List (Maybe decodesTo))) RootQuery
+adaptationStrategies : (AdaptationStrategiesOptionalArguments -> AdaptationStrategiesOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.AdaptationStrategy -> Field (List (Maybe decodesTo)) RootQuery
 adaptationStrategies fillInOptionals object =
     let
         filledInOptionals =
@@ -63,7 +63,7 @@ adaptationStrategies fillInOptionals object =
             [ Argument.optional "filter" filledInOptionals.filter ChipApi.InputObject.encodeStrategyFilter, Argument.optional "order" filledInOptionals.order (Encode.enum ChipApi.Enum.SortOrder.toString) ]
                 |> List.filterMap identity
     in
-    Object.selectionField "adaptationStrategies" optionalArgs object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "adaptationStrategies" optionalArgs object (identity >> Decode.nullable >> Decode.list)
 
 
 type alias CoastalHazardsOptionalArguments =
@@ -72,7 +72,7 @@ type alias CoastalHazardsOptionalArguments =
 
 {-| The list of coastal hazards
 -}
-coastalHazards : (CoastalHazardsOptionalArguments -> CoastalHazardsOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.CoastalHazard -> Field (Maybe (List (Maybe decodesTo))) RootQuery
+coastalHazards : (CoastalHazardsOptionalArguments -> CoastalHazardsOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.CoastalHazard -> Field (List (Maybe decodesTo)) RootQuery
 coastalHazards fillInOptionals object =
     let
         filledInOptionals =
@@ -82,7 +82,7 @@ coastalHazards fillInOptionals object =
             [ Argument.optional "order" filledInOptionals.order (Encode.enum ChipApi.Enum.SortOrder.toString) ]
                 |> List.filterMap identity
     in
-    Object.selectionField "coastalHazards" optionalArgs object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "coastalHazards" optionalArgs object (identity >> Decode.nullable >> Decode.list)
 
 
 type alias ImpactScalesOptionalArguments =
@@ -91,7 +91,7 @@ type alias ImpactScalesOptionalArguments =
 
 {-| The list of geographic scales of impact
 -}
-impactScales : (ImpactScalesOptionalArguments -> ImpactScalesOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.ImpactScale -> Field (Maybe (List (Maybe decodesTo))) RootQuery
+impactScales : (ImpactScalesOptionalArguments -> ImpactScalesOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.ImpactScale -> Field (List (Maybe decodesTo)) RootQuery
 impactScales fillInOptionals object =
     let
         filledInOptionals =
@@ -101,4 +101,4 @@ impactScales fillInOptionals object =
             [ Argument.optional "order" filledInOptionals.order (Encode.enum ChipApi.Enum.SortOrder.toString) ]
                 |> List.filterMap identity
     in
-    Object.selectionField "impactScales" optionalArgs object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "impactScales" optionalArgs object (identity >> Decode.nullable >> Decode.list)

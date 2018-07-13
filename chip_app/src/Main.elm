@@ -2,10 +2,9 @@ module Main exposing (..)
 
 import Navigation
 import Html exposing (Html)
-import Dict
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Element.Events exposing (..)
+import Element.Events as Events exposing (..)
 import Element.Input as Input exposing (..)
 import Style exposing (..)
 import Style.Color as Color
@@ -13,20 +12,22 @@ import Style.Border as Border
 import Style.Font as Font
 import Color exposing (..)
 import Animation
+import RemoteData exposing (RemoteData)
+import Types exposing (..)
+import Message exposing (..)
+import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
 import Ports exposing (..)
 
 
 ---- MODEL ----
 
-type Hazard
-    = SeaLevelRise
-    | StormSurge
-    | Erosion
 
 type alias Model =
     { urlState : Maybe Route
-    , hazardMenu : SelectWith Hazard Msg
+    , coastalHazards : GqlData CoastalHazardsResponse
+    , hazardMenu : SelectWith CoastalHazard Msg
+    , isHazardMenuOpen : Bool
     , numHazards : Int
     }
 
@@ -35,7 +36,9 @@ defaultModel : Model
 defaultModel =
     Model
         (Just Blank)
+        RemoteData.Loading
         (Input.dropMenu Nothing SelectHazard)
+        False
         3
 
 
@@ -47,7 +50,8 @@ init location =
 
         msgs =
             Cmd.batch
-                [ olCmd <| encodeOpenLayersCmd InitMap
+                [ getCoastalHazards
+                , olCmd <| encodeOpenLayersCmd InitMap
                 , routeFx
                 ]
     in
@@ -58,13 +62,6 @@ init location =
 
 
 ---- UPDATE ----
-
-
-type Msg
-    = Noop
-    | UrlChange Navigation.Location
-    | SelectHazard (Input.SelectMsg Hazard)
-    | Animate Animation.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -82,25 +79,26 @@ update msg model =
                 , Cmd.none
                 )
 
+        HandleCoastalHazardsResponse response ->
+            ( { model | coastalHazards = response }, Cmd.none )
+
         SelectHazard msg ->
-            ( { model | hazardMenu = Input.updateSelection msg model.hazardMenu }
+            ( { model
+                | hazardMenu = Input.updateSelection msg model.hazardMenu
+              }
             , Cmd.none
             )
 
         Animate animMsg ->
             ( model, Cmd.none )
-            -- ( { model
-            --     | planningLayersAnimations = Animation.update animMsg model.planningLayersAnimations
-            --     , drawerAnimations = Animation.update animMsg model.drawerAnimations
-            --   }
-            -- , Cmd.none
-            -- )
+
 
 
 ---- VIEW ----
 
 
--- Palette colors named using http://chir.ag/projects/name-that-color
+{-| Palette colors named using <http://chir.ag/projects/name-that-color>
+-}
 palette =
     { cornflowerBlue = rgb 97 149 237
     , mySin = rgb 255 182 18
@@ -116,6 +114,7 @@ type MainStyles
     = NoStyle
     | Header HeaderStyles
 
+
 type HeaderStyles
     = HeaderBackground
     | HeaderTitle
@@ -124,24 +123,57 @@ type HeaderStyles
     | HeaderMenuItem
 
 
+type Variations
+    = InputIdle
+    | InputSelected
+    | InputFocused
+    | InputSelectedInBox
+    | SelectMenuOpen
+
+
+choiceStateToVariation : ChoiceState -> Variations
+choiceStateToVariation state =
+    case state of
+        Input.Idle ->
+            InputIdle
+
+        Input.Selected ->
+            InputSelected
+
+        Input.Focused ->
+            InputFocused
+
+        Input.SelectedInBox ->
+            InputSelectedInBox
+
+
 stylesheet =
     Style.styleSheet
         [ Style.style NoStyle []
         , Style.style (Header HeaderBackground)
-            [ Color.background palette.cornflowerBlue 
+            [ Color.background palette.cornflowerBlue
             ]
         , Style.style (Header HeaderTitle)
             [ Color.text white
             , Font.size 24.0
             , Font.bold
             , Font.typeface fontstack
+            , Font.letterSpacing 1.0
             ]
         , Style.style (Header HeaderMenu)
             [ Color.background <| rgba 0 0 0 0.4
             , Color.text white
-            , Font.size 24.0
+            , Font.size 22.0
             , Font.typeface fontstack
             , Border.rounded 8.0
+            , Style.focus
+                [ Border.roundBottomLeft 0.0
+                , Border.roundBottomRight 0.0
+                ]
+            , variation SelectMenuOpen
+                [ Border.roundBottomLeft 0.0
+                , Border.roundBottomRight 0.0
+                ]
             ]
         , Style.style (Header HeaderSubMenu)
             [ Style.opacity 0.65
@@ -150,14 +182,14 @@ stylesheet =
             [ Color.text white
             , Font.size 18.0
             , Font.typeface fontstack
-            , variation Input.Idle
-                [ Color.background black ]
-            , variation Input.Selected
-                [ Color.background red ]
-            , variation Input.Focused
+            , Style.hover
                 [ Color.background green ]
-            , variation Input.SelectedInBox
-                [ Color.background orange ]
+            , variation InputIdle
+                [ Color.background black ]
+            , variation InputSelected
+                [ Color.background red ]
+            , variation InputFocused []
+            , variation InputSelectedInBox []
             ]
         ]
 
@@ -181,42 +213,56 @@ view model =
             ]
 
 
-headerView : Model -> Element MainStyles ChoiceState Msg
+headerView : Model -> Element MainStyles Variations Msg
 headerView model =
     header (Header HeaderBackground) [ height (px 80) ] <|
         row NoStyle [ height fill, paddingXY 54.0 0.0, spacingXY 54.0 0.0 ] <|
-            [ column NoStyle [ verticalCenter ] 
+            [ column NoStyle
+                [ verticalCenter ]
                 [ h1 (Header HeaderTitle) [] <| Element.text "Coastal Hazard Impact Planner" ]
-            , column NoStyle [ verticalCenter, alignRight, width fill ] 
+            , column NoStyle
+                [ verticalCenter, alignRight, width fill ]
                 [ row NoStyle [] [ headerDropdownView model ] ]
             ]
 
 
-headerDropdownView : Model -> Element MainStyles ChoiceState Msg
+headerDropdownView : Model -> Element MainStyles Variations Msg
 headerDropdownView model =
-    Input.select (Header HeaderMenu) 
-        [ height (px 42), width (px 327) ]
-        { label = Input.placeholder <|
-            { text = "select an option"
-            , label = Input.hiddenLabel "Select Hazard"
-            }
+    -- case model.coastalHazards of
+    --     RemoteData.NotAsked ->
+    --     RemoteData.Loading ->
+    --     RemoteData.Failure err ->
+    --     RemoteData.Success data ->
+    Input.select (Header HeaderMenu)
+        [ height (px 42)
+        , width (px 327)
+        , paddingXY 10.0 0.0
+        , vary SelectMenuOpen model.isHazardMenuOpen
+        ]
+        { label =
+            Input.placeholder <|
+                { text = "select hazard"
+                , label = Input.hiddenLabel "Select Hazard"
+                }
         , with = model.hazardMenu
         , max = model.numHazards
         , options = []
-        , menu =            
+        , menu =
             Input.menu (Header HeaderSubMenu)
                 [ width (px 327) ]
-                [ Input.styledSelectChoice SeaLevelRise <| headerMenuItemView "Sea Level Rise"
-                , Input.styledSelectChoice StormSurge <| headerMenuItemView "Storm Surge"
-                , Input.styledSelectChoice Erosion <| headerMenuItemView "Erosion"
-                ]
+                []
+
+        -- [ Input.styledSelectChoice SeaLevelRise <| headerMenuItemView "Sea Level Rise"
+        -- , Input.styledSelectChoice StormSurge <| headerMenuItemView "Storm Surge"
+        -- , Input.styledSelectChoice Erosion <| headerMenuItemView "Erosion"
+        -- ]
         }
 
 
-headerMenuItemView : String -> ChoiceState -> Element MainStyles ChoiceState Msg
+headerMenuItemView : String -> ChoiceState -> Element MainStyles Variations Msg
 headerMenuItemView itemText state =
-    el (Header HeaderMenuItem) [ vary state True ] <| Element.text itemText
-        
+    el (Header HeaderMenuItem) [ vary (choiceStateToVariation state) True, paddingXY 5.0 2.0 ] <| Element.text itemText
+
 
 
 ---- SUBSCRIPTIONS ----
