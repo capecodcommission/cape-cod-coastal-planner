@@ -12,7 +12,9 @@ import Style.Border as Border
 import Style.Font as Font
 import Color exposing (..)
 import Animation
-import RemoteData exposing (RemoteData)
+import RemoteData exposing (RemoteData(..))
+import Maybe
+import Maybe.Extra as MEx
 import Types exposing (..)
 import Message exposing (..)
 import Request exposing (..)
@@ -80,7 +82,20 @@ update msg model =
                 )
 
         HandleCoastalHazardsResponse response ->
-            ( { model | coastalHazards = response }, Cmd.none )
+            case response of
+                NotAsked ->
+                    ( { model | coastalHazards = response }, Cmd.none )
+
+                Loading ->
+                    ( { model | coastalHazards = response }, Cmd.none )
+
+                Success data ->
+                    ( { model | coastalHazards = response, numHazards = List.length data.hazards }
+                    , Cmd.none
+                    )
+
+                Failure err ->
+                    ( { model | coastalHazards = response }, Cmd.none )
 
         SelectHazard msg ->
             ( { model
@@ -228,35 +243,103 @@ headerView model =
 
 headerDropdownView : Model -> Element MainStyles Variations Msg
 headerDropdownView model =
-    -- case model.coastalHazards of
-    --     RemoteData.NotAsked ->
-    --     RemoteData.Loading ->
-    --     RemoteData.Failure err ->
-    --     RemoteData.Success data ->
-    Input.select (Header HeaderMenu)
-        [ height (px 42)
-        , width (px 327)
-        , paddingXY 10.0 0.0
-        , vary SelectMenuOpen model.isHazardMenuOpen
-        ]
-        { label =
-            Input.placeholder <|
-                { text = "select hazard"
-                , label = Input.hiddenLabel "Select Hazard"
+    case model.coastalHazards of
+        NotAsked ->
+            Input.select (Header HeaderMenu)
+                [ height (px 42)
+                , width (px 327)
+                , paddingXY 10.0 0.0
+                , vary SelectMenuOpen model.isHazardMenuOpen
+                ]
+                { label =
+                    Input.placeholder <|
+                        { text = ""
+                        , label = Input.hiddenLabel "Select Hazard"
+                        }
+                , with = model.hazardMenu
+                , max = model.numHazards
+                , options = [ Input.disabled ]
+                , menu =
+                    Input.menu (Header HeaderSubMenu)
+                        [ width (px 327) ]
+                        []
                 }
-        , with = model.hazardMenu
-        , max = model.numHazards
-        , options = []
-        , menu =
-            Input.menu (Header HeaderSubMenu)
-                [ width (px 327) ]
-                []
 
-        -- [ Input.styledSelectChoice SeaLevelRise <| headerMenuItemView "Sea Level Rise"
-        -- , Input.styledSelectChoice StormSurge <| headerMenuItemView "Storm Surge"
-        -- , Input.styledSelectChoice Erosion <| headerMenuItemView "Erosion"
-        -- ]
-        }
+        Loading ->
+            Input.select (Header HeaderMenu)
+                [ height (px 42)
+                , width (px 327)
+                , paddingXY 10.0 0.0
+                , vary SelectMenuOpen model.isHazardMenuOpen
+                ]
+                { label =
+                    Input.placeholder <|
+                        { text = "loading hazards..."
+                        , label = Input.hiddenLabel "Select Hazard"
+                        }
+                , with = model.hazardMenu
+                , max = model.numHazards
+                , options = [ Input.disabled ]
+                , menu =
+                    Input.menu (Header HeaderSubMenu)
+                        [ width (px 327) ]
+                        []
+                }
+
+        Failure err ->
+            Input.select (Header HeaderMenu)
+                [ height (px 42)
+                , width (px 327)
+                , paddingXY 10.0 0.0
+                , vary SelectMenuOpen model.isHazardMenuOpen
+                ]
+                { label =
+                    Input.placeholder <|
+                        { text = ""
+                        , label = Input.hiddenLabel "Select Hazard"
+                        }
+                , with = model.hazardMenu
+                , max = model.numHazards
+                , options = [ Input.disabled, Input.errorAbove <| Element.text "Failure to load hazards" ]
+                , menu =
+                    Input.menu (Header HeaderSubMenu)
+                        [ width (px 327) ]
+                        []
+                }
+
+        Success data ->
+            let
+                hazards : List CoastalHazard
+                hazards =
+                    data.hazards
+                        |> List.map (\h -> Maybe.withDefault (CoastalHazard "") h)
+                        |> List.filter (\h -> h.name /= "")
+            in
+                Input.select (Header HeaderMenu)
+                    [ height (px 42)
+                    , width (px 327)
+                    , paddingXY 10.0 0.0
+                    , vary SelectMenuOpen model.isHazardMenuOpen
+                    ]
+                    { label =
+                        Input.placeholder <|
+                            { text = "select hazard"
+                            , label = Input.hiddenLabel "Select Hazard"
+                            }
+                    , with = model.hazardMenu
+                    , max = model.numHazards
+                    , options = []
+                    , menu =
+                        Input.menu (Header HeaderSubMenu)
+                            [ width (px 327) ]
+                            (hazards
+                                |> List.map
+                                    (\hazard ->
+                                        Input.styledSelectChoice hazard <|
+                                            headerMenuItemView hazard.name
+                                    )
+                            )
+                    }
 
 
 headerMenuItemView : String -> ChoiceState -> Element MainStyles Variations Msg
