@@ -98,14 +98,36 @@ update msg model =
                     ( { model | coastalHazards = response }, Cmd.none )
 
         SelectHazard msg ->
-            ( { model
-                | hazardMenu = Input.updateSelection msg model.hazardMenu
-              }
-            , Cmd.none
-            )
+            let
+                updatedMenu =
+                    Input.updateSelection msg model.hazardMenu
+            in
+                case parseSelectMenuChange msg of
+                    Just val ->
+                        ( { model | hazardMenu = updatedMenu, isHazardMenuOpen = val }, Cmd.none )
+
+                    Nothing ->
+                        ( { model | hazardMenu = updatedMenu }, Cmd.none )
 
         Animate animMsg ->
             ( model, Cmd.none )
+
+
+{-| This is sort of a hack to get around the opaque implementations of
+Input.SelectMsg and Input.SelectMenu.
+-}
+parseSelectMenuChange : Input.SelectMsg a -> Maybe Bool
+parseSelectMenuChange message =
+    let
+        msg =
+            toString message
+    in
+        if String.contains "OpenMenu" msg then
+            Just True
+        else if String.contains "CloseMenu" msg then
+            Just False
+        else
+            Nothing
 
 
 
@@ -191,7 +213,7 @@ stylesheet =
                 ]
             ]
         , Style.style (Header HeaderSubMenu)
-            [ Style.opacity 0.65
+            [ Style.opacity 0.85
             ]
         , Style.style (Header HeaderMenuItem)
             [ Color.text white
@@ -204,7 +226,10 @@ stylesheet =
             , variation InputSelected
                 [ Color.background red ]
             , variation InputFocused []
-            , variation InputSelectedInBox []
+            , variation InputSelectedInBox
+                [ Style.hover
+                    [ Color.background <| rgba 0 0 0 0.0 ]
+                ]
             ]
         ]
 
@@ -332,19 +357,20 @@ headerDropdownView model =
                     , menu =
                         Input.menu (Header HeaderSubMenu)
                             [ width (px 327) ]
-                            (hazards
-                                |> List.map
-                                    (\hazard ->
-                                        Input.styledSelectChoice hazard <|
-                                            headerMenuItemView hazard.name
-                                    )
-                            )
+                            (hazards |> List.map headerMenuItemView)
                     }
 
 
-headerMenuItemView : String -> ChoiceState -> Element MainStyles Variations Msg
-headerMenuItemView itemText state =
-    el (Header HeaderMenuItem) [ vary (choiceStateToVariation state) True, paddingXY 5.0 2.0 ] <| Element.text itemText
+headerMenuItemView : CoastalHazard -> Input.Choice CoastalHazard MainStyles Variations Msg
+headerMenuItemView hazard =
+    Input.styledSelectChoice hazard <|
+        (\state ->
+            el (Header HeaderMenuItem)
+                [ vary (choiceStateToVariation state) True
+                , padding 5.0
+                ]
+                (Element.text hazard.name)
+        )
 
 
 
