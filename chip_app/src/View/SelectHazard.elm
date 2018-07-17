@@ -8,6 +8,7 @@ import RemoteData exposing (RemoteData(..))
 import Message exposing (..)
 import Types exposing (..)
 import Styles exposing (..)
+import View.SelectError as SelectError
 
 
 view :
@@ -59,7 +60,7 @@ hazardPlaceholder response =
             }
 
 
-hazardOptions : GqlData CoastalHazardsResponse -> List (Input.Option style variation msg)
+hazardOptions : GqlData CoastalHazardsResponse -> List (Input.Option MainStyles Variations Msg)
 hazardOptions response =
     case response of
         NotAsked ->
@@ -68,8 +69,10 @@ hazardOptions response =
         Loading ->
             [ Input.disabled ]
 
-        Failure _ ->
-            [ Input.disabled, Input.errorAbove <| Element.text "Failed to load hazards" ]
+        Failure err ->
+            [ Input.disabled
+            , SelectError.view err
+            ]
 
         Success _ ->
             []

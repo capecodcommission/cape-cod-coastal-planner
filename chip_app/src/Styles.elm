@@ -32,6 +32,7 @@ type HeaderStyles
     | HeaderMenu
     | HeaderSubMenu
     | HeaderMenuItem
+    | HeaderMenuError
 
 
 type Variations
@@ -104,5 +105,10 @@ stylesheet =
                 [ Style.hover
                     [ Color.background <| rgba 0 0 0 0.0 ]
                 ]
+            ]
+        , Style.style (Header HeaderMenuError)
+            [ Color.text red
+            , Font.size 12.0
+            , Font.typeface fontstack
             ]
         ]
