@@ -26,5 +26,5 @@ coastalHazards =
 getCoastalHazards : Cmd Msg
 getCoastalHazards =
     queryCoastalHazards
-        |> queryRequest "http://localhost:4000/api"
+        |> queryRequest "./api"
         |> send (fromResult >> HandleCoastalHazardsResponse)

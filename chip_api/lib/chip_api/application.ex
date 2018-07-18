@@ -5,6 +5,7 @@ defmodule ChipApi.Application do
   # for more information on OTP Applications
   def start(_type, _args) do
     import Supervisor.Spec
+    import Cachex.Spec
 
     # Define workers and child supervisors to be supervised
     children = [
@@ -13,7 +14,11 @@ defmodule ChipApi.Application do
       # Start the endpoint when the application starts
       supervisor(ChipApiWeb.Endpoint, []),
       # Start your own worker by calling: ChipApi.Worker.start_link(arg1, arg2, arg3)
-      # worker(ChipApi.Worker, [arg1, arg2, arg3]),
+      worker(Cachex, [ :littoral_cell_cache, [
+        warmers: [
+          warmer(module: ChipApi.Cache.Warmers.LittoralCellWarmer)
+          ]
+      ] ]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

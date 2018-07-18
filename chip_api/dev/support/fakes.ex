@@ -1,6 +1,7 @@
 defmodule ChipApi.Fakes do
     alias ChipApi.Repo
     alias ChipApi.Adaptation.{Strategy, Category, Hazard, Scale}
+    alias ChipApi.Geospatial.LittoralCell
 
     @cat1 %Category{name: "cat1"}
     @cat2 %Category{name: "cat2"}
@@ -11,8 +12,11 @@ defmodule ChipApi.Fakes do
     @scale3 %Scale{name: "scale3", impact: 3, display_order: 2}
     @strat1 %Strategy{name: "strat1", description: "desc1", is_active: true, display_order: 1}
     @strat2 %Strategy{name: "strat2", description: "desc2", is_active: false, display_order: 2}
+    @cell1 %LittoralCell{name: "cell1", minX: -70.0, minY: 41.0, maxX: -69.0, maxY: 42.0}
+    @cell2 %LittoralCell{name: "cell2", minX: -70.0, minY: 41.0, maxX: -69.0, maxY: 42.0}
 
-    def run_categories() do
+
+    def run_categories do
         cat1 = @cat1 |> Repo.insert!
         cat2 = @cat2 |> Repo.insert!
 
@@ -32,7 +36,7 @@ defmodule ChipApi.Fakes do
         }}
     end
     
-    def run_hazards() do
+    def run_hazards do
         haz1 = @haz1 |> Repo.insert!
         haz2 = @haz2 |> Repo.insert!
 
@@ -52,7 +56,7 @@ defmodule ChipApi.Fakes do
         }}
     end
 
-    def run_scales() do
+    def run_scales do
         scale1 = @scale1 |> Repo.insert!
         scale2 = @scale2 |> Repo.insert!
         scale3 = @scale3 |> Repo.insert!
@@ -74,7 +78,17 @@ defmodule ChipApi.Fakes do
         }}
     end
 
-    def run_all() do
+    def run_littoral_cells do
+        cell1 = @cell1 |> Repo.insert!
+        cell2 = @cell2 |> Repo.insert!
+
+        {:ok, data: %{
+            cell1: cell1,
+            cell2: cell2
+        }}
+    end
+
+    def run_all_adaptation do
         cat1 = @cat1 |> Repo.insert!
         cat2 = @cat2 |> Repo.insert!
         haz1 = @haz1 |> Repo.insert!

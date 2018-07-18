@@ -1,7 +1,8 @@
-defmodule ChipApi.HazardTest do
+defmodule ChipApi.Adaptation.HazardTest do
     use ChipApi.DataCase, async: true
     alias ChipApi.Adaptation.{Strategies, Hazard}
 
+    @moduletag :adaptation_case
     @moduletag :hazard_case
 
     setup do

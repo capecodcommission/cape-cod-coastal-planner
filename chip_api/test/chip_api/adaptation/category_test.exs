@@ -1,7 +1,8 @@
-defmodule ChipApi.CategoryTest do
+defmodule ChipApi.Adaptation.CategoryTest do
     use ChipApi.DataCase, async: true
     alias ChipApi.Adaptation.{Strategies, Category}
 
+    @moduletag :adaptation_case
     @moduletag :category_case
 
     setup do

@@ -11,7 +11,7 @@ import Element.Input as Input exposing (ChoiceState)
 {-| Palette colors named using <http://chir.ag/projects/name-that-color>
 -}
 palette =
-    { cornflowerBlue = rgb 97 149 237
+    { indigo = rgb 78 88 188
     , mySin = rgb 255 182 18
     }
 
@@ -63,7 +63,7 @@ stylesheet =
     Style.styleSheet
         [ Style.style NoStyle []
         , Style.style (Header HeaderBackground)
-            [ Color.background palette.cornflowerBlue
+            [ Color.background palette.indigo
             ]
         , Style.style (Header HeaderTitle)
             [ Color.text white
