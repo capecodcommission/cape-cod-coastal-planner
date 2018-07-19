@@ -6,4 +6,16 @@ defmodule ChipApi.Schema.CommonTypes do
         value :desc
     end
 
+    # scalar :extent, name: "Geographic Extent" do
+        
+    #     parse fn input ->
+
+    #     end
+
+    #     serialize fn extent ->
+
+    #     end
+
+    # end
+
 end
