@@ -48,8 +48,6 @@ defmodule ChipApi.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.5.2"},
-      {:httpoison, "~> 1.2.0"},
-      {:poison, "~> 3.1"},
       {:absinthe, "~> 1.4.12"},
       {:absinthe_plug, "~> 1.4.5"},
       {:absinthe_phoenix, "~> 1.4.2"},
