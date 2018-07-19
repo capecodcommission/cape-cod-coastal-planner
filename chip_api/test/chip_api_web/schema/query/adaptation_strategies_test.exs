@@ -4,7 +4,7 @@ defmodule ChipApiWeb.Schema.Query.AdaptationStrategiesTest do
     @moduletag :adaptation_strategies_case
 
     setup do
-        ChipApi.Fakes.run_all()
+        ChipApi.Fakes.run_all_adaptation()
     end
 
     @query """

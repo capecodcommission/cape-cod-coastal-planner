@@ -6,7 +6,7 @@ defmodule ChipApi.Adaptation.StrategyTest do
     @moduletag :strategy_case
 
     setup do
-        ChipApi.Fakes.run_all()
+        ChipApi.Fakes.run_all_adaptation()
     end
 
     test "list_strategies returns all adaptation strategies", %{data: data} do
