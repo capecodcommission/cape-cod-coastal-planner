@@ -1,6 +1,6 @@
 {
   "name": "chip_app",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Coastal Hazard Impact Planner",
   "main": "index.js",
   "author": "Timmons Group, Inc.",

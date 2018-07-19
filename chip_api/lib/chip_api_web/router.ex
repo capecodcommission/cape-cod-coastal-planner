@@ -10,7 +10,7 @@ defmodule ChipApiWeb.Router do
   end
 
   pipeline :api do
-    plug CORSPlug, origin: "http://localhost:3000"
+    plug CORSPlug, origin: "*/*"
     plug :accepts, ["json"]
   end
 

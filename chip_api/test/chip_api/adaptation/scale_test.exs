@@ -1,7 +1,8 @@
-defmodule ChipApi.ScaleTest do
+defmodule ChipApi.Adaptation.ScaleTest do
     use ChipApi.DataCase, async: true
     alias ChipApi.Adaptation.{Strategies, Scale}
 
+    @moduletag :adaptation_case
     @moduletag :scale_case
 
     setup do

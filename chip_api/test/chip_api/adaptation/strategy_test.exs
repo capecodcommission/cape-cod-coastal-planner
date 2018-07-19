@@ -1,7 +1,8 @@
-defmodule ChipApi.StrategyTest do
+defmodule ChipApi.Adaptation.StrategyTest do
     use ChipApi.DataCase, async: true
     alias ChipApi.Adaptation.{Strategies, Strategy}
 
+    @moduletag :adaptation_case
     @moduletag :strategy_case
 
     setup do

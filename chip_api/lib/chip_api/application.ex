@@ -15,11 +15,10 @@ defmodule ChipApi.Application do
       supervisor(ChipApiWeb.Endpoint, []),
       # Start your own worker by calling: ChipApi.Worker.start_link(arg1, arg2, arg3)
       worker(Cachex, [ :littoral_cell_cache, [
-          warmers: [
-            warmer(module: ChipApi.Geospatial.LittoralCellWarmer)
+        warmers: [
+          warmer(module: ChipApi.Cache.Warmers.LittoralCellWarmer)
           ]
-        ] 
-      ]),
+      ] ]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
