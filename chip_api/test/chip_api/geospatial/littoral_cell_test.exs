@@ -104,7 +104,7 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
     }
     test "create_littoral_cell without maxY returns error and changeset" do
         assert {:error, changeset} = ShorelineLocations.create_littoral_cell(@attrs)
-        assert "can't be blank" in errors_on(changeset).maxY
+        assert "can't be blank" in errors_on(changeset).maxX
     end
 
 end
