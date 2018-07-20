@@ -24,13 +24,16 @@ defmodule ChipApiWeb.Schema.LocationTypes do
 
     end
 
-    # object :shoreline_location do
+    @desc "A shoreline location (littoral cell)"
+    object :shoreline_location do
         
-    #     field :name, non_null(:string)
+        @desc "The name of the shoreline location"
+        field :name, non_null(:string)
 
-    #     field :extent, list_of(:float)
+        @desc "The geographic extent of the location"
+        field :extent, non_null(:geographic_extent)
 
-    # end
+    end
 
     
 end
