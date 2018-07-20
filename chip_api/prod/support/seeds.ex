@@ -1,10 +1,11 @@
-defmodule ChipApi.Prod.Seeds do
+defmodule ChipApi.Seeds do
+
     def run() do
         alias ChipApi.{Adaptation, Geospatial, Repo}
 
-        # #
-        # # SCALES OF IMPACT
-        # #
+        #
+        # SCALES OF IMPACT
+        #
         
         site = %Adaptation.Scale{name: "Site", impact: 1}
         |> Repo.insert!
@@ -518,5 +519,3 @@ defmodule ChipApi.Prod.Seeds do
         :ok
     end
 end
-
-ChipApi.Prod.Seeds.run()
