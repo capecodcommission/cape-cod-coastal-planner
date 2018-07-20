@@ -4,7 +4,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
     import_types ChipApi.Schema.CommonTypes
 
-    @desc "Available queries for CHIP"
+    @desc "Available queries for strategy-related types"
     object :strategies_queries do
 
         @desc "The list of adaptation strategies"

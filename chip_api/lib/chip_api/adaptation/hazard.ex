@@ -1,7 +1,6 @@
 defmodule ChipApi.Adaptation.Hazard do
   use Ecto.Schema
   import Ecto.Changeset
-  alias ChipApi.Adaptation.Hazard
 
   schema "coastal_hazards" do
     field :description, :string

@@ -49,5 +49,9 @@ release :chip_api do
   set applications: [
     :runtime_tools
   ]
+  # you can run `bin/chip_api.bat migrate` on a server w/ release to run migrations and seeds
+  set commands: [
+    "migrate": "rel/commands/migrate.ps1"
+  ]
 end
 

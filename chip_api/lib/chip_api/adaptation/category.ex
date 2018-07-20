@@ -1,7 +1,6 @@
 defmodule ChipApi.Adaptation.Category do
   use Ecto.Schema
   import Ecto.Changeset
-  alias ChipApi.Adaptation.Category
 
 
   schema "adaptation_categories" do
