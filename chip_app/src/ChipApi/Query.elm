@@ -102,3 +102,22 @@ impactScales fillInOptionals object =
                 |> List.filterMap identity
     in
     Object.selectionField "impactScales" optionalArgs object (identity >> Decode.nullable >> Decode.list)
+
+
+type alias ShorelineLocationsOptionalArguments =
+    { filter : OptionalArgument ChipApi.InputObject.LocationFilter, order : OptionalArgument ChipApi.Enum.SortOrder.SortOrder }
+
+
+{-| The list of shoreline locations
+-}
+shorelineLocations : (ShorelineLocationsOptionalArguments -> ShorelineLocationsOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.ShorelineLocation -> Field (List (Maybe decodesTo)) RootQuery
+shorelineLocations fillInOptionals object =
+    let
+        filledInOptionals =
+            fillInOptionals { filter = Absent, order = Absent }
+
+        optionalArgs =
+            [ Argument.optional "filter" filledInOptionals.filter ChipApi.InputObject.encodeLocationFilter, Argument.optional "order" filledInOptionals.order (Encode.enum ChipApi.Enum.SortOrder.toString) ]
+                |> List.filterMap identity
+    in
+    Object.selectionField "shorelineLocations" optionalArgs object (identity >> Decode.nullable >> Decode.list)

@@ -5,6 +5,5 @@
 module ChipApi.Scalar exposing (..)
 
 
-placeholder : String
-placeholder =
-    ""
+type GeographicExtent
+    = GeographicExtent String

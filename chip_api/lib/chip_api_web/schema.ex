@@ -27,7 +27,12 @@ defmodule ChipApiWeb.Schema do
                 {:ok, maxX} <- values |> Enum.at(2) |> valid_lat?,
                 {:ok, maxY} <- values |> Enum.at(3) |> valid_long?
             do
-                {:ok, [minX, minY, maxX, maxY]}
+                {:ok, %{
+                    minX: minX,
+                    minY: minY,
+                    maxX: maxX,
+                    maxY: maxY
+                }}
             else
                 _ -> :error
             end

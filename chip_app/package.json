@@ -58,6 +58,6 @@
     "reactor": "elm-reactor",
     "test": "elm-test",
     "analyse": "elm-analyse -s",
-    "api": "graphqelm http://0.0.0.0:4000/api --base ChipApi"
+    "api": "graphqelm http://localhost:4000/api --base ChipApi"
   }
 }

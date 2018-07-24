@@ -19,3 +19,7 @@ type CoastalHazard
 
 type ImpactScale
     = ImpactScale
+
+
+type ShorelineLocation
+    = ShorelineLocation

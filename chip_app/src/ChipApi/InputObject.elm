@@ -17,6 +17,34 @@ import Graphqelm.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
 
 
+buildLocationFilter : (LocationFilterOptionalFields -> LocationFilterOptionalFields) -> LocationFilter
+buildLocationFilter fillOptionals =
+    let
+        optionals =
+            fillOptionals
+                { name = Absent }
+    in
+    { name = optionals.name }
+
+
+type alias LocationFilterOptionalFields =
+    { name : OptionalArgument String }
+
+
+{-| Type for the LocationFilter input object.
+-}
+type alias LocationFilter =
+    { name : OptionalArgument String }
+
+
+{-| Encode a LocationFilter into a value that can be used as an argument.
+-}
+encodeLocationFilter : LocationFilter -> Value
+encodeLocationFilter input =
+    Encode.maybeObject
+        [ ( "name", Encode.string |> Encode.optional input.name ) ]
+
+
 buildStrategyFilter : (StrategyFilterOptionalFields -> StrategyFilterOptionalFields) -> StrategyFilter
 buildStrategyFilter fillOptionals =
     let
