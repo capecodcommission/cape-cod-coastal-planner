@@ -2,8 +2,6 @@ defmodule ChipApiWeb.Schema.LocationTypes do
     use Absinthe.Schema.Notation
     alias ChipApiWeb.Resolvers
 
-    import_types ChipApi.Schema.CommonTypes
-
     @desc "Available queries for location-related types"
     object :locations_queries do
         

@@ -29,11 +29,20 @@ defmodule ChipApi.Geospatial.ShorelineLocations do
         |> Enum.reduce(LittoralCell, fn
             {:order, order}, query ->
                 query |> order_by([{^order, :name}, {^order, :id}])
+            {:filter, filter}, query ->
+                query |> filter_littoral_cells_with(filter)
         end)
         |> Repo.all
     end
     def list_littoral_cells do
         Repo.all(LittoralCell)
+    end
+
+    defp filter_littoral_cells_with(query, filter) do
+        Enum.reduce(filter, query, fn
+            {:name, name}, query ->
+                from q in query, where: ilike(q.name, ^"%#{name}%")
+        end)
     end
 
 

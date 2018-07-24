@@ -2,8 +2,6 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
     use Absinthe.Schema.Notation
     alias ChipApiWeb.Resolvers
 
-    import_types ChipApi.Schema.CommonTypes
-
     @desc "Available queries for strategy-related types"
     object :strategies_queries do
 

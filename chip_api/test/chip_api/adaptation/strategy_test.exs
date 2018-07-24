@@ -32,7 +32,7 @@ defmodule ChipApi.Adaptation.StrategyTest do
         assert [data.strat2.name] == strategies
     end
 
-    @attrs %{filter: %{name: "Strat1"}}
+    @attrs %{filter: %{name: "strat1"}}
     test "list_strategies that match name returns only matching strategies", %{data: data} do
         strategies = for s <- Strategies.list_strategies(@attrs), do: s.name
         assert [data.strat1.name] == strategies
