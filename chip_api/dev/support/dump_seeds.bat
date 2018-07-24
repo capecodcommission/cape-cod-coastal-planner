@@ -1,0 +1,1 @@
+pg_dump --column-inserts --data-only --username=postgres --password --file=priv\repo\seeds.sql chip_api_dev 

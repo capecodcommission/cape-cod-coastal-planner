@@ -1,5 +1,7 @@
 defmodule ChipApi.ReleaseTasks do
     @start_apps [
+        :crypto,
+        :ssl,
         :postgrex,
         :ecto
     ]

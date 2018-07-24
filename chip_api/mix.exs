@@ -29,8 +29,8 @@ defmodule ChipApi.Mixfile do
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "dev/support", "test/support"]
   defp elixirc_paths(:dev), do: ["lib", "dev/support"]
-  defp elixirc_paths(:prod), do: ["lib", "prod/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib", "prod/support"]
+  #defp elixirc_paths(_),     do: ["lib"]
 
   # Specifies your project dependencies.
   #
@@ -52,6 +52,7 @@ defmodule ChipApi.Mixfile do
       {:absinthe, "~> 1.4.12"},
       {:absinthe_plug, "~> 1.4.5"},
       {:absinthe_phoenix, "~> 1.4.2"},
+      {:unsafe, "~> 1.0"},
       {:excoveralls, "~> 0.9.1", only: :test},
       {:distillery, "~> 1.5.3", runtime: false}
     ]
@@ -68,6 +69,7 @@ defmodule ChipApi.Mixfile do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "test": ["ecto.create --quiet", "ecto.migrate", "test"],
+      "dump": ["ecto.dump -d priv/repo/migrations.sql"]
     ]
   end
 end
