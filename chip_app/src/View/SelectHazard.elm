@@ -9,6 +9,7 @@ import Message exposing (..)
 import Types exposing (..)
 import Styles exposing (..)
 import View.SelectError as SelectError
+import View.Helpers exposing (..)
 
 
 view :
@@ -25,6 +26,7 @@ view model =
         , width (px 327)
         , paddingXY 10.0 0.0
         , vary SelectMenuOpen model.isHazardMenuOpen
+        , vary SelectMenuError <| RemoteData.isFailure model.coastalHazards
         ]
         { label = hazardPlaceholder model.coastalHazards
         , with = model.hazardMenu
@@ -32,7 +34,7 @@ view model =
         , options = hazardOptions model.coastalHazards
         , menu =
             Input.menu (Header HeaderSubMenu)
-                [ width (px 327) ]
+                [ width (px 327), forceTransparent 327 ]
                 (hazardMenuItems model.coastalHazards)
         }
 
@@ -40,42 +42,34 @@ view model =
 hazardPlaceholder : GqlData CoastalHazardsResponse -> Label MainStyles Variations Msg
 hazardPlaceholder response =
     let
-        placeholderText =
+        ( placeholderText, hiddenText ) =
             case response of
                 NotAsked ->
-                    ""
+                    ( "", "Select Hazard" )
 
                 Loading ->
-                    "loading hazards..."
+                    ( "loading hazards...", "Select Hazard" )
 
-                Failure _ ->
-                    ""
+                Failure err ->
+                    err |> SelectError.errorText |> Tuple.mapFirst (\e -> "(" ++ e ++ ")") |> Tuple.mapSecond (\e -> "Select Hazard: " ++ e)
 
                 Success _ ->
-                    "select hazard"
+                    ( "select hazard", "Select Hazard" )
     in
         Input.placeholder
             { text = placeholderText
-            , label = Input.hiddenLabel "select_hazard"
+            , label = Input.hiddenLabel hiddenText
             }
 
 
 hazardOptions : GqlData CoastalHazardsResponse -> List (Input.Option MainStyles Variations Msg)
 hazardOptions response =
     case response of
-        NotAsked ->
-            [ Input.disabled ]
-
-        Loading ->
-            [ Input.disabled ]
-
-        Failure err ->
-            [ Input.disabled
-            , SelectError.view err
-            ]
-
         Success _ ->
             []
+
+        _ ->
+            [ Input.disabled ]
 
 
 hazardMenuItems : GqlData CoastalHazardsResponse -> List (Input.Choice CoastalHazard MainStyles Variations Msg)
@@ -83,20 +77,19 @@ hazardMenuItems response =
     case response of
         Success data ->
             data.hazards
-                |> List.map (\h -> Maybe.withDefault (CoastalHazard "") h)
-                |> List.filter (\h -> h.name /= "")
-                |> List.map hazardMenuItemView
+                |> List.indexedMap (hazardMenuItemView ((List.length data.hazards) - 1))
 
         _ ->
             []
 
 
-hazardMenuItemView : CoastalHazard -> Input.Choice CoastalHazard MainStyles Variations Msg
-hazardMenuItemView hazard =
+hazardMenuItemView : Int -> Int -> CoastalHazard -> Input.Choice CoastalHazard MainStyles Variations Msg
+hazardMenuItemView lastIndex currentIndex hazard =
     Input.styledSelectChoice hazard <|
         (\state ->
             el (Header HeaderMenuItem)
                 [ vary (choiceStateToVariation state) True
+                , vary LastMenuItem (lastIndex == currentIndex)
                 , padding 5.0
                 ]
                 (Element.text hazard.name)

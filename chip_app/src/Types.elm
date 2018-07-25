@@ -2,6 +2,7 @@ module Types exposing (..)
 
 import Graphqelm.Http
 import RemoteData exposing (RemoteData)
+import ChipApi.Scalar exposing (..)
 
 
 type alias GqlData a =
@@ -14,5 +15,16 @@ type alias CoastalHazard =
 
 
 type alias CoastalHazardsResponse =
-    { hazards : List (Maybe CoastalHazard)
+    { hazards : List CoastalHazard
+    }
+
+
+type alias ShorelineLocation =
+    { name : String
+    , extent : GeographicExtent
+    }
+
+
+type alias ShorelineLocationsResponse =
+    { locations : List ShorelineLocation
     }

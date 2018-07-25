@@ -13,6 +13,7 @@ import Message exposing (..)
 import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
 import View.SelectHazard as SelectHazard
+import View.SelectLocation as SelectLocation
 import Styles exposing (..)
 import Ports exposing (..)
 
@@ -22,10 +23,18 @@ import Ports exposing (..)
 
 type alias Model =
     { urlState : Maybe Route
+
+    -- coastal hazard data
     , coastalHazards : GqlData CoastalHazardsResponse
     , hazardMenu : SelectWith CoastalHazard Msg
     , isHazardMenuOpen : Bool
     , numHazards : Int
+
+    -- shoreline location data
+    , shorelineLocations : GqlData ShorelineLocationsResponse
+    , locationMenu : SelectWith ShorelineLocation Msg
+    , isLocationMenuOpen : Bool
+    , numLocations : Int
     }
 
 
@@ -33,10 +42,16 @@ defaultModel : Model
 defaultModel =
     Model
         (Just Blank)
+        -- coastal hazard defaults
         RemoteData.Loading
         (Input.dropMenu Nothing SelectHazard)
         False
-        3
+        0
+        -- shoreline location defaults
+        RemoteData.Loading
+        (Input.dropMenu Nothing SelectLocation)
+        False
+        0
 
 
 init : Navigation.Location -> ( Model, Cmd Msg )
@@ -48,6 +63,7 @@ init location =
         msgs =
             Cmd.batch
                 [ getCoastalHazards
+                , getShorelineLocations
                 , olCmd <| encodeOpenLayersCmd InitMap
                 , routeFx
                 ]
@@ -104,6 +120,34 @@ update msg model =
                     Nothing ->
                         ( { model | hazardMenu = updatedMenu }, Cmd.none )
 
+        HandleShorelineLocationsResponse response ->
+            case response of
+                NotAsked ->
+                    ( { model | shorelineLocations = response }, Cmd.none )
+
+                Loading ->
+                    ( { model | shorelineLocations = response }, Cmd.none )
+
+                Success data ->
+                    ( { model | shorelineLocations = response, numLocations = List.length data.locations }
+                    , Cmd.none
+                    )
+
+                Failure err ->
+                    ( { model | shorelineLocations = response }, Cmd.none )
+
+        SelectLocation msg ->
+            let
+                updatedMenu =
+                    Input.updateSelection msg model.locationMenu
+            in
+                case parseSelectMenuChange msg of
+                    Just val ->
+                        ( { model | locationMenu = updatedMenu, isLocationMenuOpen = val }, Cmd.none )
+
+                    Nothing ->
+                        ( { model | locationMenu = updatedMenu }, Cmd.none )
+
         Animate animMsg ->
             ( model, Cmd.none )
 
@@ -157,7 +201,12 @@ headerView model =
                 [ h1 (Header HeaderTitle) [] <| Element.text "Coastal Hazard Impact Planner" ]
             , column NoStyle
                 [ verticalCenter, alignRight, width fill ]
-                [ row NoStyle [] [ SelectHazard.view model ] ]
+                [ row NoStyle
+                    []
+                    [ SelectHazard.view model
+                    , SelectLocation.view model
+                    ]
+                ]
             ]
 
 

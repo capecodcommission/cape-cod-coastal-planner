@@ -6,7 +6,7 @@ defmodule ChipApiWeb.Schema.LocationTypes do
     object :locations_queries do
         
         @desc "The list of shoreline locations"
-        field :shoreline_locations, non_null(list_of(:shoreline_location)) do
+        field :shoreline_locations, non_null(list_of(non_null(:shoreline_location))) do
             arg :filter, :location_filter
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Locations.shoreline_locations/3

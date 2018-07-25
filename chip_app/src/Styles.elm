@@ -1,6 +1,7 @@
 module Styles exposing (..)
 
 import Color exposing (..)
+import Color.Manipulate exposing (fadeOut)
 import Style exposing (..)
 import Style.Color as Color
 import Style.Border as Border
@@ -11,8 +12,10 @@ import Element.Input as Input exposing (ChoiceState)
 {-| Palette colors named using <http://chir.ag/projects/name-that-color>
 -}
 palette =
-    { indigo = rgb 78 88 188
+    { chambray = rgb 54 77 127
+    , havelockBlue = rgb 85 126 216
     , mySin = rgb 255 182 18
+    , persimmon = rgb 255 85 85
     }
 
 
@@ -40,7 +43,9 @@ type Variations
     | InputSelected
     | InputFocused
     | InputSelectedInBox
+    | LastMenuItem
     | SelectMenuOpen
+    | SelectMenuError
 
 
 choiceStateToVariation : ChoiceState -> Variations
@@ -63,7 +68,7 @@ stylesheet =
     Style.styleSheet
         [ Style.style NoStyle []
         , Style.style (Header HeaderBackground)
-            [ Color.background palette.indigo
+            [ Color.background palette.chambray
             ]
         , Style.style (Header HeaderTitle)
             [ Color.text white
@@ -73,7 +78,7 @@ stylesheet =
             , Font.letterSpacing 1.0
             ]
         , Style.style (Header HeaderMenu)
-            [ Color.background <| rgba 0 0 0 0.4
+            [ Color.background <| rgba 0 0 0 0.7
             , Color.text white
             , Font.size 22.0
             , Font.typeface fontstack
@@ -86,29 +91,40 @@ stylesheet =
                 [ Border.roundBottomLeft 0.0
                 , Border.roundBottomRight 0.0
                 ]
+            , variation SelectMenuError
+                [ Color.text palette.persimmon
+                ]
             ]
         , Style.style (Header HeaderSubMenu)
-            [ Style.opacity 0.85
+            [ Color.background <| rgba 0 0 0 0.7
             ]
         , Style.style (Header HeaderMenuItem)
             [ Color.text white
             , Font.size 18.0
             , Font.typeface fontstack
             , Style.hover
-                [ Color.background green ]
+                [ Color.background <| fadeOut 0.7 palette.havelockBlue ]
             , variation InputIdle
-                [ Color.background black ]
+                [ Color.background <| rgba 0 0 0 0.7 ]
             , variation InputSelected
-                [ Color.background red ]
+                [ Color.text palette.havelockBlue
+                , Color.background <| rgba 0 0 0 0.7
+                , Style.hover
+                    [ Color.text white ]
+                ]
             , variation InputFocused []
             , variation InputSelectedInBox
                 [ Style.hover
                     [ Color.background <| rgba 0 0 0 0.0 ]
                 ]
+            , variation LastMenuItem
+                [ Border.roundBottomLeft 8.0
+                , Border.roundBottomRight 8.0
+                ]
             ]
         , Style.style (Header HeaderMenuError)
-            [ Color.text red
-            , Font.size 12.0
+            [ Color.text palette.persimmon
+            , Font.size 14.0
             , Font.typeface fontstack
             ]
         ]

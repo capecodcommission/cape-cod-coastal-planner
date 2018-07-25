@@ -6,26 +6,26 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
     object :strategies_queries do
 
         @desc "The list of adaptation strategies"
-        field :adaptation_strategies, non_null(list_of(:adaptation_strategy)) do
+        field :adaptation_strategies, non_null(list_of(non_null(:adaptation_strategy))) do
             arg :filter, :strategy_filter
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.adaptation_strategies/3
         end
 
         @desc "The list of adaptation categories"
-        field :adaptation_categories, non_null(list_of(:adaptation_category)) do
+        field :adaptation_categories, non_null(list_of(non_null(:adaptation_category))) do
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.adaptation_categories/3
         end
 
         @desc "The list of coastal hazards"
-        field :coastal_hazards, non_null(list_of(:coastal_hazard)) do
+        field :coastal_hazards, non_null(list_of(non_null(:coastal_hazard))) do
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.coastal_hazards/3
         end
 
         @desc "The list of geographic scales of impact"
-        field :impact_scales, non_null(list_of(:impact_scale)) do
+        field :impact_scales, non_null(list_of(non_null(:impact_scale))) do
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.impact_scales/3
         end

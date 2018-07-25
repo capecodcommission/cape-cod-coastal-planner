@@ -13,10 +13,16 @@ import View.Helpers exposing (parseErrors)
 view : Graphqelm.Http.Error a -> Input.Option MainStyles Variations Msg
 view error =
     error
+        |> errorText
+        |> errorView
+
+
+errorText : Graphqelm.Http.Error a -> ( String, String )
+errorText error =
+    error
         |> parseErrors
         |> List.head
         |> Maybe.withDefault ( "Failed to load hazards", "" )
-        |> errorView
 
 
 errorView : ( String, String ) -> Input.Option MainStyles Variations Msg

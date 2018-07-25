@@ -6,9 +6,15 @@ import Graphqelm.SelectionSet exposing (SelectionSet, with)
 import RemoteData exposing (RemoteData, fromResult)
 import ChipApi.Object
 import ChipApi.Object.CoastalHazard as CH
+import ChipApi.Object.ShorelineLocation as SL
 import ChipApi.Query as Query
 import Types exposing (..)
 import Message exposing (..)
+
+
+--
+-- COASTAL HAZARDS
+--
 
 
 queryCoastalHazards : SelectionSet CoastalHazardsResponse RootQuery
@@ -28,3 +34,29 @@ getCoastalHazards =
     queryCoastalHazards
         |> queryRequest "./api"
         |> send (fromResult >> HandleCoastalHazardsResponse)
+
+
+
+--
+-- SHORELINE LOCATIONS
+--
+
+
+queryShorelineLocations : SelectionSet ShorelineLocationsResponse RootQuery
+queryShorelineLocations =
+    Query.selection ShorelineLocationsResponse
+        |> with (Query.shorelineLocations identity shorelineLocations)
+
+
+shorelineLocations : SelectionSet Types.ShorelineLocation ChipApi.Object.ShorelineLocation
+shorelineLocations =
+    SL.selection Types.ShorelineLocation
+        |> with SL.name
+        |> with SL.extent
+
+
+getShorelineLocations : Cmd Msg
+getShorelineLocations =
+    queryShorelineLocations
+        |> queryRequest "./api"
+        |> send (fromResult >> HandleShorelineLocationsResponse)
