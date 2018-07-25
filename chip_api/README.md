@@ -39,5 +39,5 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
     * run all tests
   * `mix test --only <moduletag>`
     * run tests that include a given modeule tag and no others
-
-pg_dump.bat --column-inserts --data-only 
+  * `dev\support\dump_seeds.bat`
+    * dumps a `seeds.sql` file to `priv\repo`
