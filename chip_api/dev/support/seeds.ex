@@ -194,325 +194,325 @@ defmodule ChipApi.Seeds do
 
         _sandy_neck = %Geospatial.LittoralCell{
             name: "Sandy Neck",
-            minX: -70.49519532,
-            minY: 41.72443529,
-            maxX: -70.27194534,
-            maxY: 41.77707184
+            min_x: -70.49519532,
+            min_y: 41.72443529,
+            max_x: -70.27194534,
+            max_y: 41.77707184
         }
         |> Repo.insert!
 
         _buttermilk_bay = %Geospatial.LittoralCell{
             name: "Buttermilk Bay",
-            minX: -70.63352723,
-            minY: 41.73653947,
-            maxX: -70.60927811,
-            maxY: 41.765290014
+            min_x: -70.63352723,
+            min_y: 41.73653947,
+            max_x: -70.60927811,
+            max_y: 41.765290014
         }
         |> Repo.insert!
 
         _mashnee = %Geospatial.LittoralCell{
             name: "Mashnee",
-            minX: -70.64053898,
-            minY: 41.71461278,
-            maxX: -70.62087102,
-            maxY: 41.73706887
+            min_x: -70.64053898,
+            min_y: 41.71461278,
+            max_x: -70.62087102,
+            max_y: 41.73706887
         }
         |> Repo.insert!
 
         _monument_beach = %Geospatial.LittoralCell{
             name: "Monument Beach",
-            minX: -70.63728516,
-            minY: 41.70796773,
-            maxX: -70.6149776,
-            maxY: 41.73706887
+            min_x: -70.63728516,
+            min_y: 41.70796773,
+            max_x: -70.6149776,
+            max_y: 41.73706887
         }
         |> Repo.insert!
 
         _wings_neck = %Geospatial.LittoralCell{
             name: "Wings Neck",
-            minX: -70.663057,
-            minY: 41.6796427,
-            maxX: -70.61667597,
-            maxY: 41.70797868
+            min_x: -70.663057,
+            min_y: 41.6796427,
+            max_x: -70.61667597,
+            max_y: 41.70797868
         }
         |> Repo.insert!
         
         _red_brook_harbor = %Geospatial.LittoralCell{
             name: "Red Brook Harbor",
-            minX: -70.6623887,
-            minY: 41.6611958,
-            maxX: -70.63281991,
-            maxY: 41.68116405
+            min_x: -70.6623887,
+            min_y: 41.6611958,
+            max_x: -70.63281991,
+            max_y: 41.68116405
         }
         |> Repo.insert!
 
         _megansett_harbor = %Geospatial.LittoralCell{
             name: "Megansett Harbor",
-            minX: -70.65483116,
-            minY: 41.63744685,
-            maxX: -70.61986912,
-            maxY: 41.66400311
+            min_x: -70.65483116,
+            min_y: 41.63744685,
+            max_x: -70.61986912,
+            max_y: 41.66400311
         }
         |> Repo.insert!
 
         _old_silver_beach = %Geospatial.LittoralCell{
             name: "Old Silver Beach",
-            minX: -70.65423194,
-            minY: 41.60672672,
-            maxX: -70.63976768,
-            maxY: 41.64190766
+            min_x: -70.65423194,
+            min_y: 41.60672672,
+            max_x: -70.63976768,
+            max_y: 41.64190766
         }
         |> Repo.insert!
 
         _sippewissett = %Geospatial.LittoralCell{
             name: "Sippewissett",
-            minX: -70.66416133,
-            minY: 41.54130225,
-            maxX: -70.64149517,
-            maxY: 41.6069038
+            min_x: -70.66416133,
+            min_y: 41.54130225,
+            max_x: -70.64149517,
+            max_y: 41.6069038
         }
         |> Repo.insert!
 
         _woods_hole = %Geospatial.LittoralCell{
             name: "Woods Hole",
-            minX: -70.68869066,
-            minY: 41.51665019,
-            maxX: -70.6630743,
-            maxY: 41.54181222
+            min_x: -70.68869066,
+            min_y: 41.51665019,
+            max_x: -70.6630743,
+            max_y: 41.54181222
         }
         |> Repo.insert!
 
         _nobska = %Geospatial.LittoralCell{
             name: "Nobska",
-            minX: -70.66831085,
-            minY: 41.51431148,
-            maxX: -70.65519,
-            maxY: 41.52329243
+            min_x: -70.66831085,
+            min_y: 41.51431148,
+            max_x: -70.65519,
+            max_y: 41.52329243
         }
         |> Repo.insert!
 
         _new_seabury = %Geospatial.LittoralCell{
             name: "New Seabury",
-            minX: -70.52807964,
-            minY: 41.54657161,
-            maxX: -70.44974468,
-            maxY: 41.5880774
+            min_x: -70.52807964,
+            min_y: 41.54657161,
+            max_x: -70.44974468,
+            max_y: 41.5880774
         }
         |> Repo.insert!
 
         _cotuit = %Geospatial.LittoralCell{
             name: "Cotuit",
-            minX: -70.45280941,
-            minY: 41.58731796,
-            maxX: -70.40093848,
-            maxY: 41.60903925
+            min_x: -70.45280941,
+            min_y: 41.58731796,
+            max_x: -70.40093848,
+            max_y: 41.60903925
         }
         |> Repo.insert!
 
         _wianno = %Geospatial.LittoralCell{
             name: "Wianno",
-            minX: -70.40095626,
-            minY: 41.6057665,
-            maxX: -70.36438018,
-            maxY: 41.6221806
+            min_x: -70.40095626,
+            min_y: 41.6057665,
+            max_x: -70.36438018,
+            max_y: 41.6221806
         }
         |> Repo.insert!
 
         _centerville_harbor = %Geospatial.LittoralCell{
             name: "Centerville Harbor",
-            minX: -70.365511,
-            minY: 41.62175632,
-            maxX: -70.31690959,
-            maxY: 41.63630151
+            min_x: -70.365511,
+            min_y: 41.62175632,
+            max_x: -70.31690959,
+            max_y: 41.63630151
         }
         |> Repo.insert!
 
         _lewis_bay = %Geospatial.LittoralCell{
             name: "Lewis Bay",
-            minX: -70.3172616,
-            minY: 41.60842778,
-            maxX: -70.24010809,
-            maxY: 41.65174441
+            min_x: -70.3172616,
+            min_y: 41.60842778,
+            max_x: -70.24010809,
+            max_y: 41.65174441
         }
         |> Repo.insert!
 
         _nantucket_sound = %Geospatial.LittoralCell{
             name: "Nantucket Sound",
-            minX: -70.26578859,
-            minY: 41.60844647,
-            maxX: -69.98190808,
-            maxY: 41.67233469
+            min_x: -70.26578859,
+            min_y: 41.60844647,
+            max_x: -69.98190808,
+            max_y: 41.67233469
         }
         |> Repo.insert!
 
         _monomoy = %Geospatial.LittoralCell{
             name: "Monomoy",
-            minX: -70.01549706,
-            minY: 41.5394904,
-            maxX: -69.94167893,
-            maxY: 41.67242025
+            min_x: -70.01549706,
+            min_y: 41.5394904,
+            max_x: -69.94167893,
+            max_y: 41.67242025
         }
         |> Repo.insert!
 
         _chatham_harbor = %Geospatial.LittoralCell{
             name: "Chatham Harbor",
-            minX: -69.95152325,
-            minY: 41.6720345,
-            maxX: -69.94433652,
-            maxY: 41.70441754
+            min_x: -69.95152325,
+            min_y: 41.6720345,
+            max_x: -69.94433652,
+            max_y: 41.70441754
         }
         |> Repo.insert!
 
         _bassing_harbor = %Geospatial.LittoralCell{
             name: "Bassing Harbor",
-            minX: -69.97397911,
-            minY: 41.70386807,
-            maxX: -69.94462443,
-            maxY: 41.7218528
+            min_x: -69.97397911,
+            min_y: 41.70386807,
+            max_x: -69.94462443,
+            max_y: 41.7218528
         }
         |> Repo.insert!
 
         _wequassett = %Geospatial.LittoralCell{
             name: "Wequassett",
-            minX: -69.99657598,
-            minY: 41.71273071,
-            maxX: -69.97359947,
-            maxY: 41.73643113
+            min_x: -69.99657598,
+            min_y: 41.71273071,
+            max_x: -69.97359947,
+            max_y: 41.73643113
         }
         |> Repo.insert!
         
         _little_pleasant_bay = %Geospatial.LittoralCell{
             name: "Little Pleasant Bay",
-            minX: -69.98772954,
-            minY: 41.70413691,
-            maxX: -69.92762984,
-            maxY: 41.77428196
+            min_x: -69.98772954,
+            min_y: 41.70413691,
+            max_x: -69.92762984,
+            max_y: 41.77428196
         }
         |> Repo.insert!
 
         _nauset = %Geospatial.LittoralCell{
             name: "Nauset",
-            minX: -69.94028234,
-            minY: 41.70768725,
-            maxX: -69.92634772,
-            maxY: 41.82633149
+            min_x: -69.94028234,
+            min_y: 41.70768725,
+            max_x: -69.92634772,
+            max_y: 41.82633149
         }
         |> Repo.insert!
 
         _coast_guard_beach = %Geospatial.LittoralCell{
             name: "Coast Guard Beach",
-            minX: -69.95075294,
-            minY: 41.82622,
-            maxX: -69.93818758,
-            maxY: 41.86148426
+            min_x: -69.95075294,
+            min_y: 41.82622,
+            max_x: -69.93818758,
+            max_y: 41.86148426
         }
         |> Repo.insert!
 
         _marconi = %Geospatial.LittoralCell{
             name: "Marconi",
-            minX: -69.96148559,
-            minY: 41.86138165,
-            maxX: -69.94954175,
-            maxY: 41.89357034
+            min_x: -69.96148559,
+            min_y: 41.86138165,
+            max_x: -69.94954175,
+            max_y: 41.89357034
         }
         |> Repo.insert!
 
         _outer_cape = %Geospatial.LittoralCell{
             name: "Outer Cape",
-            minX: -70.24858201,
-            minY: 41.89346876,
-            maxX: -69.9602872,
-            maxY: 42.08343397
+            min_x: -70.24858201,
+            min_y: 41.89346876,
+            max_x: -69.9602872,
+            max_y: 42.08343397
         }
         |> Repo.insert!
 
         _provincetown_harbor = %Geospatial.LittoralCell{
             name: "Provincetown Harbor",
-            minX: -70.19870082,
-            minY: 42.02392881,
-            maxX: -70.16644116,
-            maxY: 42.04655892
+            min_x: -70.19870082,
+            min_y: 42.02392881,
+            max_x: -70.16644116,
+            max_y: 42.04655892
         }
         |> Repo.insert!
 
         _truro = %Geospatial.LittoralCell{
             name: "Truro",
-            minX: -70.18977157,
-            minY: 41.9681321,
-            maxX: -70.07712532,
-            maxY: 42.06217857
+            min_x: -70.18977157,
+            min_y: 41.9681321,
+            max_x: -70.07712532,
+            max_y: 42.06217857
         }
         |> Repo.insert!
 
         _bound_brook = %Geospatial.LittoralCell{
             name: "Bound Brook",
-            minX: -70.07896201,
-            minY: 41.94333318,
-            maxX: -70.076689,
-            maxY: 41.968213
+            min_x: -70.07896201,
+            min_y: 41.94333318,
+            max_x: -70.076689,
+            max_y: 41.968213
         }
         |> Repo.insert!
 
         _great_island = %Geospatial.LittoralCell{
             name: "Great Island",
-            minX: -70.07826461,
-            minY: 41.8838964,
-            maxX: -70.06694975,
-            maxY: 41.94342149
+            min_x: -70.07826461,
+            min_y: 41.8838964,
+            max_x: -70.06694975,
+            max_y: 41.94342149
         }
         |> Repo.insert!
 
         _wellfleet_harbor = %Geospatial.LittoralCell{
             name: "Wellfleet Harbor",
-            minX: -70.07076949,
-            minY: 41.88411699,
-            maxX: -70.02296983,
-            maxY: 41.93148949
+            min_x: -70.07076949,
+            min_y: 41.88411699,
+            max_x: -70.02296983,
+            max_y: 41.93148949
         }
         |> Repo.insert!
 
         _blackfish_creek = %Geospatial.LittoralCell{
             name: "Blackfish Creek",
-            minX: -70.02552165,
-            minY: 41.89249817,
-            maxX: -70.00587516,
-            maxY: 41.9097969
+            min_x: -70.02552165,
+            min_y: 41.89249817,
+            max_x: -70.00587516,
+            max_y: 41.9097969
         }
         |> Repo.insert!
 
         _cape_cod_bay = %Geospatial.LittoralCell{
             name: "Cape Cod Bay",
-            minX: -70.10876375,
-            minY: 41.76304249,
-            maxX: -70.00142255,
-            maxY: 41.89320727
+            min_x: -70.10876375,
+            min_y: 41.76304249,
+            max_x: -70.00142255,
+            max_y: 41.89320727
         }
         |> Repo.insert!
 
         _quivett = %Geospatial.LittoralCell{
             name: "Quivett",
-            minX: -70.18135437,
-            minY: 41.75132777,
-            maxX: -70.10853291,
-            maxY: 41.76420279
+            min_x: -70.18135437,
+            min_y: 41.75132777,
+            max_x: -70.10853291,
+            max_y: 41.76420279
         }
         |> Repo.insert!
 
         _barnstable_harbor = %Geospatial.LittoralCell{
             name: "Barnstable Harbor",
-            minX: -70.35255989,
-            minY: 41.70837857,
-            maxX: -70.18112468,
-            maxY: 41.75302983
+            min_x: -70.35255989,
+            min_y: 41.70837857,
+            max_x: -70.18112468,
+            max_y: 41.75302983
         }
         |> Repo.insert!
 
         _sagamore = %Geospatial.LittoralCell{
             name: "Sagamore",
-            minX: -70.53777639,
-            minY: 41.77663144,
-            maxX: -70.4932775,
-            maxY: 41.8111471
+            min_x: -70.53777639,
+            min_y: 41.77663144,
+            max_x: -70.4932775,
+            max_y: 41.8111471
         }
         |> Repo.insert!
 

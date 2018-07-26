@@ -57,16 +57,18 @@ the correct functionality, since using `attribute` in this way seems to overwrit
 <https://github.com/mdgriffith/style-elements/blob/4.3.0/src/Element/Input.elm>
 
 -}
-forceTransparent : Float -> Element.Attribute Variations Msg
-forceTransparent width =
+forceTransparent : Float -> Float -> Element.Attribute Variations Msg
+forceTransparent width maxHeight =
     let
         inlineStyles =
             [ "pointer-events:auto"
             , "display:flex"
             , "flex-direction:column"
             , "width:" ++ toString width ++ "px"
+            , "max-height:" ++ toString maxHeight ++ "px"
+            , "overflow-y:auto"
             , "position:relative"
-            , "top:calc(100%+0px)"
+            , "top:calc(100% * 0px)"
             , "left:0px"
             , "box-sizing:border-box"
             , "cursor:pointer"

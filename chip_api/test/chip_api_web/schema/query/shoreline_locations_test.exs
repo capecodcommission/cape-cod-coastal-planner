@@ -33,12 +33,12 @@ defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
         }
     }
     """
-    test "shorelineLocations field returns locations with extent formatted as [minX, minY, maxX, maxY]", %{data: data} do
+    test "shorelineLocations field returns locations with extent formatted as [min_x, min_y, max_x, max_y]", %{data: data} do
         expected_extent = [
-            data.cell1.minX, 
-            data.cell1.minY, 
-            data.cell1.maxX, 
-            data.cell1.maxY
+            data.cell1.min_x, 
+            data.cell1.min_y, 
+            data.cell1.max_x, 
+            data.cell1.max_y
         ]
         
         response = get build_conn(), "/api", query: @query

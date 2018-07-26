@@ -51,10 +51,10 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
 
     @attrs %{
         name: "test",
-        minX: -50.0,
-        minY: 42.0,
-        maxX: -49.0,
-        maxY: 43.0
+        min_x: -50.0,
+        min_y: 42.0,
+        max_x: -49.0,
+        max_y: 43.0
     }
     test "create_littoral_cell with a good values creates a new littoral cell" do
         parent = self()
@@ -66,14 +66,14 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
         assert {:ok, cell} = Task.await(task)
         assert @attrs ==
             Repo.get!(LittoralCell, cell.id)
-            |> Map.take([:name, :minX, :minY, :maxX, :maxY])
+            |> Map.take([:name, :min_x, :min_y, :max_x, :max_y])
     end
 
     @attrs %{
-        minX: -50.0,
-        minY: 42.0,
-        maxX: -49.0,
-        maxY: 43.0
+        min_x: -50.0,
+        min_y: 42.0,
+        max_x: -49.0,
+        max_y: 43.0
     }
     test "create_littoral_cell without name returns error and changeset" do
         assert {:error, changeset} = ShorelineLocations.create_littoral_cell(@attrs)
@@ -81,10 +81,10 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
     end
 
     @attrs %{
-        minX: -50.0,
-        minY: 42.0,
-        maxX: -49.0,
-        maxY: 43.0
+        min_x: -50.0,
+        min_y: 42.0,
+        max_x: -49.0,
+        max_y: 43.0
     }
     test "create_littoral_cell with duplicate name returns error and changeset", %{data: data} do
         bad_attrs = Map.put(@attrs, :name, data.cell1.name)
@@ -94,10 +94,10 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
 
     @attrs %{
         name: 405,
-        minX: -50.0,
-        minY: 42.0,
-        maxX: -49.0,
-        maxY: 43.0
+        min_x: -50.0,
+        min_y: 42.0,
+        max_x: -49.0,
+        max_y: 43.0
     }
     test "create_littoral_cell with bad name value returns error and changeset" do
         assert {:error, changeset} = ShorelineLocations.create_littoral_cell(@attrs)
@@ -106,94 +106,94 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
 
     @attrs %{
         name: "test",
-        minX: "bad",
-        minY: 42.0,
-        maxX: -49.0,
-        maxY: 43.0
+        min_x: "bad",
+        min_y: 42.0,
+        max_x: -49.0,
+        max_y: 43.0
     }
-    test "create_littoral_cell with bad minX value returns error and changeset" do
+    test "create_littoral_cell with bad min_x value returns error and changeset" do
         assert {:error, changeset} = ShorelineLocations.create_littoral_cell(@attrs)
-        assert "is invalid" in errors_on(changeset).minX
+        assert "is invalid" in errors_on(changeset).min_x
     end
 
     @attrs %{
         name: "test",
-        minX: -50.0,
-        minY: "bad",
-        maxX: -49.0,
-        maxY: 43.0
+        min_x: -50.0,
+        min_y: "bad",
+        max_x: -49.0,
+        max_y: 43.0
     }
-    test "create_littoral_cell with bad minY value returns error and changeset" do
+    test "create_littoral_cell with bad min_y value returns error and changeset" do
         assert {:error, changeset} = ShorelineLocations.create_littoral_cell(@attrs)
-        assert "is invalid" in errors_on(changeset).minY
+        assert "is invalid" in errors_on(changeset).min_y
     end
 
     @attrs %{
         name: "test",
-        minX: -50.0,
-        minY: 42.0,
-        maxX: "bad",
-        maxY: 43.0
+        min_x: -50.0,
+        min_y: 42.0,
+        max_x: "bad",
+        max_y: 43.0
     }
-    test "create_littoral_cell with bad maxX value returns error and changeset" do
+    test "create_littoral_cell with bad max_x value returns error and changeset" do
         assert {:error, changeset} = ShorelineLocations.create_littoral_cell(@attrs)
-        assert "is invalid" in errors_on(changeset).maxX
+        assert "is invalid" in errors_on(changeset).max_x
     end
 
     @attrs %{
         name: "test",
-        minX: -50.0,
-        minY: 42.0,
-        maxX: -49.0,
-        maxY: "bad"
+        min_x: -50.0,
+        min_y: 42.0,
+        max_x: -49.0,
+        max_y: "bad"
     }
-    test "create_littoral_cell with bad maxY value returns error and changeset" do
+    test "create_littoral_cell with bad max_y value returns error and changeset" do
         assert {:error, changeset} = ShorelineLocations.create_littoral_cell(@attrs)
-        assert "is invalid" in errors_on(changeset).maxY
+        assert "is invalid" in errors_on(changeset).max_y
     end
 
     @attrs %{
         name: "test",
-        minY: 42.0,
-        maxX: -49.0,
-        maxY: 43.0
+        min_y: 42.0,
+        max_x: -49.0,
+        max_y: 43.0
     }
-    test "create_littoral_cell without minX returns error and changeset" do
+    test "create_littoral_cell without min_x returns error and changeset" do
         assert {:error, changeset} = ShorelineLocations.create_littoral_cell(@attrs)
-        assert "can't be blank" in errors_on(changeset).minX
+        assert "can't be blank" in errors_on(changeset).min_x
     end
 
     @attrs %{
         name: "test",
-        minX: -50.0,
-        maxX: -49.0,
-        maxY: 43.0
+        min_x: -50.0,
+        max_x: -49.0,
+        max_y: 43.0
     }
-    test "create_littoral_cell without minY returns error and changeset" do
+    test "create_littoral_cell without min_y returns error and changeset" do
         assert {:error, changeset} = ShorelineLocations.create_littoral_cell(@attrs)
-        assert "can't be blank" in errors_on(changeset).minY
+        assert "can't be blank" in errors_on(changeset).min_y
     end
 
     @attrs %{
         name: "test",
-        minX: -50.0,
-        minY: 42.0,
-        maxY: 43.0
+        min_x: -50.0,
+        min_y: 42.0,
+        max_y: 43.0
     }
-    test "create_littoral_cell without maxX returns error and changeset" do
+    test "create_littoral_cell without max_x returns error and changeset" do
         assert {:error, changeset} = ShorelineLocations.create_littoral_cell(@attrs)
-        assert "can't be blank" in errors_on(changeset).maxX
+        assert "can't be blank" in errors_on(changeset).max_x
     end
 
     @attrs %{
         name: "test",
-        minX: -50.0,
-        minY: 42.0,
-        maxX: -49.0
+        min_x: -50.0,
+        min_y: 42.0,
+        max_x: -49.0
     }
-    test "create_littoral_cell without maxY returns error and changeset" do
+    test "create_littoral_cell without max_y returns error and changeset" do
         assert {:error, changeset} = ShorelineLocations.create_littoral_cell(@attrs)
-        assert "can't be blank" in errors_on(changeset).maxY
+        assert "can't be blank" in errors_on(changeset).max_y
     end
 
     @attrs %{
@@ -213,9 +213,9 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
     end
 
     @attrs %{
-        minX: -39.3
+        min_x: -39.3
     }
-    test "update_littoral_cell with a good minX value returns updated littoral cell", %{data: data} do
+    test "update_littoral_cell with a good min_x value returns updated littoral cell", %{data: data} do
         parent = self()
         task = Task.async(fn -> 
             allow(parent, self())
@@ -225,13 +225,13 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
         assert {:ok, cell} = Task.await(task)
         assert @attrs ==
             Repo.get!(LittoralCell, cell.id)
-            |> Map.take([:minX])
+            |> Map.take([:min_x])
     end
 
     @attrs %{
-        minY: 41.7
+        min_y: 41.7
     }
-    test "update_littoral_cell with a good minY value returns updated littoral cell", %{data: data} do
+    test "update_littoral_cell with a good min_y value returns updated littoral cell", %{data: data} do
         parent = self()
         task = Task.async(fn -> 
             allow(parent, self())
@@ -241,13 +241,13 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
         assert {:ok, cell} = Task.await(task)
         assert @attrs ==
             Repo.get!(LittoralCell, cell.id)
-            |> Map.take([:minY])
+            |> Map.take([:min_y])
     end
 
     @attrs %{
-        maxX: 39.3
+        max_x: 39.3
     }
-    test "update_littoral_cell with a good maxX value returns updated littoral cell", %{data: data} do
+    test "update_littoral_cell with a good max_x value returns updated littoral cell", %{data: data} do
         parent = self()
         task = Task.async(fn -> 
             allow(parent, self())
@@ -257,13 +257,13 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
         assert {:ok, cell} = Task.await(task)
         assert @attrs ==
             Repo.get!(LittoralCell, cell.id)
-            |> Map.take([:maxX])
+            |> Map.take([:max_x])
     end
 
     @attrs %{
-        maxY: 55.3
+        max_y: 55.3
     }
-    test "update_littoral_cell with a good maxY value returns updated littoral cell", %{data: data} do
+    test "update_littoral_cell with a good max_y value returns updated littoral cell", %{data: data} do
         parent = self()
         task = Task.async(fn -> 
             allow(parent, self())
@@ -273,7 +273,7 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
         assert {:ok, cell} = Task.await(task)
         assert @attrs ==
             Repo.get!(LittoralCell, cell.id)
-            |> Map.take([:maxY])
+            |> Map.take([:max_y])
     end
 
     @attrs %{
@@ -290,35 +290,35 @@ defmodule ChipApi.Geospatial.LittoralCellTest do
     end
 
     @attrs %{
-        minX: "bad"
+        min_x: "bad"
     }
-    test "update_littoral_cell with a bad minX value returns error and changeset", %{data: data} do
+    test "update_littoral_cell with a bad min_x value returns error and changeset", %{data: data} do
         assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, @attrs)
-        assert "is invalid" in errors_on(changeset).minX
+        assert "is invalid" in errors_on(changeset).min_x
     end
     
     @attrs %{
-        minY: "bad"
+        min_y: "bad"
     }
-    test "update_littoral_cell with a bad minY value returns error and changeset", %{data: data} do
+    test "update_littoral_cell with a bad min_y value returns error and changeset", %{data: data} do
         assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, @attrs)
-        assert "is invalid" in errors_on(changeset).minY
+        assert "is invalid" in errors_on(changeset).min_y
     end
     
     @attrs %{
-        maxX: "bad"
+        max_x: "bad"
     }
-    test "update_littoral_cell with a bad maxX value returns error and changeset", %{data: data} do
+    test "update_littoral_cell with a bad max_x value returns error and changeset", %{data: data} do
         assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, @attrs)
-        assert "is invalid" in errors_on(changeset).maxX
+        assert "is invalid" in errors_on(changeset).max_x
     end
     
     @attrs %{
-        maxY: "bad"
+        max_y: "bad"
     }
-    test "update_littoral_cell with a bad maxY value returns error and changeset", %{data: data} do
+    test "update_littoral_cell with a bad max_y value returns error and changeset", %{data: data} do
         assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, @attrs)
-        assert "is invalid" in errors_on(changeset).maxY
+        assert "is invalid" in errors_on(changeset).max_y
     end
 
     test "delete_littoral_cell with a good value removes the littoral cell", %{data: data} do

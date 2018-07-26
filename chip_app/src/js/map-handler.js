@@ -1,5 +1,10 @@
 "use strict";
 
+import proj from "ol/proj";
+import Map from "ol/map";
+import View from "ol/view";
+import TileLayer from "ol/layer/tile";
+import XYZ from "ol/source/xyz";
 import {logError, getRAF} from "./misc";
 
 class MapHandler {
@@ -15,6 +20,17 @@ class MapHandler {
                         this.map = initMap();
                     }
                     break;
+
+                case "zoom_to_shoreline_location":
+                    if (!this.map) {
+                        throw Error("Map not initialized!");
+                    } else if (!data.extent) {
+                        throw Error("Expected an extent!");
+                    } else {
+                        let extent3857 = this.convertExtent(data.extent)
+                        this.map.getView().fit(extent3857);
+                    }
+                    break;
     
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
@@ -23,14 +39,17 @@ class MapHandler {
             logError(err);
         }
     }
+
+    convertExtent([minX, minY, maxX, maxY]) {
+        let convertedExtent = [
+            proj.fromLonLat([minX, 0])[0],
+            proj.fromLonLat([0, minY])[1],
+            proj.fromLonLat([maxX, 0])[0],
+            proj.fromLonLat([0, maxY])[1]
+        ];
+        return convertedExtent;
+    }
 }
-
-
-import proj from "ol/proj";
-import Map from "ol/map";
-import View from "ol/view";
-import TileLayer from "ol/layer/tile";
-import XYZ from "ol/source/xyz";
 
 function initMap() {
     // pre-render initializations: view, layers, map
@@ -73,6 +92,8 @@ function initMap() {
         // post-render initializations: controls, interactions
         // nothing yet
     });
+
+    return map;
 }
 
 export { MapHandler as default };

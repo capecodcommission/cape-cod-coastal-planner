@@ -52,7 +52,10 @@ shorelineLocations : SelectionSet Types.ShorelineLocation ChipApi.Object.Shoreli
 shorelineLocations =
     SL.selection Types.ShorelineLocation
         |> with SL.name
-        |> with SL.extent
+        |> with SL.minX
+        |> with SL.minY
+        |> with SL.maxX
+        |> with SL.maxY
 
 
 getShorelineLocations : Cmd Msg

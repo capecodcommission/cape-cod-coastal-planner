@@ -3,6 +3,7 @@ module Types exposing (..)
 import Graphqelm.Http
 import RemoteData exposing (RemoteData)
 import ChipApi.Scalar exposing (..)
+import Json.Encode as E
 
 
 type alias GqlData a =
@@ -21,8 +22,24 @@ type alias CoastalHazardsResponse =
 
 type alias ShorelineLocation =
     { name : String
-    , extent : GeographicExtent
+    , minX : Float
+    , minY : Float
+    , maxX : Float
+    , maxY : Float
     }
+
+
+encodeShorelineLocation : ShorelineLocation -> E.Value
+encodeShorelineLocation location =
+    let
+        extent =
+            [ location.minX, location.minY, location.maxX, location.maxY ]
+                |> List.map E.float
+    in
+        E.object
+            [ ( "name", E.string location.name )
+            , ( "extent", E.list extent )
+            ]
 
 
 type alias ShorelineLocationsResponse =

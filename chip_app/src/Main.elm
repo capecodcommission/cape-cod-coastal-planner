@@ -140,13 +140,28 @@ update msg model =
             let
                 updatedMenu =
                     Input.updateSelection msg model.locationMenu
+
+                selectedLocationFx =
+                    updatedMenu
+                        |> Input.selected
+                        |> Maybe.map
+                            (\loc ->
+                                ZoomToShorelineLocation encodeShorelineLocation loc
+                                    |> encodeOpenLayersCmd
+                                    |> olCmd
+                            )
+                        |> Maybe.withDefault Cmd.none
             in
                 case parseSelectMenuChange msg of
                     Just val ->
-                        ( { model | locationMenu = updatedMenu, isLocationMenuOpen = val }, Cmd.none )
+                        ( { model | locationMenu = updatedMenu, isLocationMenuOpen = val }
+                        , selectedLocationFx
+                        )
 
                     Nothing ->
-                        ( { model | locationMenu = updatedMenu }, Cmd.none )
+                        ( { model | locationMenu = updatedMenu }
+                        , selectedLocationFx
+                        )
 
         Animate animMsg ->
             ( model, Cmd.none )
@@ -202,7 +217,7 @@ headerView model =
             , column NoStyle
                 [ verticalCenter, alignRight, width fill ]
                 [ row NoStyle
-                    []
+                    [ spacingXY 16 0 ]
                     [ SelectHazard.view model
                     , SelectLocation.view model
                     ]

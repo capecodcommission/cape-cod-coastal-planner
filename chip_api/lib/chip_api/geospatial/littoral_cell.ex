@@ -4,10 +4,10 @@ defmodule ChipApi.Geospatial.LittoralCell do
 
     schema "littoral_cells" do
         field :name, :string
-        field :minX, :float
-        field :minY, :float
-        field :maxX, :float
-        field :maxY, :float
+        field :min_x, :float
+        field :min_y, :float
+        field :max_x, :float
+        field :max_y, :float
 
         timestamps()
     end
@@ -15,8 +15,8 @@ defmodule ChipApi.Geospatial.LittoralCell do
     @doc false
     def changeset(lit_cell, attrs) do
         lit_cell
-        |> cast(attrs, [:name, :minX, :minY, :maxX, :maxY])
-        |> validate_required([:name, :minX, :minY, :maxX, :maxY])
+        |> cast(attrs, [:name, :min_x, :min_y, :max_x, :max_y])
+        |> validate_required([:name, :min_x, :min_y, :max_x, :max_y])
         |> unique_constraint(:name)
     end
     

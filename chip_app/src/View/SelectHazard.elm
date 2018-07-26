@@ -1,6 +1,5 @@
 module View.SelectHazard exposing (..)
 
-import Maybe
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Input as Input exposing (..)
@@ -24,7 +23,6 @@ view model =
     Input.select (Header HeaderMenu)
         [ height (px 42)
         , width (px 327)
-        , paddingXY 10.0 0.0
         , vary SelectMenuOpen model.isHazardMenuOpen
         , vary SelectMenuError <| RemoteData.isFailure model.coastalHazards
         ]
@@ -34,7 +32,7 @@ view model =
         , options = hazardOptions model.coastalHazards
         , menu =
             Input.menu (Header HeaderSubMenu)
-                [ width (px 327), forceTransparent 327 ]
+                [ forceTransparent 327 500 ]
                 (hazardMenuItems model.coastalHazards)
         }
 
@@ -90,7 +88,7 @@ hazardMenuItemView lastIndex currentIndex hazard =
             el (Header HeaderMenuItem)
                 [ vary (choiceStateToVariation state) True
                 , vary LastMenuItem (lastIndex == currentIndex)
-                , padding 5.0
+                , paddingXY 16 5
                 ]
                 (Element.text hazard.name)
         )

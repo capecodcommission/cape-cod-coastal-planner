@@ -29,9 +29,22 @@ defmodule ChipApiWeb.Schema.LocationTypes do
         field :name, non_null(:string)
 
         @desc "The geographic extent of the location"
-        field :extent, non_null(:geographic_extent)
+        field :extent, non_null(:geographic_extent) do
+            resolve &Resolvers.Locations.geographic_extent/3
+        end
+
+        @desc "The westernmost latitude of the location's extent"
+        field :min_x , non_null(:float)
+
+        @desc "The southernmost longitude of the location's extent"
+        field :min_y, non_null(:float)
+
+        @desc "The easternmost latitude of the location's extent"
+        field :max_x, non_null(:float)
+
+        @desc "The northernmost longitude of the location's extent"
+        field :max_y, non_null(:float)
 
     end
 
-    
 end

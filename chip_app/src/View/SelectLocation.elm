@@ -23,7 +23,6 @@ view model =
     Input.select (Header HeaderMenu)
         [ height (px 42)
         , width (px 327)
-        , paddingXY 10.0 0.0
         , vary SelectMenuOpen model.isLocationMenuOpen
         , vary SelectMenuError <| RemoteData.isFailure model.shorelineLocations
         ]
@@ -33,7 +32,7 @@ view model =
         , options = locationOptions model.shorelineLocations
         , menu =
             Input.menu (Header HeaderSubMenu)
-                [ width (px 327), forceTransparent 327 ]
+                [ forceTransparent 327 500 ]
                 (locationMenuItems model.shorelineLocations)
         }
 
@@ -89,7 +88,7 @@ locationMenuItemView lastIndex currentIndex location =
             el (Header HeaderMenuItem)
                 [ vary (choiceStateToVariation state) True
                 , vary LastMenuItem (lastIndex == currentIndex)
-                , padding 5.0
+                , paddingXY 16 5
                 ]
                 (Element.text location.name)
         )
