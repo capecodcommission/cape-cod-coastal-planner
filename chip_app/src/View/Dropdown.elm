@@ -16,7 +16,6 @@ type alias Dropdown a b =
     { data : GqlData { a | items : List { b | name : String } }
     , menu : SelectWith { b | name : String } Msg
     , isOpen : Bool
-    , numOptions : Int
     , name : String
     }
 
@@ -40,7 +39,7 @@ view dropdown =
             ]
             { label = dropdownPlaceholder dropdown.name dropdown.data
             , with = dropdown.menu
-            , max = dropdown.numOptions
+            , max = getMaxItems dropdown.data
             , options = dropdownOptions dropdown.data
             , menu =
                 Input.menu (Header HeaderSubMenu)
@@ -113,3 +112,19 @@ menuItemView lastIndex currentIndex item =
                 ]
                 (Element.text item.name)
         )
+
+
+getMaxItems : GqlData { a | items : List { b | name : String } } -> Int
+getMaxItems data =
+    case data of
+        NotAsked ->
+            0
+
+        Loading ->
+            0
+
+        Success val ->
+            List.length val.items
+
+        Failure _ ->
+            0

@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.3
--- Dumped by pg_dump version 10.3
+-- Dumped from database version 10.4
+-- Dumped by pg_dump version 10.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -174,10 +174,10 @@ ALTER SEQUENCE public.impact_scales_id_seq OWNED BY public.impact_scales.id;
 CREATE TABLE public.littoral_cells (
     id bigint NOT NULL,
     name character varying(255),
-    "minX" double precision,
-    "minY" double precision,
-    "maxX" double precision,
-    "maxY" double precision,
+    min_x double precision,
+    min_y double precision,
+    max_x double precision,
+    max_y double precision,
     inserted_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -412,5 +412,5 @@ ALTER TABLE ONLY public.strategies_scales
 -- PostgreSQL database dump complete
 --
 
-INSERT INTO public."schema_migrations" (version) VALUES (20180627200200), (20180627200743), (20180627201108), (20180627203452), (20180627211906), (20180627212047), (20180627212147), (20180703202705), (20180703204221), (20180703204303), (20180703205219), (20180705210332), (20180718180304);
+INSERT INTO public."schema_migrations" (version) VALUES (20180627200200), (20180627200743), (20180627201108), (20180627203452), (20180627211906), (20180627212047), (20180627212147), (20180703202705), (20180703204221), (20180703204303), (20180703205219), (20180705210332), (20180718180304), (20180726173204);
 

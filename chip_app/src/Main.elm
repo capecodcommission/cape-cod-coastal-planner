@@ -12,8 +12,7 @@ import Types exposing (..)
 import Message exposing (..)
 import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
-import View.SelectHazard as SelectHazard
-import View.SelectLocation as SelectLocation
+import View.Dropdown as Dropdown exposing (Dropdown)
 import Styles exposing (..)
 import Ports exposing (..)
 
@@ -23,20 +22,8 @@ import Ports exposing (..)
 
 type alias Model =
     { urlState : Maybe Route
-
-    -- coastal hazard data
-    , coastalHazards : GqlData CoastalHazardsResponse
-    , hazardMenu : SelectWith CoastalHazard Msg
-    , selectedHazard : Maybe CoastalHazard
-    , isHazardMenuOpen : Bool
-    , numHazards : Int
-
-    -- shoreline location data
-    , shorelineLocations : GqlData ShorelineLocationsResponse
-    , locationMenu : SelectWith ShorelineLocation Msg
-    , selectedLocation : Maybe ShorelineLocation
-    , isLocationMenuOpen : Bool
-    , numLocations : Int
+    , coastalHazards : Dropdown CoastalHazardsResponse CoastalHazard
+    , shorelineLocations : Dropdown ShorelineLocationsResponse ShorelineLocation
     }
 
 
@@ -44,18 +31,16 @@ defaultModel : Model
 defaultModel =
     Model
         (Just Blank)
-        -- coastal hazard defaults
-        RemoteData.Loading
-        (Input.dropMenu Nothing SelectHazard)
-        Nothing
-        False
-        0
-        -- shoreline location defaults
-        RemoteData.Loading
-        (Input.dropMenu Nothing SelectLocation)
-        Nothing
-        False
-        0
+        { data = RemoteData.Loading
+        , menu = Input.dropMenu Nothing SelectHazard
+        , isOpen = False
+        , name = "Hazard"
+        }
+        { data = RemoteData.Loading
+        , menu = Input.dropMenu Nothing SelectLocation
+        , isOpen = False
+        , name = "Shoreline Location"
+        }
 
 
 init : Navigation.Location -> ( Model, Cmd Msg )
@@ -97,60 +82,54 @@ update msg model =
                 )
 
         HandleCoastalHazardsResponse response ->
-            case response of
-                NotAsked ->
-                    ( { model | coastalHazards = response }, Cmd.none )
-
-                Loading ->
-                    ( { model | coastalHazards = response }, Cmd.none )
-
-                Success data ->
-                    ( { model | coastalHazards = response, numHazards = List.length data.hazards }
-                    , Cmd.none
-                    )
-
-                Failure err ->
-                    ( { model | coastalHazards = response }, Cmd.none )
+            let
+                updatedHazards =
+                    model.coastalHazards
+                        |> (\hazards -> { hazards | data = response })
+            in
+                ( { model | coastalHazards = updatedHazards }
+                , Cmd.none
+                )
 
         SelectHazard msg ->
             let
-                updatedMenu =
-                    Input.updateSelection msg model.hazardMenu
+                updatedHazards =
+                    case parseMenuOpeningOrClosing msg of
+                        Just val ->
+                            model.coastalHazards
+                                |> (\hazards ->
+                                        { hazards
+                                            | menu = Input.updateSelection msg hazards.menu
+                                            , isOpen = val
+                                        }
+                                   )
 
-                selectedHazard =
-                    Input.selected updatedMenu
+                        Nothing ->
+                            model.coastalHazards
+                                |> (\hazards ->
+                                        { hazards
+                                            | menu = Input.updateSelection msg hazards.menu
+                                        }
+                                   )
             in
-                case parseMenuOpeningOrClosing msg of
-                    Just val ->
-                        ( { model | hazardMenu = updatedMenu, isHazardMenuOpen = val, selectedHazard = selectedHazard }
-                        , Cmd.none
-                        )
-
-                    Nothing ->
-                        ( { model | hazardMenu = updatedMenu, selectedHazard = selectedHazard }
-                        , Cmd.none
-                        )
+                ( { model | coastalHazards = updatedHazards }
+                , Cmd.none
+                )
 
         HandleShorelineLocationsResponse response ->
-            case response of
-                NotAsked ->
-                    ( { model | shorelineLocations = response }, Cmd.none )
-
-                Loading ->
-                    ( { model | shorelineLocations = response }, Cmd.none )
-
-                Success data ->
-                    ( { model | shorelineLocations = response, numLocations = List.length data.locations }
-                    , Cmd.none
-                    )
-
-                Failure err ->
-                    ( { model | shorelineLocations = response }, Cmd.none )
+            let
+                updatedLocations =
+                    model.shorelineLocations
+                        |> (\locs -> { locs | data = response })
+            in
+                ( { model | shorelineLocations = updatedLocations }
+                , Cmd.none
+                )
 
         SelectLocation msg ->
             let
                 updatedMenu =
-                    Input.updateSelection msg model.locationMenu
+                    Input.updateSelection msg model.shorelineLocations.menu
 
                 selectedLocation =
                     Input.selected updatedMenu
@@ -158,26 +137,30 @@ update msg model =
                 selectedLocationFx =
                     selectedLocation
                         |> Maybe.map
-                            (\loc ->
+                            (\l ->
                                 if shouldLocationMenuChangeTriggerZoomTo msg then
-                                    ZoomToShorelineLocation encodeShorelineLocation loc
+                                    ZoomToShorelineLocation encodeShorelineLocation l
                                         |> encodeOpenLayersCmd
                                         |> olCmd
                                 else
                                     Cmd.none
                             )
                         |> Maybe.withDefault Cmd.none
-            in
-                case parseMenuOpeningOrClosing msg of
-                    Just val ->
-                        ( { model | locationMenu = updatedMenu, isLocationMenuOpen = val, selectedLocation = selectedLocation }
-                        , selectedLocationFx
-                        )
 
-                    Nothing ->
-                        ( { model | locationMenu = updatedMenu, selectedLocation = selectedLocation }
-                        , selectedLocationFx
-                        )
+                updatedLocations =
+                    model.shorelineLocations
+                        |> (\l ->
+                                case parseMenuOpeningOrClosing msg of
+                                    Just val ->
+                                        { l | menu = updatedMenu, isOpen = val }
+
+                                    Nothing ->
+                                        { l | menu = updatedMenu }
+                           )
+            in
+                ( { model | shorelineLocations = updatedLocations }
+                , selectedLocationFx
+                )
 
         Animate animMsg ->
             ( model, Cmd.none )
@@ -246,8 +229,8 @@ headerView model =
                 [ verticalCenter, alignRight, width fill ]
                 [ row NoStyle
                     [ spacingXY 16 0 ]
-                    [ SelectHazard.view model
-                    , SelectLocation.view model
+                    [ Dropdown.view model.coastalHazards
+                    , Dropdown.view model.shorelineLocations
                     ]
                 ]
             ]

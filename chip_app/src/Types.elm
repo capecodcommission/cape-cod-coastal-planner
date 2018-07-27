@@ -16,7 +16,7 @@ type alias CoastalHazard =
 
 
 type alias CoastalHazardsResponse =
-    { hazards : List CoastalHazard
+    { items : List CoastalHazard
     }
 
 
@@ -43,5 +43,5 @@ encodeShorelineLocation location =
 
 
 type alias ShorelineLocationsResponse =
-    { locations : List ShorelineLocation
+    { items : List ShorelineLocation
     }
