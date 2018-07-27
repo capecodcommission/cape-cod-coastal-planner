@@ -2,6 +2,7 @@ defmodule ChipApi.Seeds do
 
     def run() do
         alias ChipApi.{Adaptation, Geospatial, Repo}
+        alias Decimal, as: D
 
         #
         # SCALES OF IMPACT
@@ -197,7 +198,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.49519532,
             min_y: 41.72443529,
             max_x: -70.27194534,
-            max_y: 41.77707184
+            max_y: 41.77707184,
+            length_miles: D.new("12.8821297"),
+            imperv_percent: D.new("4.404603481")
         }
         |> Repo.insert!
 
@@ -206,7 +209,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.63352723,
             min_y: 41.73653947,
             max_x: -70.60927811,
-            max_y: 41.765290014
+            max_y: 41.765290014,
+            length_miles: D.new("4.9664421"),
+            imperv_percent: D.new("25.71430588")
         }
         |> Repo.insert!
 
@@ -215,7 +220,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.64053898,
             min_y: 41.71461278,
             max_x: -70.62087102,
-            max_y: 41.73706887
+            max_y: 41.73706887,
+            length_miles: D.new("2.939918"),
+            imperv_percent: D.new("13.06014061")
         }
         |> Repo.insert!
 
@@ -224,7 +231,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.63728516,
             min_y: 41.70796773,
             max_x: -70.6149776,
-            max_y: 41.73706887
+            max_y: 41.73706887,
+            length_miles: D.new("3.889698"),
+            imperv_percent: D.new("11.41208649")
         }
         |> Repo.insert!
 
@@ -233,7 +242,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.663057,
             min_y: 41.6796427,
             max_x: -70.61667597,
-            max_y: 41.70797868
+            max_y: 41.70797868,
+            length_miles: D.new("4.0165191"),
+            imperv_percent: D.new("9.428860664")
         }
         |> Repo.insert!
         
@@ -242,7 +253,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.6623887,
             min_y: 41.6611958,
             max_x: -70.63281991,
-            max_y: 41.68116405
+            max_y: 41.68116405,
+            length_miles: D.new("3.7567761"),
+            imperv_percent: D.new("4.952525139")
         }
         |> Repo.insert!
 
@@ -251,7 +264,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.65483116,
             min_y: 41.63744685,
             max_x: -70.61986912,
-            max_y: 41.66400311
+            max_y: 41.66400311,
+            length_miles: D.new("4.5419111"),
+            imperv_percent: D.new("12.91113758")
         }
         |> Repo.insert!
 
@@ -260,7 +275,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.65423194,
             min_y: 41.60672672,
             max_x: -70.63976768,
-            max_y: 41.64190766
+            max_y: 41.64190766,
+            length_miles: D.new("3.843195"),
+            imperv_percent: D.new("16.91975403")
         }
         |> Repo.insert!
 
@@ -269,7 +286,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.66416133,
             min_y: 41.54130225,
             max_x: -70.64149517,
-            max_y: 41.6069038
+            max_y: 41.6069038,
+            length_miles: D.new("5.3717442"),
+            imperv_percent: D.new("8.564338684")
         }
         |> Repo.insert!
 
@@ -278,7 +297,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.68869066,
             min_y: 41.51665019,
             max_x: -70.6630743,
-            max_y: 41.54181222
+            max_y: 41.54181222,
+            length_miles: D.new("4.9520388"),
+            imperv_percent: D.new("10.31838799")
         }
         |> Repo.insert!
 
@@ -287,7 +308,20 @@ defmodule ChipApi.Seeds do
             min_x: -70.66831085,
             min_y: 41.51431148,
             max_x: -70.65519,
-            max_y: 41.52329243
+            max_y: 41.52329243,
+            length_miles: D.new("1.395851"),
+            imperv_percent: D.new("18.66693115")
+        }
+        |> Repo.insert!
+
+        _south_falmouth = %Geospatial.LittoralCell{
+            name: "South Falmouth",
+            min_x: -70.65551689,
+            min_y: 41.51432919,
+            max_x: -70.52806583,
+            max_y: 41.55234115,
+            length_miles: D.new("7.9527521"),
+            imperv_percent: D.new("13.50438404")
         }
         |> Repo.insert!
 
@@ -296,7 +330,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.52807964,
             min_y: 41.54657161,
             max_x: -70.44974468,
-            max_y: 41.5880774
+            max_y: 41.5880774,
+            length_miles: D.new("5.3732042"),
+            imperv_percent: D.new("11.50544548")
         }
         |> Repo.insert!
 
@@ -305,7 +341,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.45280941,
             min_y: 41.58731796,
             max_x: -70.40093848,
-            max_y: 41.60903925
+            max_y: 41.60903925,
+            length_miles: D.new("3.7948329"),
+            imperv_percent: D.new("6.853813171")
         }
         |> Repo.insert!
 
@@ -314,7 +352,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.40095626,
             min_y: 41.6057665,
             max_x: -70.36438018,
-            max_y: 41.6221806
+            max_y: 41.6221806,
+            length_miles: D.new("2.2582591"),
+            imperv_percent: D.new("11.87512684")
         }
         |> Repo.insert!
 
@@ -323,7 +363,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.365511,
             min_y: 41.62175632,
             max_x: -70.31690959,
-            max_y: 41.63630151
+            max_y: 41.63630151,
+            length_miles: D.new("3.4090099"),
+            imperv_percent: D.new("11.96304893")
         }
         |> Repo.insert!
 
@@ -332,7 +374,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.3172616,
             min_y: 41.60842778,
             max_x: -70.24010809,
-            max_y: 41.65174441
+            max_y: 41.65174441,
+            length_miles: D.new("11.5430002"),
+            imperv_percent: D.new("18.56052208")
         }
         |> Repo.insert!
 
@@ -341,7 +385,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.26578859,
             min_y: 41.60844647,
             max_x: -69.98190808,
-            max_y: 41.67233469
+            max_y: 41.67233469,
+            length_miles: D.new("17.3015995"),
+            imperv_percent: D.new("15.66193962")
         }
         |> Repo.insert!
 
@@ -350,7 +396,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.01549706,
             min_y: 41.5394904,
             max_x: -69.94167893,
-            max_y: 41.67242025
+            max_y: 41.67242025,
+            length_miles: D.new("20.9548302"),
+            imperv_percent: D.new("0.722238481")
         }
         |> Repo.insert!
 
@@ -359,7 +407,9 @@ defmodule ChipApi.Seeds do
             min_x: -69.95152325,
             min_y: 41.6720345,
             max_x: -69.94433652,
-            max_y: 41.70441754
+            max_y: 41.70441754,
+            length_miles: D.new("2.5425341"),
+            imperv_percent: D.new("17.18111992")
         }
         |> Repo.insert!
 
@@ -368,7 +418,9 @@ defmodule ChipApi.Seeds do
             min_x: -69.97397911,
             min_y: 41.70386807,
             max_x: -69.94462443,
-            max_y: 41.7218528
+            max_y: 41.7218528,
+            length_miles: D.new("3.182462"),
+            imperv_percent: D.new("9.980096817")
         }
         |> Repo.insert!
 
@@ -377,7 +429,9 @@ defmodule ChipApi.Seeds do
             min_x: -69.99657598,
             min_y: 41.71273071,
             max_x: -69.97359947,
-            max_y: 41.73643113
+            max_y: 41.73643113,
+            length_miles: D.new("3.073679"),
+            imperv_percent: D.new("11.93692398")
         }
         |> Repo.insert!
         
@@ -386,7 +440,9 @@ defmodule ChipApi.Seeds do
             min_x: -69.98772954,
             min_y: 41.70413691,
             max_x: -69.92762984,
-            max_y: 41.77428196
+            max_y: 41.77428196,
+            length_miles: D.new("12.0422802"),
+            imperv_percent: D.new("5.15602541")
         }
         |> Repo.insert!
 
@@ -395,7 +451,9 @@ defmodule ChipApi.Seeds do
             min_x: -69.94028234,
             min_y: 41.70768725,
             max_x: -69.92634772,
-            max_y: 41.82633149
+            max_y: 41.82633149,
+            length_miles: D.new("8.6657391"),
+            imperv_percent: D.new("1.425156593")
         }
         |> Repo.insert!
 
@@ -404,7 +462,9 @@ defmodule ChipApi.Seeds do
             min_x: -69.95075294,
             min_y: 41.82622,
             max_x: -69.93818758,
-            max_y: 41.86148426
+            max_y: 41.86148426,
+            length_miles: D.new("2.540206"),
+            imperv_percent: D.new("2.573147058")
         }
         |> Repo.insert!
 
@@ -413,7 +473,9 @@ defmodule ChipApi.Seeds do
             min_x: -69.96148559,
             min_y: 41.86138165,
             max_x: -69.94954175,
-            max_y: 41.89357034
+            max_y: 41.89357034,
+            length_miles: D.new("2.2889249"),
+            imperv_percent: D.new("2.897997141")
         }
         |> Repo.insert!
 
@@ -422,7 +484,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.24858201,
             min_y: 41.89346876,
             max_x: -69.9602872,
-            max_y: 42.08343397
+            max_y: 42.08343397,
+            length_miles: D.new("28.6761799"),
+            imperv_percent: D.new("1.655546427")
         }
         |> Repo.insert!
 
@@ -431,7 +495,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.19870082,
             min_y: 42.02392881,
             max_x: -70.16644116,
-            max_y: 42.04655892
+            max_y: 42.04655892,
+            length_miles: D.new("3.480684"),
+            imperv_percent: D.new("11.96743774")
         }
         |> Repo.insert!
 
@@ -440,7 +506,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.18977157,
             min_y: 41.9681321,
             max_x: -70.07712532,
-            max_y: 42.06217857
+            max_y: 42.06217857,
+            length_miles: D.new("10.7964802"),
+            imperv_percent: D.new("17.23412132")
         }
         |> Repo.insert!
 
@@ -449,7 +517,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.07896201,
             min_y: 41.94333318,
             max_x: -70.076689,
-            max_y: 41.968213
+            max_y: 41.968213,
+            length_miles: D.new("1.72536"),
+            imperv_percent: D.new("2.774612904")
         }
         |> Repo.insert!
 
@@ -458,7 +528,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.07826461,
             min_y: 41.8838964,
             max_x: -70.06694975,
-            max_y: 41.94342149
+            max_y: 41.94342149,
+            length_miles: D.new("4.1978979"),
+            imperv_percent: D.new("8.03567028")
         }
         |> Repo.insert!
 
@@ -467,7 +539,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.07076949,
             min_y: 41.88411699,
             max_x: -70.02296983,
-            max_y: 41.93148949
+            max_y: 41.93148949,
+            length_miles: D.new("10.5048399"),
+            imperv_percent: D.new("6.293058395")
         }
         |> Repo.insert!
 
@@ -476,7 +550,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.02552165,
             min_y: 41.89249817,
             max_x: -70.00587516,
-            max_y: 41.9097969
+            max_y: 41.9097969,
+            length_miles: D.new("2.860405"),
+            imperv_percent: D.new("4.120303631")
         }
         |> Repo.insert!
 
@@ -485,7 +561,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.10876375,
             min_y: 41.76304249,
             max_x: -70.00142255,
-            max_y: 41.89320727
+            max_y: 41.89320727,
+            length_miles: D.new("13.96208"),
+            imperv_percent: D.new("10.03118896")
         }
         |> Repo.insert!
 
@@ -494,7 +572,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.18135437,
             min_y: 41.75132777,
             max_x: -70.10853291,
-            max_y: 41.76420279
+            max_y: 41.76420279,
+            length_miles: D.new("4.1774969"),
+            imperv_percent: D.new("8.187264442")
         }
         |> Repo.insert!
 
@@ -503,7 +583,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.35255989,
             min_y: 41.70837857,
             max_x: -70.18112468,
-            max_y: 41.75302983
+            max_y: 41.75302983,
+            length_miles: D.new("16.4632301"),
+            imperv_percent: D.new("5.641637325")
         }
         |> Repo.insert!
 
@@ -512,7 +594,9 @@ defmodule ChipApi.Seeds do
             min_x: -70.53777639,
             min_y: 41.77663144,
             max_x: -70.4932775,
-            max_y: 41.8111471
+            max_y: 41.8111471,
+            length_miles: D.new("3.3053861"),
+            imperv_percent: D.new("10.14210987")
         }
         |> Repo.insert!
 
