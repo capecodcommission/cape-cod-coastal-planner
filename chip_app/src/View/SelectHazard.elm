@@ -1,5 +1,6 @@
 module View.SelectHazard exposing (..)
 
+import Maybe
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Input as Input exposing (..)
@@ -20,21 +21,30 @@ view :
     }
     -> Element MainStyles Variations Msg
 view model =
-    Input.select (Header HeaderMenu)
-        [ height (px 42)
-        , width (px 327)
-        , vary SelectMenuOpen model.isHazardMenuOpen
-        , vary SelectMenuError <| RemoteData.isFailure model.coastalHazards
-        ]
-        { label = hazardPlaceholder model.coastalHazards
-        , with = model.hazardMenu
-        , max = model.numHazards
-        , options = hazardOptions model.coastalHazards
-        , menu =
-            Input.menu (Header HeaderSubMenu)
-                [ forceTransparent 327 500 ]
-                (hazardMenuItems model.coastalHazards)
-        }
+    let
+        placeholderPadding =
+            model.hazardMenu
+                |> Input.selected
+                |> Maybe.map (\_ -> 0)
+                |> Maybe.withDefault 16
+    in
+        Input.select (Header HeaderMenu)
+            [ height (px 42)
+            , width (px 327)
+            , paddingLeft placeholderPadding
+            , paddingRight 16
+            , vary SelectMenuOpen model.isHazardMenuOpen
+            , vary SelectMenuError <| RemoteData.isFailure model.coastalHazards
+            ]
+            { label = hazardPlaceholder model.coastalHazards
+            , with = model.hazardMenu
+            , max = model.numHazards
+            , options = hazardOptions model.coastalHazards
+            , menu =
+                Input.menu (Header HeaderSubMenu)
+                    [ forceTransparent 327 500 ]
+                    (hazardMenuItems model.coastalHazards)
+            }
 
 
 hazardPlaceholder : GqlData CoastalHazardsResponse -> Label MainStyles Variations Msg

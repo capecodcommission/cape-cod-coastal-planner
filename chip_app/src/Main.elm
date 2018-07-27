@@ -27,12 +27,14 @@ type alias Model =
     -- coastal hazard data
     , coastalHazards : GqlData CoastalHazardsResponse
     , hazardMenu : SelectWith CoastalHazard Msg
+    , selectedHazard : Maybe CoastalHazard
     , isHazardMenuOpen : Bool
     , numHazards : Int
 
     -- shoreline location data
     , shorelineLocations : GqlData ShorelineLocationsResponse
     , locationMenu : SelectWith ShorelineLocation Msg
+    , selectedLocation : Maybe ShorelineLocation
     , isLocationMenuOpen : Bool
     , numLocations : Int
     }
@@ -45,11 +47,13 @@ defaultModel =
         -- coastal hazard defaults
         RemoteData.Loading
         (Input.dropMenu Nothing SelectHazard)
+        Nothing
         False
         0
         -- shoreline location defaults
         RemoteData.Loading
         (Input.dropMenu Nothing SelectLocation)
+        Nothing
         False
         0
 
@@ -112,13 +116,20 @@ update msg model =
             let
                 updatedMenu =
                     Input.updateSelection msg model.hazardMenu
+
+                selectedHazard =
+                    Input.selected updatedMenu
             in
-                case parseSelectMenuChange msg of
+                case parseMenuOpeningOrClosing msg of
                     Just val ->
-                        ( { model | hazardMenu = updatedMenu, isHazardMenuOpen = val }, Cmd.none )
+                        ( { model | hazardMenu = updatedMenu, isHazardMenuOpen = val, selectedHazard = selectedHazard }
+                        , Cmd.none
+                        )
 
                     Nothing ->
-                        ( { model | hazardMenu = updatedMenu }, Cmd.none )
+                        ( { model | hazardMenu = updatedMenu, selectedHazard = selectedHazard }
+                        , Cmd.none
+                        )
 
         HandleShorelineLocationsResponse response ->
             case response of
@@ -141,25 +152,30 @@ update msg model =
                 updatedMenu =
                     Input.updateSelection msg model.locationMenu
 
+                selectedLocation =
+                    Input.selected updatedMenu
+
                 selectedLocationFx =
-                    updatedMenu
-                        |> Input.selected
+                    selectedLocation
                         |> Maybe.map
                             (\loc ->
-                                ZoomToShorelineLocation encodeShorelineLocation loc
-                                    |> encodeOpenLayersCmd
-                                    |> olCmd
+                                if shouldLocationMenuChangeTriggerZoomTo msg then
+                                    ZoomToShorelineLocation encodeShorelineLocation loc
+                                        |> encodeOpenLayersCmd
+                                        |> olCmd
+                                else
+                                    Cmd.none
                             )
                         |> Maybe.withDefault Cmd.none
             in
-                case parseSelectMenuChange msg of
+                case parseMenuOpeningOrClosing msg of
                     Just val ->
-                        ( { model | locationMenu = updatedMenu, isLocationMenuOpen = val }
+                        ( { model | locationMenu = updatedMenu, isLocationMenuOpen = val, selectedLocation = selectedLocation }
                         , selectedLocationFx
                         )
 
                     Nothing ->
-                        ( { model | locationMenu = updatedMenu }
+                        ( { model | locationMenu = updatedMenu, selectedLocation = selectedLocation }
                         , selectedLocationFx
                         )
 
@@ -170,8 +186,8 @@ update msg model =
 {-| This is sort of a hack to get around the opaque implementations of
 Input.SelectMsg and Input.SelectMenu.
 -}
-parseSelectMenuChange : Input.SelectMsg a -> Maybe Bool
-parseSelectMenuChange message =
+parseMenuOpeningOrClosing : Input.SelectMsg a -> Maybe Bool
+parseMenuOpeningOrClosing message =
     let
         msg =
             toString message
@@ -182,6 +198,18 @@ parseSelectMenuChange message =
             Just False
         else
             Nothing
+
+
+{-| This is sort of a hack to get around the opaque implementations of
+Input.SelectMsg and Input.SelectMenu.
+-}
+shouldLocationMenuChangeTriggerZoomTo : Input.SelectMsg a -> Bool
+shouldLocationMenuChangeTriggerZoomTo message =
+    let
+        msg =
+            toString message
+    in
+        String.contains "SelectValue" msg
 
 
 

@@ -20,21 +20,30 @@ view :
     }
     -> Element MainStyles Variations Msg
 view model =
-    Input.select (Header HeaderMenu)
-        [ height (px 42)
-        , width (px 327)
-        , vary SelectMenuOpen model.isLocationMenuOpen
-        , vary SelectMenuError <| RemoteData.isFailure model.shorelineLocations
-        ]
-        { label = locationPlaceholder model.shorelineLocations
-        , with = model.locationMenu
-        , max = model.numLocations
-        , options = locationOptions model.shorelineLocations
-        , menu =
-            Input.menu (Header HeaderSubMenu)
-                [ forceTransparent 327 500 ]
-                (locationMenuItems model.shorelineLocations)
-        }
+    let
+        placeholderPadding =
+            model.locationMenu
+                |> Input.selected
+                |> Maybe.map (\_ -> 0)
+                |> Maybe.withDefault 16
+    in
+        Input.select (Header HeaderMenu)
+            [ height (px 42)
+            , width (px 327)
+            , paddingLeft placeholderPadding
+            , paddingRight 16
+            , vary SelectMenuOpen model.isLocationMenuOpen
+            , vary SelectMenuError <| RemoteData.isFailure model.shorelineLocations
+            ]
+            { label = locationPlaceholder model.shorelineLocations
+            , with = model.locationMenu
+            , max = model.numLocations
+            , options = locationOptions model.shorelineLocations
+            , menu =
+                Input.menu (Header HeaderSubMenu)
+                    [ forceTransparent 327 500 ]
+                    (locationMenuItems model.shorelineLocations)
+            }
 
 
 locationPlaceholder : GqlData ShorelineLocationsResponse -> Label MainStyles Variations Msg
