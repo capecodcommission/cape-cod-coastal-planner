@@ -28,7 +28,9 @@ class MapHandler {
                         throw Error("Expected an extent!");
                     } else {
                         let extent3857 = this.convertExtent(data.extent)
-                        this.map.getView().fit(extent3857);
+                        this.map.getView().fit(extent3857, {
+                            duration: 1000
+                        });
                     }
                     break;
     

@@ -1,0 +1,115 @@
+module View.Dropdown exposing (..)
+
+import Element exposing (..)
+import Element.Attributes exposing (..)
+import Element.Input as Input exposing (..)
+import RemoteData exposing (RemoteData(..))
+import String.Extra as SEx
+import Message exposing (..)
+import Types exposing (..)
+import Styles exposing (..)
+import View.SelectError as SelectError
+import View.Helpers exposing (..)
+
+
+type alias Dropdown a b =
+    { data : GqlData { a | items : List { b | name : String } }
+    , menu : SelectWith { b | name : String } Msg
+    , isOpen : Bool
+    , numOptions : Int
+    , name : String
+    }
+
+
+view : Dropdown a b -> Element MainStyles Variations Msg
+view dropdown =
+    let
+        placeholderPadding =
+            dropdown.menu
+                |> Input.selected
+                |> Maybe.map (\_ -> 0)
+                |> Maybe.withDefault 16
+    in
+        Input.select (Header HeaderMenu)
+            [ height (px 42)
+            , width (px 327)
+            , paddingLeft placeholderPadding
+            , paddingRight 16
+            , vary SelectMenuOpen dropdown.isOpen
+            , vary SelectMenuError <| RemoteData.isFailure dropdown.data
+            ]
+            { label = dropdownPlaceholder dropdown.name dropdown.data
+            , with = dropdown.menu
+            , max = dropdown.numOptions
+            , options = dropdownOptions dropdown.data
+            , menu =
+                Input.menu (Header HeaderSubMenu)
+                    [ forceTransparent 327 500 ]
+                    (menuItemsView dropdown.data)
+            }
+
+
+dropdownPlaceholder : String -> GqlData { a | items : List { b | name : String } } -> Label MainStyles Variations Msg
+dropdownPlaceholder name data =
+    let
+        titlecased =
+            SEx.toTitleCase name
+
+        lowercased =
+            String.toLower name
+
+        ( placeholderText, hiddenText ) =
+            case data of
+                NotAsked ->
+                    ( "", "Select " ++ titlecased )
+
+                Loading ->
+                    ( "loading " ++ lowercased ++ "...", "Select " ++ titlecased )
+
+                Failure err ->
+                    err
+                        |> SelectError.errorText
+                        |> Tuple.mapFirst (\e -> "(" ++ e ++ ")")
+                        |> Tuple.mapSecond (\e -> "Select " ++ titlecased ++ ": " ++ e)
+
+                Success _ ->
+                    ( "select " ++ lowercased, "Select " ++ titlecased )
+    in
+        Input.placeholder
+            { text = placeholderText
+            , label = Input.hiddenLabel hiddenText
+            }
+
+
+dropdownOptions : GqlData { a | items : List { b | name : String } } -> List (Input.Option MainStyles Variations Msg)
+dropdownOptions data =
+    case data of
+        Success _ ->
+            []
+
+        _ ->
+            [ Input.disabled ]
+
+
+menuItemsView : GqlData { a | items : List { b | name : String } } -> List (Input.Choice { b | name : String } MainStyles Variations Msg)
+menuItemsView data =
+    case data of
+        Success data ->
+            data.items
+                |> List.indexedMap (menuItemView ((List.length data.items) - 1))
+
+        _ ->
+            []
+
+
+menuItemView : Int -> Int -> { b | name : String } -> Input.Choice { b | name : String } MainStyles Variations Msg
+menuItemView lastIndex currentIndex item =
+    Input.styledSelectChoice item <|
+        (\state ->
+            el (Header HeaderMenuItem)
+                [ vary (choiceStateToVariation state) True
+                , vary LastMenuItem (lastIndex == currentIndex)
+                , paddingXY 16 5
+                ]
+                (Element.text item.name)
+        )
