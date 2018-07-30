@@ -32,28 +32,42 @@ extent =
     Object.fieldDecoder "extent" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.GeographicExtent)
 
 
-{-| The easternmost latitude of the location's extent
+{-| The percentage of impervious surface area
+-}
+impervPercent : Field ChipApi.Scalar.Decimal ChipApi.Object.ShorelineLocation
+impervPercent =
+    Object.fieldDecoder "impervPercent" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.Decimal)
+
+
+{-| The length in miles of the shoreline
+-}
+lengthMiles : Field ChipApi.Scalar.Decimal ChipApi.Object.ShorelineLocation
+lengthMiles =
+    Object.fieldDecoder "lengthMiles" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.Decimal)
+
+
+{-| The easternmost longitude of the location's extent
 -}
 maxX : Field Float ChipApi.Object.ShorelineLocation
 maxX =
     Object.fieldDecoder "maxX" [] Decode.float
 
 
-{-| The northernmost longitude of the location's extent
+{-| The northernmost latitude of the location's extent
 -}
 maxY : Field Float ChipApi.Object.ShorelineLocation
 maxY =
     Object.fieldDecoder "maxY" [] Decode.float
 
 
-{-| The westernmost latitude of the location's extent
+{-| The westernmost longitude of the location's extent
 -}
 minX : Field Float ChipApi.Object.ShorelineLocation
 minX =
     Object.fieldDecoder "minX" [] Decode.float
 
 
-{-| The southernmost longitude of the location's extent
+{-| The southernmost latitude of the location's extent
 -}
 minY : Field Float ChipApi.Object.ShorelineLocation
 minY =

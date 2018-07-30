@@ -5,5 +5,9 @@
 module ChipApi.Scalar exposing (..)
 
 
+type Decimal
+    = Decimal String
+
+
 type GeographicExtent
     = GeographicExtent String
