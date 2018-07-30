@@ -13,4 +13,5 @@ defmodule ChipApiWeb.Resolvers.Locations do
             shoreline_location.max_y
         ]}
     end
+
 end

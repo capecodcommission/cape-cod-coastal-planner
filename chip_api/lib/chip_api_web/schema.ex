@@ -1,5 +1,6 @@
 defmodule ChipApiWeb.Schema do
     use Absinthe.Schema
+    alias Decimal
 
     import_types __MODULE__.StrategyTypes
     import_types __MODULE__.LocationTypes
@@ -32,6 +33,19 @@ defmodule ChipApiWeb.Schema do
     scalar :geographic_extent do
         parse &parse_geographic_extent/1
         serialize &serialize_geographic_extent/1
+    end
+
+    @desc "A custom scalar representing a decimal type"
+    scalar :decimal do
+        
+        parse fn
+        %{value: value}, _ ->
+            Decimal.parse(value)
+        _, _ ->
+            :error
+        end
+
+        serialize &Decimal.to_string/1
     end
 
     @type extent_map :: %{min_x: float, min_y: float, max_x: float, max_y: float}

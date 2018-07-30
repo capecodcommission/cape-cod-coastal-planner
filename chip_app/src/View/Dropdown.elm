@@ -54,16 +54,13 @@ dropdownPlaceholder name data =
         titlecased =
             SEx.toTitleCase name
 
-        lowercased =
-            String.toLower name
-
         ( placeholderText, hiddenText ) =
             case data of
                 NotAsked ->
                     ( "", "Select " ++ titlecased )
 
                 Loading ->
-                    ( "loading " ++ lowercased ++ "...", "Select " ++ titlecased )
+                    ( "Loading " ++ titlecased ++ "...", "Select " ++ titlecased )
 
                 Failure err ->
                     err
@@ -72,7 +69,7 @@ dropdownPlaceholder name data =
                         |> Tuple.mapSecond (\e -> "Select " ++ titlecased ++ ": " ++ e)
 
                 Success _ ->
-                    ( "select " ++ lowercased, "Select " ++ titlecased )
+                    ( "Select " ++ titlecased, "Select " ++ titlecased )
     in
         Input.placeholder
             { text = placeholderText

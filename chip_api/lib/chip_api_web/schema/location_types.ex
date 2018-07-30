@@ -45,6 +45,12 @@ defmodule ChipApiWeb.Schema.LocationTypes do
         @desc "The northernmost latitude of the location's extent"
         field :max_y, non_null(:float)
 
+        @desc "The length in miles of the shoreline"
+        field :length_miles, non_null(:decimal)
+
+        @desc "The percentage of impervious surface area"
+        field :imperv_percent, non_null(:decimal)
+
     end
 
 end
