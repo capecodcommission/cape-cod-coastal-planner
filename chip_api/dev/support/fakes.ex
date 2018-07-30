@@ -2,6 +2,7 @@ defmodule ChipApi.Fakes do
     alias ChipApi.Repo
     alias ChipApi.Adaptation.{Strategy, Category, Hazard, Scale}
     alias ChipApi.Geospatial.LittoralCell
+    alias Decimal
 
     @cat1 %Category{name: "cat1"}
     @cat2 %Category{name: "cat2"}
@@ -12,8 +13,8 @@ defmodule ChipApi.Fakes do
     @scale3 %Scale{name: "scale3", impact: 3, display_order: 2}
     @strat1 %Strategy{name: "strat1", description: "desc1", is_active: true, display_order: 1}
     @strat2 %Strategy{name: "strat2", description: "desc2", is_active: false, display_order: 2}
-    @cell1 %LittoralCell{name: "cell1", min_x: -70.0, min_y: 41.0, max_x: -69.0, max_y: 42.0}
-    @cell2 %LittoralCell{name: "cell2", min_x: -70.0, min_y: 41.0, max_x: -69.0, max_y: 42.0}
+    @cell1 %LittoralCell{name: "cell1", min_x: -70.0, min_y: 41.0, max_x: -69.0, max_y: 42.0, length_miles: Decimal.new("3.3"), imperv_percent: Decimal.new("3.3")}
+    @cell2 %LittoralCell{name: "cell2", min_x: -70.0, min_y: 41.0, max_x: -69.0, max_y: 42.0, length_miles: Decimal.new("3.3"), imperv_percent: Decimal.new("3.3")}
 
 
     def run_categories do

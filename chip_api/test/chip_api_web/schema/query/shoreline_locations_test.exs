@@ -48,6 +48,40 @@ defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
             }
         } = json_response(response, 200)
     end
+
+    @query """
+    {
+        shorelineLocations {
+            lengthMiles
+        }
+    }
+    """
+    test "shorelineLocation field returns locations with the shoreline length in miles", %{data: data} do
+        len = Decimal.to_string data.cell1.length_miles
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"lengthMiles" => len} | _]
+            }
+        } = json_response(response, 200)
+    end
+
+    @query """
+    {
+        shorelineLocations {
+            impervPercent
+        }
+    }
+    """
+    test "shorelineLocation field returns locations with the percentage of impervious surface area", %{data: data} do
+        perc = Decimal.to_string data.cell1.imperv_percent
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"impervPercent" => perc} | _]
+            }
+        } = json_response(response, 200)
+    end
     
     describe "filtering shorelineLocations by name" do
         @query """
