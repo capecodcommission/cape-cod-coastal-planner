@@ -11,3 +11,7 @@ type Decimal
 
 type GeographicExtent
     = GeographicExtent String
+
+
+type Id
+    = Id String

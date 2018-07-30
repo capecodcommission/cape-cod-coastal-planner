@@ -104,11 +104,25 @@ impactScales fillInOptionals object =
     Object.selectionField "impactScales" optionalArgs object (identity >> Decode.list)
 
 
+type alias ShorelineLocationRequiredArguments =
+    { id : ChipApi.Scalar.Id }
+
+
+{-| An individual shoreline location matched on id
+
+  - id - The ID of the shoreline location
+
+-}
+shorelineLocation : ShorelineLocationRequiredArguments -> SelectionSet decodesTo ChipApi.Object.ShorelineLocation -> Field (Maybe decodesTo) RootQuery
+shorelineLocation requiredArgs object =
+    Object.selectionField "shorelineLocation" [ Argument.required "id" requiredArgs.id (\(ChipApi.Scalar.Id raw) -> Encode.string raw) ] object (identity >> Decode.nullable)
+
+
 type alias ShorelineLocationsOptionalArguments =
     { filter : OptionalArgument ChipApi.InputObject.LocationFilter, order : OptionalArgument ChipApi.Enum.SortOrder.SortOrder }
 
 
-{-| The list of shoreline locations
+{-| The list of shoreline locations, filterable and sortable by name
 -}
 shorelineLocations : (ShorelineLocationsOptionalArguments -> ShorelineLocationsOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.ShorelineLocation -> Field (List decodesTo) RootQuery
 shorelineLocations fillInOptionals object =

@@ -7,6 +7,22 @@ defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
         ChipApi.Fakes.run_littoral_cells()
     end
 
+    test "shorelineLocation field returns a location when using a good id", %{data: data} do
+        query = """
+        {
+            shorelineLocation(id: #{data.cell1.id}) {
+                id
+            }
+        }
+        """
+        response = get build_conn(), "/api", query: query
+        assert json_response(response, 200) == %{
+            "data" => %{
+                "shorelineLocation" => %{"id" => to_string data.cell1.id}
+            }
+        }
+    end
+
     @query """
     {
         shorelineLocations {
@@ -56,7 +72,7 @@ defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
         }
     }
     """
-    test "shorelineLocation field returns locations with the shoreline length in miles", %{data: data} do
+    test "shorelineLocations field returns locations with the shoreline length in miles", %{data: data} do
         len = Decimal.to_string data.cell1.length_miles
         response = get build_conn(), "/api", query: @query
         assert %{
@@ -73,7 +89,7 @@ defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
         }
     }
     """
-    test "shorelineLocation field returns locations with the percentage of impervious surface area", %{data: data} do
+    test "shorelineLocations field returns locations with the percentage of impervious surface area", %{data: data} do
         perc = Decimal.to_string data.cell1.imperv_percent
         response = get build_conn(), "/api", query: @query
         assert %{

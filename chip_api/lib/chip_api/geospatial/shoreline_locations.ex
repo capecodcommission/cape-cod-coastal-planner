@@ -76,6 +76,7 @@ defmodule ChipApi.Geospatial.ShorelineLocations do
         nil
 
     """
+    def get_littoral_cell(%{id: id}), do: Repo.get(LittoralCell, id)
     def get_littoral_cell(id), do: Repo.get(LittoralCell, id)
 
     @doc """

@@ -32,6 +32,13 @@ extent =
     Object.fieldDecoder "extent" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.GeographicExtent)
 
 
+{-| The ID of the shoreline location
+-}
+id : Field ChipApi.Scalar.Id ChipApi.Object.ShorelineLocation
+id =
+    Object.fieldDecoder "id" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.Id)
+
+
 {-| The percentage of impervious surface area
 -}
 impervPercent : Field ChipApi.Scalar.Decimal ChipApi.Object.ShorelineLocation
