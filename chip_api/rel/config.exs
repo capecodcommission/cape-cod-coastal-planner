@@ -30,13 +30,19 @@ environment :dev do
   # dev mode.
   set dev_mode: true
   set include_erts: false
-  set cookie: :"L:5d;v|`ztYi]6iquFiJ*2bUkHiksmh}4X5&IB)|M=/D~UpKY^D;7Wr<]Kfc%];}"
+  set cookie: :crypto.hash(:sha256, (if System.get_env("COOKIE"), do: System.get_env("COOKIE"), else: "chip_api_dev")) |> Base.encode16 |> String.to_atom
 end
 
 environment :prod do
   set include_erts: true
   set include_src: false
-  set cookie: :"bT[/AzV{whu|HV.RmjB4Wm<unhs>24wUfZenZIU}MlKMLr.Ewdr%)kcieB*}X%.r"
+  set cookie: :crypto.hash(:sha256, (if System.get_env("COOKIE"), do: System.get_env("COOKIE"), else: "chip_api_prod")) |> Base.encode16 |> String.to_atom
+end
+
+environment :stage do
+  set include_erts: true
+  set include_src: false
+  set cookie: :crypto.hash(:sha256, (if System.get_env("COOKIE"), do: System.get_env("COOKIE"), else: "chip_api_stage")) |> Base.encode16 |> String.to_atom
 end
 
 # You may define one or more releases in this file.
@@ -48,6 +54,22 @@ release :chip_api do
   set version: current_version(:chip_api)
   set applications: [
     :runtime_tools
+  ]
+  # you can run `bin/chip_api.bat migrate` on a server w/ release to run migrations and seeds
+  set commands: [
+    "migrate": "rel/commands/migrate.bat"
+  ]
+
+  set overlays: [
+    {:copy, "rel/commands/migrate.bat", "releases/<%= release_version %>/commands/migrate.bat"}
+  ]
+end
+
+release :chip_api_stage do
+  set version: current_version(:chip_api)
+  set applications: [
+    :runtime_tools,
+    :chip_api
   ]
   # you can run `bin/chip_api.bat migrate` on a server w/ release to run migrations and seeds
   set commands: [
