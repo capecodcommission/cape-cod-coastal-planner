@@ -1,8 +1,9 @@
 module Types exposing (..)
 
+import Dict exposing (Dict)
 import Graphqelm.Http
 import RemoteData exposing (RemoteData)
-import ChipApi.Scalar exposing (..)
+import ChipApi.Scalar as Scalar
 import Json.Encode as E
 
 
@@ -15,13 +16,14 @@ type alias CoastalHazard =
     }
 
 
-type alias CoastalHazardsResponse =
+type alias CoastalHazards =
     { items : List CoastalHazard
     }
 
 
-type alias ShorelineLocation =
-    { name : String
+type alias ShorelineExtent =
+    { id : Scalar.Id
+    , name : String
     , minX : Float
     , minY : Float
     , maxX : Float
@@ -29,8 +31,8 @@ type alias ShorelineLocation =
     }
 
 
-encodeShorelineLocation : ShorelineLocation -> E.Value
-encodeShorelineLocation location =
+encodeShorelineExtent : ShorelineExtent -> E.Value
+encodeShorelineExtent location =
     let
         extent =
             [ location.minX, location.minY, location.maxX, location.maxY ]
@@ -42,6 +44,18 @@ encodeShorelineLocation location =
             ]
 
 
-type alias ShorelineLocationsResponse =
-    { items : List ShorelineLocation
+type alias ShorelineExtents =
+    { items : List ShorelineExtent
     }
+
+
+type alias BaselineInfo =
+    { id : Scalar.Id
+    , name : String
+    , lengthMiles : Scalar.Decimal
+    , impervPercent : Scalar.Decimal
+    }
+
+
+type alias BaselineInfoDict =
+    Dict String (GqlData (Maybe BaselineInfo))

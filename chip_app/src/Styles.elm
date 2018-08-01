@@ -6,6 +6,7 @@ import Style exposing (..)
 import Style.Color as Color
 import Style.Border as Border
 import Style.Font as Font
+import Style.Transition as Transition
 import Element.Input as Input exposing (ChoiceState)
 
 
@@ -21,7 +22,7 @@ palette =
 
 fontstack : List Font
 fontstack =
-    [ Font.font "Segoe", Font.font "Tahoma", Font.font "Verdana", Font.sansSerif ]
+    [ Font.font "Segoe UI", Font.font "Tahoma", Font.font "Verdana", Font.sansSerif ]
 
 
 type MainStyles
@@ -36,6 +37,7 @@ type HeaderStyles
     | HeaderSubMenu
     | HeaderMenuItem
     | HeaderMenuError
+    | BaselineInfoBtn
 
 
 type Variations
@@ -126,5 +128,21 @@ stylesheet =
             [ Color.text palette.persimmon
             , Font.size 14.0
             , Font.typeface fontstack
+            ]
+        , Style.style (Header BaselineInfoBtn)
+            [ Color.background <| rgba 0 0 0 0
+            , Color.text white
+            , Color.border white
+            , Font.size 22.0
+            , Font.typeface fontstack
+            , Font.italic
+            , Border.rounded 50.0
+            , Border.all 2
+            , Transition.all
+            , Style.hover
+                [ Color.text palette.mySin
+                , Color.border palette.mySin
+                , Transition.all
+                ]
             ]
         ]

@@ -28,7 +28,7 @@ port olSub : (D.Value -> msg) -> Sub msg
 
 type OpenLayersCmd
     = InitMap
-    | ZoomToShorelineLocation (ShorelineLocation -> E.Value) ShorelineLocation
+    | ZoomToShorelineLocation (ShorelineExtent -> E.Value) ShorelineExtent
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value

@@ -13,6 +13,7 @@ import Message exposing (..)
 import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
 import View.Dropdown as Dropdown exposing (Dropdown)
+import View.BaselineInfo as BaselineInfo
 import Styles exposing (..)
 import Ports exposing (..)
 
@@ -22,8 +23,8 @@ import Ports exposing (..)
 
 type alias Model =
     { urlState : Maybe Route
-    , coastalHazards : Dropdown CoastalHazardsResponse CoastalHazard
-    , shorelineLocations : Dropdown ShorelineLocationsResponse ShorelineLocation
+    , coastalHazards : Dropdown CoastalHazards CoastalHazard
+    , shorelineLocations : Dropdown ShorelineExtents ShorelineExtent
     }
 
 
@@ -52,7 +53,7 @@ init location =
         msgs =
             Cmd.batch
                 [ getCoastalHazards
-                , getShorelineLocations
+                , getShorelineExtents
                 , olCmd <| encodeOpenLayersCmd InitMap
                 , routeFx
                 ]
@@ -116,7 +117,7 @@ update msg model =
                 , Cmd.none
                 )
 
-        HandleShorelineLocationsResponse response ->
+        HandleShorelineExtentsResponse response ->
             let
                 updatedLocations =
                     model.shorelineLocations
@@ -139,7 +140,7 @@ update msg model =
                         |> Maybe.map
                             (\l ->
                                 if shouldLocationMenuChangeTriggerZoomTo msg then
-                                    ZoomToShorelineLocation encodeShorelineLocation l
+                                    ZoomToShorelineLocation encodeShorelineExtent l
                                         |> encodeOpenLayersCmd
                                         |> olCmd
                                 else
@@ -161,6 +162,20 @@ update msg model =
                 ( { model | shorelineLocations = updatedLocations }
                 , selectedLocationFx
                 )
+
+        GetBaselineInfo ->
+            let
+                cmd =
+                    model.shorelineLocations
+                        |> .menu
+                        |> Input.selected
+                        |> Maybe.map (\l -> getBaselineInfo l.id)
+                        |> Maybe.withDefault Cmd.none
+            in
+                ( model, cmd )
+
+        HandleBaselineInfoResponse response ->
+            ( model, Cmd.none )
 
         Animate animMsg ->
             ( model, Cmd.none )
@@ -231,6 +246,7 @@ headerView model =
                     [ spacingXY 16 0 ]
                     [ Dropdown.view model.coastalHazards
                     , Dropdown.view model.shorelineLocations
+                    , BaselineInfo.view
                     ]
                 ]
             ]

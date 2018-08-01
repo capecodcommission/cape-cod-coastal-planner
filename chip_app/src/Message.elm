@@ -9,8 +9,10 @@ import Types exposing (..)
 type Msg
     = Noop
     | UrlChange Navigation.Location
-    | HandleCoastalHazardsResponse (GqlData CoastalHazardsResponse)
+    | HandleCoastalHazardsResponse (GqlData CoastalHazards)
     | SelectHazard (Input.SelectMsg CoastalHazard)
-    | HandleShorelineLocationsResponse (GqlData ShorelineLocationsResponse)
-    | SelectLocation (Input.SelectMsg ShorelineLocation)
+    | HandleShorelineExtentsResponse (GqlData ShorelineExtents)
+    | SelectLocation (Input.SelectMsg ShorelineExtent)
+    | GetBaselineInfo
+    | HandleBaselineInfoResponse (GqlData (Maybe BaselineInfo))
     | Animate Animation.Msg
