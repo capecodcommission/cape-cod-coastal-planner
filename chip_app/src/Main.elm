@@ -7,14 +7,16 @@ import Element.Attributes exposing (..)
 import Element.Input as Input exposing (..)
 import Animation
 import RemoteData exposing (RemoteData(..))
+import Dict exposing (Dict)
 import Maybe
 import Types exposing (..)
 import Message exposing (..)
 import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
 import View.Dropdown as Dropdown exposing (Dropdown)
-import View.BaselineInfo as BaselineInfo
+import View.BaselineInfo as BaselineInfo exposing (..)
 import Styles exposing (..)
+import ChipApi.Scalar as Scalar
 import Ports exposing (..)
 
 
@@ -25,23 +27,32 @@ type alias Model =
     { urlState : Maybe Route
     , coastalHazards : Dropdown CoastalHazards CoastalHazard
     , shorelineLocations : Dropdown ShorelineExtents ShorelineExtent
+    , baselineInformation : BaselineInformation
+    , baselineModal : GqlData (Maybe BaselineInfo)
     }
 
 
 defaultModel : Model
 defaultModel =
     Model
+        -- Initial Route State
         (Just Blank)
+        -- Coastal Hazard Dropdown
         { data = RemoteData.Loading
         , menu = Input.dropMenu Nothing SelectHazard
         , isOpen = False
         , name = "Hazard"
         }
+        -- Shoreline Location Dropdown
         { data = RemoteData.Loading
         , menu = Input.dropMenu Nothing SelectLocation
         , isOpen = False
         , name = "Shoreline Location"
         }
+        -- Baseline Information
+        Dict.empty
+        -- Baseline Modal
+        NotAsked
 
 
 init : Navigation.Location -> ( Model, Cmd Msg )
@@ -164,21 +175,58 @@ update msg model =
                 )
 
         GetBaselineInfo ->
-            let
-                cmd =
-                    model.shorelineLocations
-                        |> .menu
-                        |> Input.selected
-                        |> Maybe.map (\l -> getBaselineInfo l.id)
-                        |> Maybe.withDefault Cmd.none
-            in
-                ( model, cmd )
+            case getCachedBaselineInfo model of
+                Just info ->
+                    ( { model | baselineModal = Success (Just info) }, Cmd.none )
+
+                Nothing ->
+                    ( { model | baselineModal = Loading }, getRemoteBaselineInfo model )
 
         HandleBaselineInfoResponse response ->
-            ( model, Cmd.none )
+            case response of
+                Success (Just info) ->
+                    ( { model
+                        | baselineInformation = cacheBaselineInfo info.id info model.baselineInformation
+                        , baselineModal = response
+                      }
+                    , Cmd.none
+                    )
+
+                _ ->
+                    ( { model | baselineModal = response }, Cmd.none )
 
         Animate animMsg ->
             ( model, Cmd.none )
+
+
+getCachedBaselineInfo : Model -> Maybe BaselineInfo
+getCachedBaselineInfo { shorelineLocations, baselineInformation } =
+    shorelineLocations
+        |> getSelectedLocationId
+        |> Maybe.andThen
+            (\(Scalar.Id id) ->
+                Dict.get id baselineInformation
+            )
+
+
+cacheBaselineInfo : Scalar.Id -> BaselineInfo -> BaselineInformation -> BaselineInformation
+cacheBaselineInfo (Scalar.Id id) info dict =
+    Dict.insert id info dict
+
+
+getRemoteBaselineInfo : Model -> Cmd Msg
+getRemoteBaselineInfo { shorelineLocations } =
+    shorelineLocations
+        |> getSelectedLocationId
+        |> Maybe.map (\id -> getBaselineInfo id)
+        |> Maybe.withDefault Cmd.none
+
+
+getSelectedLocationId : Dropdown ShorelineExtents ShorelineExtent -> Maybe Scalar.Id
+getSelectedLocationId dropdown =
+    dropdown.menu
+        |> Input.selected
+        |> Maybe.map .id
 
 
 {-| This is sort of a hack to get around the opaque implementations of
@@ -246,7 +294,7 @@ headerView model =
                     [ spacingXY 16 0 ]
                     [ Dropdown.view model.coastalHazards
                     , Dropdown.view model.shorelineLocations
-                    , BaselineInfo.view
+                    , BaselineInfo.view model.baselineModal
                     ]
                 ]
             ]

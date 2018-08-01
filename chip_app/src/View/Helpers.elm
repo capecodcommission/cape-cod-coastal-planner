@@ -3,7 +3,7 @@ module View.Helpers exposing (..)
 import Http
 import Graphqelm.Http exposing (Error(..))
 import Graphqelm.Http.GraphqlError exposing (GraphqlError)
-import Element
+import Element exposing (Attribute)
 import Element.Attributes exposing (..)
 import Styles exposing (..)
 import Message exposing (..)
@@ -45,3 +45,8 @@ parseGraphqlErrors errors =
             (\err ->
                 ( "GraphQL Error", err.message )
             )
+
+
+title : String -> Attribute Variations Msg
+title t =
+    attribute "title" t

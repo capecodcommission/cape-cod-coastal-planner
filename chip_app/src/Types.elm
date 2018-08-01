@@ -55,7 +55,3 @@ type alias BaselineInfo =
     , lengthMiles : Scalar.Decimal
     , impervPercent : Scalar.Decimal
     }
-
-
-type alias BaselineInfoDict =
-    Dict String (GqlData (Maybe BaselineInfo))
