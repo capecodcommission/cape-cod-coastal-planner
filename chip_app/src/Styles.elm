@@ -7,7 +7,12 @@ import Style.Color as Color
 import Style.Border as Border
 import Style.Font as Font
 import Style.Transition as Transition
+import Style.Scale as Scale
 import Element.Input as Input exposing (ChoiceState)
+
+
+scaled =
+    Scale.modular 18 1.375
 
 
 {-| Palette colors named using <http://chir.ag/projects/name-that-color>
@@ -28,6 +33,18 @@ fontstack =
 type MainStyles
     = NoStyle
     | Header HeaderStyles
+    | Baseline BaselineStyles
+    | Headings HeadingStyles
+    | CloseIcon
+
+
+type HeadingStyles
+    = H1
+    | H2
+    | H3
+    | H4
+    | H5
+    | H6
 
 
 type HeaderStyles
@@ -37,7 +54,13 @@ type HeaderStyles
     | HeaderSubMenu
     | HeaderMenuItem
     | HeaderMenuError
-    | BaselineInfoBtn
+
+
+type BaselineStyles
+    = BaselineInfoBtn
+    | BaselineInfoModalBg
+    | BaselineInfoModal
+    | BaselineInfoHeader
 
 
 type Variations
@@ -129,7 +152,7 @@ stylesheet =
             , Font.size 14.0
             , Font.typeface fontstack
             ]
-        , Style.style (Header BaselineInfoBtn)
+        , Style.style (Baseline BaselineInfoBtn)
             [ Color.background <| rgba 0 0 0 0
             , Color.text white
             , Color.border white
@@ -145,4 +168,33 @@ stylesheet =
                 , Transition.all
                 ]
             ]
+        , Style.style (Baseline BaselineInfoModalBg)
+            [ Color.background <| rgba 0 0 0 0.59 ]
+        , Style.style (Baseline BaselineInfoModal)
+            [ Color.background white
+            , Border.rounded 4
+            ]
+        , Style.style (Baseline BaselineInfoHeader)
+            [ Color.background palette.chambray
+            , Color.text white
+            , Font.typeface fontstack
+            , Border.roundTopLeft 4
+            , Border.roundTopRight 4
+            ]
+        , Style.style (Headings H1) <| headingStyle 6
+        , Style.style (Headings H2) <| headingStyle 5
+        , Style.style (Headings H3) <| headingStyle 4
+        , Style.style (Headings H4) <| headingStyle 3
+        , Style.style (Headings H5) <| headingStyle 2
+        , Style.style (Headings H6) <| headingStyle 1
+        , Style.style CloseIcon
+            [ Style.cursor "pointer" ]
         ]
+
+
+headingStyle scale =
+    [ Color.text white
+    , Font.size (scaled scale)
+    , Font.typeface fontstack
+    , Font.weight 300
+    ]

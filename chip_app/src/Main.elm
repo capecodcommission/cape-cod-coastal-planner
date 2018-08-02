@@ -7,6 +7,7 @@ import Element.Attributes exposing (..)
 import Element.Input as Input exposing (..)
 import Animation
 import RemoteData exposing (RemoteData(..))
+import Json.Decode as D
 import Dict exposing (Dict)
 import Maybe
 import Types exposing (..)
@@ -29,6 +30,7 @@ type alias Model =
     , shorelineLocations : Dropdown ShorelineExtents ShorelineExtent
     , baselineInformation : BaselineInformation
     , baselineModal : GqlData (Maybe BaselineInfo)
+    , closePath : String
     }
 
 
@@ -53,13 +55,25 @@ defaultModel =
         Dict.empty
         -- Baseline Modal
         NotAsked
+        -- closePath
+        ""
 
 
-init : Navigation.Location -> ( Model, Cmd Msg )
-init location =
+init : D.Value -> Navigation.Location -> ( Model, Cmd Msg )
+init flags location =
     let
+        closePath =
+            case D.decodeValue (D.field "closePath" D.string) flags of
+                Ok path ->
+                    path
+
+                Err err ->
+                    ""
+
         ( updatedModel, routeFx ) =
-            update (UrlChange location) defaultModel
+            defaultModel
+                |> (\model -> { model | closePath = closePath })
+                |> update (UrlChange location)
 
         msgs =
             Cmd.batch
@@ -195,6 +209,9 @@ update msg model =
                 _ ->
                     ( { model | baselineModal = response }, Cmd.none )
 
+        CloseBaselineInfo ->
+            ( { model | baselineModal = NotAsked }, Cmd.none )
+
         Animate animMsg ->
             ( model, Cmd.none )
 
@@ -294,7 +311,7 @@ headerView model =
                     [ spacingXY 16 0 ]
                     [ Dropdown.view model.coastalHazards
                     , Dropdown.view model.shorelineLocations
-                    , BaselineInfo.view model.baselineModal
+                    , BaselineInfo.view model.closePath model.baselineModal
                     ]
                 ]
             ]
@@ -313,9 +330,9 @@ subscriptions model =
 ---- PROGRAM ----
 
 
-main : Program Never Model Msg
+main : Program D.Value Model Msg
 main =
-    Navigation.program UrlChange
+    Navigation.programWithFlags UrlChange
         { view = view
         , init = init
         , update = update

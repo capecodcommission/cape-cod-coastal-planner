@@ -15,4 +15,5 @@ type Msg
     | SelectLocation (Input.SelectMsg ShorelineExtent)
     | GetBaselineInfo
     | HandleBaselineInfoResponse (GqlData (Maybe BaselineInfo))
+    | CloseBaselineInfo
     | Animate Animation.Msg

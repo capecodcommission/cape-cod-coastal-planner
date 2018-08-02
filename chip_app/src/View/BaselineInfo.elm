@@ -18,11 +18,11 @@ type alias BaselineInformation =
     Dict String BaselineInfo
 
 
-view : GqlData (Maybe BaselineInfo) -> Element MainStyles Variations Msg
-view response =
+view : String -> GqlData (Maybe BaselineInfo) -> Element MainStyles Variations Msg
+view closePath response =
     case response of
         NotAsked ->
-            button (Header BaselineInfoBtn)
+            button (Baseline BaselineInfoBtn)
                 [ height (px 42)
                 , width (px 42)
                 , onClick GetBaselineInfo
@@ -32,7 +32,7 @@ view response =
                 Element.text "i"
 
         Loading ->
-            button (Header BaselineInfoBtn)
+            button (Baseline BaselineInfoBtn)
                 [ height (px 42)
                 , width (px 42)
                 , title "Loading baseline information for the selected Shoreline Location"
@@ -41,16 +41,59 @@ view response =
                 Element.text "i"
 
         Success (Just info) ->
-            button (Header BaselineInfoBtn)
-                [ height (px 42)
-                , width (px 42)
-                , title "Baseline information for the selected Shoreline Location"
+            column NoStyle
+                []
+                [ button (Baseline BaselineInfoBtn)
+                    [ height (px 42)
+                    , width (px 42)
+                    , title "Baseline information for the selected Shoreline Location"
+                    ]
+                  <|
+                    Element.text "i"
+                , modal (Baseline BaselineInfoModalBg)
+                    [ height fill
+                    , width fill
+                    , padding 10
+                    ]
+                  <|
+                    el (Baseline BaselineInfoModal)
+                        [ width (px 900)
+                        , height (px 700)
+                        , center
+                        , verticalCenter
+                        ]
+                    <|
+                        column NoStyle
+                            []
+                            [ header (Baseline BaselineInfoHeader)
+                                [ width fill, height (px 225) ]
+                              <|
+                                (column (Baseline BaselineInfoHeader)
+                                    [ alignBottom
+                                    , height fill
+                                    , width fill
+                                    , paddingXY 40 10
+                                    , spacingXY 0 5
+                                    ]
+                                    [ h6 (Headings H6) [ width fill ] <| Element.text "BASELINE LOCATION INFORMATION"
+                                    , h1 (Headings H3) [ width fill, height (px 65) ] <| Element.text info.name
+                                    ]
+                                    |> within
+                                        [ image CloseIcon
+                                            [ alignRight
+                                            , moveDown 15
+                                            , moveLeft 15
+                                            , title "Close baseline information"
+                                            , onClick CloseBaselineInfo
+                                            ]
+                                            { src = closePath, caption = "Close Modal" }
+                                        ]
+                                )
+                            ]
                 ]
-            <|
-                Element.text "i"
 
         Success Nothing ->
-            button (Header BaselineInfoBtn)
+            button (Baseline BaselineInfoBtn)
                 [ height (px 42)
                 , width (px 42)
                 , title "Baseline information for the selected Shoreline Location"
@@ -59,7 +102,7 @@ view response =
                 Element.text "i"
 
         Failure err ->
-            button (Header BaselineInfoBtn)
+            button (Baseline BaselineInfoBtn)
                 [ height (px 42)
                 , width (px 42)
                 , title "Baseline information for the selected Shoreline Location"
