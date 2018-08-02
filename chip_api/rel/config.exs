@@ -30,7 +30,6 @@ environment :dev do
   # dev mode.
   set dev_mode: true
   set include_erts: false
-  set vm_args: "rel/vm.args"
   set cookie: "${COOKIE}"
 end
 
