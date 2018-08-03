@@ -44,7 +44,7 @@
 if not defined SERVICE_POSTFIX (
   @set lservice_name=!rel_name!_!rel_vsn!
 ) else (
-  @set lservice_name=!rel_name!_!rel_vsn!_!SERVICE_POSTFIX!
+  @set lservice_name=!rel_name!_!SERVICE_POSTFIX!
 )
 @endlocal && @set service_name=%lservice_name%
 
