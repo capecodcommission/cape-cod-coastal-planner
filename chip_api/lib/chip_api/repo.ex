@@ -6,6 +6,16 @@ defmodule ChipApi.Repo do
   DATABASE_URL environment variable.
   """
   def init(_, opts) do
-    {:ok, Keyword.put(opts, :url, System.get_env("DATABASE_URL"))}
+
+    opts = 
+      opts
+      |> Keyword.put(:hostname, System.get_env("DB_HOST"))
+      |> Keyword.put(:username, System.get_env("DB_USERNAME"))
+      |> Keyword.put(:password, System.get_env("DB_PASSWORD"))
+      |> Keyword.put(:database, System.get_env("DB_DATABASE"))
+      |> Keyword.put(:url, System.get_env("DATABASE_URL"))
+
+    {:ok, opts}
+
   end
 end

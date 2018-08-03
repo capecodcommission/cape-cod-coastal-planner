@@ -64,6 +64,10 @@ config :logger, level: :info
 #     config :chip_api, ChipApiWeb.Endpoint, server: true
 #
 
+config :chip_api, ChipApi.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  pool_size: 15
+
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
 import_config "prod.secret.exs"
