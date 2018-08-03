@@ -66,7 +66,7 @@ config :logger, level: :info
 
 config :chip_api, ChipApi.Repo,
   adapter: Ecto.Adapters.Postgres,
-  pool_size: 15
+  pool_size: 15  
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.

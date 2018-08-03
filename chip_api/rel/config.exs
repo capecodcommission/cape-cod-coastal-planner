@@ -36,6 +36,7 @@ end
 environment :prod do
   set include_erts: true
   set include_src: false
+  set vm_args: "rel/vm.args"
   set cookie: "${COOKIE}"
 end
 
@@ -55,7 +56,9 @@ release :chip_api do
   ]
 
   set overlays: [
-    {:copy, "rel/commands/migrate.bat", "releases/<%= release_version %>/commands/migrate.bat"}
+    {:copy, "rel/commands/migrate.bat", "releases/<%= release_version %>/commands/migrate.bat"},
+    {:template, "rel/templates/boot_win.eex", "releases/<%= release_version %>/<%= release_name %>.bat"}
   ]
+
 end
 

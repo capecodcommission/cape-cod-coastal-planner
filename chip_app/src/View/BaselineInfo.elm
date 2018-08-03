@@ -26,7 +26,7 @@ view closePath response =
                 [ height (px 42)
                 , width (px 42)
                 , onClick GetBaselineInfo
-                , title "Baseline information for the selected Shoreline Location"
+                , title "Show baseline information for the selected Shoreline Location"
                 ]
             <|
                 Element.text "i"
