@@ -9,13 +9,24 @@ defmodule ChipApi.Repo do
 
     opts = 
       opts
-      |> Keyword.put(:hostname, System.get_env("DB_HOST"))
-      |> Keyword.put(:username, System.get_env("DB_USERNAME"))
-      |> Keyword.put(:password, System.get_env("DB_PASSWORD"))
-      |> Keyword.put(:database, System.get_env("DB_DATABASE"))
+      |> overwrite_opt(:hostname, "DB_HOST")
+      |> overwrite_opt(:username, "DB_USERNAME")
+      |> overwrite_opt(:password, "DB_PASSWORD")
+      |> overwrite_opt(:database, "DB_DATABASE")
       |> Keyword.put(:url, System.get_env("DATABASE_URL"))
 
     {:ok, opts}
 
   end
+
+  defp overwrite_opt(opts, atom, key) do
+    env_var = System.get_env(key)
+
+    if env_var != nil do
+      opts = Keyword.put(opts, atom, env_var)
+    else
+      opts
+    end
+  end
+
 end
