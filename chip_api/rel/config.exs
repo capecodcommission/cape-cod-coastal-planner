@@ -52,11 +52,13 @@ release :chip_api do
   ]
   # you can run `bin/chip_api.bat migrate` on a server w/ release to run migrations and seeds
   set commands: [
-    "migrate": "rel/commands/migrate.bat"
+    "migrate": "rel/commands/migrate.bat",
+    "seed": "rel/commands/seed.bat"
   ]
 
   set overlays: [
     {:copy, "rel/commands/migrate.bat", "releases/<%= release_version %>/commands/migrate.bat"},
+    {:copy, "rel/commands/seed.bat", "releases/<%= release_version %>/commands/seed.bat"},
     {:template, "rel/templates/boot_win.eex", "releases/<%= release_version %>/<%= release_name %>.bat"}
   ]
 
