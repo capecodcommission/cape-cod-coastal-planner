@@ -53,6 +53,7 @@ defmodule ChipApi.Mixfile do
       {:absinthe_plug, "~> 1.4.5"},
       {:absinthe_phoenix, "~> 1.4.2"},
       {:unsafe, "~> 1.0"},
+      {:zarex, "~> 0.4"},
       {:excoveralls, "~> 0.9.1", only: :test},
       {:distillery, "~> 1.5.3", runtime: false}
     ]

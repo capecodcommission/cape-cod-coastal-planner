@@ -60,6 +60,11 @@ defmodule ChipApiWeb.Schema.LocationTypes do
         @desc "The percentage of impervious surface area"
         field :imperv_percent, non_null(:decimal)
 
+        @desc "The server path to an image of the shoreline location"
+        field :image_path, :string do
+            resolve &Resolvers.Locations.image_path/3
+        end
+
     end
 
 end

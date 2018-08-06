@@ -53,12 +53,13 @@ view closePath response =
                 , modal (Baseline BaselineInfoModalBg)
                     [ height fill
                     , width fill
-                    , padding 10
+                    , padding 90
                     ]
                   <|
                     el (Baseline BaselineInfoModal)
                         [ width (px 900)
-                        , height (px 700)
+                        , maxHeight (px 1200)
+                        , minHeight (px 900)
                         , center
                         , verticalCenter
                         ]
@@ -76,7 +77,7 @@ view closePath response =
                                     , spacingXY 0 5
                                     ]
                                     [ h6 (Headings H6) [ width fill ] <| Element.text "BASELINE LOCATION INFORMATION"
-                                    , h1 (Headings H3) [ width fill, height (px 65) ] <| Element.text info.name
+                                    , h3 (Headings H3) [ width fill, height (px 65) ] <| Element.text info.name
                                     ]
                                     |> within
                                         [ image CloseIcon
@@ -89,6 +90,29 @@ view closePath response =
                                             { src = closePath, caption = "Close Modal" }
                                         ]
                                 )
+                            , row NoStyle
+                                [ padding 32, spacing 32 ]
+                                [ (case info.imagePath of
+                                    Just path ->
+                                        column NoStyle
+                                            []
+                                            [ decorativeImage NoStyle
+                                                [ width fill ]
+                                                { src = path }
+                                            ]
+
+                                    Nothing ->
+                                        Element.empty
+                                  )
+                                , column (Baseline BaselineInfoText)
+                                    [ width (percent 50), spacingXY 0 16 ]
+                                    [ Element.text <| "Length of shoreline: " ++ formatDecimal 4 info.lengthMiles ++ " mi."
+                                    , Element.text <| "Impervious surface area: " ++ formatDecimal 4 info.impervPercent ++ " %."
+                                    ]
+                                ]
+                            , column NoStyle
+                                [ padding 32, spacing 32 ]
+                                []
                             ]
                 ]
 

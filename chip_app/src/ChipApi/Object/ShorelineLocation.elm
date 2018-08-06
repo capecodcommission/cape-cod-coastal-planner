@@ -39,6 +39,13 @@ id =
     Object.fieldDecoder "id" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.Id)
 
 
+{-| The server path to an image of the shoreline location
+-}
+imagePath : Field (Maybe String) ChipApi.Object.ShorelineLocation
+imagePath =
+    Object.fieldDecoder "imagePath" [] (Decode.string |> Decode.nullable)
+
+
 {-| The percentage of impervious surface area
 -}
 impervPercent : Field ChipApi.Scalar.Decimal ChipApi.Object.ShorelineLocation

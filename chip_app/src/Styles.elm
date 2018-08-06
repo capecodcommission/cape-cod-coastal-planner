@@ -61,6 +61,7 @@ type BaselineStyles
     | BaselineInfoModalBg
     | BaselineInfoModal
     | BaselineInfoHeader
+    | BaselineInfoText
 
 
 type Variations
@@ -171,8 +172,9 @@ stylesheet =
         , Style.style (Baseline BaselineInfoModalBg)
             [ Color.background <| rgba 0 0 0 0.59 ]
         , Style.style (Baseline BaselineInfoModal)
-            [ Color.background white
+            [ Color.background <| rgba 0 0 0 0.7
             , Border.rounded 4
+            , Font.lineHeight 1.29
             ]
         , Style.style (Baseline BaselineInfoHeader)
             [ Color.background palette.chambray
@@ -180,6 +182,10 @@ stylesheet =
             , Font.typeface fontstack
             , Border.roundTopLeft 4
             , Border.roundTopRight 4
+            ]
+        , Style.style (Baseline BaselineInfoText)
+            [ Color.text white
+            , Font.typeface fontstack
             ]
         , Style.style (Headings H1) <| headingStyle 6
         , Style.style (Headings H2) <| headingStyle 5

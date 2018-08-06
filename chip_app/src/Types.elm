@@ -54,4 +54,5 @@ type alias BaselineInfo =
     , name : String
     , lengthMiles : Scalar.Decimal
     , impervPercent : Scalar.Decimal
+    , imagePath : Maybe String
     }

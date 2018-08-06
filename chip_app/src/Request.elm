@@ -87,6 +87,7 @@ baselineInfo =
         |> with SL.name
         |> with SL.lengthMiles
         |> with SL.impervPercent
+        |> with SL.imagePath
 
 
 getBaselineInfo : Scalar.Id -> Cmd Msg

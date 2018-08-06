@@ -7,6 +7,7 @@ import Element exposing (Attribute)
 import Element.Attributes exposing (..)
 import Styles exposing (..)
 import Message exposing (..)
+import ChipApi.Scalar as Scalar
 
 
 parseErrors : Graphqelm.Http.Error a -> List ( String, String )
@@ -50,3 +51,31 @@ parseGraphqlErrors errors =
 title : String -> Attribute Variations Msg
 title t =
     attribute "title" t
+
+
+formatDecimal : Int -> Scalar.Decimal -> String
+formatDecimal precision decimal =
+    decimal
+        |> parseDecimal precision
+        |> Result.map toString
+        |> Result.toMaybe
+        |> Maybe.withDefault "Err!"
+
+
+parseDecimal : Int -> Scalar.Decimal -> Result String Float
+parseDecimal precision (Scalar.Decimal decimal) =
+    let
+        multiplier =
+            List.repeat precision 10
+                |> List.foldr (*) 1
+    in
+        decimal
+            |> String.toFloat
+            |> Result.map
+                (\num ->
+                    num
+                        * multiplier
+                        |> round
+                        |> toFloat
+                        |> flip (/) multiplier
+                )
