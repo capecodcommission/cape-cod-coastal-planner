@@ -4,10 +4,7 @@ import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick)
-import Element.Input as Input exposing (..)
 import RemoteData exposing (RemoteData(..))
-import Graphqelm.Http exposing (Error(..))
-import String.Extra as SEx
 import Message exposing (..)
 import Types exposing (..)
 import Styles exposing (..)
@@ -18,9 +15,9 @@ type alias BaselineInformation =
     Dict String BaselineInfo
 
 
-view : String -> GqlData (Maybe BaselineInfo) -> Element MainStyles Variations Msg
-view closePath response =
-    case response of
+view : { config | closePath : String, baselineModal : GqlData (Maybe BaselineInfo) } -> Element MainStyles Variations Msg
+view config =
+    case config.baselineModal of
         NotAsked ->
             button (Baseline BaselineInfoBtn)
                 [ height (px 42)
@@ -59,60 +56,15 @@ view closePath response =
                     el (Baseline BaselineInfoModal)
                         [ width (px 900)
                         , maxHeight (px 1200)
-                        , minHeight (px 900)
+                        , minHeight (px 780)
                         , center
                         , verticalCenter
                         ]
                     <|
                         column NoStyle
                             []
-                            [ header (Baseline BaselineInfoHeader)
-                                [ width fill, height (px 225) ]
-                              <|
-                                (column (Baseline BaselineInfoHeader)
-                                    [ alignBottom
-                                    , height fill
-                                    , width fill
-                                    , paddingXY 40 10
-                                    , spacingXY 0 5
-                                    ]
-                                    [ h6 (Headings H6) [ width fill ] <| Element.text "BASELINE LOCATION INFORMATION"
-                                    , h3 (Headings H3) [ width fill, height (px 65) ] <| Element.text info.name
-                                    ]
-                                    |> within
-                                        [ image CloseIcon
-                                            [ alignRight
-                                            , moveDown 15
-                                            , moveLeft 15
-                                            , title "Close baseline information"
-                                            , onClick CloseBaselineInfo
-                                            ]
-                                            { src = closePath, caption = "Close Modal" }
-                                        ]
-                                )
-                            , row NoStyle
-                                [ padding 32, spacing 32 ]
-                                [ (case info.imagePath of
-                                    Just path ->
-                                        column NoStyle
-                                            []
-                                            [ decorativeImage NoStyle
-                                                [ width fill ]
-                                                { src = path }
-                                            ]
-
-                                    Nothing ->
-                                        Element.empty
-                                  )
-                                , column (Baseline BaselineInfoText)
-                                    [ width (percent 50), spacingXY 0 16 ]
-                                    [ Element.text <| "Length of shoreline: " ++ formatDecimal 4 info.lengthMiles ++ " mi."
-                                    , Element.text <| "Impervious surface area: " ++ formatDecimal 4 info.impervPercent ++ " %."
-                                    ]
-                                ]
-                            , column NoStyle
-                                [ padding 32, spacing 32 ]
-                                []
+                            [ headerView config.closePath info
+                            , mainContentView info
                             ]
                 ]
 
@@ -133,3 +85,75 @@ view closePath response =
                 ]
             <|
                 Element.text "i"
+
+
+headerView : String -> BaselineInfo -> Element MainStyles Variations Msg
+headerView closePath info =
+    header (Baseline BaselineInfoHeader)
+        [ width fill, height (px 225) ]
+    <|
+        (column (Baseline BaselineInfoHeader)
+            [ alignBottom
+            , height fill
+            , width fill
+            , paddingXY 40 10
+            , spacingXY 0 5
+            ]
+            [ h6 (Headings H6) [ width fill ] <| Element.text "BASELINE LOCATION INFORMATION"
+            , h3 (Headings H3) [ width fill, height (px 65) ] <| Element.text info.name
+            ]
+            |> within
+                [ image CloseIcon
+                    [ alignRight
+                    , moveDown 15
+                    , moveLeft 15
+                    , title "Close baseline information"
+                    , onClick CloseBaselineInfo
+                    ]
+                    { src = closePath, caption = "Close Modal" }
+                ]
+        )
+
+
+mainContentView : BaselineInfo -> Element MainStyles Variations Msg
+mainContentView info =
+    column NoStyle
+        []
+        [ row NoStyle
+            [ padding 32, spacing 32 ]
+            [ (case info.imagePath of
+                Just path ->
+                    column NoStyle
+                        []
+                        [ decorativeImage NoStyle
+                            [ width fill ]
+                            { src = path }
+                        ]
+
+                Nothing ->
+                    Element.empty
+              )
+            , column (Baseline BaselineInfoText)
+                [ width (percent 50), spacingXY 0 10 ]
+                [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "GENERAL INFO"
+                , infoRowView
+                    "Length of shoreline:"
+                    (formatDecimal 4 info.lengthMiles ++ " mi.")
+                , infoRowView
+                    "Impervious surface area:"
+                    (formatDecimal 4 info.impervPercent ++ " %.")
+                ]
+            ]
+        , column NoStyle
+            [ padding 32, spacing 32 ]
+            []
+        ]
+
+
+infoRowView : String -> String -> Element MainStyles Variations Msg
+infoRowView label value =
+    row NoStyle
+        [ width fill ]
+        [ el FontLeft [ width fill ] <| Element.text label
+        , el FontRight [ width fill ] <| Element.text value
+        ]

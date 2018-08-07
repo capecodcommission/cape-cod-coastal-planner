@@ -311,7 +311,7 @@ headerView model =
                     [ spacingXY 16 0 ]
                     [ Dropdown.view model.coastalHazards
                     , Dropdown.view model.shorelineLocations
-                    , BaselineInfo.view model.closePath model.baselineModal
+                    , BaselineInfo.view model
                     ]
                 ]
             ]

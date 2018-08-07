@@ -36,6 +36,8 @@ type MainStyles
     | Baseline BaselineStyles
     | Headings HeadingStyles
     | CloseIcon
+    | FontLeft
+    | FontRight
 
 
 type HeadingStyles
@@ -72,6 +74,7 @@ type Variations
     | LastMenuItem
     | SelectMenuOpen
     | SelectMenuError
+    | Secondary
 
 
 choiceStateToVariation : ChoiceState -> Variations
@@ -185,6 +188,7 @@ stylesheet =
             ]
         , Style.style (Baseline BaselineInfoText)
             [ Color.text white
+            , Font.size (scaled 1)
             , Font.typeface fontstack
             ]
         , Style.style (Headings H1) <| headingStyle 6
@@ -195,6 +199,8 @@ stylesheet =
         , Style.style (Headings H6) <| headingStyle 1
         , Style.style CloseIcon
             [ Style.cursor "pointer" ]
+        , Style.style FontLeft [ Font.alignLeft ]
+        , Style.style FontRight [ Font.alignRight ]
         ]
 
 
@@ -203,4 +209,8 @@ headingStyle scale =
     , Font.size (scaled scale)
     , Font.typeface fontstack
     , Font.weight 300
+    , variation Secondary
+        [ Color.text palette.havelockBlue
+        , Font.weight 400
+        ]
     ]
