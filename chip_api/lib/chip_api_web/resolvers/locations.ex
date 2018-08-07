@@ -19,19 +19,21 @@ defmodule ChipApiWeb.Resolvers.Locations do
     end
 
     
-    @root_dir "/priv/static/"
-    @public_path "images/locations/"
+    @public_path "/images/locations/"
     @valid_extensions ~w(.jpg .JPG .jpeg .png .gif)
     def image_path(shoreline_location, _args, _) do
+        priv_dir = :code.priv_dir(:chip_api)
+        static_dir = Path.join priv_dir, "static"
+
         file_name = location_to_file_name(shoreline_location)
-        file_root = @root_dir <> @public_path <> file_name
+        file_root = static_dir <> @public_path <> file_name
         
         case Enum.find @valid_extensions, &(image_exists?(file_root, &1)) do
             extension when is_binary(extension) -> 
                 {:ok, @public_path <> file_name <> extension}
 
             _ ->
-                {:ok, Path.relative(@public_path <> file_name)}
+                {:ok, nil}
         end
     end
 
@@ -44,7 +46,6 @@ defmodule ChipApiWeb.Resolvers.Locations do
     
     def image_exists?(file_root, extension) do
         (file_root <> extension)
-        |> Path.relative()
         |> File.exists?
     end
 
