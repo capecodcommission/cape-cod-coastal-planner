@@ -31,7 +31,7 @@ defmodule ChipApiWeb.Resolvers.Locations do
                 {:ok, @public_path <> file_name <> extension}
 
             _ ->
-                {:ok, nil}
+                {:ok, @public_path <> file_name}
         end
     end
 
