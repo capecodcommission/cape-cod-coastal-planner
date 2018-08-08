@@ -136,12 +136,12 @@ mainContentView info =
             , column (Baseline BaselineInfoText)
                 [ width (percent 50), spacingXY 0 10 ]
                 [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "GENERAL INFO"
-                , infoRowView
+                , infoRowView []
                     "Length of shoreline:"
-                    (formatDecimal 4 info.lengthMiles ++ " mi.")
-                , infoRowView
+                    (formatDecimal 4 info.lengthMiles ++ " miles")
+                , infoRowView [ alignRight ]
                     "Impervious surface area:"
-                    (formatDecimal 4 info.impervPercent ++ " %.")
+                    (formatDecimal 4 info.impervPercent ++ " %")
                 ]
             ]
         , column NoStyle
@@ -150,10 +150,10 @@ mainContentView info =
         ]
 
 
-infoRowView : String -> String -> Element MainStyles Variations Msg
-infoRowView label value =
+infoRowView : List (Element.Attribute Variations Msg) -> String -> String -> Element MainStyles Variations Msg
+infoRowView attrs label value =
     row NoStyle
-        [ width fill ]
+        (width fill :: attrs)
         [ el FontLeft [ width fill ] <| Element.text label
         , el FontRight [ width fill ] <| Element.text value
         ]
