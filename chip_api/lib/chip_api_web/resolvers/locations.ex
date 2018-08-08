@@ -27,7 +27,7 @@ defmodule ChipApiWeb.Resolvers.Locations do
 
         file_name = location_to_file_name(shoreline_location)
         file_root = static_dir <> @public_path <> file_name
-        
+
         case Enum.find @valid_extensions, &(image_exists?(file_root, &1)) do
             extension when is_binary(extension) -> 
                 {:ok, @public_path <> file_name <> extension}

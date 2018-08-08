@@ -180,8 +180,18 @@ CREATE TABLE public.littoral_cells (
     max_y double precision,
     inserted_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    length_miles numeric,
-    imperv_percent numeric
+    critical_facilities_count integer NOT NULL,
+    coastal_structures_count integer NOT NULL,
+    working_harbor boolean NOT NULL,
+    public_buildings_count integer NOT NULL,
+    salt_marsh_acres numeric NOT NULL,
+    eelgrass_acres numeric NOT NULL,
+    public_beach_count integer NOT NULL,
+    recreation_open_space_acres numeric NOT NULL,
+    town_ways_to_water integer NOT NULL,
+    total_assessed_value numeric NOT NULL,
+    length_miles numeric NOT NULL,
+    imperv_percent numeric NOT NULL
 );
 
 
@@ -414,5 +424,5 @@ ALTER TABLE ONLY public.strategies_scales
 -- PostgreSQL database dump complete
 --
 
-INSERT INTO public."schema_migrations" (version) VALUES (20180627200200), (20180627200743), (20180627201108), (20180627203452), (20180627211906), (20180627212047), (20180627212147), (20180703202705), (20180703204221), (20180703204303), (20180703205219), (20180705210332), (20180718180304), (20180726173204), (20180727193446), (20180727194146);
+INSERT INTO public."schema_migrations" (version) VALUES (20180627200200), (20180627200743), (20180627201108), (20180627203452), (20180627211906), (20180627212047), (20180627212147), (20180703202705), (20180703204221), (20180703204303), (20180703205219), (20180705210332), (20180718180304), (20180726173204), (20180727193446), (20180727194146), (20180807203920), (20180807203940), (20180807203956), (20180807204011), (20180807204026), (20180807204040), (20180807204054), (20180807204115), (20180807204132), (20180807204145), (20180808140524), (20180808140539);
 

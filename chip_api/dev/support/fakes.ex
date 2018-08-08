@@ -2,7 +2,7 @@ defmodule ChipApi.Fakes do
     alias ChipApi.Repo
     alias ChipApi.Adaptation.{Strategy, Category, Hazard, Scale}
     alias ChipApi.Geospatial.LittoralCell
-    alias Decimal
+    alias Decimal, as: D
 
     @cat1 %Category{name: "cat1"}
     @cat2 %Category{name: "cat2"}
@@ -13,8 +13,44 @@ defmodule ChipApi.Fakes do
     @scale3 %Scale{name: "scale3", impact: 3, display_order: 2}
     @strat1 %Strategy{name: "strat1", description: "desc1", is_active: true, display_order: 1}
     @strat2 %Strategy{name: "strat2", description: "desc2", is_active: false, display_order: 2}
-    @cell1 %LittoralCell{name: "cell1", min_x: -70.0, min_y: 41.0, max_x: -69.0, max_y: 42.0, length_miles: Decimal.new("3.3"), imperv_percent: Decimal.new("3.3")}
-    @cell2 %LittoralCell{name: "cell2", min_x: -70.0, min_y: 41.0, max_x: -69.0, max_y: 42.0, length_miles: Decimal.new("3.3"), imperv_percent: Decimal.new("3.3")}
+    @cell1 %LittoralCell{
+        name: "cell1", 
+        min_x: -70.0, 
+        min_y: 41.0, 
+        max_x: -69.0, 
+        max_y: 42.0, 
+        length_miles: D.new("3.3"), 
+        imperv_percent: D.new("3.3"),
+        critical_facilities_count: 1,
+        coastal_structures_count: 1,
+        working_harbor: false,
+        public_buildings_count: 1,
+        salt_marsh_acres: D.new("10.01"),
+        eelgrass_acres: D.new("1.1"),
+        public_beach_count: 1,
+        recreation_open_space_acres: D.new("10.01"),
+        town_ways_to_water: 1,
+        total_assessed_value: D.new("1000.00")
+    }
+    @cell2 %LittoralCell{
+        name: "cell2", 
+        min_x: -70.0, 
+        min_y: 41.0, 
+        max_x: -69.0, 
+        max_y: 42.0, 
+        length_miles: D.new("3.3"), 
+        imperv_percent: D.new("3.3"),
+        critical_facilities_count: 1,
+        coastal_structures_count: 1,
+        working_harbor: true,
+        public_buildings_count: 1,
+        salt_marsh_acres: D.new("10.01"),
+        eelgrass_acres: D.new("1.1"),
+        public_beach_count: 1,
+        recreation_open_space_acres: D.new("10.01"),
+        town_ways_to_water: 1,
+        total_assessed_value: D.new("1000.00")
+    }
 
 
     def run_categories do
