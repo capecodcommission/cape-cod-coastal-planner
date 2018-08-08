@@ -194,7 +194,12 @@ update msg model =
                     ( { model | baselineModal = Success (Just info) }, Cmd.none )
 
                 Nothing ->
-                    ( { model | baselineModal = Loading }, getRemoteBaselineInfo model )
+                    case getRemoteBaselineInfo model of
+                        Just command ->
+                            ( { model | baselineModal = Loading }, command )
+
+                        Nothing ->
+                            ( model, Cmd.none )
 
         HandleBaselineInfoResponse response ->
             case response of
@@ -231,12 +236,11 @@ cacheBaselineInfo (Scalar.Id id) info dict =
     Dict.insert id info dict
 
 
-getRemoteBaselineInfo : Model -> Cmd Msg
+getRemoteBaselineInfo : Model -> Maybe (Cmd Msg)
 getRemoteBaselineInfo { shorelineLocations } =
     shorelineLocations
         |> getSelectedLocationId
         |> Maybe.map (\id -> getBaselineInfo id)
-        |> Maybe.withDefault Cmd.none
 
 
 getSelectedLocationId : Dropdown ShorelineExtents ShorelineExtent -> Maybe Scalar.Id
