@@ -1,7 +1,6 @@
 defmodule ChipApi.Geospatial.LittoralCell.DeleteLittoralCellTest do
     use ChipApi.DataCase, async: true
     alias ChipApi.Geospatial.{ShorelineLocations, LittoralCell}
-    alias Decimal, as: D
 
     @moduletag :geospatial_case
     @moduletag :littoral_cell_case

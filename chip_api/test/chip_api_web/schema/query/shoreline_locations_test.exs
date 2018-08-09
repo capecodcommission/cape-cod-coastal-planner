@@ -60,9 +60,10 @@ defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
         response = get build_conn(), "/api", query: @query
         assert %{
             "data" => %{
-                "shorelineLocations" => [ %{"extent" => expected_extent } | _]
+                "shorelineLocations" => [ %{"extent" => extent } | _]
             }
         } = json_response(response, 200)
+        assert expected_extent == extent
     end
 
     @query """
@@ -73,13 +74,14 @@ defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
     }
     """
     test "shorelineLocations field returns locations with the shoreline length in miles", %{data: data} do
-        len = Decimal.to_string data.cell1.length_miles
+        expected_length = Decimal.to_string data.cell1.length_miles
         response = get build_conn(), "/api", query: @query
         assert %{
             "data" => %{
-                "shorelineLocations" => [ %{"lengthMiles" => len} | _]
+                "shorelineLocations" => [ %{"lengthMiles" => length} | _]
             }
         } = json_response(response, 200)
+        assert expected_length == length
     end
 
     @query """
@@ -90,13 +92,14 @@ defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
     }
     """
     test "shorelineLocations field returns locations with the percentage of impervious surface area", %{data: data} do
-        perc = Decimal.to_string data.cell1.imperv_percent
+        expected_percent = Decimal.to_string data.cell1.imperv_percent
         response = get build_conn(), "/api", query: @query
         assert %{
             "data" => %{
-                "shorelineLocations" => [ %{"impervPercent" => perc} | _]
+                "shorelineLocations" => [ %{"impervPercent" => percent} | _]
             }
         } = json_response(response, 200)
+        assert expected_percent == percent
     end
     
     describe "filtering shorelineLocations by name" do

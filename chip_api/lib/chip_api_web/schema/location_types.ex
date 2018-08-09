@@ -60,6 +60,36 @@ defmodule ChipApiWeb.Schema.LocationTypes do
         @desc "The percentage of impervious surface area"
         field :imperv_percent, non_null(:decimal)
 
+        @desc "The number of critical facilities in the area"
+        field :critical_facilities_count, non_null(:integer)
+
+        @desc "The number of coastal structures in the area"
+        field :coastal_structures_count, non_null(:integer)
+
+        @desc "Whether or not the location has a working harbor"
+        field :working_harbor, non_null(:boolean)
+
+        @desc "The number of public buildings in the area"
+        field :public_buildings_count, non_null(:integer)
+
+        @desc "The total acreage of salt marsh in the area"
+        field :salt_marsh_acres, non_null(:decimal)
+
+        @desc "The total acreage of eelgrass in the area"
+        field :eelgrass_acres, non_null(:decimal)
+
+        @desc "The number of public beaches in the area"
+        field :public_beach_count, non_null(:integer)
+
+        @desc "The total acreage of recreational open space in the area"
+        field :recreation_open_space_acres, non_null(:decimal)
+
+        @desc "The number of town ways to water in the area"
+        field :town_ways_to_water, non_null(:integer)
+
+        @desc "The total assessed value of property in the area"
+        field :total_assessed_value, non_null(:decimal)
+
         @desc "The server path to an image of the shoreline location"
         field :image_path, :string do
             resolve &Resolvers.Locations.image_path/3

@@ -1,6 +1,6 @@
 defmodule ChipApi.Geospatial.LittoralCell.ReadLittoralCellTest do
     use ChipApi.DataCase, async: true
-    alias ChipApi.Geospatial.{ShorelineLocations, LittoralCell}
+    alias ChipApi.Geospatial.{ShorelineLocations}
 
     @moduletag :geospatial_case
     @moduletag :littoral_cell_case
@@ -37,7 +37,7 @@ defmodule ChipApi.Geospatial.LittoralCell.ReadLittoralCellTest do
         end
 
         @attrs %{filter: %{name: "cell12"}}
-        test "filtered on name returns no littoral cells when none found", %{data: data} do
+        test "filtered on name returns no littoral cells when none found", %{data: _data} do
             cells = for l <- ShorelineLocations.list_littoral_cells(@attrs), do: l.name
             assert [] == cells
         end

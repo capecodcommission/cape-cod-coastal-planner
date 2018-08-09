@@ -44,7 +44,7 @@ defmodule ChipApiWeb.Resolvers.Locations do
             |> String.replace(" ", "_")
     end
     
-    def image_exists?(file_root, extension) do
+    defp image_exists?(file_root, extension) do
         (file_root <> extension)
         |> File.exists?
     end
