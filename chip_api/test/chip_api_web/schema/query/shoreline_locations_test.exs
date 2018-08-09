@@ -101,6 +101,186 @@ defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
         } = json_response(response, 200)
         assert expected_percent == percent
     end
+
+    @query """
+    {
+        shorelineLocations {
+            criticalFacilitiesCount
+        }
+    }
+    """
+    test "shorelineLocations field returns locations with the count of critical facilities", %{data: data} do
+        expected_count = data.cell1.critical_facilities_count
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"criticalFacilitiesCount" => count} | _]
+            }
+        } = json_response(response, 200)
+        assert expected_count == count
+    end
+
+    @query """
+    {
+        shorelineLocations {
+            coastalStructuresCount
+        }
+    }
+    """
+    test "shorelineLocations field returns locations with the count of coastal structures", %{data: data} do
+        expected_count = data.cell1.coastal_structures_count
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"coastalStructuresCount" => count} | _]
+            }
+        } = json_response(response, 200)
+        assert expected_count == count
+    end
+
+    @query """
+    {
+        shorelineLocations {
+            workingHarbor
+        }
+    }
+    """
+    test "shorelineLocations field returns locations with whether or not there is a working harbor", %{data: data} do
+        expected_has_harbor? = data.cell1.working_harbor
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"workingHarbor" => has_harbor?} | _]
+            }
+        } = json_response(response, 200)
+        assert expected_has_harbor? == has_harbor?
+    end
+
+    @query """
+    {
+        shorelineLocations {
+            publicBuildingsCount
+        }
+    }
+    """
+    test "shorelineLocations field returns locations with count of public buildings", %{data: data} do
+        expected_count = data.cell1.public_buildings_count
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"publicBuildingsCount" => count} | _]
+            }
+        } = json_response(response, 200)
+        assert expected_count == count
+    end
+
+    @query """
+    {
+        shorelineLocations {
+            saltMarshAcres
+        }
+    }
+    """
+    test "shorelineLocations field returns locations with acreage of salt marsh", %{data: data} do
+        expected_acres = Decimal.to_string data.cell1.salt_marsh_acres
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"saltMarshAcres" => acres} | _]
+            }
+        } = json_response(response, 200)
+        assert expected_acres == acres
+    end
+
+    @query """
+    {
+        shorelineLocations {
+            eelgrassAcres
+        }
+    }
+    """
+    test "shorelineLocations field returns locations with acreage of eelgrass", %{data: data} do
+        expected_acres = Decimal.to_string data.cell1.eelgrass_acres
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"eelgrassAcres" => acres} | _]
+            }
+        } = json_response(response, 200)
+        assert expected_acres == acres
+    end
+
+    @query """
+    {
+        shorelineLocations {
+            publicBeachCount
+        }
+    }
+    """
+    test "shorelineLocations field returns locations with count of public beaches", %{data: data} do
+        expected_count = data.cell1.public_beach_count
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"publicBeachCount" => count} | _]
+            }
+        } = json_response(response, 200)
+        assert expected_count == count
+    end
+
+    @query """
+    {
+        shorelineLocations {
+            recreationOpenSpaceAcres
+        }
+    }
+    """
+    test "shorelineLocations field returns locations with acreage of recreational open space", %{data: data} do
+        expected_acres = Decimal.to_string data.cell1.recreation_open_space_acres
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"recreationOpenSpaceAcres" => acres} | _]
+            }
+        } = json_response(response, 200)
+        assert expected_acres == acres
+    end
+
+    @query """
+    {
+        shorelineLocations {
+            townWaysToWater
+        }
+    }
+    """
+    test "shorelineLocations field returns locations with count of town ways to water", %{data: data} do
+        expected_count = data.cell1.town_ways_to_water
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"townWaysToWater" => count} | _]
+            }
+        } = json_response(response, 200)
+        assert expected_count == count
+    end
+
+    @query """
+    {
+        shorelineLocations {
+            totalAssessedValue
+        }
+    }
+    """
+    test "shorelineLocations field returns locations with total assessed value", %{data: data} do
+        expected_value = Decimal.to_string data.cell1.total_assessed_value
+        response = get build_conn(), "/api", query: @query
+        assert %{
+            "data" => %{
+                "shorelineLocations" => [ %{"totalAssessedValue" => value} | _]
+            }
+        } = json_response(response, 200)
+        assert expected_value == value
+    end
     
     describe "filtering shorelineLocations by name" do
         @query """
