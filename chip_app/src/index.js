@@ -8,13 +8,15 @@ import registerServiceWorker from './registerServiceWorker';
 
 window.chip = window.chip || {};
 
-console.log(closePath);
-
 document.addEventListener("DOMContentLoaded", () => {
     chip.map = new MapHandler();
     
     chip.app = Main.fullscreen({
-        "closePath": closePath
+        "closePath": closePath,
+        "size": {
+            width: window.innerWidth,
+            height: window.innerHeight
+        }
     });
 
     // subscribe to error reports coming from Elm

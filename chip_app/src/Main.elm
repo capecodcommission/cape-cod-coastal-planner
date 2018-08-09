@@ -6,8 +6,9 @@ import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Input as Input exposing (..)
 import Animation
+import Window
 import RemoteData exposing (RemoteData(..))
-import Json.Decode as D
+import Json.Decode as D exposing (..)
 import Dict exposing (Dict)
 import Maybe
 import Types exposing (..)
@@ -26,6 +27,7 @@ import Ports exposing (..)
 
 type alias Model =
     { urlState : Maybe Route
+    , device : Device
     , coastalHazards : Dropdown CoastalHazards CoastalHazard
     , shorelineLocations : Dropdown ShorelineExtents ShorelineExtent
     , baselineInformation : BaselineInformation
@@ -39,6 +41,15 @@ defaultModel =
     Model
         -- Initial Route State
         (Just Blank)
+        -- Default (no) device
+        { width = 0
+        , height = 0
+        , phone = False
+        , tablet = False
+        , desktop = False
+        , bigDesktop = False
+        , portrait = False
+        }
         -- Coastal Hazard Dropdown
         { data = RemoteData.Loading
         , menu = Input.dropMenu Nothing SelectHazard
@@ -59,33 +70,55 @@ defaultModel =
         ""
 
 
+type alias Flags =
+    { closePath : String
+    , size : Window.Size
+    }
+
+
+decodeWindowSize : Decoder Window.Size
+decodeWindowSize =
+    D.map2 Window.Size
+        (D.field "width" D.int)
+        (D.field "height" D.int)
+
+
+decodeFlags : Decoder Flags
+decodeFlags =
+    D.map2 Flags
+        (D.field "closePath" D.string)
+        (D.field "size" decodeWindowSize)
+
+
 init : D.Value -> Navigation.Location -> ( Model, Cmd Msg )
 init flags location =
-    let
-        closePath =
-            case D.decodeValue (D.field "closePath" D.string) flags of
-                Ok path ->
-                    path
+    case D.decodeValue decodeFlags flags of
+        Ok data ->
+            let
+                ( updatedModel, routeFx ) =
+                    defaultModel
+                        |> (\model ->
+                                { model
+                                    | closePath = data.closePath
+                                    , device = classifyDevice data.size
+                                }
+                           )
+                        |> update (UrlChange location)
 
-                Err err ->
-                    ""
+                msgs =
+                    Cmd.batch
+                        [ getCoastalHazards
+                        , getShorelineExtents
+                        , olCmd <| encodeOpenLayersCmd InitMap
+                        , routeFx
+                        ]
+            in
+                ( updatedModel
+                , msgs
+                )
 
-        ( updatedModel, routeFx ) =
-            defaultModel
-                |> (\model -> { model | closePath = closePath })
-                |> update (UrlChange location)
-
-        msgs =
-            Cmd.batch
-                [ getCoastalHazards
-                , getShorelineExtents
-                , olCmd <| encodeOpenLayersCmd InitMap
-                , routeFx
-                ]
-    in
-        ( updatedModel
-        , msgs
-        )
+        Err err ->
+            ( defaultModel, Cmd.none )
 
 
 
@@ -220,6 +253,11 @@ update msg model =
         Animate animMsg ->
             ( model, Cmd.none )
 
+        Resize size ->
+            ( { model | device = classifyDevice size }
+            , Cmd.none
+            )
+
 
 getCachedBaselineInfo : Model -> Maybe BaselineInfo
 getCachedBaselineInfo { shorelineLocations, baselineInformation } =
@@ -327,7 +365,10 @@ headerView model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Animation.subscription Animate []
+    Sub.batch
+        [ Animation.subscription Animate []
+        , Window.resizes Resize
+        ]
 
 
 

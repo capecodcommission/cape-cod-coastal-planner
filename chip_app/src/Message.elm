@@ -3,6 +3,7 @@ module Message exposing (..)
 import Navigation
 import Element.Input as Input
 import Animation
+import Window
 import Types exposing (..)
 
 
@@ -17,3 +18,4 @@ type Msg
     | HandleBaselineInfoResponse (GqlData (Maybe BaselineInfo))
     | CloseBaselineInfo
     | Animate Animation.Msg
+    | Resize Window.Size
