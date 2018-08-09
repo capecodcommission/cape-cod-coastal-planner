@@ -8,6 +8,8 @@ import Element.Attributes exposing (..)
 import Styles exposing (..)
 import Message exposing (..)
 import ChipApi.Scalar as Scalar
+import FormatNumber exposing (format)
+import FormatNumber.Locales exposing (usLocale)
 
 
 parseErrors : Graphqelm.Http.Error a -> List ( String, String )
@@ -53,11 +55,21 @@ title t =
     attribute "title" t
 
 
+formatBoolean : Bool -> String
+formatBoolean boolean =
+    case boolean of
+        True ->
+            "Yes"
+
+        False ->
+            "No"
+
+
 formatDecimal : Int -> Scalar.Decimal -> String
 formatDecimal precision decimal =
     decimal
         |> parseDecimal precision
-        |> Result.map toString
+        |> Result.map (format { usLocale | decimals = precision })
         |> Result.toMaybe
         |> Maybe.withDefault "Err!"
 

@@ -188,7 +188,7 @@ stylesheet =
             ]
         , Style.style (Baseline BaselineInfoText)
             [ Color.text white
-            , Font.size (scaled 1)
+            , Font.size 16
             , Font.typeface fontstack
             ]
         , Style.style (Headings H1) <| headingStyle 6

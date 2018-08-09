@@ -85,9 +85,19 @@ baselineInfo =
     SL.selection BaselineInfo
         |> with SL.id
         |> with SL.name
+        |> with SL.imagePath
         |> with SL.lengthMiles
         |> with SL.impervPercent
-        |> with SL.imagePath
+        |> with SL.criticalFacilitiesCount
+        |> with SL.coastalStructuresCount
+        |> with SL.workingHarbor
+        |> with SL.publicBuildingsCount
+        |> with SL.saltMarshAcres
+        |> with SL.eelgrassAcres
+        |> with SL.publicBeachCount
+        |> with SL.recreationOpenSpaceAcres
+        |> with SL.townWaysToWater
+        |> with SL.totalAssessedValue
 
 
 getBaselineInfo : Scalar.Id -> Cmd Msg

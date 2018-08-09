@@ -52,7 +52,17 @@ type alias ShorelineExtents =
 type alias BaselineInfo =
     { id : Scalar.Id
     , name : String
+    , imagePath : Maybe String
     , lengthMiles : Scalar.Decimal
     , impervPercent : Scalar.Decimal
-    , imagePath : Maybe String
+    , criticalFacilitiesCount : Int
+    , coastalStructuresCount : Int
+    , workingHarbor : Bool
+    , publicBuildingsCount : Int
+    , saltMarshAcres : Scalar.Decimal
+    , eelgrassAcres : Scalar.Decimal
+    , publicBeachCount : Int
+    , recreationOpenSpaceAcres : Scalar.Decimal
+    , townWaysToWater : Int
+    , totalAssessedValue : Scalar.Decimal
     }
