@@ -30,6 +30,7 @@ defmodule ChipApi.Geospatial.LittoralCell.CreateLittoralCellTest do
         town_ways_to_water: 5,
         total_assessed_value: D.new("66.66")
     }
+    
     describe "create_littoral_cell/1" do
         test "with good values creates a new littoral cell" do
             parent = self()
@@ -64,11 +65,15 @@ defmodule ChipApi.Geospatial.LittoralCell.CreateLittoralCellTest do
             errors = errors_on(changeset)
 
             assert 5 = errors |> Map.keys() |> length()
-            assert error_text = errors.name
-            assert error_text = errors.min_x
-            assert error_text = errors.min_y
-            assert error_text = errors.max_x
-            assert error_text = errors.max_y           
+            assert error_text in errors.name
+            assert error_text in errors.min_x
+            assert error_text in errors.min_y
+            assert error_text in errors.max_x
+            assert error_text in errors.max_y           
+        end
+
+        test "with bad value types returns errors and changeset" do
+            
         end
 
         test "name field with bad value types returns error and changeset" do
