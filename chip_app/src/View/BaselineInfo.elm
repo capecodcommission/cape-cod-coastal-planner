@@ -15,38 +15,36 @@ type alias BaselineInformation =
     Dict String BaselineInfo
 
 
-view : { config | closePath : String, baselineModal : GqlData (Maybe BaselineInfo) } -> Element MainStyles Variations Msg
+modalHeight : Device -> Float
+modalHeight device =
+    adjustOnHeight ( 580, 1000 ) device
+
+
+headerHeight : Device -> Float
+headerHeight device =
+    adjustOnHeight ( 165, 225 ) device
+
+
+mainHeight : Device -> Float
+mainHeight device =
+    (modalHeight device) - (headerHeight device)
+
+
+view : { config | device : Device, closePath : String, baselineModal : GqlData (Maybe BaselineInfo) } -> Element MainStyles Variations Msg
 view config =
     case config.baselineModal of
         NotAsked ->
-            button (Baseline BaselineInfoBtn)
-                [ height (px 42)
-                , width (px 42)
-                , onClick GetBaselineInfo
-                , title "Show baseline information for the selected Shoreline Location"
-                ]
-            <|
-                Element.text "i"
+            "Show baseline information for the selected Shoreline Location"
+                |> infoButtonView [ onClick GetBaselineInfo ]
 
         Loading ->
-            button (Baseline BaselineInfoBtn)
-                [ height (px 42)
-                , width (px 42)
-                , title "Loading baseline information for the selected Shoreline Location"
-                ]
-            <|
-                Element.text "i"
+            "Loading baseline information for the selected Shoreline Location"
+                |> infoButtonView []
 
         Success (Just info) ->
             column NoStyle
                 []
-                [ button (Baseline BaselineInfoBtn)
-                    [ height (px 42)
-                    , width (px 42)
-                    , title "Baseline information for the selected Shoreline Location"
-                    ]
-                  <|
-                    Element.text "i"
+                [ infoButtonView [] defaultButtonText
                 , modal (Baseline BaselineInfoModalBg)
                     [ height fill
                     , width fill
@@ -55,42 +53,29 @@ view config =
                   <|
                     el (Baseline BaselineInfoModal)
                         [ width (px 900)
-                        , maxHeight (px 900)
+                        , maxHeight (px <| modalHeight config.device)
                         , center
                         , verticalCenter
                         ]
                     <|
                         column NoStyle
                             []
-                            [ headerView config.closePath info
-                            , mainContentView info
+                            [ headerView config info
+                            , mainContentView config info
                             ]
                 ]
 
         Success Nothing ->
-            button (Baseline BaselineInfoBtn)
-                [ height (px 42)
-                , width (px 42)
-                , title "Baseline information for the selected Shoreline Location"
-                ]
-            <|
-                Element.text "i"
+            infoButtonView [] defaultButtonText
 
         Failure err ->
-            button (Baseline BaselineInfoBtn)
-                [ height (px 42)
-                , width (px 42)
-                , title "Baseline information for the selected Shoreline Location"
-                ]
-            <|
-                Element.text "i"
+            infoButtonView [] defaultButtonText
 
 
-headerView : String -> BaselineInfo -> Element MainStyles Variations Msg
-headerView closePath info =
+headerView : { config | closePath : String, device : Device } -> BaselineInfo -> Element MainStyles Variations Msg
+headerView { closePath, device } info =
     header (Baseline BaselineInfoHeader)
-        [ width fill, height (px 225) ]
-    <|
+        [ width fill, height (px <| headerHeight device) ]
         (column (Baseline BaselineInfoHeader)
             [ alignBottom
             , height fill
@@ -114,10 +99,10 @@ headerView closePath info =
         )
 
 
-mainContentView : BaselineInfo -> Element MainStyles Variations Msg
-mainContentView info =
+mainContentView : { config | device : Device } -> BaselineInfo -> Element MainStyles Variations Msg
+mainContentView { device } info =
     column NoStyle
-        [ maxHeight (px 615), scrollbars ]
+        [ scrollbars, id "hihihi", height (px <| mainHeight device) ]
         [ row NoStyle
             [ padding 32, spacing 32 ]
             [ column (Baseline BaselineInfoText)
@@ -205,3 +190,15 @@ infoRowView label value =
         [ el FontLeft [ width fill ] <| Element.text label
         , el FontRight [ width fill ] <| Element.text value
         ]
+
+
+defaultButtonText : String
+defaultButtonText =
+    "Baseline information for the selected Shoreline Location"
+
+
+infoButtonView : List (Attribute Variations Msg) -> String -> Element MainStyles Variations Msg
+infoButtonView attrs txt =
+    button (Baseline BaselineInfoBtn)
+        (height (px 42) :: width (px 42) :: title txt :: attrs)
+        (Element.text "i")

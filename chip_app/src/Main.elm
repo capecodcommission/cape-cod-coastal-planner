@@ -17,6 +17,7 @@ import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
 import View.Dropdown as Dropdown exposing (Dropdown)
 import View.BaselineInfo as BaselineInfo exposing (..)
+import View.Helpers exposing (..)
 import Styles exposing (..)
 import ChipApi.Scalar as Scalar
 import Ports exposing (..)
@@ -341,8 +342,8 @@ view model =
 
 
 headerView : Model -> Element MainStyles Variations Msg
-headerView model =
-    header (Header HeaderBackground) [ height (px 80) ] <|
+headerView ({ device } as model) =
+    header (Header HeaderBackground) [ height (px <| adjustOnHeight ( 60, 80 ) device) ] <|
         row NoStyle [ height fill, paddingXY 54.0 0.0, spacingXY 54.0 0.0 ] <|
             [ column NoStyle
                 [ verticalCenter ]

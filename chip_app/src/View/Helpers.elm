@@ -3,7 +3,7 @@ module View.Helpers exposing (..)
 import Http
 import Graphqelm.Http exposing (Error(..))
 import Graphqelm.Http.GraphqlError exposing (GraphqlError)
-import Element exposing (Attribute)
+import Element exposing (..)
 import Element.Attributes exposing (..)
 import Styles exposing (..)
 import Message exposing (..)
@@ -91,3 +91,13 @@ parseDecimal precision (Scalar.Decimal decimal) =
                         |> toFloat
                         |> flip (/) multiplier
                 )
+
+
+adjustOnHeight : ( Float, Float ) -> Device -> Float
+adjustOnHeight range device =
+    responsive (toFloat device.height) ( 600, 1200 ) range
+
+
+adjustOnWidth : ( Float, Float ) -> Device -> Float
+adjustOnWidth range device =
+    responsive (toFloat device.width) ( 1200, 1800 ) range

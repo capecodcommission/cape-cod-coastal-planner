@@ -17,7 +17,6 @@ defmodule ChipApiWeb.Resolvers.Locations do
             shoreline_location.max_y
         ]}
     end
-
     
     @public_path "/images/locations/"
     @valid_extensions ~w(.jpg .JPG .jpeg .png .gif)
