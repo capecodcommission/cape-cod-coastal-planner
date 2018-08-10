@@ -1,8 +1,19 @@
 defmodule ChipApiWeb.Resolvers.Locations do
     alias ChipApi.Geospatial.ShorelineLocations
+    alias Cachex
 
-    def shoreline_location(_, args, _) do
-        {:ok, ShorelineLocations.get_littoral_cell(args)}
+    # An example of fetching cached shoreline locations with a fallback to
+    # fetching from the database.
+    def shoreline_location(_, %{id: id}, _) do
+        Cachex.get(:littoral_cell_cache, String.to_integer(id), fallback: fn(id) ->
+            {:ok, ShorelineLocations.get_littoral_cell(id)}
+        end)
+        |> case do
+            {:error, err} -> 
+                {:ok, nil}
+            {success, value} when success in [:ok, :loaded] -> 
+                {:ok, value}
+        end
     end
 
     def shoreline_locations(_, args, _) do

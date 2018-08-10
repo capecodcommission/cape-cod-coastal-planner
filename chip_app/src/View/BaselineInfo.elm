@@ -102,7 +102,7 @@ headerView { closePath, device } info =
 mainContentView : { config | device : Device } -> BaselineInfo -> Element MainStyles Variations Msg
 mainContentView { device } info =
     column NoStyle
-        [ scrollbars, id "hihihi", height (px <| mainHeight device) ]
+        [ scrollbars, height (px <| mainHeight device) ]
         [ row NoStyle
             [ padding 32, spacing 32 ]
             [ column (Baseline BaselineInfoText)

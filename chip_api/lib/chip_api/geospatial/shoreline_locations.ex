@@ -45,7 +45,6 @@ defmodule ChipApi.Geospatial.ShorelineLocations do
         end)
     end
 
-
     @doc """
     Gets a single littoral cell by id.
 
