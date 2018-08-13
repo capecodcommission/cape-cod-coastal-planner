@@ -3,7 +3,7 @@ defmodule ChipApiWeb.Resolvers.Locations do
     alias Cachex
 
     # An example of fetching cached shoreline locations with a fallback to
-    # fetching from the database.
+    # fetching from the database. This should maybe live in shoreline_locations.ex
     def shoreline_location(_, %{id: id}, _) do
         Cachex.fetch(:littoral_cell_cache, String.to_integer(id), fn(id) ->
             case ShorelineLocations.get_littoral_cell(id) do
