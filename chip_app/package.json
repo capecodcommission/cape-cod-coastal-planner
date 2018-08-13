@@ -10,7 +10,7 @@
     "@turf/turf": "^5.1.6",
     "elm-phoenix-websocket-ports": "^1.0.1",
     "normalize.css": "^8.0.0",
-    "ol": "^4.6.5",
+    "ol": "5.1.3",
     "phoenix": "^1.3.0",
     "proj4": "^2.4.4"
   },

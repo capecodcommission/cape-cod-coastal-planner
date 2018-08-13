@@ -1,8 +1,10 @@
 "use strict";
 
-import proj from "ol/proj";
+import proj4 from "proj4";
+import {fromLonLat} from "ol/proj";
+import {register} from "ol/proj/proj4";
 import Map from "ol/map";
-import View from "ol/view";
+import View from "ol/View";
 import TileLayer from "ol/layer/tile";
 import XYZ from "ol/source/xyz";
 import {logError, getRAF} from "./misc";
@@ -44,19 +46,20 @@ class MapHandler {
 
     convertExtent([minX, minY, maxX, maxY]) {
         let convertedExtent = [
-            proj.fromLonLat([minX, 0])[0],
-            proj.fromLonLat([0, minY])[1],
-            proj.fromLonLat([maxX, 0])[0],
-            proj.fromLonLat([0, maxY])[1]
+            fromLonLat([minX, 0])[0],
+            fromLonLat([0, minY])[1],
+            fromLonLat([maxX, 0])[0],
+            fromLonLat([0, maxY])[1]
         ];
         return convertedExtent;
     }
 }
 
 function initMap() {
+    register(proj4);
     // pre-render initializations: view, layers, map
     let view = new View({
-        center: proj.fromLonLat([-70.2962, 41.6688]),
+        center: fromLonLat([-70.2962, 41.6688]),
         rotation: 0,
         zoom: 11,
         maxZoom: 19,
