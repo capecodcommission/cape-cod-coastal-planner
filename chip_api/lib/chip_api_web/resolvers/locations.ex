@@ -13,7 +13,6 @@ defmodule ChipApiWeb.Resolvers.Locations do
         end)
         |> case do
             {:error, err} ->
-                IO.inspect err
                 {:ok, nil}
             {:ignore, _} ->
                 {:ok, nil}
