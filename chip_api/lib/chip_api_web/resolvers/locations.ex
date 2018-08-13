@@ -5,13 +5,19 @@ defmodule ChipApiWeb.Resolvers.Locations do
     # An example of fetching cached shoreline locations with a fallback to
     # fetching from the database.
     def shoreline_location(_, %{id: id}, _) do
-        Cachex.get(:littoral_cell_cache, String.to_integer(id), fallback: fn(id) ->
-            {:ok, ShorelineLocations.get_littoral_cell(id)}
+        Cachex.fetch(:littoral_cell_cache, String.to_integer(id), fn(id) ->
+            case ShorelineLocations.get_littoral_cell(id) do
+                location -> {:commit, location}
+                nil -> {:ignore, nil}
+            end
         end)
         |> case do
-            {:error, err} -> 
+            {:error, err} ->
+                IO.inspect err
                 {:ok, nil}
-            {success, value} when success in [:ok, :loaded] -> 
+            {:ignore, _} ->
+                {:ok, nil}
+            {success, value} when success in [:ok, :commit] -> 
                 {:ok, value}
         end
     end

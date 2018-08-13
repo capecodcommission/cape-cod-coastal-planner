@@ -1,5 +1,15 @@
-defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
-    use ChipApiWeb.ConnCase, async: true
+defmodule ChipApiWeb.Schema.Query.Sync.ShorelineLocationsTest do
+    @moduledoc """
+    This module runs in synchronous mode for dealing with queries that
+    try to hit the cache before falling back to the repo.
+
+    There is likely a much better way to organize these, but this is OK
+    for the time being.
+
+    Below this module is one that runs tests in asynchronous mode for the
+    remainder of tests that do not rely on a cache query.
+    """
+    use ChipApiWeb.ConnCase
 
     @moduletag :shoreline_locations_case
 
@@ -7,6 +17,7 @@ defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
         ChipApi.Fakes.run_littoral_cells()
     end
 
+    
     test "shorelineLocation field returns a location when using a good id", %{data: data} do
         query = """
         {
@@ -21,6 +32,33 @@ defmodule ChipApiWeb.Schema.Query.ShorelineLocationsTest do
                 "shorelineLocation" => %{"id" => to_string data.cell1.id}
             }
         }
+    end
+
+    test "shorelineLocation field returns nil when using a bad id" do
+        query = """
+        {
+            shorelineLocation(id: -12) {
+                id
+            }
+        }
+        """
+        response = get build_conn(), "/api", query: query
+        assert json_response(response, 200) == %{
+            "data" => %{
+                "shorelineLocation" => nil
+            }
+        }
+    end
+
+end
+
+defmodule ChipApiWeb.Schema.Query.Async.ShorelineLocationsTest do
+    use ChipApiWeb.ConnCase, async: true
+
+    @moduletag :shoreline_locations_case
+
+    setup do
+        ChipApi.Fakes.run_littoral_cells()
     end
 
     @query """
