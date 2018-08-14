@@ -25,3 +25,12 @@ function shouldUseRollbar() {
     return isRollbarAvailable && isEnvironmentAppropriate;
 }
 
+export function convertExtent([minX, minY, maxX, maxY]) {
+    let convertedExtent = [
+        fromLonLat([minX, 0])[0],
+        fromLonLat([0, minY])[1],
+        fromLonLat([maxX, 0])[0],
+        fromLonLat([0, maxY])[1]
+    ];
+    return convertedExtent;
+}

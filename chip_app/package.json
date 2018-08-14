@@ -9,6 +9,7 @@
   "dependencies": {
     "@turf/turf": "^5.1.6",
     "elm-phoenix-websocket-ports": "^1.0.1",
+    "lodash.debounce": "^4.0.8",
     "normalize.css": "^8.0.0",
     "ol": "5.1.3",
     "phoenix": "^1.3.0",

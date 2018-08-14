@@ -14,18 +14,6 @@ port logErrorCmd : E.Value -> Cmd msg
 port olCmd : E.Value -> Cmd msg
 
 
-
--- SUBSCRIPTION PORTS (INBOUND)
-
-
-port olSub : (D.Value -> msg) -> Sub msg
-
-
-
--- HELPER TYPES
--- maybe extract to separate file
-
-
 type OpenLayersCmd
     = InitMap
     | ZoomToShorelineLocation (ShorelineExtent -> E.Value) ShorelineExtent
@@ -44,3 +32,18 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "zoom_to_shoreline_location" )
                 , ( "data", encoder location )
                 ]
+
+
+
+-- SUBSCRIPTION PORTS (INBOUND)
+
+
+port olSub : (D.Value -> msg) -> Sub msg
+
+
+type OpenLayersSub
+    = LoadLittoralCells
+
+
+
+--decodeOpenLayersSub : Decoder a

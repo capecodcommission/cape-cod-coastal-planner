@@ -59,11 +59,11 @@ defmodule ChipApi.Seeds do
         # ADAPTIVE STRATEGIES
         #
 
-        _do_nothing = %Adaptation.Strategy{
-            name: "Do Nothing",
-            adaptation_categories: [],
-            coastal_hazards: [],
-            impact_scales: [],
+        _no_action = %Adaptation.Strategy{
+            name: "No Action",
+            adaptation_categories: [retreat],
+            coastal_hazards: ["Take no action to address changes in the coast. Effects of erosion, SLR, and flooding will continue or intensify. Depending on conditions, coastal resources may not migrate naturally where steep topography or preexisting coastal erosion control structures are present. Structures or facilities may be threatened or undermined."],
+            impact_scales: [site, community, neighborhood, regional],
             is_active: true
         }
         |> Repo.insert!
