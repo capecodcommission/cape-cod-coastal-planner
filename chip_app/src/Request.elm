@@ -1,10 +1,13 @@
 module Request exposing (..)
 
 import Maybe
+import Http
 import Graphqelm.Http exposing (..)
 import Graphqelm.Operation exposing (RootQuery)
 import Graphqelm.SelectionSet exposing (SelectionSet, with)
 import RemoteData exposing (RemoteData, fromResult)
+import QueryString as QS
+import Json.Decode as D
 import ChipApi.Object
 import ChipApi.Object.CoastalHazard as CH
 import ChipApi.Object.ShorelineLocation as SL
@@ -105,3 +108,54 @@ getBaselineInfo id =
     queryBaselineInfo id
         |> queryRequest "./api"
         |> send (fromResult >> HandleBaselineInfoResponse)
+
+
+
+--
+-- LITTORAL CELLS (FEATURE SERVICE)
+--
+
+
+sendGetLittoralCellsRequest : Extent -> Cmd Msg
+sendGetLittoralCellsRequest extent =
+    Http.send LoadLittoralCellsResponse <|
+        getLittoralCells extent
+
+
+
+-- TODO : make URL configurable
+
+
+getLittoralCells : Extent -> Http.Request D.Value
+getLittoralCells extent =
+    let
+        geometry =
+            [ extent.minX, extent.minY, extent.maxX, extent.maxY ]
+                |> List.map toString
+                |> String.join ","
+
+        qs =
+            QS.empty
+                |> QS.add "f" "pjson"
+                |> QS.add "returnGeometry" "true"
+                |> QS.add "spatialRel" "esriSpatialRelIntersects"
+                |> QS.add "geometryType" "esriGeometryEnvelope"
+                |> QS.add "inSR" "4326"
+                |> QS.add "outSR" "3857"
+                |> QS.add "geometry" geometry
+
+        url =
+            "https://gis-services.capecodcommission.org/arcgis/rest/services/Test/hexagonGeoJSON/MapServer/2"
+
+        getUrl =
+            url ++ QS.render qs
+    in
+        Http.request
+            { method = "GET"
+            , headers = [ Http.header "Accept" "application/json, text/javascript, */*, q=0.01" ]
+            , url = getUrl
+            , body = Http.emptyBody
+            , expect = Http.expectJson D.value
+            , timeout = Nothing
+            , withCredentials = True
+            }

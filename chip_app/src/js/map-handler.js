@@ -10,7 +10,10 @@ import XYZ from "ol/source/xyz";
 import {logError, getRAF, convertExtent} from "./misc";
 
 class MapHandler {
-    constructor() {
+    constructor({onInit}) {
+        if (!(typeof onInit === "function")) 
+            throw new Error("expecting an 'onInit' callback");
+        this.onInit = onInit;
         this.map = null;
     }
 
@@ -24,6 +27,13 @@ class MapHandler {
                 case "zoom_to_shoreline_location":
                     this.zoomToShorelineLocation(data);
                     break;
+
+                case "littoral_cells_loaded":
+                    this.map.dispatchEvent({
+                        "type": "littoral_cells_loaded",
+                        "data": data
+                    });
+                    break;
     
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
@@ -35,7 +45,7 @@ class MapHandler {
 
     initialize() {
         if (!this.map) {
-            this.map = initMap();
+            this.map = initMap(this.onInit);
         }
     }
 
@@ -67,29 +77,27 @@ function addLittCells(map) {
     const esrijsonformat = new EsriJSON();
     let source = new VectorSource({
         loader: (extent, resolution, projection) => {
-            let proj = projection.getCode();
-            proj = 4326;
-            let encodedExtent = `${extent[0]},${extent[1]},${extent[2]},${extent[3]}`;
-            encodedExtent = `-70.68869066199994,41.51431148300003,-69.92634771999997,42.083433967000076`
-            let serviceUrl = `${url}/query?f=json&returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=${encodedExtent}&geometryType=esriGeometryEnvelope&inSR=${proj}&outFields=*&outSR=3857`;
-
-            let xhr = new XMLHttpRequest();
-            xhr.open('GET', serviceUrl);
-            let onError = () => {
-                source.removeLoadedExtent(extent);
-            }
-            xhr.onerror = onError;
-            xhr.onload = () => {
-                if (xhr.status == 200) {
-                    let features = esrijsonformat.readFeatures(xhr.responseText);                    
+            map.on("littoral_cells_loaded", ({data}) => {
+                if (data.error) {
+                    source.removeLoadedExtent(extent);
+                } else {
+                    let features = esrijsonformat.readFeatures(data);
                     if (features.length > 0) {
                         source.addFeatures(features);
                     }
-                } else {
-                    onError();
                 }
-            }
-            xhr.send();
+            });
+            
+            map.dispatchEvent({
+                "type": "olSub",
+                "sub": "load_littoral_cells", 
+                "data": {
+                    "min_x": extent[0],
+                    "min_y": extent[1],
+                    "max_x": extent[2],
+                    "max_y": extent[3]
+                }
+            });                 
         },
         strategy: bbox
     });
@@ -174,7 +182,7 @@ function addLittCellHover(map) {
  
 }
 
-function initMap() {
+function initMap(onInit) {
     register(proj4);
     // pre-render initializations: view, layers, map
     let view = new View({
@@ -210,6 +218,8 @@ function initMap() {
         if (document.getElementById("map") === null) {
             throw new Error("Map target 'map' cannot be found. Render failed...");
         }
+        // execute onInit callback function
+        onInit(map);
         // render map
         map.setTarget("map");
         // post-render initializations: controls, interactions

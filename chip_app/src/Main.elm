@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Navigation
+import Http
 import Html exposing (Html)
 import Element exposing (..)
 import Element.Attributes exposing (..)
@@ -199,7 +200,7 @@ update msg model =
                         |> Maybe.map
                             (\l ->
                                 if shouldLocationMenuChangeTriggerZoomTo msg then
-                                    ZoomToShorelineLocation encodeShorelineExtent l
+                                    ZoomToShorelineLocation l
                                         |> encodeOpenLayersCmd
                                         |> olCmd
                                 else
@@ -250,6 +251,16 @@ update msg model =
 
         CloseBaselineInfo ->
             ( { model | baselineModal = NotAsked }, Cmd.none )
+
+        LoadLittoralCells extent ->
+            ( model
+            , sendGetLittoralCellsRequest extent
+            )
+
+        LoadLittoralCellsResponse value ->
+            ( model
+            , olCmd <| encodeOpenLayersCmd (LittoralCellsLoaded value)
+            )
 
         Animate animMsg ->
             ( model, Cmd.none )
@@ -369,6 +380,7 @@ subscriptions model =
     Sub.batch
         [ Animation.subscription Animate []
         , Window.resizes Resize
+        , olSub decodeOpenLayersSub
         ]
 
 

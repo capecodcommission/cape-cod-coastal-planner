@@ -1,10 +1,12 @@
 module Types exposing (..)
 
-import Dict exposing (Dict)
+import Http exposing (..)
 import Graphqelm.Http
+import Dict exposing (Dict)
 import RemoteData exposing (RemoteData)
 import ChipApi.Scalar as Scalar
 import Json.Encode as E
+import Json.Decode as D
 
 
 type alias GqlData a =
@@ -66,3 +68,33 @@ type alias BaselineInfo =
     , townWaysToWater : Int
     , totalAssessedValue : Scalar.Decimal
     }
+
+
+type alias Extent =
+    { minX : Float
+    , minY : Float
+    , maxX : Float
+    , maxY : Float
+    }
+
+
+encodeRawResponse : Result Http.Error D.Value -> E.Value
+encodeRawResponse response =
+    case response of
+        Ok value ->
+            E.object [ ( "response", value ) ]
+
+        Err (BadUrl err) ->
+            E.object [ ( "error", E.string <| "bad url: " ++ err ) ]
+
+        Err Timeout ->
+            E.object [ ( "error", E.string "http timeout" ) ]
+
+        Err NetworkError ->
+            E.object [ ( "error", E.string "network error" ) ]
+
+        Err (BadStatus { status }) ->
+            E.object [ ( "error", E.string <| "bad status: " ++ toString status ) ]
+
+        Err (BadPayload err { status }) ->
+            E.object [ ( "error", E.string <| "bad payload: " ++ err ) ]

@@ -5,6 +5,8 @@ import Element.Input as Input
 import Animation
 import Window
 import Types exposing (..)
+import Json.Decode as D
+import Http
 
 
 type Msg
@@ -17,5 +19,7 @@ type Msg
     | GetBaselineInfo
     | HandleBaselineInfoResponse (GqlData (Maybe BaselineInfo))
     | CloseBaselineInfo
+    | LoadLittoralCells Extent
+    | LoadLittoralCellsResponse (Result Http.Error D.Value)
     | Animate Animation.Msg
     | Resize Window.Size

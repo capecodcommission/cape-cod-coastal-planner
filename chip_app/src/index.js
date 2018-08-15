@@ -9,7 +9,9 @@ import registerServiceWorker from './registerServiceWorker';
 window.chip = window.chip || {};
 
 document.addEventListener("DOMContentLoaded", () => {
-    chip.map = new MapHandler();
+    chip.map = new MapHandler({
+        onInit: onMapHandlerInit
+    });
     
     chip.app = Main.fullscreen({
         "closePath": closePath,
@@ -26,17 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
     chip.app.ports.olCmd.subscribe(cmdData => {
         chip.map.onCmd(cmdData);
     });
-
-    // subscribe to map events to send to Elm
-    chip.map.map.on("olEvt", ({evt, data}) => {
-        switch (evt) {
-            case "load_littoral_cells": 
-                break;
-            default:
-                return;
-        }
-    })
+ 
     
 });
+
+function onMapHandlerInit(map) {
+    // subscribe to map events to send to Elm
+    map.on("olSub", ({sub, data}) => {
+        chip.app.ports.olSub.send({sub, data});
+    });
+}
 
 //registerServiceWorker();

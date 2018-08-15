@@ -1,8 +1,11 @@
 port module Ports exposing (..)
 
+import Http
 import Json.Encode as E
-import Json.Decode as D
+import Json.Decode as D exposing (Decoder)
 import Types exposing (..)
+import Message exposing (..)
+import Result
 
 
 -- COMMAND PORTS (OUTBOUND)
@@ -16,7 +19,8 @@ port olCmd : E.Value -> Cmd msg
 
 type OpenLayersCmd
     = InitMap
-    | ZoomToShorelineLocation (ShorelineExtent -> E.Value) ShorelineExtent
+    | ZoomToShorelineLocation ShorelineExtent
+    | LittoralCellsLoaded (Result Http.Error D.Value)
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -27,10 +31,16 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "init_map" )
                 ]
 
-        ZoomToShorelineLocation encoder location ->
+        ZoomToShorelineLocation location ->
             E.object
                 [ ( "cmd", E.string "zoom_to_shoreline_location" )
-                , ( "data", encoder location )
+                , ( "data", encodeShorelineExtent location )
+                ]
+
+        LittoralCellsLoaded response ->
+            E.object
+                [ ( "cmd", E.string "littoral_cells_loaded" )
+                , ( "data", encodeRawResponse response )
                 ]
 
 
@@ -41,9 +51,27 @@ encodeOpenLayersCmd cmd =
 port olSub : (D.Value -> msg) -> Sub msg
 
 
-type OpenLayersSub
-    = LoadLittoralCells
+decodeOpenLayersSub : D.Value -> Msg
+decodeOpenLayersSub value =
+    let
+        subDecoder : String -> Decoder Msg
+        subDecoder sub =
+            case sub of
+                "load_littoral_cells" ->
+                    D.field "data"
+                        (D.map4 Extent
+                            (D.field "min_x" D.float)
+                            (D.field "min_y" D.float)
+                            (D.field "max_x" D.float)
+                            (D.field "max_y" D.float)
+                        )
+                        |> D.map LoadLittoralCells
 
-
-
---decodeOpenLayersSub : Decoder a
+                _ ->
+                    D.succeed Noop
+    in
+        D.field "sub" D.string
+            |> D.andThen subDecoder
+            |> (\decoder -> D.decodeValue decoder value)
+            |> Result.toMaybe
+            |> Maybe.withDefault Noop
