@@ -67,6 +67,10 @@ decodeOpenLayersSub value =
                         )
                         |> D.map LoadLittoralCells
 
+                "map_select_littoral_cell" ->
+                    D.at [ "data", "name" ] D.string
+                        |> D.map MapSelectLittoralCell
+
                 _ ->
                     D.succeed Noop
     in

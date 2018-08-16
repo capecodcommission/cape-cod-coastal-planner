@@ -5,18 +5,22 @@ import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Text from "ol/style/Text";
-import {pointerMove} from "ol/events/condition";
+import {pointerMove, singleClick, always} from "ol/events/condition";
 
 
 /**
- * Hover Select functions
+ * Hover functions
  */
 
  export function hover(map) {
+     let layers = map.getLayers().getArray().filter(layer => {
+         return layer.get("name") === "littoral_cells";
+     });
      let select = new Select({
          condition: pointerMove,
          hitTolerance: 8,
-         style: _style
+         style: _style,
+         layers: layers
      });
     _onHover(select);
     return select;
@@ -39,7 +43,7 @@ import {pointerMove} from "ol/events/condition";
 
 
  /**
-  * Hover Select Style functions
+  * Hover Style functions
   */
  function _style(feature, resolution) {
     return [
@@ -72,3 +76,45 @@ import {pointerMove} from "ol/events/condition";
         })
     ];
  }
+
+
+ /**
+  * Select functions
+  */
+
+export function select(map) {
+    let layers = map.getLayers().getArray().filter(layer => {
+        return layer.get("name") === "littoral_cells";
+    });
+    let select = new Select({
+        // addCondition: singleClick,
+        // removeCondition: always,
+        hitTolerance: 8,
+        style: new Style(),
+        layers: layers
+    });
+    _onSingleClick(select);
+    return select;
+}
+
+function _onSingleClick(select) {
+    select.on('select', _clicked);
+}
+
+function _clicked(evt) {
+    if (evt.selected.length === 0) return;
+    let map = evt.target.getMap();
+    let name = evt.selected[0].get("Littoral_Cell_Name");
+    _selectCell(map, name);
+    evt.target.getFeatures().clear();
+}
+
+function _selectCell(map, name) {
+    map.dispatchEvent({
+        "type": "olSub",
+        "sub": "map_select_littoral_cell",
+        "data": {
+            "name": `${name}`
+        }
+    });
+}

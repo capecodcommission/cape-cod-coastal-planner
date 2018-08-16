@@ -5,11 +5,10 @@ import { logError } from "./js/misc";
 import closePath from "./img/close.png";
 import registerServiceWorker from './registerServiceWorker';
 
-
 window.chip = window.chip || {};
 
 document.addEventListener("DOMContentLoaded", () => {
-    chip.map = new MapHandler({
+    chip.mapHandler = new MapHandler({
         onInit: onMapHandlerInit
     });
     
@@ -26,10 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // subscribe to OL commands coming from Elm
     chip.app.ports.olCmd.subscribe(cmdData => {
-        chip.map.onCmd(cmdData);
+        chip.mapHandler.onCmd(cmdData);
     });
- 
-    
 });
 
 function onMapHandlerInit(map) {
@@ -39,4 +36,7 @@ function onMapHandlerInit(map) {
     });
 }
 
+// Uncomment to enable as PWA. We had issues with the offline caching when enabled by default and since it's
+// not a priority to have this feature, time has yet to be devoted to examining how to configure/implement CHIP
+// as a PWA. This could be a good upgrade point for the app, however, and you'd start here by registering the service worker.
 //registerServiceWorker();

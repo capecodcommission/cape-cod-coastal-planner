@@ -1,5 +1,6 @@
 "use strict";
 
+import {fromLonLat} from "ol/proj";
 
 const requestAnimationFrame = 
     window.requestAnimationFrame ||

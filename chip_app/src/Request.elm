@@ -140,6 +140,7 @@ getLittoralCells extent =
                 |> QS.add "returnGeometry" "true"
                 |> QS.add "spatialRel" "esriSpatialRelIntersects"
                 |> QS.add "geometryType" "esriGeometryEnvelope"
+                |> QS.add "outFields" "Id,Littoral_Cell_Name"
                 |> QS.add "inSR" "3857"
                 |> QS.add "outSR" "3857"
                 |> QS.add "geometry" geometry

@@ -24,6 +24,7 @@ export function layer(map) {
         source: source,
         style: _style
     });
+    layer.set("name", "littoral_cells");
     return layer;
  }
 

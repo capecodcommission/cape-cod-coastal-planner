@@ -6,7 +6,10 @@ import View from "ol/View";
 import {getRAF} from "./misc";
 import {layer as worldImagery} from "./layers/world_imagery";
 import {layer as littoralCells} from "./layers/littoral_cells";
-import {hover as hoverLittoralCells} from "./interactions/littoral_cells";
+import {
+    hover as hoverLittoralCells, 
+    select as selectLittoralCells
+} from "./interactions/littoral_cells";
 
 export function init(onInit) {
     let map = new Map({
@@ -29,6 +32,7 @@ export function init(onInit) {
         map.setTarget("map");
         // post-render initializations: controls, interactions
         map.addInteraction(hoverLittoralCells(map));
+        map.addInteraction(selectLittoralCells(map));
     });
 
     return map;

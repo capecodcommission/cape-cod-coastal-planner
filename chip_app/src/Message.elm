@@ -21,5 +21,6 @@ type Msg
     | CloseBaselineInfo
     | LoadLittoralCells Extent
     | LoadLittoralCellsResponse (Result Http.Error D.Value)
+    | MapSelectLittoralCell String
     | Animate Animation.Msg
     | Resize Window.Size

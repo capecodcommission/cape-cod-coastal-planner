@@ -12,6 +12,7 @@ import RemoteData exposing (RemoteData(..))
 import Json.Decode as D exposing (..)
 import Dict exposing (Dict)
 import Maybe
+import List.Extra as LEx
 import Types exposing (..)
 import Message exposing (..)
 import Request exposing (..)
@@ -262,6 +263,26 @@ update msg model =
             , olCmd <| encodeOpenLayersCmd (LittoralCellsLoaded value)
             )
 
+        MapSelectLittoralCell name ->
+            case getLocationByName name model.shorelineLocations of
+                Just selection ->
+                    let
+                        updatedMenu =
+                            Input.dropMenu (Just selection) SelectLocation
+
+                        updatedLocations =
+                            model.shorelineLocations
+                                |> (\l -> { l | menu = updatedMenu })
+                    in
+                        ( { model | shorelineLocations = updatedLocations }
+                        , ZoomToShorelineLocation selection
+                            |> encodeOpenLayersCmd
+                            |> olCmd
+                        )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
         Animate animMsg ->
             ( model, Cmd.none )
 
@@ -298,6 +319,16 @@ getSelectedLocationId dropdown =
     dropdown.menu
         |> Input.selected
         |> Maybe.map .id
+
+
+getLocationByName : String -> Dropdown ShorelineExtents ShorelineExtent -> Maybe ShorelineExtent
+getLocationByName name dropdown =
+    case dropdown.data of
+        Success { items } ->
+            LEx.find (\item -> item.name == name) items
+
+        _ ->
+            Nothing
 
 
 {-| This is sort of a hack to get around the opaque implementations of
