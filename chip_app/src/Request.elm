@@ -116,18 +116,14 @@ getBaselineInfo id =
 --
 
 
-sendGetLittoralCellsRequest : Extent -> Cmd Msg
-sendGetLittoralCellsRequest extent =
+sendGetLittoralCellsRequest : Extent -> Env -> Cmd Msg
+sendGetLittoralCellsRequest extent env =
     Http.send LoadLittoralCellsResponse <|
-        getLittoralCells extent
+        getLittoralCells extent env
 
 
-
--- TODO : make URL configurable
-
-
-getLittoralCells : Extent -> Http.Request D.Value
-getLittoralCells extent =
+getLittoralCells : Extent -> Env -> Http.Request D.Value
+getLittoralCells extent env =
     let
         geometry =
             [ extent.minX, extent.minY, extent.maxX, extent.maxY ]
@@ -145,10 +141,7 @@ getLittoralCells extent =
                 |> QS.add "outSR" "3857"
                 |> QS.add "geometry" geometry
 
-        url =
-            "https://gis-services.capecodcommission.org/arcgis/rest/services/Test/hexagonGeoJSON/MapServer/2/query"
-
         getUrl =
-            url ++ QS.render qs
+            env.agsLittoralCellUrl ++ QS.render qs
     in
         Http.get getUrl D.value

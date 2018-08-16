@@ -2,11 +2,45 @@ module Types exposing (..)
 
 import Http exposing (..)
 import Graphqelm.Http
-import Dict exposing (Dict)
 import RemoteData exposing (RemoteData)
 import ChipApi.Scalar as Scalar
+import Window
 import Json.Encode as E
-import Json.Decode as D
+import Json.Decode as D exposing (Decoder)
+import Json.Decode.Pipeline exposing (decode, required)
+
+
+type alias Flags =
+    { env : Env
+    , closePath : String
+    , size : Window.Size
+    }
+
+
+decodeWindowSize : Decoder Window.Size
+decodeWindowSize =
+    D.map2 Window.Size
+        (D.field "width" D.int)
+        (D.field "height" D.int)
+
+
+decodeFlags : Decoder Flags
+decodeFlags =
+    D.map3 Flags
+        (D.field "env" decodeEnv)
+        (D.field "closePath" D.string)
+        (D.field "size" decodeWindowSize)
+
+
+type alias Env =
+    { agsLittoralCellUrl : String
+    }
+
+
+decodeEnv : Decoder Env
+decodeEnv =
+    decode Env
+        |> required "agsLittoralCellUrl" D.string
 
 
 type alias GqlData a =

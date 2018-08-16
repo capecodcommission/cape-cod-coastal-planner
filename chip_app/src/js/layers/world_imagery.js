@@ -15,9 +15,13 @@ export function layer() {
 }
 
 function _source() {
+    let url = process.env.ELM_APP_AGS_WORLD_IMG_URL;
+    if (!url) {
+        throw Error("Must configure environment variable `ELM_APP_AGS_WORLD_IMG_URL`!");
+    }
     let source = new XYZ({
         crossOrigin: "anonymous",
-        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        url: url,
         maxZoom: 16,
         minZoom: 3,
         tileLoadFunction: (imageTile, src) => {

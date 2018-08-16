@@ -13,6 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
     chip.app = Main.fullscreen({
+        "env": {
+            "agsLittoralCellUrl": process.env.ELM_APP_AGS_LITT_CELLS_URL
+        },
         "closePath": closePath,
         "size": {
             width: window.innerWidth,

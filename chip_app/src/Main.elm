@@ -1,7 +1,6 @@
 module Main exposing (..)
 
 import Navigation
-import Http
 import Html exposing (Html)
 import Element exposing (..)
 import Element.Attributes exposing (..)
@@ -28,31 +27,34 @@ import Ports exposing (..)
 ---- MODEL ----
 
 
+type App
+    = Loaded Model
+    | Failure String
+
+
 type alias Model =
-    { urlState : Maybe Route
+    { env : Env
+    , urlState : Maybe Route
     , device : Device
+    , closePath : String
     , coastalHazards : Dropdown CoastalHazards CoastalHazard
     , shorelineLocations : Dropdown ShorelineExtents ShorelineExtent
     , baselineInformation : BaselineInformation
     , baselineModal : GqlData (Maybe BaselineInfo)
-    , closePath : String
     }
 
 
-defaultModel : Model
-defaultModel =
+initialModel : Flags -> Model
+initialModel flags =
     Model
+        -- Environment variables
+        flags.env
         -- Initial Route State
         (Just Blank)
-        -- Default (no) device
-        { width = 0
-        , height = 0
-        , phone = False
-        , tablet = False
-        , desktop = False
-        , bigDesktop = False
-        , portrait = False
-        }
+        -- initial Device
+        (classifyDevice flags.size)
+        -- closePath
+        flags.closePath
         -- Coastal Hazard Dropdown
         { data = RemoteData.Loading
         , menu = Input.dropMenu Nothing SelectHazard
@@ -69,43 +71,17 @@ defaultModel =
         Dict.empty
         -- Baseline Modal
         NotAsked
-        -- closePath
-        ""
 
 
-type alias Flags =
-    { closePath : String
-    , size : Window.Size
-    }
-
-
-decodeWindowSize : Decoder Window.Size
-decodeWindowSize =
-    D.map2 Window.Size
-        (D.field "width" D.int)
-        (D.field "height" D.int)
-
-
-decodeFlags : Decoder Flags
-decodeFlags =
-    D.map2 Flags
-        (D.field "closePath" D.string)
-        (D.field "size" decodeWindowSize)
-
-
-init : D.Value -> Navigation.Location -> ( Model, Cmd Msg )
+init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
     case D.decodeValue decodeFlags flags of
-        Ok data ->
+        Ok flagData ->
             let
-                ( updatedModel, routeFx ) =
-                    defaultModel
-                        |> (\model ->
-                                { model
-                                    | closePath = data.closePath
-                                    , device = classifyDevice data.size
-                                }
-                           )
+                ( updatedApp, routeFx ) =
+                    flagData
+                        |> initialModel
+                        |> Loaded
                         |> update (UrlChange location)
 
                 msgs =
@@ -116,20 +92,31 @@ init flags location =
                         , routeFx
                         ]
             in
-                ( updatedModel
+                ( updatedApp
                 , msgs
                 )
 
         Err err ->
-            ( defaultModel, Cmd.none )
+            ( Failure err, Cmd.none )
 
 
 
 ---- UPDATE ----
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Msg -> App -> ( App, Cmd Msg )
+update msg app =
+    case app of
+        Loaded model ->
+            updateModel msg model
+                |> (\( model, cmds ) -> ( Loaded model, cmds ))
+
+        Failure err ->
+            ( Failure err, Cmd.none )
+
+
+updateModel : Msg -> Model -> ( Model, Cmd Msg )
+updateModel msg model =
     case msg of
         Noop ->
             ( model, Cmd.none )
@@ -255,7 +242,7 @@ update msg model =
 
         LoadLittoralCells extent ->
             ( model
-            , sendGetLittoralCellsRequest extent
+            , sendGetLittoralCellsRequest extent model.env
             )
 
         LoadLittoralCellsResponse value ->
@@ -369,18 +356,27 @@ renderAnimation animations otherAttrs =
     (List.map Element.Attributes.toAttr <| Animation.render animations) ++ otherAttrs
 
 
-view : Model -> Html Msg
-view model =
-    Element.viewport stylesheet <|
-        column NoStyle
-            [ height (percent 100) ]
-            [ headerView model
-            , mainContent NoStyle [ height fill, clip ] <|
-                column NoStyle [ height fill ] <|
-                    [ el NoStyle [ id "map", height fill ] empty
-                        |> within []
+view : App -> Html Msg
+view app =
+    case app of
+        Loaded model ->
+            Element.viewport stylesheet <|
+                column NoStyle
+                    [ height (percent 100) ]
+                    [ headerView model
+                    , mainContent NoStyle [ height fill, clip ] <|
+                        column NoStyle [ height fill ] <|
+                            [ el NoStyle [ id "map", height fill ] empty
+                                |> within []
+                            ]
                     ]
-            ]
+
+        Failure err ->
+            Html.div []
+                [ Html.div [] [ Html.text "FAILED TO LOAD APP!" ]
+                , Html.div [] [ Html.text "TODO: Make prettier :D" ]
+                , Html.div [] [ Html.text err ]
+                ]
 
 
 headerView : Model -> Element MainStyles Variations Msg
@@ -406,20 +402,25 @@ headerView ({ device } as model) =
 ---- SUBSCRIPTIONS ----
 
 
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch
-        [ Animation.subscription Animate []
-        , Window.resizes Resize
-        , olSub decodeOpenLayersSub
-        ]
+subscriptions : App -> Sub Msg
+subscriptions app =
+    case app of
+        Loaded model ->
+            Sub.batch
+                [ Animation.subscription Animate []
+                , Window.resizes Resize
+                , olSub decodeOpenLayersSub
+                ]
+
+        Failure err ->
+            Sub.none
 
 
 
 ---- PROGRAM ----
 
 
-main : Program D.Value Model Msg
+main : Program D.Value App Msg
 main =
     Navigation.programWithFlags UrlChange
         { view = view
