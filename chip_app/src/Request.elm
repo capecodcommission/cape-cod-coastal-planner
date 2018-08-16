@@ -140,22 +140,14 @@ getLittoralCells extent =
                 |> QS.add "returnGeometry" "true"
                 |> QS.add "spatialRel" "esriSpatialRelIntersects"
                 |> QS.add "geometryType" "esriGeometryEnvelope"
-                |> QS.add "inSR" "4326"
+                |> QS.add "inSR" "3857"
                 |> QS.add "outSR" "3857"
                 |> QS.add "geometry" geometry
 
         url =
-            "https://gis-services.capecodcommission.org/arcgis/rest/services/Test/hexagonGeoJSON/MapServer/2"
+            "https://gis-services.capecodcommission.org/arcgis/rest/services/Test/hexagonGeoJSON/MapServer/2/query"
 
         getUrl =
             url ++ QS.render qs
     in
-        Http.request
-            { method = "GET"
-            , headers = [ Http.header "Accept" "application/json, text/javascript, */*, q=0.01" ]
-            , url = getUrl
-            , body = Http.emptyBody
-            , expect = Http.expectJson D.value
-            , timeout = Nothing
-            , withCredentials = True
-            }
+        Http.get getUrl D.value
