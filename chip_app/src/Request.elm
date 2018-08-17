@@ -5,7 +5,7 @@ import Http
 import Graphqelm.Http exposing (..)
 import Graphqelm.Operation exposing (RootQuery)
 import Graphqelm.SelectionSet exposing (SelectionSet, with)
-import RemoteData exposing (RemoteData, fromResult)
+import RemoteData exposing (RemoteData, fromResult, sendRequest)
 import QueryString as QS
 import Json.Decode as D
 import ChipApi.Object
@@ -125,11 +125,6 @@ sendGetLittoralCellsRequest extent env =
 getLittoralCells : Extent -> Env -> Http.Request D.Value
 getLittoralCells extent env =
     let
-        geometry =
-            [ extent.minX, extent.minY, extent.maxX, extent.maxY ]
-                |> List.map toString
-                |> String.join ","
-
         qs =
             QS.empty
                 |> QS.add "f" "pjson"
@@ -139,9 +134,42 @@ getLittoralCells extent env =
                 |> QS.add "outFields" "Id,Littoral_Cell_Name"
                 |> QS.add "inSR" "3857"
                 |> QS.add "outSR" "3857"
-                |> QS.add "geometry" geometry
+                |> QS.add "geometry" (extentToString extent)
 
         getUrl =
             env.agsLittoralCellUrl ++ QS.render qs
     in
         Http.get getUrl D.value
+
+
+
+--
+-- VULNERABILITY RIBBON (FEATURE SERVICE)
+--
+
+
+sendGetVulnRibbonRequest : Extent -> Env -> Cmd Msg
+sendGetVulnRibbonRequest extent env =
+    getVulnRibbonForLocation extent env
+        |> sendRequest
+        |> Cmd.map LoadVulnerabilityRibbonResponse
+
+
+getVulnRibbonForLocation : Extent -> Env -> Http.Request VulnerabilityRibbon
+getVulnRibbonForLocation extent env =
+    let
+        qs =
+            QS.empty
+                |> QS.add "f" "pjson"
+                |> QS.add "returnGeometry" "true"
+                |> QS.add "spatialRel" "esriSpatialRelIntersects"
+                |> QS.add "geometryType" "esriGeometryEnvelope"
+                |> QS.add "outFields" "OBJECTID,SaltMarsh,CoastalDune,Undeveloped,RibbonScore"
+                |> QS.add "inSR" "3857"
+                |> QS.add "outSR" "3857"
+                |> QS.add "geometry" (extentToString extent)
+
+        getUrl =
+            env.agsVulnerabilityRibbonUrl ++ QS.render qs
+    in
+        Http.get getUrl vulnerabilityRibbonDecoder

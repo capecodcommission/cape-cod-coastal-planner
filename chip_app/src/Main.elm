@@ -5,6 +5,7 @@ import Html exposing (Html)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Input as Input exposing (..)
+import RemoteData exposing (WebData)
 import Animation
 import Window
 import RemoteData exposing (RemoteData(..))
@@ -41,6 +42,7 @@ type alias Model =
     , shorelineLocations : Dropdown ShorelineExtents ShorelineExtent
     , baselineInformation : BaselineInformation
     , baselineModal : GqlData (Maybe BaselineInfo)
+    , vulnerabilityRibbon : WebData VulnerabilityRibbon
     }
 
 
@@ -70,6 +72,8 @@ initialModel flags =
         -- Baseline Information
         Dict.empty
         -- Baseline Modal
+        NotAsked
+        -- Vulernability Ribbon segments
         NotAsked
 
 
@@ -269,6 +273,11 @@ updateModel msg model =
 
                 Nothing ->
                     ( model, Cmd.none )
+
+        LoadVulnerabilityRibbonResponse response ->
+            ( { model | vulnerabilityRibbon = response }
+            , Cmd.none
+            )
 
         Animate animMsg ->
             ( model, Cmd.none )
