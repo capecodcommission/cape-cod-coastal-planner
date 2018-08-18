@@ -116,14 +116,14 @@ getBaselineInfo id =
 --
 
 
-sendGetLittoralCellsRequest : Extent -> Env -> Cmd Msg
-sendGetLittoralCellsRequest extent env =
+sendGetLittoralCellsRequest : Env -> Extent -> Cmd Msg
+sendGetLittoralCellsRequest env extent =
     Http.send LoadLittoralCellsResponse <|
-        getLittoralCells extent env
+        getLittoralCells env extent
 
 
-getLittoralCells : Extent -> Env -> Http.Request D.Value
-getLittoralCells extent env =
+getLittoralCells : Env -> Extent -> Http.Request D.Value
+getLittoralCells env extent =
     let
         qs =
             QS.empty
@@ -148,15 +148,17 @@ getLittoralCells extent env =
 --
 
 
-sendGetVulnRibbonRequest : Extent -> Env -> Cmd Msg
-sendGetVulnRibbonRequest extent env =
-    getVulnRibbonForLocation extent env
+sendGetVulnRibbonRequest : Env -> ShorelineExtent -> Cmd Msg
+sendGetVulnRibbonRequest env shorelineExtent =
+    shorelineExtent
+        |> shorelineExtentToExtent
+        |> getVulnRibbonForLocation env
         |> sendRequest
         |> Cmd.map LoadVulnerabilityRibbonResponse
 
 
-getVulnRibbonForLocation : Extent -> Env -> Http.Request VulnerabilityRibbon
-getVulnRibbonForLocation extent env =
+getVulnRibbonForLocation : Env -> Extent -> Http.Request VulnerabilityRibbon
+getVulnRibbonForLocation env extent =
     let
         qs =
             QS.empty
@@ -165,7 +167,7 @@ getVulnRibbonForLocation extent env =
                 |> QS.add "spatialRel" "esriSpatialRelIntersects"
                 |> QS.add "geometryType" "esriGeometryEnvelope"
                 |> QS.add "outFields" "OBJECTID,SaltMarsh,CoastalDune,Undeveloped,RibbonScore"
-                |> QS.add "inSR" "3857"
+                |> QS.add "inSR" "4326"
                 |> QS.add "outSR" "3857"
                 |> QS.add "geometry" (extentToString extent)
 

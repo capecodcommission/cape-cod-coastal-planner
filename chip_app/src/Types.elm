@@ -10,7 +10,7 @@ import Json.Encode as E
 import Json.Encode.Extra as EEx
 import Json.Decode as D exposing (Decoder)
 import Json.Decode.Extra as DEx
-import Json.Decode.Pipeline exposing (decode, required)
+import Json.Decode.Pipeline exposing (decode, required, custom, hardcoded)
 
 
 type alias Flags =
@@ -70,6 +70,11 @@ type alias ShorelineExtent =
     , maxX : Float
     , maxY : Float
     }
+
+
+shorelineExtentToExtent : ShorelineExtent -> Extent
+shorelineExtentToExtent { minX, minY, maxX, maxY } =
+    Extent minX minY maxX maxY
 
 
 encodeShorelineExtent : ShorelineExtent -> E.Value
@@ -162,8 +167,13 @@ type alias RibbonSegment =
 
 encodeVulnerabilityRibbon : VulnerabilityRibbon -> E.Value
 encodeVulnerabilityRibbon ribbon =
-    ribbon
-        |> EEx.dict toString encodeRibbonSegment
+    let
+        ribbonList : List RibbonSegment
+        ribbonList =
+            ribbon |> Dict.toList |> List.map Tuple.second
+    in
+        E.object
+            [ ( "features", E.list <| List.map encodeRibbonSegment ribbonList ) ]
 
 
 encodeRibbonSegment : RibbonSegment -> E.Value
@@ -180,21 +190,21 @@ encodeRibbonSegment segment =
 
 vulnerabilityRibbonDecoder : Decoder VulnerabilityRibbon
 vulnerabilityRibbonDecoder =
-    D.at [ "features" ] (D.list <| D.at [ "attributes" ] ribbonSegmentDecoder)
+    D.at [ "features" ] (D.list <| ribbonSegmentDecoder)
         |> D.andThen (Dict.fromList >> D.succeed)
 
 
 ribbonSegmentDecoder : Decoder ( Int, RibbonSegment )
 ribbonSegmentDecoder =
-    decode RibbonSegment
-        |> required "OBJECTID" D.int
-        |> required "RibbonScore" D.int
-        |> required "SaltMarsh" yesNoDecoder
-        |> required "CoastalDune" yesNoDecoder
-        |> required "Undeveloped" yesNoDecoder
-        |> required "geometry" D.value
-        |> D.andThen
-            (\data -> D.succeed ( data.id, data ))
+    (D.map6 RibbonSegment
+        (D.at [ "attributes", "OBJECTID" ] D.int)
+        (D.at [ "attributes", "RibbonScore" ] D.int)
+        (D.at [ "attributes", "SaltMarsh" ] yesNoDecoder)
+        (D.at [ "attributes", "CoastalDune" ] yesNoDecoder)
+        (D.at [ "attributes", "Undeveloped" ] yesNoDecoder)
+        (D.at [ "geometry" ] D.value)
+    )
+        |> D.andThen (\segment -> D.succeed ( segment.id, segment ))
 
 
 yesNoDecoder : Decoder Bool

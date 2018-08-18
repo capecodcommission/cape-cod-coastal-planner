@@ -190,9 +190,9 @@ updateModel msg model =
                 selectedLocationFx =
                     selectedLocation
                         |> Maybe.map
-                            (\l ->
+                            (\selection ->
                                 if shouldLocationMenuChangeTriggerZoomTo msg then
-                                    ZoomToShorelineLocation l
+                                    ZoomToShorelineLocation selection
                                         |> encodeOpenLayersCmd
                                         |> olCmd
                                 else
@@ -246,7 +246,7 @@ updateModel msg model =
 
         LoadLittoralCells extent ->
             ( model
-            , sendGetLittoralCellsRequest extent model.env
+            , sendGetLittoralCellsRequest model.env extent
             )
 
         LoadLittoralCellsResponse value ->
@@ -266,18 +266,32 @@ updateModel msg model =
                                 |> (\l -> { l | menu = updatedMenu })
                     in
                         ( { model | shorelineLocations = updatedLocations }
-                        , ZoomToShorelineLocation selection
-                            |> encodeOpenLayersCmd
-                            |> olCmd
+                        , Cmd.batch
+                            [ ZoomToShorelineLocation selection
+                                |> encodeOpenLayersCmd
+                                |> olCmd
+                            , sendGetVulnRibbonRequest model.env selection
+                            ]
                         )
 
                 Nothing ->
                     ( model, Cmd.none )
 
         LoadVulnerabilityRibbonResponse response ->
-            ( { model | vulnerabilityRibbon = response }
-            , Cmd.none
-            )
+            let
+                fx =
+                    case response of
+                        Success ribbon ->
+                            RenderVulnerabilityRibbon ribbon
+                                |> encodeOpenLayersCmd
+                                |> olCmd
+
+                        _ ->
+                            Cmd.none
+            in
+                ( { model | vulnerabilityRibbon = response }
+                , fx
+                )
 
         Animate animMsg ->
             ( model, Cmd.none )

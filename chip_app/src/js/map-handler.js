@@ -25,10 +25,11 @@ class MapHandler {
                     break;
 
                 case "littoral_cells_loaded":
-                    this.map.dispatchEvent({
-                        "type": "littoral_cells_loaded",
-                        "data": data
-                    });
+                    this.littoralCellsLoaded(data);         
+                    break;
+
+                case "render_vulnerability_ribbon":
+                    this.renderVulnerabilityRibbon(data);
                     break;
 
                 default:
@@ -56,6 +57,20 @@ class MapHandler {
                 duration: 1000
             });
         }
+    }
+
+    littoralCellsLoaded(data) {
+        this.map.dispatchEvent({
+            "type": "littoral_cells_loaded",
+            "data": data
+        });
+    }
+
+    renderVulnerabilityRibbon(data) {
+        this.map.dispatchEvent({
+            "type": "render_vulnerability_ribbon",
+            "data": data
+        });
     }
 }
 
