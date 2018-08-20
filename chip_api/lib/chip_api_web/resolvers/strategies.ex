@@ -17,6 +17,10 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_scales(args)}
     end
 
+    def strategy_placements(_, args, _) do
+        {:ok, Strategies.list_placements()}
+    end
+
     def categories_for_strategy(strategy, _args, _) do
         {:ok, Strategies.list_categories_for_strategy(strategy)}
     end
@@ -29,6 +33,10 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_scales_for_strategy(strategy)}
     end
 
+    def placements_for_strategy(strategy, _args, _) do
+        {:ok, Strategies.list_placements_for_strategy(strategy)}
+    end
+
     def strategies_for_category(category, _args, _) do
         {:ok, Strategies.list_strategies_for_category(category)}
     end
@@ -39,6 +47,10 @@ defmodule ChipApiWeb.Resolvers.Strategies do
 
     def strategies_for_scale(scale, _args, _) do
         {:ok, Strategies.list_strategies_for_scale(scale)}
+    end
+
+    def strategies_for_placement(placement, _args, _) do
+        {:ok, Strategies.list_strategies_for_placement(placement)}
     end
 
 end

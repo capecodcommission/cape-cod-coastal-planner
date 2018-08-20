@@ -53,6 +53,11 @@ defmodule ChipApi.Adaptation.StrategyTest do
         assert [data.scale1.name, data.scale2.name] == scales
     end
 
+    test "list_placements_for_strategy returns all placements for a strategy", %{data: data} do
+        placements = for p <- Strategies.list_placements_for_strategy(data.strat1), do: p.name
+        assert [data.place1.name, data.place2.name] == placements
+    end
+
     test "get_strategy! with a good id returns the correct strategy", %{data: data} do
         assert data.strat1.name == Strategies.get_strategy!(data.strat1.id) |> Map.fetch!(:name)
     end

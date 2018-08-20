@@ -29,6 +29,11 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.impact_scales/3
         end
+
+        @desc "The list of valid placements for strategies"
+        field :placements, non_null(list_of(non_null(:strategy_placement))) do
+            resolve &Resolvers.Strategies.strategy_placements/3
+        end
     end
 
     @desc "Filtering options for adaptation strategies"
@@ -66,6 +71,11 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The geographic scales of impact the strategy can target"
         field :scales, list_of(:impact_scale) do
             resolve &Resolvers.Strategies.scales_for_strategy/3
+        end
+
+        @desc "The list of valid placements the strategies can be used in"
+        field :placements, list_of(:strategy_placement) do
+            resolve &Resolvers.Strategies.placements_for_strategy/3
         end
     end
 
@@ -109,12 +119,24 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The description of the scale of impact"
         field :description, :string
 
-        @desc "The impact is an integer representing the relative scale of impact. A larger number means a larger scale."
+        @desc "The impact is an integer representing the relative scale of impact. A larger number means a larger scale"
         field :impact, non_null(:integer)
 
-        @desc "The adaptation strategies that are associated with the scale of impact."
+        @desc "The adaptation strategies that are associated with the scale of impact"
         field :strategies, list_of(:adaptation_strategy) do
             resolve &Resolvers.Strategies.strategies_for_scale/3
+        end
+    end
+
+    @desc "A land characteristic used to determine where a strategy is allowed to be placed"
+    object :strategy_placement do
+        
+        @desc "The name of the placement"
+        field :name, non_null(:string)
+
+        @desc "The adaptation strategies that are associated with the placement"
+        field :strategies, list_of(:adaptation_strategy) do
+            resolve &Resolvers.Strategies.strategies_for_placement/3
         end
     end
 

@@ -21,6 +21,10 @@ defmodule ChipApi.Adaptation.Strategy do
       join_through: "strategies_scales",
       on_delete: :delete_all
 
+    many_to_many :strategy_placements, ChipApi.Adaptation.Placement,
+      join_through: "strategies_placements",
+      on_delete: :delete_all
+
     timestamps()
   end
 
