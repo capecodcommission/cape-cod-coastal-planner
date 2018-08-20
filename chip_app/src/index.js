@@ -1,6 +1,6 @@
 import './main.css';
 import { Main } from './Main.elm';
-import MapHandler from "./js/map-handler";
+import MapHandler from "./js/map_handler";
 import { logError } from "./js/misc";
 import closePath from "./img/close.png";
 import registerServiceWorker from './registerServiceWorker';
