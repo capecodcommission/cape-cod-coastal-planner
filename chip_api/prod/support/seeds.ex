@@ -87,7 +87,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [retreat],
             coastal_hazards: [],
             impact_scales: [site, community, neighborhood, regional],
-            placements: [developed, undeveloped, coastal_dune, salt_marsh],
+            strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
             is_active: true
         }
         |> Repo.insert!
@@ -98,7 +98,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site],
-            placements: [developed, undeveloped, coastal_dune, salt_marsh],
+            strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
             is_active: true
         }
         |> Repo.insert!
@@ -109,7 +109,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect, retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood, community, regional],
-            placements: [undeveloped],
+            strategy_placements: [undeveloped],
             is_active: true
         }
         |> Repo.insert!
@@ -120,7 +120,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood],
-            placements: [developed, undeveloped, coastal_dune, salt_marsh],
+            strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
             is_active: true
         }
         |> Repo.insert!
@@ -131,7 +131,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion],
             impact_scales: [site, neighborhood],
-            placements: [coastal_dune],
+            strategy_placements: [coastal_dune],
             is_active: true
         }
         |> Repo.insert!
@@ -142,7 +142,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion],
             impact_scales: [site, neighborhood],
-            placements: [coastal_dune],
+            strategy_placements: [coastal_dune],
             is_active: true
         }
         |> Repo.insert!
@@ -153,7 +153,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood],
-            placements: [developed, undeveloped, coastal_dune],
+            strategy_placements: [developed, undeveloped, coastal_dune],
             is_active: true
         }
         |> Repo.insert!
@@ -164,7 +164,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            placements: [coastal_dune],
+            strategy_placements: [coastal_dune],
             is_active: true
         }
         |> Repo.insert!
@@ -175,7 +175,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            placements: [coastal_dune],
+            strategy_placements: [coastal_dune],
             is_active: true
         }
         |> Repo.insert!
@@ -186,7 +186,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            placements: [developed, undeveloped, coastal_dune],
+            strategy_placements: [developed, undeveloped, coastal_dune],
             is_active: true
         }
         |> Repo.insert!
@@ -197,7 +197,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            placements: [developed, undeveloped, coastal_dune],
+            strategy_placements: [developed, undeveloped, coastal_dune],
             is_active: true
         }
         |> Repo.insert!
@@ -209,7 +209,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            placements: [developed, undeveloped, coastal_dune],
+            strategy_placements: [developed, undeveloped, coastal_dune],
             is_active: true
         }
         |> Repo.insert!
@@ -220,7 +220,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            placements: [developed, undeveloped, coastal_dune],
+            strategy_placements: [developed, undeveloped, coastal_dune],
             is_active: true
         }
         |> Repo.insert!
