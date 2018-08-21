@@ -21,7 +21,7 @@ type OpenLayersCmd
     = InitMap
     | ZoomToShorelineLocation ShorelineExtent
     | LittoralCellsLoaded (Result Http.Error D.Value)
-    | RenderVulnerabilityRibbon VulnerabilityRibbon
+    | RenderVulnerabilityRibbon (Result Http.Error D.Value)
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -44,10 +44,10 @@ encodeOpenLayersCmd cmd =
                 , ( "data", encodeRawResponse response )
                 ]
 
-        RenderVulnerabilityRibbon ribbon ->
+        RenderVulnerabilityRibbon response ->
             E.object
                 [ ( "cmd", E.string "render_vulnerability_ribbon" )
-                , ( "data", encodeVulnerabilityRibbon ribbon )
+                , ( "data", encodeRawResponse response )
                 ]
 
 
