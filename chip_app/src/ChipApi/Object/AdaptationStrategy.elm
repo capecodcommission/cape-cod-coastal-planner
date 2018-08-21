@@ -60,6 +60,13 @@ name =
     Object.fieldDecoder "name" [] Decode.string
 
 
+{-| The list of valid placements the strategies can be used in
+-}
+placements : SelectionSet decodesTo ChipApi.Object.StrategyPlacement -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
+placements object =
+    Object.selectionField "placements" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+
+
 {-| The geographic scales of impact the strategy can target
 -}
 scales : SelectionSet decodesTo ChipApi.Object.ImpactScale -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy

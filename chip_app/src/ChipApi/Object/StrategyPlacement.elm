@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/graphqelm
 
 
-module ChipApi.Object.ImpactScale exposing (..)
+module ChipApi.Object.StrategyPlacement exposing (..)
 
 import ChipApi.InputObject
 import ChipApi.Interface
@@ -20,34 +20,20 @@ import Json.Decode as Decode
 
 {-| Select fields to build up a SelectionSet for this object.
 -}
-selection : (a -> constructor) -> SelectionSet (a -> constructor) ChipApi.Object.ImpactScale
+selection : (a -> constructor) -> SelectionSet (a -> constructor) ChipApi.Object.StrategyPlacement
 selection constructor =
     Object.selection constructor
 
 
-{-| The description of the scale of impact
+{-| The name of the placement
 -}
-description : Field (Maybe String) ChipApi.Object.ImpactScale
-description =
-    Object.fieldDecoder "description" [] (Decode.string |> Decode.nullable)
-
-
-{-| The impact is an integer representing the relative scale of impact. A larger number means a larger scale
--}
-impact : Field Int ChipApi.Object.ImpactScale
-impact =
-    Object.fieldDecoder "impact" [] Decode.int
-
-
-{-| The name of the scale of impact
--}
-name : Field String ChipApi.Object.ImpactScale
+name : Field String ChipApi.Object.StrategyPlacement
 name =
     Object.fieldDecoder "name" [] Decode.string
 
 
-{-| The adaptation strategies that are associated with the scale of impact
+{-| The adaptation strategies that are associated with the placement
 -}
-strategies : SelectionSet decodesTo ChipApi.Object.AdaptationStrategy -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.ImpactScale
+strategies : SelectionSet decodesTo ChipApi.Object.AdaptationStrategy -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.StrategyPlacement
 strategies object =
     Object.selectionField "strategies" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)

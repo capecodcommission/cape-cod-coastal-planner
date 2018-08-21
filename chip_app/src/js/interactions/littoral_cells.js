@@ -87,8 +87,6 @@ export function select(map) {
         return layer.get("name") === "littoral_cells";
     });
     let select = new Select({
-        // addCondition: singleClick,
-        // removeCondition: always,
         hitTolerance: 8,
         style: new Style(),
         layers: layers
