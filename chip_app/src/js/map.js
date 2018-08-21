@@ -11,6 +11,10 @@ import {
     hover as hoverLittoralCells, 
     select as selectLittoralCells
 } from "./interactions/littoral_cells";
+import {
+    hover as hoverVulnRibbon,
+    select as selectVulnRibbon
+} from "./interactions/vulnerability_ribbon";
 
 export function init(onInit) {
     let map = new Map({
@@ -35,6 +39,8 @@ export function init(onInit) {
         // post-render initializations: controls, interactions
         map.addInteraction(hoverLittoralCells(map));
         map.addInteraction(selectLittoralCells(map));
+        map.addInteraction(hoverVulnRibbon(map));
+        map.addInteraction(selectVulnRibbon(map));
     });
 
     return map;
