@@ -156,11 +156,15 @@ sendGetVulnRibbonRequest env shorelineExtent =
     shorelineExtent
         |> shorelineExtentToExtent
         |> getVulnRibbonForLocation env
-        |> sendRequest
-        |> Cmd.map LoadVulnerabilityRibbonResponse
+        |> Http.send LoadVulnerabilityRibbonResponse
 
 
-getVulnRibbonForLocation : Env -> Extent -> Http.Request VulnerabilityRibbon
+
+-- |> sendRequest
+-- |> Cmd.map LoadVulnerabilityRibbonResponse
+
+
+getVulnRibbonForLocation : Env -> Extent -> Http.Request D.Value
 getVulnRibbonForLocation env extent =
     let
         qs =
@@ -177,4 +181,4 @@ getVulnRibbonForLocation env extent =
         getUrl =
             env.agsVulnerabilityRibbonUrl ++ QS.render qs
     in
-        Http.get getUrl vulnerabilityRibbonDecoder
+        Http.get getUrl D.value

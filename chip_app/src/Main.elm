@@ -42,7 +42,7 @@ type alias Model =
     , shorelineLocations : Dropdown ShorelineExtents ShorelineExtent
     , baselineInformation : BaselineInformation
     , baselineModal : GqlData (Maybe BaselineInfo)
-    , vulnerabilityRibbon : WebData VulnerabilityRibbon
+    , vulnerabilityRibbon : WebData D.Value
     }
 
 
@@ -249,9 +249,9 @@ updateModel msg model =
             , sendGetLittoralCellsRequest model.env extent
             )
 
-        LoadLittoralCellsResponse value ->
+        LoadLittoralCellsResponse response ->
             ( model
-            , olCmd <| encodeOpenLayersCmd (LittoralCellsLoaded value)
+            , olCmd <| encodeOpenLayersCmd (LittoralCellsLoaded response)
             )
 
         MapSelectLittoralCell name ->
@@ -278,21 +278,23 @@ updateModel msg model =
                     ( model, Cmd.none )
 
         LoadVulnerabilityRibbonResponse response ->
-            let
-                fx =
-                    case response of
-                        Success ribbon ->
-                            RenderVulnerabilityRibbon ribbon
-                                |> encodeOpenLayersCmd
-                                |> olCmd
+            ( model
+            , olCmd <| encodeOpenLayersCmd (RenderVulnerabilityRibbon response)
+            )
 
-                        _ ->
-                            Cmd.none
-            in
-                ( { model | vulnerabilityRibbon = response }
-                , fx
-                )
-
+        -- let
+        --     fx =
+        --         case response of
+        --             Success ribbon ->
+        --                 RenderVulnerabilityRibbon ribbon
+        --                     |> encodeOpenLayersCmd
+        --                     |> olCmd
+        --             _ ->
+        --                 Cmd.none
+        -- in
+        --     ( { model | vulnerabilityRibbon = response }
+        --     , fx
+        --     )
         Animate animMsg ->
             ( model, Cmd.none )
 

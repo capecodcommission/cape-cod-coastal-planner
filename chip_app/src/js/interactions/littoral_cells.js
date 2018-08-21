@@ -16,21 +16,35 @@ import {pointerMove, singleClick, always} from "ol/events/condition";
      let layers = map.getLayers().getArray().filter(layer => {
          return layer.get("name") === "littoral_cells";
      });
-     let select = new Select({
+     let hover = new Select({
          condition: pointerMove,
          hitTolerance: 8,
          style: _style,
          layers: layers
      });
-    _onHover(select);
-    return select;
+     hover.set("name", "hover_littoral_cells");
+    _onHover(hover);
+    return hover;
  }
 
- function _onHover(select) {
-     select.on('select', _hovered);
+ function _onHover(hover) {
+    hover.on('select', _hovered);
  }
 
  function _hovered(evt) {
+    // turn on select littoral cell interaction
+    let interactions = evt.target.getMap().getInteractions();
+    interactions.forEach(interaction => {
+        let name = interaction.get("name");
+        if (!name) return;
+        if (name === "select_littoral_cells") {
+            interaction.setActive(true);
+        } else if (name.includes("select_")) {
+            interaction.setActive(false);
+        }
+    });
+
+    // set cursor style
     let target = evt.target.getMap().getTarget();
     let node = document.getElementById(target);
     if (!node) return;
@@ -91,6 +105,8 @@ export function select(map) {
         style: new Style(),
         layers: layers
     });
+    select.set("name", "select_littoral_cells");
+    select.setActive(false);
     _onSingleClick(select);
     return select;
 }

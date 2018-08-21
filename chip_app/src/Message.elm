@@ -23,6 +23,6 @@ type Msg
     | LoadLittoralCells Extent
     | LoadLittoralCellsResponse (Result Http.Error D.Value)
     | MapSelectLittoralCell String
-    | LoadVulnerabilityRibbonResponse (WebData VulnerabilityRibbon)
+    | LoadVulnerabilityRibbonResponse (Result Http.Error D.Value)
     | Animate Animation.Msg
     | Resize Window.Size
