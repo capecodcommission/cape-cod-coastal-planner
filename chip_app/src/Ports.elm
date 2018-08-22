@@ -22,6 +22,7 @@ type OpenLayersCmd
     | ZoomToShorelineLocation ShorelineExtent
     | LittoralCellsLoaded (Result Http.Error D.Value)
     | RenderVulnerabilityRibbon (Result Http.Error D.Value)
+    | PositionZoneOfImpactPopup
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -48,6 +49,11 @@ encodeOpenLayersCmd cmd =
             E.object
                 [ ( "cmd", E.string "render_vulnerability_ribbon" )
                 , ( "data", encodeRawResponse response )
+                ]
+
+        PositionZoneOfImpactPopup ->
+            E.object
+                [ ( "cmd", E.string "position_zone_of_impact_popup" )
                 ]
 
 
@@ -77,6 +83,10 @@ decodeOpenLayersSub value =
                 "map_select_littoral_cell" ->
                     D.at [ "data", "name" ] D.string
                         |> D.map MapSelectLittoralCell
+
+                "popup_zone_of_impact" ->
+                    D.at [ "data", "popup_state" ] popupStateDecoder
+                        |> D.map ChangeZoneOfImpactState
 
                 _ ->
                     D.succeed Noop

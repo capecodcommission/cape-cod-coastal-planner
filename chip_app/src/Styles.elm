@@ -35,6 +35,7 @@ type MainStyles
     | Header HeaderStyles
     | Baseline BaselineStyles
     | Headings HeadingStyles
+    | Popup
     | CloseIcon
     | FontLeft
     | FontRight
@@ -197,6 +198,10 @@ stylesheet =
         , Style.style (Headings H4) <| headingStyle 3
         , Style.style (Headings H5) <| headingStyle 2
         , Style.style (Headings H6) <| headingStyle 1
+        , Style.style Popup
+            [ Color.background palette.chambray
+            , Color.text white
+            ]
         , Style.style CloseIcon
             [ Style.cursor "pointer" ]
         , Style.style FontLeft [ Font.alignLeft ]

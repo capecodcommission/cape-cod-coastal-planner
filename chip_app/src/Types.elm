@@ -230,3 +230,29 @@ yesNoToBool yesNo =
 
         _ ->
             Nothing
+
+
+type PopupState
+    = PopupHidden
+    | PopupEnabled
+    | PopupDisabled
+
+
+popupStateDecoder : Decoder PopupState
+popupStateDecoder =
+    D.string
+        |> D.andThen
+            (\state ->
+                case state of
+                    "popup_hidden" ->
+                        D.succeed PopupHidden
+
+                    "popup_enabled" ->
+                        D.succeed PopupEnabled
+
+                    "popup_disabled" ->
+                        D.succeed PopupDisabled
+
+                    _ ->
+                        D.fail <| "Invalid PopupState '" ++ state ++ "', expecting one of ['popup_hidden', 'popup_enabled', 'popup_disabled']"
+            )

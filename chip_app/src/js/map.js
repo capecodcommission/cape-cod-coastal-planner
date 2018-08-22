@@ -7,6 +7,7 @@ import {getRAF} from "./misc";
 import {layer as worldImagery} from "./layers/world_imagery";
 import {layer as littoralCells} from "./layers/littoral_cells";
 import {layer as vulnRibbon} from "./layers/vulnerability_ribbon";
+import {layer as impactZone} from "./layers/zone_of_impact";
 import {
     hover as hoverLittoralCells, 
     select as selectLittoralCells
@@ -23,7 +24,7 @@ export function init(onInit) {
         loadTilesWhileAnimating: true
     });
     map.addLayer(littoralCells(map));
-    map.addLayer(vulnRibbon(map));
+    map.addLayer(vulnRibbon(map));    
 
     // wait until next frame to attempt rendering the map
     // ie: target div needs to exist before attempt
@@ -41,6 +42,7 @@ export function init(onInit) {
         map.addInteraction(selectLittoralCells(map));
         map.addInteraction(hoverVulnRibbon(map));
         map.addInteraction(selectVulnRibbon(map));
+        map.addLayer(impactZone(map)); // depends on selectVulnRibbon
     });
 
     return map;
