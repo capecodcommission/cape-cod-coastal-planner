@@ -24,5 +24,6 @@ type Msg
     | LoadLittoralCellsResponse (Result Http.Error D.Value)
     | MapSelectLittoralCell String
     | LoadVulnerabilityRibbonResponse (Result Http.Error D.Value)
+    | ChangeZoneOfImpactState PopupState
     | Animate Animation.Msg
     | Resize Window.Size

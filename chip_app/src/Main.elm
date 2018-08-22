@@ -19,6 +19,7 @@ import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
 import View.Dropdown as Dropdown exposing (Dropdown)
 import View.BaselineInfo as BaselineInfo exposing (..)
+import View.ZoneOfImpact as ZoneOfImpact
 import View.Helpers exposing (..)
 import Styles exposing (..)
 import ChipApi.Scalar as Scalar
@@ -43,6 +44,7 @@ type alias Model =
     , baselineInformation : BaselineInformation
     , baselineModal : GqlData (Maybe BaselineInfo)
     , vulnerabilityRibbon : WebData D.Value
+    , zoneOfImpact : PopupState
     }
 
 
@@ -75,6 +77,8 @@ initialModel flags =
         NotAsked
         -- Vulernability Ribbon segments
         NotAsked
+        -- Zone of Impact popup
+        PopupDisabled
 
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -282,19 +286,11 @@ updateModel msg model =
             , olCmd <| encodeOpenLayersCmd (RenderVulnerabilityRibbon response)
             )
 
-        -- let
-        --     fx =
-        --         case response of
-        --             Success ribbon ->
-        --                 RenderVulnerabilityRibbon ribbon
-        --                     |> encodeOpenLayersCmd
-        --                     |> olCmd
-        --             _ ->
-        --                 Cmd.none
-        -- in
-        --     ( { model | vulnerabilityRibbon = response }
-        --     , fx
-        --     )
+        ChangeZoneOfImpactState state ->
+            ( { model | zoneOfImpact = state }
+            , olCmd <| encodeOpenLayersCmd PositionZoneOfImpactPopup
+            )
+
         Animate animMsg ->
             ( model, Cmd.none )
 
@@ -394,6 +390,7 @@ view app =
                             [ el NoStyle [ id "map", height fill ] empty
                                 |> within []
                             ]
+                    , ZoneOfImpact.view model
                     ]
 
         Failure err ->

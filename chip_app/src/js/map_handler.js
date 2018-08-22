@@ -32,6 +32,10 @@ class MapHandler {
                     this.renderVulnerabilityRibbon(data);
                     break;
 
+                case "position_zone_of_impact_popup":
+                    this.positionZoneOfImpactPopup(data);
+                    break;
+
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
             }
