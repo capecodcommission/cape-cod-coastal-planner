@@ -21,10 +21,13 @@ defmodule ChipApi.Geospatial.LittoralCell do
         # habitat
         field :salt_marsh_acres, :decimal, default: D.new("0.0")
         field :eelgrass_acres, :decimal, default: D.new("0.0")
+        field :coastal_dune_acres, :decimal, default: D.new("0.0")
+        field :rare_species_acres, :decimal, default: D.new("0.0")
         # recreation
         field :public_beach_count, :integer, default: 0
         field :recreation_open_space_acres, :decimal, default: D.new("0.0")
         field :town_ways_to_water, :integer, default: 0
+        field :national_seashore, :boolean, default: false
         # private infrastructure
         field :total_assessed_value, :decimal, default: D.new("0.0")
 
@@ -79,6 +82,18 @@ defmodule ChipApi.Geospatial.LittoralCell do
         |> validate_change(:eelgrass_acres, fn :eelgrass_acres, eelgrass_acres ->
             case D.cmp(eelgrass_acres, "0.0") do
                 :lt -> [eelgrass_acres: "cannot be less than 0.0"]
+                _ -> []
+            end
+        end)
+        |> validate_change(:coastal_dune_acres, fn :coastal_dune_acres, coastal_dune_acres ->
+            case D.cmp(coastal_dune_acres, "0.0") do
+                :lt -> [coastal_dune_acres: "cannot be less than 0.0"]
+                _ -> []
+            end
+        end)
+        |> validate_change(:rare_species_acres, fn :rare_species_acres, rare_species_acres ->
+            case D.cmp(rare_species_acres, "0.0") do
+                :lt -> [rare_species_acres: "cannot be less than 0.0"]
                 _ -> []
             end
         end)

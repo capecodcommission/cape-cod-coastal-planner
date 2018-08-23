@@ -97,9 +97,12 @@ baselineInfo =
         |> with SL.publicBuildingsCount
         |> with SL.saltMarshAcres
         |> with SL.eelgrassAcres
+        |> with SL.coastalDuneAcres
+        |> with SL.rareSpeciesAcres
         |> with SL.publicBeachCount
         |> with SL.recreationOpenSpaceAcres
         |> with SL.townWaysToWater
+        |> with SL.nationalSeashore
         |> with SL.totalAssessedValue
 
 

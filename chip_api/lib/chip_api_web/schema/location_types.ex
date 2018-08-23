@@ -78,6 +78,12 @@ defmodule ChipApiWeb.Schema.LocationTypes do
         @desc "The total acreage of eelgrass in the area"
         field :eelgrass_acres, non_null(:decimal)
 
+        @desc "The total acreage of coastal dunes in the area"
+        field :coastal_dune_acres, non_null(:decimal)
+
+        @desc "The total acreage of rare species habitat in the area"
+        field :rare_species_acres, non_null(:decimal)
+
         @desc "The number of public beaches in the area"
         field :public_beach_count, non_null(:integer)
 
@@ -86,6 +92,9 @@ defmodule ChipApiWeb.Schema.LocationTypes do
 
         @desc "The number of town ways to water in the area"
         field :town_ways_to_water, non_null(:integer)
+
+        @desc "Whether or not the location is a national seashore"
+        field :national_seashore, non_null(:boolean)
 
         @desc "The total assessed value of property in the area"
         field :total_assessed_value, non_null(:decimal)

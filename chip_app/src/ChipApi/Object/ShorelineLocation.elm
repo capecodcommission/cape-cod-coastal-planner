@@ -25,6 +25,13 @@ selection constructor =
     Object.selection constructor
 
 
+{-| The total acreage of coastal dunes in the area
+-}
+coastalDuneAcres : Field ChipApi.Scalar.Decimal ChipApi.Object.ShorelineLocation
+coastalDuneAcres =
+    Object.fieldDecoder "coastalDuneAcres" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.Decimal)
+
+
 {-| The number of coastal structures in the area
 -}
 coastalStructuresCount : Field Int ChipApi.Object.ShorelineLocation
@@ -116,6 +123,13 @@ name =
     Object.fieldDecoder "name" [] Decode.string
 
 
+{-| Whether or not the location is a national seashore
+-}
+nationalSeashore : Field Bool ChipApi.Object.ShorelineLocation
+nationalSeashore =
+    Object.fieldDecoder "nationalSeashore" [] Decode.bool
+
+
 {-| The number of public beaches in the area
 -}
 publicBeachCount : Field Int ChipApi.Object.ShorelineLocation
@@ -128,6 +142,13 @@ publicBeachCount =
 publicBuildingsCount : Field Int ChipApi.Object.ShorelineLocation
 publicBuildingsCount =
     Object.fieldDecoder "publicBuildingsCount" [] Decode.int
+
+
+{-| The total acreage of rare species habitat in the area
+-}
+rareSpeciesAcres : Field ChipApi.Scalar.Decimal ChipApi.Object.ShorelineLocation
+rareSpeciesAcres =
+    Object.fieldDecoder "rareSpeciesAcres" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.Decimal)
 
 
 {-| The total acreage of recreational open space in the area

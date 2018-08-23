@@ -243,9 +243,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 8,
             salt_marsh_acres: D.new("204.0055084"),
             eelgrass_acres: D.new("5.9798193"),
+            coastal_dune_acres: D.new("650.0172119"),
+            rare_species_acres: D.new("4021.1875"),
             public_beach_count: 7,
             recreation_open_space_acres: D.new("130.4343719"),
             town_ways_to_water: 1,
+            national_seashore: false,
             total_assessed_value: D.new("461244800.00")
         }
         |> Repo.insert!
@@ -264,9 +267,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 218,
             salt_marsh_acres: D.new("34.2522774"),
             eelgrass_acres: D.new("171.8101501"),
+            coastal_dune_acres: D.new("5.9395294"),
+            rare_species_acres: D.new("657.7874146"),
             public_beach_count: 4,
             recreation_open_space_acres: D.new("55.6946297"),
             town_ways_to_water: 1,
+            national_seashore: false,
             total_assessed_value: D.new("393422600.00")
         }
         |> Repo.insert!
@@ -285,9 +291,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 21,
             salt_marsh_acres: D.new("20.3502502"),
             eelgrass_acres: D.new("179.1102753"),
+            coastal_dune_acres: D.new("61.0107536"),
+            rare_species_acres: D.new("476.4459839"),
             public_beach_count: 2,
             recreation_open_space_acres: D.new("20.6207943"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("301794700.00")
         }
         |> Repo.insert!
@@ -306,9 +315,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 8,
             salt_marsh_acres: D.new("26.915144"),
             eelgrass_acres: D.new("95.0147705"),
+            coastal_dune_acres: D.new("63.1204758"),
+            rare_species_acres: D.new("597.7488403"),
             public_beach_count: 1,
             recreation_open_space_acres: D.new("12.8510218"),
             town_ways_to_water: 1,
+            national_seashore: false,
             total_assessed_value: D.new("290605160.00")
         }
         |> Repo.insert!
@@ -327,9 +339,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 3,
             salt_marsh_acres: D.new("64.2526627"),
             eelgrass_acres: D.new("74.3793411"),
+            coastal_dune_acres: D.new("5.8283544"),
+            rare_species_acres: D.new("381.8328247"),
             public_beach_count: 2,
             recreation_open_space_acres: D.new("31.8369522"),
             town_ways_to_water: 2,
+            national_seashore: false,
             total_assessed_value: D.new("323256020.00")
         }
         |> Repo.insert!
@@ -348,9 +363,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 1,
             salt_marsh_acres: D.new("9.7079134"),
             eelgrass_acres: D.new("271.3979797"),
+            coastal_dune_acres: D.new("2.6752608"),
+            rare_species_acres: D.new("486.3106384"),
             public_beach_count: 2,
             recreation_open_space_acres: D.new("0.0"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("217658870.00")
         }
         |> Repo.insert!
@@ -369,9 +387,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 3,
             salt_marsh_acres: D.new("21.2656403"),
             eelgrass_acres: D.new("283.9780273"),
+            coastal_dune_acres: D.new("24.9014893"),
+            rare_species_acres: D.new("459.4194336"),
             public_beach_count: 3,
             recreation_open_space_acres: D.new("3.3487511"),
             town_ways_to_water: 1,
+            national_seashore: false,
             total_assessed_value: D.new("683448500.00")
         }
         |> Repo.insert!
@@ -390,9 +411,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 6,
             salt_marsh_acres: D.new("31.3422775"),
             eelgrass_acres: D.new("175.4341583"),
+            coastal_dune_acres: D.new("30.8582382"),
+            rare_species_acres: D.new("236.6368408"),
             public_beach_count: 11,
             recreation_open_space_acres: D.new("2.9746351"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("635004300.00")
         }
         |> Repo.insert!
@@ -411,9 +435,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 0,
             salt_marsh_acres: D.new("95.0317993"),
             eelgrass_acres: D.new("431.8627625"),
+            coastal_dune_acres: D.new("66.9046783"),
+            rare_species_acres: D.new("737.499939"),
             public_beach_count: 9,
             recreation_open_space_acres: D.new("6.4433169"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("582787000.00")
         }
         |> Repo.insert!
@@ -432,9 +459,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 110,
             salt_marsh_acres: D.new("3.9876704"),
             eelgrass_acres: D.new("284.7936707"),
+            coastal_dune_acres: D.new("0.4507518"),
+            rare_species_acres: D.new("825.6036987"),
             public_beach_count: 3,
             recreation_open_space_acres: D.new("22.3431664"),
             town_ways_to_water: 1,
+            national_seashore: false,
             total_assessed_value: D.new("626611700.00")
         }
         |> Repo.insert!
@@ -453,9 +483,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 89,
             salt_marsh_acres: D.new("0.4663978"),
             eelgrass_acres: D.new("87.6272888"),
+            coastal_dune_acres: D.new("3.2719717"),
+            rare_species_acres: D.new("237.9641266"),
             public_beach_count: 1,
             recreation_open_space_acres: D.new("4.3100624"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("251606300.00")
         }
         |> Repo.insert!
@@ -474,9 +507,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 28,
             salt_marsh_acres: D.new("38.2330894"),
             eelgrass_acres: D.new("975.5437622"),
+            coastal_dune_acres: D.new("67.3718033"),
+            rare_species_acres: D.new("1746.2563477"),
             public_beach_count: 17,
             recreation_open_space_acres: D.new("175.8104095"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("1025546449.00")
         }
         |> Repo.insert!
@@ -495,9 +531,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 0,
             salt_marsh_acres: D.new("61.836483"),
             eelgrass_acres: D.new("19.7484436"),
+            coastal_dune_acres: D.new("26.8142071"),
+            rare_species_acres: D.new("1490.3686523"),
             public_beach_count: 5,
             recreation_open_space_acres: D.new("298.637207"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("894116100.00")
         }
         |> Repo.insert!
@@ -516,9 +555,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 4,
             salt_marsh_acres: D.new("25.401474"),
             eelgrass_acres: D.new("54.628727"),
+            coastal_dune_acres: D.new("89.3615646"),
+            rare_species_acres: D.new("1101.5426025"),
             public_beach_count: 4,
             recreation_open_space_acres: D.new("0.8072858"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("435699300.00")
         }
         |> Repo.insert!
@@ -537,9 +579,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 2,
             salt_marsh_acres: D.new("3.102915"),
             eelgrass_acres: D.new("322.4924316"),
+            coastal_dune_acres: D.new("16.1339588"),
+            rare_species_acres: D.new("551.7070923"),
             public_beach_count: 2,
             recreation_open_space_acres: D.new("33.4862099"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("513900700.00")
         }
         |> Repo.insert!
@@ -558,9 +603,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 4,
             salt_marsh_acres: D.new("99.109169"),
             eelgrass_acres: D.new("191.6327057"),
+            coastal_dune_acres: D.new("39.8272591"),
+            rare_species_acres: D.new("909.6130371"),
             public_beach_count: 7,
             recreation_open_space_acres: D.new("40.852684"),
             town_ways_to_water: 1,
+            national_seashore: false,
             total_assessed_value: D.new("523927500.00")
         }
         |> Repo.insert!
@@ -579,9 +627,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 115,
             salt_marsh_acres: D.new("137.3874664"),
             eelgrass_acres: D.new("466.7622681"),
+            coastal_dune_acres: D.new("106.2389297"),
+            rare_species_acres: D.new("1913.0593262"),
             public_beach_count: 17,
             recreation_open_space_acres: D.new("131.2438965"),
             town_ways_to_water: 2,
+            national_seashore: false,
             total_assessed_value: D.new("1428641000.00")
         }
         |> Repo.insert!
@@ -600,9 +651,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 70,
             salt_marsh_acres: D.new("380.8373108"),
             eelgrass_acres: D.new("2486.3562012"),
+            coastal_dune_acres: D.new("340.8415222"),
+            rare_species_acres: D.new("4085.7602539"),
             public_beach_count: 51,
             recreation_open_space_acres: D.new("490.1095581"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("2537257400.00")
         }
         |> Repo.insert!
@@ -621,9 +675,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 5,
             salt_marsh_acres: D.new("105.3767395"),
             eelgrass_acres: D.new("560.2143555"),
+            coastal_dune_acres: D.new("1051.571167"),
+            rare_species_acres: D.new("6738.7255859"),
             public_beach_count: 2,
             recreation_open_space_acres: D.new("213.083374"),
             town_ways_to_water: 0,
+            national_seashore: true,
             total_assessed_value: D.new("271926400.00")
         }
         |> Repo.insert!
@@ -642,9 +699,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 11,
             salt_marsh_acres: D.new("31.2736931"),
             eelgrass_acres: D.new("78.3087082"),
+            coastal_dune_acres: D.new("24.9601288"),
+            rare_species_acres: D.new("569.944397"),
             public_beach_count: 5,
             recreation_open_space_acres: D.new("21.3441048"),
             town_ways_to_water: 0,
+            national_seashore: true,
             total_assessed_value: D.new("865465800.00")
         }
         |> Repo.insert!
@@ -663,9 +723,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 4,
             salt_marsh_acres: D.new("34.5506363"),
             eelgrass_acres: D.new("361.5568237"),
+            coastal_dune_acres: D.new("11.1119413"),
+            rare_species_acres: D.new("619.3502197"),
             public_beach_count: 3,
             recreation_open_space_acres: D.new("37.4128647"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("481869100.00")
         }
         |> Repo.insert!
@@ -684,9 +747,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 8,
             salt_marsh_acres: D.new("22.9759789"),
             eelgrass_acres: D.new("71.4209671"),
+            coastal_dune_acres: D.new("8.8877954"),
+            rare_species_acres: D.new("674.5410156"),
             public_beach_count: 9,
             recreation_open_space_acres: D.new("152.7987518"),
             town_ways_to_water: 1,
+            national_seashore: false,
             total_assessed_value: D.new("310864000.00")
         }
         |> Repo.insert!
@@ -705,9 +771,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 12,
             salt_marsh_acres: D.new("511.4660339"),
             eelgrass_acres: D.new("821.8519897"),
+            coastal_dune_acres: D.new("261.1954651"),
+            rare_species_acres: D.new("2852.9833984"),
             public_beach_count: 7,
             recreation_open_space_acres: D.new("470.2912292"),
             town_ways_to_water: 2,
+            national_seashore: true,
             total_assessed_value: D.new("592666250.00")
         }
         |> Repo.insert!
@@ -726,9 +795,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 22,
             salt_marsh_acres: D.new("243.6255646"),
             eelgrass_acres: D.new("22.5867462"),
+            coastal_dune_acres: D.new("487.9051819"),
+            rare_species_acres: D.new("3070.623291"),
             public_beach_count: 1,
             recreation_open_space_acres: D.new("762.0858154"),
             town_ways_to_water: 0,
+            national_seashore: true,
             total_assessed_value: D.new("130701200.00")
         }
         |> Repo.insert!
@@ -747,9 +819,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 9,
             salt_marsh_acres: D.new("23.6465569"),
             eelgrass_acres: D.new("0.0"),
+            coastal_dune_acres: D.new("14.4632149"),
+            rare_species_acres: D.new("1053.2125244"),
             public_beach_count: 3,
             recreation_open_space_acres: D.new("0.0"),
             town_ways_to_water: 0,
+            national_seashore: true,
             total_assessed_value: D.new("30923200.00")
         }
         |> Repo.insert!
@@ -768,9 +843,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 6,
             salt_marsh_acres: D.new("0.0"),
             eelgrass_acres: D.new("0.0"),
+            coastal_dune_acres: D.new("0.0"),
+            rare_species_acres: D.new("967.5145874"),
             public_beach_count: 2,
             recreation_open_space_acres: D.new("171.526062"),
             town_ways_to_water: 0,
+            national_seashore: true,
             total_assessed_value: D.new("17981400.00")
         }
         |> Repo.insert!
@@ -789,9 +867,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 75,
             salt_marsh_acres: D.new("118.0019379"),
             eelgrass_acres: D.new("12.9466887"),
+            coastal_dune_acres: D.new("1095.5489502"),
+            rare_species_acres: D.new("9952.5556641"),
             public_beach_count: 15,
             recreation_open_space_acres: D.new("3932.9230957"),
             town_ways_to_water: 0,
+            national_seashore: true,
             total_assessed_value: D.new("171293000.00")
         }
         |> Repo.insert!
@@ -810,9 +891,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 25,
             salt_marsh_acres: D.new("133.3305054"),
             eelgrass_acres: D.new("140.2750092"),
+            coastal_dune_acres: D.new("53.2006798"),
+            rare_species_acres: D.new("991.5595093"),
             public_beach_count: 8,
             recreation_open_space_acres: D.new("292.7267151"),
             town_ways_to_water: 0,
+            national_seashore: true,
             total_assessed_value: D.new("726006200.00")
         }
         |> Repo.insert!
@@ -831,9 +915,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 79,
             salt_marsh_acres: D.new("39.6284142"),
             eelgrass_acres: D.new("1121.4608154"),
+            coastal_dune_acres: D.new("103.8385391"),
+            rare_species_acres: D.new("2721.8625488"),
             public_beach_count: 30,
             recreation_open_space_acres: D.new("168.9987946"),
             town_ways_to_water: 0,
+            national_seashore: true,
             total_assessed_value: D.new("2369225100.00")
         }
         |> Repo.insert!
@@ -852,9 +939,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 5,
             salt_marsh_acres: D.new("0.0"),
             eelgrass_acres: D.new("325.9089966"),
+            coastal_dune_acres: D.new("47.3282356"),
+            rare_species_acres: D.new("755.8833008"),
             public_beach_count: 2,
             recreation_open_space_acres: D.new("240.3492889"),
             town_ways_to_water: 0,
+            national_seashore: true,
             total_assessed_value: D.new("70897100.00")
         }
         |> Repo.insert!
@@ -873,9 +963,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 0,
             salt_marsh_acres: D.new("106.9666061"),
             eelgrass_acres: D.new("425.5777283"),
+            coastal_dune_acres: D.new("68.1362839"),
+            rare_species_acres: D.new("1622.809082"),
             public_beach_count: 2,
             recreation_open_space_acres: D.new("489.5529175"),
             town_ways_to_water: 0,
+            national_seashore: true,
             total_assessed_value: D.new("15374700.00")
         }
         |> Repo.insert!
@@ -894,9 +987,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 6,
             salt_marsh_acres: D.new("222.3549652"),
             eelgrass_acres: D.new("70.8523407"),
+            coastal_dune_acres: D.new("70.2663345"),
+            rare_species_acres: D.new("2528.1630859"),
             public_beach_count: 10,
             recreation_open_space_acres: D.new("624.2570801"),
             town_ways_to_water: 0,
+            national_seashore: true,
             total_assessed_value: D.new("455847300.00")
         }
         |> Repo.insert!
@@ -915,9 +1011,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 0,
             salt_marsh_acres: D.new("177.3943939"),
             eelgrass_acres: D.new("0.0"),
+            coastal_dune_acres: D.new("28.9642696"),
+            rare_species_acres: D.new("922.3416748"),
             public_beach_count: 0,
             recreation_open_space_acres: D.new("0.6491886"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("149123700.00")
         }
         |> Repo.insert!
@@ -936,9 +1035,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 96,
             salt_marsh_acres: D.new("608.8064575"),
             eelgrass_acres: D.new("189.9243622"),
+            coastal_dune_acres: D.new("143.90625"),
+            rare_species_acres: D.new("3427.4592285"),
             public_beach_count: 41,
             recreation_open_space_acres: D.new("201.6305389"),
             town_ways_to_water: 2,
+            national_seashore: false,
             total_assessed_value: D.new("1542971500.00")
         }
         |> Repo.insert!
@@ -957,9 +1059,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 3,
             salt_marsh_acres: D.new("89.2759476"),
             eelgrass_acres: D.new("9.3302622"),
+            coastal_dune_acres: D.new("79.331604"),
+            rare_species_acres: D.new("673.1985474"),
             public_beach_count: 8,
             recreation_open_space_acres: D.new("43.7184067"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("446347420.00")
         }
         |> Repo.insert!
@@ -978,9 +1083,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 27,
             salt_marsh_acres: D.new("1256.4754639"),
             eelgrass_acres: D.new("37.4771461"),
+            coastal_dune_acres: D.new("319.9433594"),
+            rare_species_acres: D.new("4614.3808594"),
             public_beach_count: 11,
             recreation_open_space_acres: D.new("87.6455841"),
             town_ways_to_water: 3,
+            national_seashore: false,
             total_assessed_value: D.new("974675740.00")
         }
         |> Repo.insert!
@@ -999,9 +1107,12 @@ defmodule ChipApi.Seeds do
             public_buildings_count: 8,
             salt_marsh_acres: D.new("0.0"),
             eelgrass_acres: D.new("5.9798193"),
+            coastal_dune_acres: D.new("58.2020454"),
+            rare_species_acres: D.new("960.220459"),
             public_beach_count: 2,
             recreation_open_space_acres: D.new("138.4368439"),
             town_ways_to_water: 0,
+            national_seashore: false,
             total_assessed_value: D.new("255135300.00")
         }
         |> Repo.insert!

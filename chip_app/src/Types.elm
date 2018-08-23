@@ -107,9 +107,12 @@ type alias BaselineInfo =
     , publicBuildingsCount : Int
     , saltMarshAcres : Scalar.Decimal
     , eelgrassAcres : Scalar.Decimal
+    , coastalDuneAcres : Scalar.Decimal
+    , rareSpeciesAcres : Scalar.Decimal
     , publicBeachCount : Int
     , recreationOpenSpaceAcres : Scalar.Decimal
     , townWaysToWater : Int
+    , nationalSeashore : Bool
     , totalAssessedValue : Scalar.Decimal
     }
 

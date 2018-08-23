@@ -157,6 +157,12 @@ mainContentView { device } info =
                     , infoRowView
                         "Acres of eelgrass:"
                         (formatDecimal 2 info.eelgrassAcres)
+                    , infoRowView
+                        "Acres of coastal dune:"
+                        (formatDecimal 2 info.coastalDuneAcres)
+                    , infoRowView
+                        "Acres of rare species habitat:"
+                        (formatDecimal 2 info.rareSpeciesAcres)
                     ]
                 , column NoStyle
                     [ spacingXY 0 8 ]
@@ -170,6 +176,9 @@ mainContentView { device } info =
                     , infoRowView
                         "Town ways to water:"
                         (toString info.townWaysToWater)
+                    , infoRowView
+                        "National seashore:"
+                        (formatBoolean info.nationalSeashore)
                     ]
                 , column NoStyle
                     [ spacingXY 0 8 ]

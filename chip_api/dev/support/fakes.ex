@@ -29,9 +29,12 @@ defmodule ChipApi.Fakes do
         public_buildings_count: 1,
         salt_marsh_acres: D.new("10.01"),
         eelgrass_acres: D.new("1.1"),
+        coastal_dune_acres: D.new("2.2"),
+        rare_species_acres: D.new("3.3"),
         public_beach_count: 1,
         recreation_open_space_acres: D.new("10.01"),
         town_ways_to_water: 1,
+        national_seashore: false,
         total_assessed_value: D.new("1000.00")
     }
     @cell2 %LittoralCell{
@@ -48,9 +51,12 @@ defmodule ChipApi.Fakes do
         public_buildings_count: 1,
         salt_marsh_acres: D.new("10.01"),
         eelgrass_acres: D.new("1.1"),
+        coastal_dune_acres: D.new("2.2"),
+        rare_species_acres: D.new("3.3"),
         public_beach_count: 1,
         recreation_open_space_acres: D.new("10.01"),
         town_ways_to_water: 1,
+        national_seashore: true,
         total_assessed_value: D.new("1000.00")
     }
 
