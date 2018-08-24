@@ -169,7 +169,7 @@ getVulnRibbonForLocation env extent =
                 |> QS.add "spatialRel" "esriSpatialRelIntersects"
                 |> QS.add "geometryType" "esriGeometryEnvelope"
                 --|> QS.add "outFields" "OBJECTID,SaltMarsh,CoastalDun,Undevelope,RibbonScor,LittoralID,BeachOwner"
-                |> QS.add "outFields" "OBJECTID,SaltMarsh,CoastalDune,Undeveloped,RibbonScore"
+                --|> QS.add "outFields" "OBJECTID,SaltMarsh,CoastalDune,Undeveloped,RibbonScore"
                 |> QS.add "inSR" "4326"
                 |> QS.add "outSR" "3857"
                 |> QS.add "geometry" (extentToString extent)
