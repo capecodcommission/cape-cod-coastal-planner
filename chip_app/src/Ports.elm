@@ -22,7 +22,7 @@ type OpenLayersCmd
     | ZoomToShorelineLocation ShorelineExtent
     | LittoralCellsLoaded (Result Http.Error D.Value)
     | RenderVulnerabilityRibbon (Result Http.Error D.Value)
-    | PositionZoneOfImpactPopup
+    | PositionZoneOfImpactPopup PopupState
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -51,9 +51,10 @@ encodeOpenLayersCmd cmd =
                 , ( "data", encodeRawResponse response )
                 ]
 
-        PositionZoneOfImpactPopup ->
+        PositionZoneOfImpactPopup popupState ->
             E.object
                 [ ( "cmd", E.string "position_zone_of_impact_popup" )
+                , ( "data", encodePopupState popupState )
                 ]
 
 

@@ -76,6 +76,13 @@ class MapHandler {
             "data": data
         });
     }
+
+    positionZoneOfImpactPopup(data) {
+        this.map.dispatchEvent({
+            "type": "position_zone_of_impact_popup",
+            "data": data
+        });
+    }
 }
 
 export { MapHandler as default };

@@ -11,9 +11,9 @@ import Styles exposing (..)
 view : { config | zoneOfImpact : PopupState } -> Element MainStyles Variations Msg
 view config =
     case config.zoneOfImpact of
-        PopupEnabled ->
+        PopupEnabled _ ->
             modal Popup
-                [ id "ZoneOfImpactPopup"
+                [ id "zone-of-impact-popup"
                 , height (px 200)
                 , width (px 300)
                 ]
@@ -24,7 +24,7 @@ view config =
                     ]
 
         PopupDisabled ->
-            empty
+            modal NoStyle [ id "zone-of-impact-popup" ] empty
 
-        PopupHidden ->
-            empty
+        PopupHidden _ ->
+            modal NoStyle [ id "zone-of-impact-popup" ] empty

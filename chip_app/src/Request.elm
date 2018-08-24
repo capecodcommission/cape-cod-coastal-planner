@@ -159,11 +159,6 @@ sendGetVulnRibbonRequest env shorelineExtent =
         |> Http.send LoadVulnerabilityRibbonResponse
 
 
-
--- |> sendRequest
--- |> Cmd.map LoadVulnerabilityRibbonResponse
-
-
 getVulnRibbonForLocation : Env -> Extent -> Http.Request D.Value
 getVulnRibbonForLocation env extent =
     let
@@ -173,6 +168,7 @@ getVulnRibbonForLocation env extent =
                 |> QS.add "returnGeometry" "true"
                 |> QS.add "spatialRel" "esriSpatialRelIntersects"
                 |> QS.add "geometryType" "esriGeometryEnvelope"
+                --|> QS.add "outFields" "OBJECTID,SaltMarsh,CoastalDun,Undevelope,RibbonScor,LittoralID,BeachOwner"
                 |> QS.add "outFields" "OBJECTID,SaltMarsh,CoastalDune,Undeveloped,RibbonScore"
                 |> QS.add "inSR" "4326"
                 |> QS.add "outSR" "3857"

@@ -16,6 +16,25 @@ import { polygon, multiPolygon } from "@turf/helpers";
 
 
 /**
+ * Overlay functions
+ */
+
+export function popup(map) {
+    let overlay = new Overlay({
+        element: document.getElementById("zone-of-impact-popup"),
+        autoPan: true,
+        autoPanAnimation: {
+            duration: 250
+        }
+    });
+
+    map.addOverlay(overlay);
+
+    map.on("position_zone_of_impact_popup")
+}
+
+
+/**
  * Vector Layer functions
  */
 
@@ -55,7 +74,10 @@ function _onUpdate(evt, layer) {
         "type": "olSub",
         "sub": "popup_zone_of_impact",
         "data" : {
-            "popup_state": "popup_enabled"
+            "popup_state": {
+                "state": "popup_enabled",
+                "position": { x: evt.coordinate[0], y: evt.coordinate[1] } 
+            }
         }
     });
 }

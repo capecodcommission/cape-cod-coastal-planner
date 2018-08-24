@@ -288,7 +288,7 @@ updateModel msg model =
 
         ChangeZoneOfImpactState state ->
             ( { model | zoneOfImpact = state }
-            , olCmd <| encodeOpenLayersCmd PositionZoneOfImpactPopup
+            , olCmd <| encodeOpenLayersCmd (PositionZoneOfImpactPopup state)
             )
 
         Animate animMsg ->

@@ -235,26 +235,72 @@ yesNoToBool yesNo =
             Nothing
 
 
+type alias PopupPosition =
+    { x : Float
+    , y : Float
+    }
+
+
+popupPositionDecoder : Decoder PopupPosition
+popupPositionDecoder =
+    D.map2 PopupPosition
+        (D.field "x" D.float)
+        (D.field "y" D.float)
+
+
+encodePopupPosition : PopupPosition -> E.Value
+encodePopupPosition pos =
+    E.list <| [ E.float pos.x, E.float pos.y ]
+
+
 type PopupState
-    = PopupHidden
-    | PopupEnabled
-    | PopupDisabled
+    = PopupDisabled
+    | PopupEnabled PopupPosition
+    | PopupHidden PopupPosition
+
+
+encodePopupState : PopupState -> E.Value
+encodePopupState state =
+    case state of
+        PopupDisabled ->
+            E.object [ ( "state", E.string "popup_disabled" ) ]
+
+        PopupEnabled position ->
+            E.object
+                [ ( "state", E.string "popup_enabled" )
+                , ( "position", encodePopupPosition position )
+                ]
+
+        PopupHidden position ->
+            E.object
+                [ ( "state", E.string "popup_hidden" )
+                , ( "position", encodePopupPosition position )
+                ]
 
 
 popupStateDecoder : Decoder PopupState
 popupStateDecoder =
-    D.string
+    (D.map2 (\a b -> ( a, b ))
+        (D.field "state" D.string)
+        (D.maybe (D.field "position" popupPositionDecoder))
+    )
         |> D.andThen
-            (\state ->
-                case state of
-                    "popup_hidden" ->
-                        D.succeed PopupHidden
-
-                    "popup_enabled" ->
-                        D.succeed PopupEnabled
-
-                    "popup_disabled" ->
+            (\( state, maybePosition ) ->
+                case ( state, maybePosition ) of
+                    ( "popup_disabled", _ ) ->
                         D.succeed PopupDisabled
+
+                    ( "popup_enabled", Just position ) ->
+                        D.succeed <| PopupEnabled position
+
+                    ( "popup_hidden", Just position ) ->
+                        D.succeed <| PopupHidden position
+
+                    ( "popup_enabled", Nothing ) ->
+                        D.fail <| "Invalid popup position, expecting { x : Float, y : Float }"
+
+                    ( "popup_hidden", Nothing ) ->
+                        D.fail <| "Invalid popup position, expecting { x : Float, y : Float }"
 
                     _ ->
                         D.fail <| "Invalid PopupState '" ++ state ++ "', expecting one of ['popup_hidden', 'popup_enabled', 'popup_disabled']"
