@@ -49,8 +49,8 @@ export function layer(map) {
                 color: 'rgba(52,147,255,0.7)'
             }),
             stroke: new Stroke({
-                color: "rgba(52,147,255,0.7)",
-                width: 1.25
+                color: "white",
+                width: 4
             })
         })
     });
@@ -60,10 +60,14 @@ export function layer(map) {
         return interaction.get("name") === "select_vulnerability_ribbon";
     })[0];
     selectRibbon.on("update_impact_zone", (evt) => {
-        _onUpdate(evt, layer);
+        _newOnUpdate(evt, layer);
     });
 
     return layer;
+}
+
+function _newOnUpdate(evt, layer) {
+    layer.getSource().addFeature(evt.arc);
 }
 
 function _onUpdate(evt, layer) {
