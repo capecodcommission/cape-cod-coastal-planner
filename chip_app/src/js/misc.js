@@ -35,3 +35,16 @@ export function convertExtent([minX, minY, maxX, maxY]) {
     ];
     return convertedExtent;
 }
+
+export function compareFeaturesById(feature1, feature2) {
+    let id1 = feature1.get('id') || feature.ol_uid || 0;
+    let id2 = feature2.get('id') || feature.ol_uid || 1;
+
+    if (id1 < id2) {
+        return -1;
+    }
+    if (id1 > id2) {
+        return 1;
+    }
+    return 0;
+};
