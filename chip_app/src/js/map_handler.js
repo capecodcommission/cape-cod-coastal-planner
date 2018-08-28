@@ -83,6 +83,20 @@ class MapHandler {
             "data": data
         });
     }
+
+    getRibbonLayer() {
+        let layers = this.map.getLayers().getArray().filter(l => {
+            return l.get("name") === "vulnerability_ribbon";
+        });
+        return layers.length > 0 ? layers[0] : null;
+    }
+
+    getRibbonSelect() {
+        let interactions = this.map.getInteractions().getArray().filter(i => {
+            return i.get("name") === "select_vulnerability_ribbon";
+        });
+        return interactions.length > 0 ? interactions[0] : null;
+    }
 }
 
 export { MapHandler as default };

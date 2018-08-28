@@ -37,8 +37,8 @@ export function convertExtent([minX, minY, maxX, maxY]) {
 }
 
 export function compareFeaturesById(feature1, feature2) {
-    let id1 = feature1.get('id') || feature.ol_uid || 0;
-    let id2 = feature2.get('id') || feature.ol_uid || 1;
+    let id1 = Number.isInteger(feature1.get('id')) || feature1.ol_uid || 0;
+    let id2 = Number.isInteger(feature2.get('id')) || feature2.ol_uid || 1;
 
     if (id1 < id2) {
         return -1;
