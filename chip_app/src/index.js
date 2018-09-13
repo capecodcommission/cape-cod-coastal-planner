@@ -15,7 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     chip.app = Main.fullscreen({
         "env": {
             "agsLittoralCellUrl": process.env.ELM_APP_AGS_LITT_CELLS_URL,
-            "agsVulnerabilityRibbonUrl": process.env.ELM_APP_AGS_SHORELINE_URL
+            "agsVulnerabilityRibbonUrl": process.env.ELM_APP_AGS_SHORELINE_URL,
+            "agsHexUrl": process.env.ELM_APP_AGS_HEX_URL
         },
         "closePath": closePath,
         "size": {

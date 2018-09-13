@@ -38,6 +38,7 @@ decodeFlags =
 type alias Env =
     { agsLittoralCellUrl : String
     , agsVulnerabilityRibbonUrl : String
+    , agsHexUrl : String
     }
 
 
@@ -46,6 +47,7 @@ decodeEnv =
     decode Env
         |> required "agsLittoralCellUrl" D.string
         |> required "agsVulnerabilityRibbonUrl" D.string
+        |> required "agsHexUrl" D.string
 
 
 type alias GqlData a =

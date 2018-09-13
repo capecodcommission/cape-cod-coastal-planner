@@ -275,6 +275,7 @@ updateModel msg model =
                                 |> encodeOpenLayersCmd
                                 |> olCmd
                             , sendGetVulnRibbonRequest model.env selection
+                            , sendGetHexesRequest model.env selection
                             ]
                         )
 
@@ -284,6 +285,11 @@ updateModel msg model =
         LoadVulnerabilityRibbonResponse response ->
             ( model
             , olCmd <| encodeOpenLayersCmd (RenderVulnerabilityRibbon response)
+            )
+
+        LoadLocationHexesResponse response ->
+            ( model
+            , olCmd <| encodeOpenLayersCmd (RenderLocationHexes response)
             )
 
         ChangeZoneOfImpactState state ->

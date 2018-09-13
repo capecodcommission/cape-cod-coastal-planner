@@ -178,3 +178,37 @@ getVulnRibbonForLocation env extent =
             env.agsVulnerabilityRibbonUrl ++ QS.render qs
     in
         Http.get getUrl D.value
+
+
+
+--
+-- HEX LAYER (FEATURE SERVICE)
+--
+
+
+sendGetHexesRequest : Env -> ShorelineExtent -> Cmd Msg
+sendGetHexesRequest env shorelineExtent =
+    shorelineExtent
+        |> shorelineExtentToExtent
+        |> getHexesForLocation env
+        |> Http.send LoadLocationHexesResponse
+
+
+getHexesForLocation : Env -> Extent -> Http.Request D.Value
+getHexesForLocation env extent =
+    let
+        qs =
+            QS.empty
+                |> QS.add "f" "pjson"
+                |> QS.add "returnGeometry" "true"
+                |> QS.add "spatialRel" "esriSpatialRelIntersects"
+                |> QS.add "geometryType" "esriGeometryEnvelope"
+                |> QS.add "outFields" "*"
+                |> QS.add "inSR" "4326"
+                |> QS.add "outSR" "3857"
+                |> QS.add "geometry" (extentToString extent)
+
+        getUrl =
+            env.agsHexUrl ++ QS.render qs
+    in
+        Http.get getUrl D.value

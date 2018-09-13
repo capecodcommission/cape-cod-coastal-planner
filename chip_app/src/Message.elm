@@ -7,7 +7,6 @@ import Window
 import Types exposing (..)
 import Json.Decode as D
 import Http
-import RemoteData exposing (WebData)
 
 
 type Msg
@@ -24,6 +23,7 @@ type Msg
     | LoadLittoralCellsResponse (Result Http.Error D.Value)
     | MapSelectLittoralCell String
     | LoadVulnerabilityRibbonResponse (Result Http.Error D.Value)
+    | LoadLocationHexesResponse (Result Http.Error D.Value)
     | ChangeZoneOfImpactState PopupState
     | Animate Animation.Msg
     | Resize Window.Size

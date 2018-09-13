@@ -32,6 +32,10 @@ class MapHandler {
                     this.renderVulnerabilityRibbon(data);
                     break;
 
+                case "render_location_hexes":
+                    this.renderLocationHexes(data);
+                    break;
+
                 case "position_zone_of_impact_popup":
                     this.positionZoneOfImpactPopup(data);
                     break;
@@ -73,6 +77,13 @@ class MapHandler {
     renderVulnerabilityRibbon(data) {
         this.map.dispatchEvent({
             "type": "render_vulnerability_ribbon",
+            "data": data
+        });
+    }
+
+    renderLocationHexes(data) {
+        this.map.dispatchEvent({
+            "type": "render_location_hexes",
             "data": data
         });
     }
