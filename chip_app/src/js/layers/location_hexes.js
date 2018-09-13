@@ -52,7 +52,7 @@ function onRenderLocationHexes(data, layer, source) {
 function _style(feature, resolution) {
     return new Style({
         fill: new Fill({
-            color: "rgba(226,6,44,0.4)"
+            color: "rgba(226,6,44,0.2)"
         }),
         stroke: new Stroke({
             color: "#E2062C",
