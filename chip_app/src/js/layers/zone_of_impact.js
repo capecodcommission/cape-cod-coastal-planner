@@ -67,7 +67,7 @@ export function layer(map) {
 }
 
 function _newOnUpdate(evt, layer) {
-    layer.getSource().addFeature(evt.arc);
+    layer.getSource().addFeature(evt.shape);
 }
 
 function _onUpdate(evt, layer) {
