@@ -23,9 +23,9 @@ export function layer(map) {
     });
     layer.set("name", "location_hexes");
 
-    // map.on("render_location_hexes", ({data}) => {
-    //     onRenderLocationHexes(data, layer, source);
-    // });
+    map.on("render_location_hexes", ({data}) => {
+        onRenderLocationHexes(data, layer, source);
+    });
 
     return layer;
 }
