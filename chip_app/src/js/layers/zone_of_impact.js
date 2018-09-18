@@ -66,8 +66,21 @@ export function layer(map) {
     return layer;
 }
 
+
+const geojsonformat = new GeoJSON();
+
 function _newOnUpdate(evt, layer) {
-    layer.getSource().addFeature(evt.shape);
+    let features = layer.getSource().getFeatures();
+
+    if (features && features.length > 0) {
+        let existingSelection = geojsonformat.writeFeaturesObject(features);
+        let newSelection = geojsonformat.writeFeatureObject(evt.shape);
+        let unionedSelection = union(newSelection, existingSelection);
+        let newFeature = geojsonformat.readFeatureFromObject(unionedSelection);
+        layer.getSource().addFeature(newFeature);
+    } else {
+        layer.getSource().addFeature(evt.shape);
+    }
 }
 
 function _onUpdate(evt, layer) {
