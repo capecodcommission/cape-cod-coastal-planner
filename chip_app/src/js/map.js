@@ -8,7 +8,10 @@ import {layer as worldImagery} from "./layers/world_imagery";
 import {layer as littoralCells} from "./layers/littoral_cells";
 import {layer as vulnRibbon} from "./layers/vulnerability_ribbon";
 import {layer as locHexes} from "./layers/location_hexes";
-import {layer as impactZone} from "./layers/zone_of_impact";
+import {
+    layer as impactZone,
+    popup as zoiPopup
+} from "./layers/zone_of_impact";
 import {
     hover as hoverLittoralCells, 
     select as selectLittoralCells
@@ -45,6 +48,8 @@ export function init(onInit) {
         map.addInteraction(hoverVulnRibbon(map));
         map.addInteraction(selectVulnRibbon(map));
         map.addLayer(impactZone(map)); // depends on selectVulnRibbon
+
+        map.addOverlay(zoiPopup(map));
     });
 
     return map;

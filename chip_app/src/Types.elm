@@ -307,3 +307,31 @@ popupStateDecoder =
                     _ ->
                         D.fail <| "Invalid PopupState '" ++ state ++ "', expecting one of ['popup_hidden', 'popup_enabled', 'popup_disabled']"
             )
+
+
+type alias ZoneOfImpact =
+    { state : PopupState
+    , geometry : Maybe String
+    , numSelected : Int
+    }
+
+
+encodeZoneOfImpact : ZoneOfImpact -> E.Value
+encodeZoneOfImpact zoi =
+    E.object
+        [ ( "state", encodePopupState zoi.state )
+        , ( "geometry", EEx.maybe E.string zoi.geometry )
+        , ( "numSelected", E.int zoi.numSelected )
+        ]
+
+
+zoneOfImpactDecoder : Decoder ZoneOfImpact
+zoneOfImpactDecoder =
+    popupStateDecoder
+        |> D.andThen
+            (\popupState ->
+                D.map3 ZoneOfImpact
+                    (D.succeed popupState)
+                    (D.maybe (D.field "geometry" D.string))
+                    (D.field "num_selected" D.int)
+            )

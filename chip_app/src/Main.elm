@@ -44,7 +44,7 @@ type alias Model =
     , baselineInformation : BaselineInformation
     , baselineModal : GqlData (Maybe BaselineInfo)
     , vulnerabilityRibbon : WebData D.Value
-    , zoneOfImpact : PopupState
+    , zoneOfImpact : ZoneOfImpact
     }
 
 
@@ -78,7 +78,10 @@ initialModel flags =
         -- Vulernability Ribbon segments
         NotAsked
         -- Zone of Impact popup
-        PopupDisabled
+        { state = PopupDisabled
+        , geometry = Nothing
+        , numSelected = 0
+        }
 
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -292,9 +295,19 @@ updateModel msg model =
             , olCmd <| encodeOpenLayersCmd (RenderLocationHexes response)
             )
 
-        ChangeZoneOfImpactState state ->
-            ( { model | zoneOfImpact = state }
-            , olCmd <| encodeOpenLayersCmd (PositionZoneOfImpactPopup state)
+        ChangeZoneOfImpactState zoi ->
+            ( { model | zoneOfImpact = zoi }
+            , olCmd <| encodeOpenLayersCmd (PositionZoneOfImpactPopup zoi.state)
+            )
+
+        DragZoneOfImpact ->
+            ( model
+            , olCmd <| encodeOpenLayersCmd StartRepositioningZoneOfImpactPopup
+            )
+
+        DropZoneOfImpact ->
+            ( model
+            , olCmd <| encodeOpenLayersCmd StopRepositioningZoneOfImpactPopup
             )
 
         Animate animMsg ->

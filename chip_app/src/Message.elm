@@ -24,6 +24,8 @@ type Msg
     | MapSelectLittoralCell String
     | LoadVulnerabilityRibbonResponse (Result Http.Error D.Value)
     | LoadLocationHexesResponse (Result Http.Error D.Value)
-    | ChangeZoneOfImpactState PopupState
+    | ChangeZoneOfImpactState ZoneOfImpact
+    | DragZoneOfImpact
+    | DropZoneOfImpact
     | Animate Animation.Msg
     | Resize Window.Size

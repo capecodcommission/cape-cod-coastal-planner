@@ -24,6 +24,8 @@ type OpenLayersCmd
     | RenderVulnerabilityRibbon (Result Http.Error D.Value)
     | RenderLocationHexes (Result Http.Error D.Value)
     | PositionZoneOfImpactPopup PopupState
+    | StartRepositioningZoneOfImpactPopup
+    | StopRepositioningZoneOfImpactPopup
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -64,6 +66,16 @@ encodeOpenLayersCmd cmd =
                 , ( "data", encodePopupState popupState )
                 ]
 
+        StartRepositioningZoneOfImpactPopup ->
+            E.object
+                [ ( "cmd", E.string "start_repositioning_zone_of_impact_popup" )
+                ]
+
+        StopRepositioningZoneOfImpactPopup ->
+            E.object
+                [ ( "cmd", E.string "stop_repositioning_zone_of_impact_popup" )
+                ]
+
 
 
 -- SUBSCRIPTION PORTS (INBOUND)
@@ -93,7 +105,7 @@ decodeOpenLayersSub value =
                         |> D.map MapSelectLittoralCell
 
                 "popup_zone_of_impact" ->
-                    D.at [ "data", "popup_state" ] popupStateDecoder
+                    D.at [ "data", "zone_of_impact" ] zoneOfImpactDecoder
                         |> D.map ChangeZoneOfImpactState
 
                 _ ->

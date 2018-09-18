@@ -4,15 +4,11 @@ import VectorSource from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
 import EsriJSON from "ol/format/EsriJSON";
 import GeoJSON from "ol/format/GeoJSON";
-import {bbox} from "ol/loadingstrategy";
 import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
-import Text from "ol/style/Text";
-import Feature from "ol/Feature";
 import Overlay from "ol/Overlay";
-import { union, buffer, simplify } from "@turf/turf";
-import { polygon, multiPolygon } from "@turf/helpers";
+import { union } from "@turf/turf";
 
 
 /**
@@ -22,15 +18,19 @@ import { polygon, multiPolygon } from "@turf/helpers";
 export function popup(map) {
     let overlay = new Overlay({
         element: document.getElementById("zone-of-impact-popup"),
+        positioning: 'top-center',
+        offset: [40, -220],
         autoPan: true,
         autoPanAnimation: {
             duration: 250
         }
     });
 
-    map.addOverlay(overlay);
+    map.on("position_zone_of_impact_popup", ({data}) => {
+        overlay.setPosition(data.position);
+    });
 
-    map.on("position_zone_of_impact_popup")
+    return overlay;
 }
 
 
@@ -60,7 +60,7 @@ export function layer(map) {
         return interaction.get("name") === "select_vulnerability_ribbon";
     })[0];
     selectRibbon.on("update_impact_zone", (evt) => {
-        _newOnUpdate(evt, layer);
+        _onUpdate(evt, layer);
     });
 
     return layer;
@@ -68,70 +68,34 @@ export function layer(map) {
 
 
 const geojsonformat = new GeoJSON();
+const esrijsonformat = new EsriJSON();
 
-function _newOnUpdate(evt, layer) {
+function _onUpdate(evt, layer) {
+    let zoneOfImpact = evt.shape;
     let features = layer.getSource().getFeatures();
-
     if (features && features.length > 0) {
         let existingSelection = geojsonformat.writeFeaturesObject(features);
         let newSelection = geojsonformat.writeFeatureObject(evt.shape);
         let unionedSelection = union(newSelection, ...existingSelection.features);
-        let newFeature = geojsonformat.readFeatureFromObject(unionedSelection);
-        layer.getSource().clear();
-        layer.getSource().addFeature(newFeature);
-    } else {
-        layer.getSource().addFeature(evt.shape);
+        zoneOfImpact = geojsonformat.readFeatureFromObject(unionedSelection);        
     }
-}
-
-function _onUpdate(evt, layer) {
     layer.getSource().clear();
-    let unioned = unionSelectedFeatures(evt.target.getFeatures());
-    layer.getSource().addFeature(unioned);
+    layer.getSource().addFeature(zoneOfImpact);
+
+    let esrijson = esrijsonformat.writeFeatureObject(zoneOfImpact);
+
+    let num_selected = evt.target.get("num_selected") || 0;
     evt.target.getMap().dispatchEvent({
         "type": "olSub",
         "sub": "popup_zone_of_impact",
         "data" : {
-            "popup_state": {
+            "zone_of_impact": {
                 "state": "popup_enabled",
-                "position": { x: evt.coordinate[0], y: evt.coordinate[1] } 
+                "position": { x: evt.coordinate[0], y: evt.coordinate[1] },
+                "geometry": JSON.stringify(esrijson),
+                "num_selected": num_selected
             }
         }
     });
 }
 
-function unionSelectedFeatures(features) {
-    try {
-        let featuresArray = features.getArray();
-        let unionedSelection = featuresArray.reduce((accFeature, nextFeature) => {
-            if (accFeature instanceof Feature) {
-                accFeature = convertFeature(accFeature);
-            }
-            let convertedNextFeature = convertFeature(nextFeature);
-            let unioned = union(accFeature, convertedNextFeature);
-            return unioned;
-        });
-
-        let format = new GeoJSON();
-        let newFeature = format.readFeatureFromObject(unionedSelection);
-        return newFeature;
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-function convertFeature(feature) {
-    let shape = null;
-    let geom = feature.getGeometry();
-    switch (geom.getType()) {
-        case "Polygon":
-            shape = polygon(geom.getCoordinates());
-            break;
-        case "MultiPolygon":
-            shape = multiPolygon(geom.getCoordinates());
-            break;
-        default:
-            throw new Error(`Invalid Geometry type: ${geometry.getType()}. Geometry must be either a Polygon or MultiPolygon.`);
-    }
-    return shape;
-}
