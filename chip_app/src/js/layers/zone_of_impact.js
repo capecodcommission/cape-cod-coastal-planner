@@ -75,8 +75,9 @@ function _newOnUpdate(evt, layer) {
     if (features && features.length > 0) {
         let existingSelection = geojsonformat.writeFeaturesObject(features);
         let newSelection = geojsonformat.writeFeatureObject(evt.shape);
-        let unionedSelection = union(newSelection, existingSelection);
+        let unionedSelection = union(newSelection, ...existingSelection.features);
         let newFeature = geojsonformat.readFeatureFromObject(unionedSelection);
+        layer.getSource().clear();
         layer.getSource().addFeature(newFeature);
     } else {
         layer.getSource().addFeature(evt.shape);
