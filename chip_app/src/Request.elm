@@ -153,14 +153,15 @@ getLittoralCells env extent =
 
 sendGetVulnRibbonRequest : Env -> ShorelineExtent -> Cmd Msg
 sendGetVulnRibbonRequest env shorelineExtent =
-    shorelineExtent
-        |> shorelineExtentToExtent
+    --shorelineExtent
+    --|> shorelineExtentToExtent
+    136
         |> getVulnRibbonForLocation env
         |> Http.send LoadVulnerabilityRibbonResponse
 
 
-getVulnRibbonForLocation : Env -> Extent -> Http.Request D.Value
-getVulnRibbonForLocation env extent =
+getVulnRibbonForLocation : Env -> Int -> Http.Request D.Value
+getVulnRibbonForLocation env id =
     let
         qs =
             QS.empty
@@ -168,12 +169,10 @@ getVulnRibbonForLocation env extent =
                 |> QS.add "returnGeometry" "true"
                 |> QS.add "spatialRel" "esriSpatialRelIntersects"
                 |> QS.add "geometryType" "esriGeometryEnvelope"
-                --|> QS.add "outFields" "OBJECTID,SaltMarsh,CoastalDune,Undeveloped,RibbonScore,LittoralID,BeachOwner"
+                |> QS.add "outFields" "OBJECTID,SaltMarsh,CoastalBank,Undeveloped,RibbonScore,LittoralID,BeachOwner"
                 |> QS.add "inSR" "4326"
                 |> QS.add "outSR" "3857"
-                --|> QS.add "maxAllowableOffset" "300"
-                |> QS.add "geometry" (extentToString extent)
-
+                |> QS.add "where" ("LittoralID=" ++ toString id)
         getUrl =
             env.agsVulnerabilityRibbonUrl ++ QS.render qs
     in
