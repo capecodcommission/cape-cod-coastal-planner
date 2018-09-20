@@ -8,6 +8,7 @@ defmodule ChipApi.Adaptation.Strategy do
     field :name, :string
     field :display_order, :integer
     field :is_active, :boolean, default: false
+    field :currently_permittable, :string
 
     many_to_many :adaptation_categories, ChipApi.Adaptation.Category,
       join_through: "strategies_categories",
@@ -35,7 +36,7 @@ defmodule ChipApi.Adaptation.Strategy do
   @doc false
   def changeset(strategy, attrs) do
     strategy
-    |> cast(attrs, [:name, :description, :display_order])
+    |> cast(attrs, [:name, :description, :display_order, :currently_permittable])
     |> validate_required([:name, :is_active])
     |> unique_constraint(:name)
   end
