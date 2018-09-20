@@ -572,6 +572,37 @@ defmodule ChipApi.Adaptation.Strategies do
     end
 
     #
+    # ADAPTATION BENEFITS
+    #
+    
+    alias ChipApi.Adaptation.Benefit
+
+    @doc """
+    Returns the list of adaptation Benefits. When ordering by display_order,
+    nulls are returned first.
+
+    ## Examples
+
+        iex> list_benefits(%{order: :desc})
+        [%Benefit{}, ...]
+
+        iex> list_benefits()
+        [%Benefit{}, ...]
+
+    """
+    def list_benefits(args) do
+        args
+        |> Enum.reduce(Benefit, fn
+            {:order, order}, query ->
+                query |> order_by([{^order, :display_order}, {^order, :id}])
+        end)
+        |> Repo.all
+    end
+    def list_benefits do
+        Repo.all(Benefit)
+    end
+
+    #
     # ADAPTATION STRATEGIES
     #
 

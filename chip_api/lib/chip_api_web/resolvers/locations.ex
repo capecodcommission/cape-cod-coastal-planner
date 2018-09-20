@@ -34,6 +34,7 @@ defmodule ChipApiWeb.Resolvers.Locations do
         ]}
     end
     
+    # TODO copy for strategy img - priv/static/images new folder called strategies - get these from mike
     @public_path "/images/locations/"
     @valid_extensions ~w(.jpg .JPG .jpeg .png .gif)
     def image_path(shoreline_location, _args, _) do

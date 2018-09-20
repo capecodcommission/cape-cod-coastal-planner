@@ -43,6 +43,8 @@ defmodule ChipApi.Adaptation.StrategyTest do
         assert [data.cat1.name, data.cat2.name] == categories
     end
 
+    # TODO Add list_benefits for strategy using category as a guide
+
     test "list_hazards_for_strategy returns all hazards for a strategy", %{data: data} do
         hazards = for h <- Strategies.list_hazards_for_strategy(data.strat1), do: h.name
         assert [data.haz1.name, data.haz2.name] == hazards

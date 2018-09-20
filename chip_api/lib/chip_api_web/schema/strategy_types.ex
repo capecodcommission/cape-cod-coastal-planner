@@ -18,6 +18,8 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.adaptation_categories/3
         end
 
+        # TODO Add for benefits
+
         @desc "The list of coastal hazards"
         field :coastal_hazards, non_null(list_of(non_null(:coastal_hazard))) do
             arg :order, type: :sort_order, default_value: :asc
@@ -63,6 +65,8 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.categories_for_strategy/3
         end
 
+        # TODO add relationship for benefits
+
         @desc "The coastal hazards that the strategy helps mitigate"
         field :hazards, list_of(:coastal_hazard) do
             resolve &Resolvers.Strategies.hazards_for_strategy/3
@@ -94,6 +98,8 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.strategies_for_category/3
         end
     end
+
+    # TODO add object for benefit
 
     @desc "A coastal hazard"
     object :coastal_hazard do

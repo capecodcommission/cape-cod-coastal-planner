@@ -57,6 +57,7 @@ defmodule ChipApi.Seeds do
         #
         # STRATEGY PLACEMENTS
         #
+        
         developed = %Adaptation.Placement{
             name: "Developed"
         }
@@ -78,7 +79,47 @@ defmodule ChipApi.Seeds do
         |> Repo.insert!
 
         #
-        # ADAPTIVE STRATEGIES
+        # ADAPTATION BENEFITS
+        #
+
+        habitat = %Adaptation.Benefit{
+            name: "Habitat",
+            display_order: 0
+        }
+        |> Repo.insert!
+
+        water_quality = %Adaptation.Benefit{
+            name: "Water Quality",
+            display_order: 1
+        }
+        |> Repo.insert!
+
+        carbon_storage = %Adaptation.Benefit{
+            name: "Carbon Storage",
+            display_order: 2
+        }
+        |> Repo.insert!
+
+        aesthetics = %Adaptation.Benefit{
+            name: "Aesthetics",
+            display_order: 3
+        }
+        |> Repo.insert!
+
+        flood_management = %Adaptation.Benefit{
+            name: "Flood Mgt.",
+            display_order: 4
+        }
+        |> Repo.insert!
+
+        recreation_tourism = %Adaptation.Benefit{
+            name: "Recreation/Tourism",
+            display_order: 5
+        }
+        |> Repo.insert!
+
+        #
+        # ADAPTATION STRATEGIES
         #
 
         _no_action = %Adaptation.Strategy{
@@ -88,6 +129,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [],
             impact_scales: [site, community, neighborhood, regional],
             strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
+            adaptation_benefits: [habitat, aesthetics, recreation_tourism],
             is_active: true
         }
         |> Repo.insert!
