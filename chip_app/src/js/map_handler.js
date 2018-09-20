@@ -4,7 +4,6 @@ import proj4 from "proj4";
 import {register} from "ol/proj/proj4";
 import {logError, convertExtent} from "./misc";
 import {init as initMap} from "./map";
-import { popup } from "./layers/zone_of_impact";
 
 class MapHandler {
     constructor({onInit}) {
@@ -35,18 +34,6 @@ class MapHandler {
 
                 case "render_location_hexes":
                     this.renderLocationHexes(data);
-                    break;
-
-                case "position_zone_of_impact_popup":
-                    this.positionZoneOfImpactPopup(data);
-                    break;
-
-                case "start_repositioning_zone_of_impact_popup":
-                    this.startRepositioningZoneOfImpactPopup();
-                    break;
-
-                case "stop_repositioning_zone_of_impact_popup":
-                    this.stopRepositioningZoneOfImpactPopup();
                     break;
 
                 default:
@@ -95,25 +82,6 @@ class MapHandler {
             "type": "render_location_hexes",
             "data": data
         });
-    }
-
-    positionZoneOfImpactPopup(data) {
-        this.map.dispatchEvent({
-            "type": "position_zone_of_impact_popup",
-            "data": data
-        });
-    }
-
-    startRepositioningZoneOfImpactPopup() {
-        this.map.addEventListener("mousemove", this.handleZoneOfImpactPopupReposition);
-    }
-
-    stopRepositioningZoneOfImpactPopup() {
-        this.map.removeEventListener("mousemove", this.handleZoneOfImpactPopupReposition);
-    }
-
-    handleZoneOfImpactPopupReposition(evt) {
-        console.log(`whoa`);
     }
 
     getRibbonLayer() {

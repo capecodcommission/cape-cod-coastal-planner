@@ -7,31 +7,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
-import Overlay from "ol/Overlay";
 import { union } from "@turf/turf";
-
-
-/**
- * Overlay functions
- */
-
-export function popup(map) {
-    let overlay = new Overlay({
-        element: document.getElementById("zone-of-impact-popup"),
-        positioning: 'top-center',
-        offset: [40, -220],
-        autoPan: true,
-        autoPanAnimation: {
-            duration: 250
-        }
-    });
-
-    map.on("position_zone_of_impact_popup", ({data}) => {
-        overlay.setPosition(data.position);
-    });
-
-    return overlay;
-}
 
 
 /**
@@ -87,14 +63,10 @@ function _onUpdate(evt, layer) {
     let num_selected = evt.target.get("num_selected") || 0;
     evt.target.getMap().dispatchEvent({
         "type": "olSub",
-        "sub": "popup_zone_of_impact",
+        "sub": "update_impact_zone",
         "data" : {
-            "zone_of_impact": {
-                "state": "popup_enabled",
-                "position": { x: evt.coordinate[0], y: evt.coordinate[1] },
-                "geometry": JSON.stringify(esrijson),
-                "num_selected": num_selected
-            }
+            "geometry": JSON.stringify(esrijson),
+            "num_selected": num_selected
         }
     });
 }

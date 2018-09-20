@@ -77,9 +77,8 @@ initialModel flags =
         NotAsked
         -- Vulernability Ribbon segments
         NotAsked
-        -- Zone of Impact popup
-        { state = PopupDisabled
-        , geometry = Nothing
+        -- Zone of Impact data
+        { geometry = Nothing
         , numSelected = 0
         }
 
@@ -295,19 +294,9 @@ updateModel msg model =
             , olCmd <| encodeOpenLayersCmd (RenderLocationHexes response)
             )
 
-        ChangeZoneOfImpactState zoi ->
+        UpdateZoneOfImpact zoi ->
             ( { model | zoneOfImpact = zoi }
-            , olCmd <| encodeOpenLayersCmd (PositionZoneOfImpactPopup zoi.state)
-            )
-
-        DragZoneOfImpact ->
-            ( model
-            , olCmd <| encodeOpenLayersCmd StartRepositioningZoneOfImpactPopup
-            )
-
-        DropZoneOfImpact ->
-            ( model
-            , olCmd <| encodeOpenLayersCmd StopRepositioningZoneOfImpactPopup
+            , Cmd.none
             )
 
         Animate animMsg ->
@@ -409,7 +398,6 @@ view app =
                             [ el NoStyle [ id "map", height fill ] empty
                                 |> within []
                             ]
-                    , ZoneOfImpact.view model
                     ]
 
         Failure err ->

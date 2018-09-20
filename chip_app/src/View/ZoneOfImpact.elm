@@ -17,27 +17,6 @@ view { zoneOfImpact } =
         ]
     <|
         column NoStyle
-            [ onMouseDown DragZoneOfImpact
-            , onMouseUp DropZoneOfImpact
-            ]
+            []
             [ text "Hahahahahaha"
             ]
-
-
-
--- case zoneOfImpact.state of
---     PopupEnabled _ ->
---         modal Popup
---             [ id "zone-of-impact-popup"
---             , height (px 200)
---             , width (px 300)
---             ]
---         <|
---             column NoStyle
---                 []
---                 [ text "Hahahahahaha"
---                 ]
---     PopupDisabled ->
---         modal NoStyle [ id "zone-of-impact-popup" ] empty
---     PopupHidden _ ->
---         modal NoStyle [ id "zone-of-impact-popup" ] empty
