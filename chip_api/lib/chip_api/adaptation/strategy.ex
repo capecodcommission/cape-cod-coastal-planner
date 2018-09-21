@@ -29,6 +29,9 @@ defmodule ChipApi.Adaptation.Strategy do
     many_to_many :adaptation_benefits, ChipApi.Adaptation.Benefit,
       join_through: "strategies_benefits",
       on_delete: :delete_all
+    
+    has_many :adaptation_advantages, ChipApi.Adaptation.Advantage, 
+      on_delete: :delete_all
 
     timestamps()
   end
