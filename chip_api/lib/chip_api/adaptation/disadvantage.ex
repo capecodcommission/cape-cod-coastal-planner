@@ -5,6 +5,7 @@ defmodule ChipApi.Adaptation.Disadvantage do
   schema "adaptation_disadvantages" do
     field :name, :string
     field :display_order, :integer
+    field :strategy_id, :integer
 
     # One to many relationship with strategy
     belongs_to :adaptation_strategies, ChipApi.Adaptation.Strategy

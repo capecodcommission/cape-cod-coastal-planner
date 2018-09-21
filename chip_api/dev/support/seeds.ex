@@ -169,11 +169,27 @@ defmodule ChipApi.Seeds do
 
         _revetment = %Adaptation.Strategy{
             name: "Revetment",
-            description: "Sloped wall of boulders constructed along eroding coastal banks designed to reflect wave energy and protect upland structures.",
+            description: "Sloped piles of boulders constructed along eroding coastal banks designed to intercept wave energy and decrease erosion.",
             adaptation_categories: [protect],
-            coastal_hazards: [erosion],
+            coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placements: [coastal_dune],
+            adaptation_benefits: [habitat, flood_management],
+            currently_permittable: "Various local, state, and federal permits required.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Mitigates wave action.", display_order: 0},
+                %Adaptation.Advantage{name: "Low maintenance.", display_order: 1},
+                %Adaptation.Advantage{name: "Longterm lifespan.", display_order: 2},
+                %Adaptation.Advantage{name: "Creates hard structure for non-mobile marine life.", display_order: 3}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Loss and fragmentation of intertidal habitat.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Erosion of adjacent unreinforced sites.", display_order: 1},
+                %Adaptation.Disadvantage{name: "No high water protection.", display_order: 2},
+                %Adaptation.Disadvantage{name: "Aesthetic impacts.", display_order: 3},
+                %Adaptation.Disadvantage{name: "Reduces longshore sediment transport.", display_order: 4},
+                %Adaptation.Disadvantage{name: "Can eliminate dry beach over time if beach nourishment is not required.", display_order: 5}
+            ],
             is_active: true
         }
         |> Repo.insert!
