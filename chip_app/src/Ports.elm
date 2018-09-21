@@ -22,6 +22,7 @@ type OpenLayersCmd
     | ZoomToShorelineLocation ShorelineExtent
     | LittoralCellsLoaded (Result Http.Error D.Value)
     | RenderVulnerabilityRibbon (Result Http.Error D.Value)
+    | ClearZoneOfImpact
     | RenderLocationHexes (Result Http.Error D.Value)
 
 
@@ -49,6 +50,11 @@ encodeOpenLayersCmd cmd =
             E.object
                 [ ( "cmd", E.string "render_vulnerability_ribbon" )
                 , ( "data", encodeRawResponse response )
+                ]
+
+        ClearZoneOfImpact ->
+            E.object
+                [ ( "cmd", E.string "clear_zone_of_impact" )
                 ]
 
         RenderLocationHexes response ->

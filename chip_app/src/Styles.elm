@@ -35,6 +35,7 @@ type MainStyles
     | Header HeaderStyles
     | Baseline BaselineStyles
     | Headings HeadingStyles
+    | Sidebar
     | Popup
     | CloseIcon
     | FontLeft
@@ -201,6 +202,11 @@ stylesheet =
         , Style.style Popup
             [ Color.background palette.chambray
             , Color.text white
+            ]
+        , Style.style Sidebar
+            [ Color.background <| Color.rgba 0 0 0 0.7
+            , Color.text white
+            , Font.typeface fontstack
             ]
         , Style.style CloseIcon
             [ Style.cursor "pointer" ]

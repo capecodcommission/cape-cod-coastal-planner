@@ -32,6 +32,10 @@ class MapHandler {
                     this.renderVulnerabilityRibbon(data);
                     break;
 
+                case "clear_zone_of_impact":
+                    this.clearZoneOfImpact();
+                    break;
+
                 case "render_location_hexes":
                     this.renderLocationHexes(data);
                     break;
@@ -74,6 +78,12 @@ class MapHandler {
         this.map.dispatchEvent({
             "type": "render_vulnerability_ribbon",
             "data": data
+        });
+    }
+
+    clearZoneOfImpact() {
+        this.map.dispatchEvent({
+            "type": "clear_zone_of_impact"
         });
     }
 

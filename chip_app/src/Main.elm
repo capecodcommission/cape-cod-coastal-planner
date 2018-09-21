@@ -19,7 +19,8 @@ import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
 import View.Dropdown as Dropdown exposing (Dropdown)
 import View.BaselineInfo as BaselineInfo exposing (..)
-import View.ZoneOfImpact as ZoneOfImpact
+import View.RightSidebar as RSidebar
+import View.ZoneOfImpact as ZOI
 import View.Helpers exposing (..)
 import Styles exposing (..)
 import ChipApi.Scalar as Scalar
@@ -44,7 +45,9 @@ type alias Model =
     , baselineInformation : BaselineInformation
     , baselineModal : GqlData (Maybe BaselineInfo)
     , vulnerabilityRibbon : WebData D.Value
-    , zoneOfImpact : ZoneOfImpact
+    , zoneOfImpact : Maybe ZoneOfImpact
+    , rightSidebarOpenness : Openness
+    , rightSidebarAnimations : Animation.State
     }
 
 
@@ -78,9 +81,10 @@ initialModel flags =
         -- Vulernability Ribbon segments
         NotAsked
         -- Zone of Impact data
-        { geometry = Nothing
-        , numSelected = 0
-        }
+        Nothing
+        -- right sidebar
+        Closed
+        (Animation.style <| .closed <| RSidebar.animations)
 
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -295,17 +299,58 @@ updateModel msg model =
             )
 
         UpdateZoneOfImpact zoi ->
-            ( { model | zoneOfImpact = zoi }
+            ( model
+                |> expandRightSidebar
+                |> \m -> { m | zoneOfImpact = Just zoi }
             , Cmd.none
             )
 
+        CancelZoneOfImpactSelection ->
+            ( model
+                |> collapseRightSidebar
+                |> \m -> { m | zoneOfImpact = Nothing }
+            , olCmd <| encodeOpenLayersCmd ClearZoneOfImpact
+            )
+
+        -- ToggleRightSidebar ->
+        --     case model.rightSidebarOpenness of
+        --         Open ->
+        --             ( collapseRightSidebar model, Cmd.none )
+        --         Closed ->
+        --             ( expandRightSidebar model, Cmd.none )
         Animate animMsg ->
-            ( model, Cmd.none )
+            ( { model
+                | rightSidebarAnimations = Animation.update animMsg model.rightSidebarAnimations
+              }
+            , Cmd.none
+            )
 
         Resize size ->
             ( { model | device = classifyDevice size }
             , Cmd.none
             )
+
+
+collapseRightSidebar : Model -> Model
+collapseRightSidebar model =
+    { model
+        | rightSidebarOpenness = Closed
+        , rightSidebarAnimations =
+            Animation.interrupt
+                [ Animation.to <| .closed <| RSidebar.animations ]
+                model.rightSidebarAnimations
+    }
+
+
+expandRightSidebar : Model -> Model
+expandRightSidebar model =
+    { model
+        | rightSidebarOpenness = Open
+        , rightSidebarAnimations =
+            Animation.interrupt
+                [ Animation.to <| .open <| RSidebar.animations ]
+                model.rightSidebarAnimations
+    }
 
 
 getCachedBaselineInfo : Model -> Maybe BaselineInfo
@@ -380,11 +425,6 @@ shouldLocationMenuChangeTriggerZoomTo message =
 ---- VIEW ----
 
 
-renderAnimation : Animation.State -> List (Element.Attribute variation Msg) -> List (Element.Attribute variation Msg)
-renderAnimation animations otherAttrs =
-    (List.map Element.Attributes.toAttr <| Animation.render animations) ++ otherAttrs
-
-
 view : App -> Html Msg
 view app =
     case app of
@@ -396,7 +436,10 @@ view app =
                     , mainContent NoStyle [ height fill, clip ] <|
                         column NoStyle [ height fill ] <|
                             [ el NoStyle [ id "map", height fill ] empty
-                                |> within []
+                                |> within
+                                    [ getRightSidebarChildViews model
+                                        |> RSidebar.view model
+                                    ]
                             ]
                     ]
 
@@ -427,6 +470,16 @@ headerView ({ device } as model) =
             ]
 
 
+getRightSidebarChildViews : Model -> List (Element MainStyles Variations Msg)
+getRightSidebarChildViews model =
+    case model.zoneOfImpact of
+        Just zoi ->
+            [ ZOI.view zoi ]
+
+        Nothing ->
+            [ el NoStyle [] empty ]
+
+
 
 ---- SUBSCRIPTIONS ----
 
@@ -436,7 +489,7 @@ subscriptions app =
     case app of
         Loaded model ->
             Sub.batch
-                [ Animation.subscription Animate []
+                [ Animation.subscription Animate [ model.rightSidebarAnimations ]
                 , Window.resizes Resize
                 , olSub decodeOpenLayersSub
                 ]

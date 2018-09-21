@@ -39,6 +39,10 @@ export function layer(map) {
         _onUpdate(evt, layer);
     });
 
+    map.on("clear_zone_of_impact", () => {
+        layer.getSource().clear();
+    });
+
     return layer;
 }
 

@@ -25,5 +25,6 @@ type Msg
     | LoadVulnerabilityRibbonResponse (Result Http.Error D.Value)
     | LoadLocationHexesResponse (Result Http.Error D.Value)
     | UpdateZoneOfImpact ZoneOfImpact
+    | CancelZoneOfImpactSelection
     | Animate Animation.Msg
     | Resize Window.Size

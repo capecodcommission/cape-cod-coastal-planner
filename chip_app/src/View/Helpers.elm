@@ -1,6 +1,7 @@
 module View.Helpers exposing (..)
 
 import Http
+import Animation
 import Graphqelm.Http exposing (Error(..))
 import Graphqelm.Http.GraphqlError exposing (GraphqlError)
 import Element exposing (..)
@@ -10,6 +11,11 @@ import Message exposing (..)
 import ChipApi.Scalar as Scalar
 import FormatNumber exposing (format)
 import FormatNumber.Locales exposing (usLocale)
+
+
+renderAnimation : Animation.State -> List (Element.Attribute variation Msg) -> List (Element.Attribute variation Msg)
+renderAnimation animations otherAttrs =
+    (List.map Element.Attributes.toAttr <| Animation.render animations) ++ otherAttrs
 
 
 parseErrors : Graphqelm.Http.Error a -> List ( String, String )

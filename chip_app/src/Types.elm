@@ -50,6 +50,11 @@ decodeEnv =
         |> required "agsHexUrl" D.string
 
 
+type Openness
+    = Open
+    | Closed
+
+
 type alias GqlData a =
     RemoteData (Graphqelm.Http.Error a) a
 
