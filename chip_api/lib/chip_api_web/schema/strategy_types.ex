@@ -18,7 +18,11 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.adaptation_categories/3
         end
 
-        # TODO Add for benefits
+        @desc "The list of adaptation benefits"
+        field :adaptation_benefits, non_null(list_of(non_null(:adaptation_benefit))) do
+            arg :order, type: :sort_order, default_value: :asc
+            resolve &Resolvers.Strategies.adaptation_benefits/3
+        end
 
         @desc "The list of coastal hazards"
         field :coastal_hazards, non_null(list_of(non_null(:coastal_hazard))) do
@@ -57,6 +61,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The description of the strategy"
         field :description, :string
 
+        @desc "The currently permittable status of the strategy"
+        field :currently_permittable, :string
+
         @desc "Denotes whether this strategy is currently available for planning"
         field :is_active, non_null(:boolean)
 
@@ -65,12 +72,19 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.categories_for_strategy/3
         end
 
-        # TODO add relationship for benefits
+        @desc "The adaptation benefits that are associated with the strategy"
+        field :benefits, list_of(:adaptation_benefit) do
+            resolve &Resolvers.Strategies.benefits_for_strategy/3
+        end
 
         @desc "The coastal hazards that the strategy helps mitigate"
         field :hazards, list_of(:coastal_hazard) do
             resolve &Resolvers.Strategies.hazards_for_strategy/3
         end
+
+        # TODO add advantages
+
+        #  TODO add disadvantages
 
         @desc "The geographic scales of impact the strategy can target"
         field :scales, list_of(:impact_scale) do
@@ -99,7 +113,17 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         end
     end
 
-    # TODO add object for benefit
+    @desc "An adaptation benefit"
+    object :adaptation_benefit do
+        
+        @desc "The name of the benefit"
+        field :name, non_null(:string)
+
+        @desc "The adaptation strategies that are associated with the benefit"
+        field :strategies, list_of(:adaptation_strategy) do
+            resolve &Resolvers.Strategies.strategies_for_benefit/3
+        end
+    end
 
     @desc "A coastal hazard"
     object :coastal_hazard do

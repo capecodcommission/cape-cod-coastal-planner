@@ -145,6 +145,52 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
+        _managed_relocation = %Adaptation.Strategy{
+            name: "Managed Relocation",
+            description: "Gradually moving development and infrastructure away from the coastline and areas of projected loss due to flooding and sea level rise.",
+            adaptation_categories: [retreat],
+            coastal_hazards: [erosion, storm_surge, sea_level_rise],
+            impact_scales: [site, neighborhood, community, regional],
+            strategy_placements: [], # TODO Revist - ask Matt
+            adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
+            currently_permittable: "Various local and state permits may be required.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Spares existing development from the effects of erosion and flooding.", display_order: 0},
+                %Adaptation.Advantage{name: "Protects future development from flooding.", display_order: 1},
+                %Adaptation.Advantage{name: "Allows for the maintenance or restoration of intertidal habitat.", display_order: 2}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Cost of moving development.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Acquisition of land for new development.", display_order: 1},
+                %Adaptation.Disadvantage{name: "Loss of coastal property values.", display_order: 2}
+            ],
+            is_active: true
+        }
+        |> Repo.insert!
+
+        _transfer_of_development = %Adaptation.Strategy{
+            name: "Transfer of Development Credit/Transferable Development Rights",
+            description: "Land use mechanism that encourages the permanent removal of development rights in defined “sending” districts, and allows those rights to be transferred to defined “receiving” districts.",
+            adaptation_categories: [retreat],
+            coastal_hazards: [erosion, storm_surge, sea_level_rise],
+            impact_scales: [community],
+            strategy_placements: [], # TODO Revist - ask Matt
+            adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
+            currently_permittable: "Local bylaws allowing for Transfer of Development Rights must be in place.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Conserves undisturbed areas that may serve as habitat or flood buffers.", display_order: 0},
+                %Adaptation.Advantage{name: "Prevents development in areas likely to become inundated or hazard areas.", display_order: 1},
+                %Adaptation.Advantage{name: "Allows for the same development potential in a community, redirecting development to revitalize urban and mixed-use centers.", display_order: 2}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "TDR may be difficult to set up and administer so it functions as intended.", display_order: 0},
+                %Adaptation.Disadvantage{name: "May encourage the development of previously undeveloped inland lands.", display_order: 1},
+                %Adaptation.Disadvantage{name: "Limits development along coastline where higher returns on investment are possible.", display_order: 2}
+            ],
+            is_active: true
+        }
+        |> Repo.insert!
+
         _open_space_protection = %Adaptation.Strategy{
             name: "Open Space Protection",
             description: "Including protection of existing wetland, drainage system, and buffer zone resources in planning will protect them from development impacts preserving them as a natural defense system.",

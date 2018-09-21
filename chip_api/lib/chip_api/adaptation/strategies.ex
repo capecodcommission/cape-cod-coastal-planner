@@ -602,6 +602,118 @@ defmodule ChipApi.Adaptation.Strategies do
         Repo.all(Benefit)
     end
 
+    @doc """
+    Returns the list of adaptation strategies associated with 
+    the given benefit.
+
+    ## Examples
+
+        iex> list_strategies_for_benefit(category)
+        [%Strategy{}, ...]
+
+    """
+    def list_strategies_for_benefit(%Benefit{} = benefit) do
+        query = Ecto.assoc(benefit, :adaptation_strategies)
+        Repo.all(query)
+    end
+
+    @doc """
+    Gets a single Benefit by id. 
+    
+    Raises `Ecto.NoResultsError` if the Benefit does not exist.
+
+    ## Examples
+
+        iex> get_benefit!(1)
+        %Benefit{}
+
+        iex> get_benefit!(100)
+        ** (Ecto.NoResultsError)
+
+    """
+    def get_benefit!(id), do: Repo.get!(Benefit, id)
+
+    @doc """
+    Gets a single Benefit by id. 
+    
+    Returns `nil` if the Benefit does not exist.
+
+    ## Examples
+
+        iex> get_benefit!(1)
+        %Benefit{}
+
+        iex> get_benefit!(100)
+        ** (Ecto.NoResultsError)
+
+    """
+    def get_benefit(id), do: Repo.get(Benefit, id)
+
+    @doc """
+    Creates a Benefit.
+
+    ## Examples
+
+        iex> create_benefit(%{field: value})
+        {:ok, %Benefit{}}
+
+        iex> create_benefit(%{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def create_benefit(attrs \\ %{}) do
+        %Benefit{}
+        |> Benefit.changeset(attrs)
+        |> Repo.insert()
+    end
+
+    @doc """
+    Updates a Benefit.
+
+    ## Examples
+
+        iex> update_benefit(benefit, %{field: new_value})
+        {:ok, %Benefit{}}
+
+        iex> update_benefit(benefit, %{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """    
+    def update_benefit(%Benefit{} = benefit, attrs) do
+        benefit
+        |> Benefit.changeset(attrs)
+        |> Repo.update()
+    end
+
+    @doc """
+    Deletes a Benefit.
+
+    ## Examples
+
+        iex> delete_benefit(benefit)
+        {:ok, %Category{}}
+
+        iex> delete_benefit(benefit)
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def delete_benefit(%Benefit{} = benefit) do
+        Repo.delete(benefit)
+    end
+
+    @doc """
+    Returns an `%Ecto.Changeset{}` for tracking benefit changes.
+
+    ## Examples
+
+        iex> change_benefit(benefit)
+        %Ecto.Changeset{source: %Benefit{}}
+
+    """
+    def change_benefit(%Benefit{} = benefit) do
+        Benefit.changeset(benefit, %{})
+    end
+
     #
     # ADAPTATION STRATEGIES
     #
@@ -659,6 +771,21 @@ defmodule ChipApi.Adaptation.Strategies do
     """
     def list_categories_for_strategy(%Strategy{} = strategy) do
         query = Ecto.assoc(strategy, :adaptation_categories)
+        Repo.all(query)
+    end
+
+    # TODO add for benefits
+    @doc """
+    Returns the list of benefits associated with the given strategy.
+
+    ## Examples
+
+        iex> list_benefits_for_strategy(strategy)
+        [%Benefit{}, ...]
+
+    """
+    def list_benefits_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :adaptation_benefits)
         Repo.all(query)
     end
 

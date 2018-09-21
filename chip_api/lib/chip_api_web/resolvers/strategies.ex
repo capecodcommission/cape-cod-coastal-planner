@@ -9,7 +9,9 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_categories(args)}
     end
 
-    # TODO resolver for benefits
+    def adaptation_benefits(_, args, _) do
+        {:ok, Strategies.list_benefits(args)}
+    end
     
     def coastal_hazards(_, args, _) do
         {:ok, Strategies.list_hazards(args)}
@@ -27,7 +29,9 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_categories_for_strategy(strategy)}
     end
 
-    # TODO add resolver for benefits for strategy
+    def benefits_for_strategy(strategy, _args, _) do
+        {:ok, Strategies.list_benefits_for_strategy(strategy)}
+    end
 
     def hazards_for_strategy(strategy, _args, _) do
         {:ok, Strategies.list_hazards_for_strategy(strategy)}
@@ -45,7 +49,9 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_strategies_for_category(category)}
     end
 
-    # strategies for benefit
+    def strategies_for_benefit(benefit, _args, _) do
+        {:ok, Strategies.list_strategies_for_benefit(benefit)}
+    end
 
     def strategies_for_hazard(hazard, _args, _) do
         {:ok, Strategies.list_strategies_for_hazard(hazard)}
