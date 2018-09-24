@@ -11,14 +11,14 @@ export function layer() {
         preload: 4,
         source: source
     });
-    layer.set("name", "world_imagery");
+    layer.set("name", "mass_imagery");
     return layer;
 }
 
 function _source() {
-    let url = process.env.ELM_APP_AGS_WORLD_IMG_URL;
+    let url = process.env.ELM_APP_AGS_MASS_IMG_URL;
     if (!url) {
-        throw Error("Must configure environment variable `ELM_APP_AGS_WORLD_IMG_URL`!");
+        throw Error("Must configure environment variable `ELM_APP_AGS_MASS_IMG_URL`!");
     }
     let source = new XYZ({
         crossOrigin: "anonymous",
