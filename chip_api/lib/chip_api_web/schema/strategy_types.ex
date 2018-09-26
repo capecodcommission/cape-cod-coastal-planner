@@ -196,4 +196,10 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         end
     end
 
+    # TODO See error thrown in webapi/schema/strategies.ex
+    # @desc "The server path to an image of the adaptation strategy"
+    # field :image_path, :string do
+    #     resolve &Resolvers.Strategies.image_path/3
+    # end
+
 end
