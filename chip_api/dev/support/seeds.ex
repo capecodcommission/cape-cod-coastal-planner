@@ -162,7 +162,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood, community, regional],
-            strategy_placements: [], # TODO Revist - ask Matt
+            strategy_placements: [],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Various local and state permits may be required.",
             adaptation_advantages: [
@@ -185,7 +185,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [community],
-            strategy_placements: [], # TODO Revist - ask Matt
+            strategy_placements: [],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Local bylaws allowing for Transfer of Development Rights must be in place.",
             adaptation_advantages: [
@@ -208,7 +208,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect, accommodate],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood],
-            strategy_placements: [], # TODO Revist - ask Matt
+            strategy_placements: [],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
             adaptation_advantages: [
@@ -233,7 +233,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [neighborhood, community],
-            strategy_placements: [], # TODO Revist - ask Matt
+            strategy_placements: [],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management],
             currently_permittable: "Local Conservation Commission approval; Conservation easements must be approved by the municipality involved.",
             adaptation_advantages: [
@@ -256,7 +256,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion],
             impact_scales: [site, neighborhood],
-            strategy_placements: [], # TODO Revist - ask Matt
+            strategy_placements: [],
             adaptation_benefits: [habitat, recreation_tourism],
             currently_permittable: "Various local, state, and federal permits required.  New groins are infrequently permitted due to impacts.",
             adaptation_advantages: [
@@ -280,7 +280,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion],
             impact_scales: [neighborhood],
-            strategy_placements: [], # TODO Revist - ask Matt
+            strategy_placements: [],
             adaptation_benefits: [habitat, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
             adaptation_advantages: [

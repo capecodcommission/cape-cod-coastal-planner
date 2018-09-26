@@ -82,13 +82,17 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.hazards_for_strategy/3
         end
 
-        # TODO add advantages
+        # TODO This API response will crash the app.  I think I am missing something RE the 1:M association
         @desc "The advantages that are associated with the strategy"
         field :advantages, list_of(:adaptation_advantages) do
             resolve &Resolvers.Strategies.advantages_for_strategy/3
         end
 
-        #  TODO add disadvantages
+        # TODO This API response will crash the app.  I think I am missing something RE the 1:M association
+        @desc "The disadvantages that are associated with the strategy"
+        field :disadvantages, list_of(:adaptation_disadvantages) do
+            resolve &Resolvers.Strategies.disadvantages_for_strategy/3
+        end
 
         @desc "The geographic scales of impact the strategy can target"
         field :scales, list_of(:impact_scale) do
@@ -134,6 +138,15 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
     object :adaptation_advantages do
         
         @desc "The name of the advantage"
+        field :name, non_null(:string)
+
+    end
+
+    # TODO Disadvantage
+    @desc "An adaptation disadvantage"
+    object :adaptation_disadvantages do
+        
+        @desc "The name of the disadvantage"
         field :name, non_null(:string)
 
     end

@@ -50,6 +50,11 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_advantages_for_strategy(strategy)}
     end
 
+    # TODO Disadvantages
+    def disadvantages_for_strategy(strategy, _args, _) do
+        {:ok, Strategies.list_disadvantages_for_strategy(strategy)}
+    end
+
     def strategies_for_category(category, _args, _) do
         {:ok, Strategies.list_strategies_for_category(category)}
     end
