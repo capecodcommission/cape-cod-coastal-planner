@@ -830,7 +830,7 @@ defmodule ChipApi.Adaptation.Strategies do
         Repo.all(query)
     end
 
-    # TODO Advantages
+    # TODO This does not seem to work correctly.  Will compile but when accessing via graphql it crashes.  
     @doc """
     Returns the list of advantages associated with the given strategy.
 
@@ -842,6 +842,21 @@ defmodule ChipApi.Adaptation.Strategies do
     """
     def list_advantages_for_strategy(%Strategy{} = strategy) do
         query = Ecto.assoc(strategy, :adaptation_advantages)
+        Repo.all(query)
+    end
+
+    # TODO This does not seem to work correctly.  Will compile but when accessing via graphql it crashes.  
+    @doc """
+    Returns the list of advantages associated with the given strategy.
+
+    ## Examples
+
+        iex> list_advantages_for_strategy(strategy)
+        [%Advantage{}, ...]
+
+    """
+    def list_disadvantages_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :adaptation_disadvantages)
         Repo.all(query)
     end
 
