@@ -30,6 +30,8 @@ defmodule ChipApi.Geospatial.LittoralCell do
         field :national_seashore, :boolean, default: false
         # private infrastructure
         field :total_assessed_value, :decimal, default: D.new("0.0")
+        # littoral cell id
+        field :littoral_cell_id, :integer
 
         timestamps()
     end
@@ -39,7 +41,7 @@ defmodule ChipApi.Geospatial.LittoralCell do
         :imperv_percent, :critical_facilities_count, :coastal_structures_count,
         :working_harbor, :public_buildings_count, :salt_marsh_acres, :eelgrass_acres,
         :public_beach_count, :recreation_open_space_acres, :town_ways_to_water, 
-        :total_assessed_value
+        :total_assessed_value, :littoral_cell_id
     ]
     @required [:name, :min_x, :min_y, :max_x, :max_y]
     #

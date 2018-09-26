@@ -506,7 +506,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("130.4343719"),
             town_ways_to_water: 1,
             national_seashore: false,
-            total_assessed_value: D.new("461244800.00")
+            total_assessed_value: D.new("461244800.00"),
+            littoral_cell_id: 101
         }
         |> Repo.insert!
 
@@ -530,7 +531,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("55.6946297"),
             town_ways_to_water: 1,
             national_seashore: false,
-            total_assessed_value: D.new("393422600.00")
+            total_assessed_value: D.new("393422600.00"),
+            littoral_cell_id: 102
         }
         |> Repo.insert!
 
@@ -554,7 +556,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("20.6207943"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("301794700.00")
+            total_assessed_value: D.new("301794700.00"),
+            littoral_cell_id: 103
         }
         |> Repo.insert!
 
@@ -578,7 +581,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("12.8510218"),
             town_ways_to_water: 1,
             national_seashore: false,
-            total_assessed_value: D.new("290605160.00")
+            total_assessed_value: D.new("290605160.00"),
+            littoral_cell_id: 104
         }
         |> Repo.insert!
 
@@ -602,7 +606,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("31.8369522"),
             town_ways_to_water: 2,
             national_seashore: false,
-            total_assessed_value: D.new("323256020.00")
+            total_assessed_value: D.new("323256020.00"),
+            littoral_cell_id: 105
         }
         |> Repo.insert!
         
@@ -626,7 +631,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("0.0"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("217658870.00")
+            total_assessed_value: D.new("217658870.00"),
+            littoral_cell_id: 106
         }
         |> Repo.insert!
 
@@ -650,7 +656,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("3.3487511"),
             town_ways_to_water: 1,
             national_seashore: false,
-            total_assessed_value: D.new("683448500.00")
+            total_assessed_value: D.new("683448500.00"),
+            littoral_cell_id: 107
         }
         |> Repo.insert!
 
@@ -674,7 +681,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("2.9746351"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("635004300.00")
+            total_assessed_value: D.new("635004300.00"),
+            littoral_cell_id: 108
         }
         |> Repo.insert!
 
@@ -698,7 +706,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("6.4433169"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("582787000.00")
+            total_assessed_value: D.new("582787000.00"),
+            littoral_cell_id: 109
         }
         |> Repo.insert!
 
@@ -722,7 +731,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("22.3431664"),
             town_ways_to_water: 1,
             national_seashore: false,
-            total_assessed_value: D.new("626611700.00")
+            total_assessed_value: D.new("626611700.00"),
+            littoral_cell_id: 110
         }
         |> Repo.insert!
 
@@ -746,7 +756,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("4.3100624"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("251606300.00")
+            total_assessed_value: D.new("251606300.00"),
+            littoral_cell_id: 111
         }
         |> Repo.insert!
 
@@ -770,7 +781,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("175.8104095"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("1025546449.00")
+            total_assessed_value: D.new("1025546449.00"),
+            littoral_cell_id: 112
         }
         |> Repo.insert!
 
@@ -794,7 +806,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("298.637207"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("894116100.00")
+            total_assessed_value: D.new("894116100.00"),
+            littoral_cell_id: 113
         }
         |> Repo.insert!
 
@@ -818,7 +831,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("0.8072858"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("435699300.00")
+            total_assessed_value: D.new("435699300.00"),
+            littoral_cell_id: 114
         }
         |> Repo.insert!
 
@@ -842,7 +856,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("33.4862099"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("513900700.00")
+            total_assessed_value: D.new("513900700.00"),
+            littoral_cell_id: 115
         }
         |> Repo.insert!
 
@@ -866,7 +881,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("40.852684"),
             town_ways_to_water: 1,
             national_seashore: false,
-            total_assessed_value: D.new("523927500.00")
+            total_assessed_value: D.new("523927500.00"),
+            littoral_cell_id: 116
         }
         |> Repo.insert!
 
@@ -890,7 +906,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("131.2438965"),
             town_ways_to_water: 2,
             national_seashore: false,
-            total_assessed_value: D.new("1428641000.00")
+            total_assessed_value: D.new("1428641000.00"),
+            littoral_cell_id: 117
         }
         |> Repo.insert!
 
@@ -914,7 +931,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("490.1095581"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("2537257400.00")
+            total_assessed_value: D.new("2537257400.00"),
+            littoral_cell_id: 118
         }
         |> Repo.insert!
 
@@ -938,7 +956,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("213.083374"),
             town_ways_to_water: 0,
             national_seashore: true,
-            total_assessed_value: D.new("271926400.00")
+            total_assessed_value: D.new("271926400.00"),
+            littoral_cell_id: 119
         }
         |> Repo.insert!
 
@@ -962,7 +981,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("21.3441048"),
             town_ways_to_water: 0,
             national_seashore: true,
-            total_assessed_value: D.new("865465800.00")
+            total_assessed_value: D.new("865465800.00"),
+            littoral_cell_id: 120
         }
         |> Repo.insert!
 
@@ -986,7 +1006,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("37.4128647"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("481869100.00")
+            total_assessed_value: D.new("481869100.00"),
+            littoral_cell_id: 121
         }
         |> Repo.insert!
 
@@ -1010,7 +1031,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("152.7987518"),
             town_ways_to_water: 1,
             national_seashore: false,
-            total_assessed_value: D.new("310864000.00")
+            total_assessed_value: D.new("310864000.00"),
+            littoral_cell_id: 122
         }
         |> Repo.insert!
         
@@ -1034,7 +1056,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("470.2912292"),
             town_ways_to_water: 2,
             national_seashore: true,
-            total_assessed_value: D.new("592666250.00")
+            total_assessed_value: D.new("592666250.00"),
+            littoral_cell_id: 123
         }
         |> Repo.insert!
 
@@ -1058,7 +1081,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("762.0858154"),
             town_ways_to_water: 0,
             national_seashore: true,
-            total_assessed_value: D.new("130701200.00")
+            total_assessed_value: D.new("130701200.00"),
+            littoral_cell_id: 124
         }
         |> Repo.insert!
 
@@ -1082,7 +1106,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("0.0"),
             town_ways_to_water: 0,
             national_seashore: true,
-            total_assessed_value: D.new("30923200.00")
+            total_assessed_value: D.new("30923200.00"),
+            littoral_cell_id: 125
         }
         |> Repo.insert!
 
@@ -1106,7 +1131,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("171.526062"),
             town_ways_to_water: 0,
             national_seashore: true,
-            total_assessed_value: D.new("17981400.00")
+            total_assessed_value: D.new("17981400.00"),
+            littoral_cell_id: 126
         }
         |> Repo.insert!
 
@@ -1130,7 +1156,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("3932.9230957"),
             town_ways_to_water: 0,
             national_seashore: true,
-            total_assessed_value: D.new("171293000.00")
+            total_assessed_value: D.new("171293000.00"),
+            littoral_cell_id: 127
         }
         |> Repo.insert!
 
@@ -1154,7 +1181,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("292.7267151"),
             town_ways_to_water: 0,
             national_seashore: true,
-            total_assessed_value: D.new("726006200.00")
+            total_assessed_value: D.new("726006200.00"),
+            littoral_cell_id: 128
         }
         |> Repo.insert!
 
@@ -1178,7 +1206,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("168.9987946"),
             town_ways_to_water: 0,
             national_seashore: true,
-            total_assessed_value: D.new("2369225100.00")
+            total_assessed_value: D.new("2369225100.00"),
+            littoral_cell_id: 129
         }
         |> Repo.insert!
 
@@ -1202,7 +1231,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("240.3492889"),
             town_ways_to_water: 0,
             national_seashore: true,
-            total_assessed_value: D.new("70897100.00")
+            total_assessed_value: D.new("70897100.00"),
+            littoral_cell_id: 130
         }
         |> Repo.insert!
 
@@ -1226,7 +1256,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("489.5529175"),
             town_ways_to_water: 0,
             national_seashore: true,
-            total_assessed_value: D.new("15374700.00")
+            total_assessed_value: D.new("15374700.00"),
+            littoral_cell_id: 131
         }
         |> Repo.insert!
 
@@ -1250,7 +1281,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("624.2570801"),
             town_ways_to_water: 0,
             national_seashore: true,
-            total_assessed_value: D.new("455847300.00")
+            total_assessed_value: D.new("455847300.00"),
+            littoral_cell_id: 132
         }
         |> Repo.insert!
 
@@ -1274,7 +1306,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("0.6491886"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("149123700.00")
+            total_assessed_value: D.new("149123700.00"),
+            littoral_cell_id: 133
         }
         |> Repo.insert!
 
@@ -1298,7 +1331,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("201.6305389"),
             town_ways_to_water: 2,
             national_seashore: false,
-            total_assessed_value: D.new("1542971500.00")
+            total_assessed_value: D.new("1542971500.00"),
+            littoral_cell_id: 134
         }
         |> Repo.insert!
 
@@ -1322,7 +1356,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("43.7184067"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("446347420.00")
+            total_assessed_value: D.new("446347420.00"),
+            littoral_cell_id: 135
         }
         |> Repo.insert!
 
@@ -1346,7 +1381,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("87.6455841"),
             town_ways_to_water: 3,
             national_seashore: false,
-            total_assessed_value: D.new("974675740.00")
+            total_assessed_value: D.new("974675740.00"),
+            littoral_cell_id: 136
         }
         |> Repo.insert!
 
@@ -1370,7 +1406,8 @@ defmodule ChipApi.Seeds do
             recreation_open_space_acres: D.new("138.4368439"),
             town_ways_to_water: 0,
             national_seashore: false,
-            total_assessed_value: D.new("255135300.00")
+            total_assessed_value: D.new("255135300.00"),
+            littoral_cell_id: 137
         }
         |> Repo.insert!
 
