@@ -128,8 +128,19 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [retreat],
             coastal_hazards: [],
             impact_scales: [site, community, neighborhood, regional],
-            strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
+            strategy_placements: [],
             adaptation_benefits: [habitat, aesthetics, recreation_tourism],
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Allows natural erosion and sediment processes to occur.", display_order: 0},
+                %Adaptation.Advantage{name: "Natural migration of resource areas and landforms may occur providing benefits to the environment and humans.", display_order: 1},
+                %Adaptation.Advantage{name: "Continued recreational access (depending on conditions).", display_order: 2}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Does not address coastal threats.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Can result in loss of upland property or changes in habitat type.", display_order: 1},
+                %Adaptation.Disadvantage{name: "Dune, beach, or saltmarsh that may be present may be lost if there are structures or topography present that prevent migration with erosion and SLR.", display_order: 2},
+                %Adaptation.Disadvantage{name: "Cost to maintain existing infrastructure that may be threatened by hazards.", display_order: 2}
+            ],
             is_active: true
         }
         |> Repo.insert!
@@ -186,6 +197,100 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "TDR may be difficult to set up and administer so it functions as intended.", display_order: 0},
                 %Adaptation.Disadvantage{name: "May encourage the development of previously undeveloped inland lands.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Limits development along coastline where higher returns on investment are possible.", display_order: 2}
+            ],
+            is_active: true
+        }
+        |> Repo.insert!
+
+        _tidal_wetland_floodplain = %Adaptation.Strategy{
+            name: "Tidal Wetland and Floodplain Restoration or Creation",
+            description: "Protecting, restoring, and creating coastal habitats within the floodplain as a buffer to storm surges and sea level rise to provide natural flood protection.",
+            adaptation_categories: [protect, accommodate],
+            coastal_hazards: [erosion, storm_surge, sea_level_rise],
+            impact_scales: [site, neighborhood],
+            strategy_placements: [], # TODO Revist - ask Matt
+            adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
+            currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Serve as  buffers for coastal areas against storm and wave damage.", display_order: 0},
+                %Adaptation.Advantage{name: "Wave attenuation and/or dissipation.", display_order: 1},
+                %Adaptation.Advantage{name: "Stabilize coastal shorelines to reduce or prevent erosion. Reduces or eliminates the need for hard engineered structures.", display_order: 2},
+                %Adaptation.Advantage{name: "Improve water quality through filtering, storing, and breaking down pollutants.", display_order: 3},
+                %Adaptation.Advantage{name: "Reduce flooding of upland areas and nearby infrastructure by reducing duration and extent of floodwater.", display_order: 4}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Potential for increased mosquito populations. Potential of increased “salt marsh” smell impacting neighboring properties.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Loss of upland as the marsh expands with restored tidal flow. At minimum, short term loss of plants at site immediately after tidal restoration.", display_order: 1},
+                %Adaptation.Disadvantage{name: "Potential impacts on coastal public access to water. Potentially higher cost than hard engineering structures.", display_order: 2}
+            ],
+            is_active: true
+        }
+        |> Repo.insert!
+
+        _rolling_conservation_easement = %Adaptation.Strategy{
+            name: "Rolling Conservation Easements",
+            description: "Private property owners sell or otherwise transfer rights in these portions of their land abutting an eroding coastline.  Rolling easements allow for limited development of upland areas of the property, and restrict development and/or the construction of erosion control structures along the shoreline.",
+            adaptation_categories: [retreat],
+            coastal_hazards: [erosion, storm_surge, sea_level_rise],
+            impact_scales: [neighborhood, community],
+            strategy_placements: [], # TODO Revist - ask Matt
+            adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management],
+            currently_permittable: "Local Conservation Commission approval; Conservation easements must be approved by the municipality involved.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Conserves undisturbed areas that may serve as habitat or flood buffers.", display_order: 0},
+                %Adaptation.Advantage{name: "Prevents development in areas likely to become inundated or hazard areas.", display_order: 1},
+                %Adaptation.Advantage{name: "Allows for the same development potential in a community, redirecting development to revitalize urban and mixed-use centers.", display_order: 2}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "The environmental benefits only apply to the parcel that the rolling conservation easement is on.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Perpetual conservation of the land may cause issues regarding development scenarios in the future.", display_order: 1},
+                %Adaptation.Disadvantage{name: "Limits ability of property owner to make changes on land.", display_order: 2}
+            ],
+            is_active: true
+        }
+        |> Repo.insert!
+
+        _groin = %Adaptation.Strategy{
+            name: "Groin",
+            description: "A hard structure projecting perpendicular from the shoreline. Designed to intercept water flow and sand moving parallel to the shoreline to prevent beach erosion, retain beach sand, and break waves.",
+            adaptation_categories: [protect],
+            coastal_hazards: [erosion],
+            impact_scales: [site, neighborhood],
+            strategy_placements: [], # TODO Revist - ask Matt
+            adaptation_benefits: [habitat, recreation_tourism],
+            currently_permittable: "Various local, state, and federal permits required.  New groins are infrequently permitted due to impacts.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Protection from wave forces.", display_order: 0},
+                %Adaptation.Advantage{name: "Can be combined with beach nourishment projects to extend their lifespan.", display_order: 1},
+                %Adaptation.Advantage{name: "Can be useful to the updrift side of the beach by providing extra sediment through the blockage of longshore sediment transport.", display_order: 2}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Erosion of adjacent downdrift beaches.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Can be detrimental to existing shoreline ecosystem (replaces native substrate with rock and reduces natural habitat availability).", display_order: 1},
+                %Adaptation.Disadvantage{name: "No high water protection.", display_order: 2},
+                %Adaptation.Disadvantage{name: "Reduces sediment and nutrient input into estuary.", display_order: 3}
+            ],
+            is_active: true
+        }
+        |> Repo.insert!
+
+        _sand_bypass = %Adaptation.Strategy{
+            name: "Sand Bypass System",
+            description: "Where a jetty or groin has interrupted the flow of sediment along the beach, sand may be moved hydraulically or mechanically from the accreting updrift side of an inlet to the eroding down-drift side.",
+            adaptation_categories: [protect],
+            coastal_hazards: [erosion],
+            impact_scales: [neighborhood],
+            strategy_placements: [], # TODO Revist - ask Matt
+            adaptation_benefits: [habitat, aesthetics, flood_management, recreation_tourism],
+            currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Mitigates the harmful effects of jetties and groins on longshore sediment transport by enabling sand to bypass these structures in order to nourish downdrift beaches.", display_order: 0},
+                %Adaptation.Advantage{name: "Restores sediment supply to coastal resources.", display_order: 1}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Cost of constructing system.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Impacts to existing habitat resources associated with beach nourishment.", display_order: 1},
+                %Adaptation.Disadvantage{name: "Long term annual costs to construct and maintain system.", display_order: 2}
             ],
             is_active: true
         }
@@ -252,23 +357,44 @@ defmodule ChipApi.Seeds do
         |> Repo.insert!
 
         _dune_creation = %Adaptation.Strategy{
-            name: "Dune Restoration/Creation",
-            description: "Restoring existing dunes or creating new dunes to protect the shoreline against erosion and flooding.",
-            adaptation_categories: [protect],
+            name: "Dune Creation",
+            description: "Creating additional or new dunes to protect the shoreline against erosion and flooding.",
+            adaptation_categories: [protect, accommodate],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
-            impact_scales: [site, neighborhood],
+            impact_scales: [site],
             strategy_placements: [developed, undeveloped, coastal_dune],
+            adaptation_benefits: [habitat, aesthetics, flood_management],
+            currently_permittable: "Various local and state permits may be required.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Dunes can provide additional habitats, sediment sources, and prevent flooding.", display_order: 0}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Can result in changes in habitat type.", display_order: 0},
+                %Adaptation.Disadvantage{name: "May have limited recreational value due to limited access.", display_order: 1}
+            ],
             is_active: true
         }
         |> Repo.insert!
 
         _bank_stabilization_fiber_coir_roll = %Adaptation.Strategy{
             name: "Bank Stabilization: Fiber/Coir Roll",
-            description: "Cylindrical rolls, 12-20 inches in diameter & 10-20 feet long, made of coir (coconut fiber) held together by a fiber mesh, covered with sand, and are planted with salt-tolerant vegetation with extensive root systems. These reinforced banks act as physical barriers to waves, tides, and currents. The rolls typically disintegrate over 5-7 years to allow plants time to grow their root systems to keep sand and soil in place.",
+            description: "Cylindrical rolls, 12-20 inches in diameter & 10-20 feet long, made of coir (coconut) fiber held together by a fiber mesh, covered with sand, and are planted with salt-tolerant vegetation with extensive root systems. These reinforced banks act as physical barriers to waves, tides, and currents. They typically disintegrate over 5-7 years to allow plants time to grow their root systems to keep sand and soil in place.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placements: [coastal_dune],
+            adaptation_benefits: [habitat, carbon_storage, flood_management],
+            currently_permittable: "Local and state permits required, potentially federal permits depending on location.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Direct physical protection from erosion, but allows continued natural erosion to supply down-drift beaches.", display_order: 0},
+                %Adaptation.Advantage{name: "Made of biodegradable materials and planted with vegetation, allowing for increased wave energy absorption and preservation of natural habitat value.", display_order: 1},
+                %Adaptation.Advantage{name: "If planted with a variety of native species, rolls can provide valuable habitat.", display_order: 2}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Use of wire and synthetic mesh rolls can be harmful to coastal/marine environments.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Potential end scour within 10-feet of the terminus of a fiber roll array should be managed on subject property.", display_order: 1},
+                %Adaptation.Disadvantage{name: "Reduces available sediment source for down-drift beaches.", display_order: 2}
+            ],
             is_active: true
         }
         |> Repo.insert!
@@ -297,11 +423,23 @@ defmodule ChipApi.Seeds do
 
         _living_shoreline_vegetation_structural = %Adaptation.Strategy{
             name: "Living Shoreline: Combined Vegetation and Structural Measures",
-            description: "Shoreline stabilization techniques along estuarine coasts, bays, sheltered coastlines, and tributaries. A living shoreline has a footprint that is made up mostly of native material. It incorporates vegetation or other living, natural \"soft\" elements alone or in combination with some other type of harder shoreline structures (e.g. oyster reefs or rock sills) for added stability. A combined approach integrates living components, such as plantings, with strategically placed structural elements, such as sills, or breakwaters.",
+            description: "A living shoreline has a footprint that is made up mostly of native material.  It incorporates vegetation or other living, natural “soft” elements alone or in combination with some other type of harder shoreline structure (e.g. oyster reefs or rock sills) for added stability. A combined approach integrates living components, such as plantings, with strategically placed structural elements, such as sills, revetments, and breakwaters.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placements: [developed, undeveloped, coastal_dune],
+            adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
+            currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Provides habitat, ecosystem services and recreational uses. Recreation and tourism benefits through increased fish habitat and shellfish productivity.", display_order: 0},
+                %Adaptation.Advantage{name: "Dissipates wave energy thus reducing storm surge, erosion and flooding. Slows inland water transfer.", display_order: 1},
+                %Adaptation.Advantage{name: "Toe protection by structural measure helps prevent wetland edge loss. Becomes more stable over time as plants, roots, and reefs grow.", display_order: 2}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "No high water protection.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Often includes installation of structural elements, which may have negative impacts on sediment supply, boating, recreation, etc. May reduce the commercial/recreational viability of the beach.", display_order: 1},
+                %Adaptation.Disadvantage{name: "May be more difficult to permit than more conventional strategies.", display_order: 2}
+            ],
             is_active: true
         }
         |> Repo.insert!
@@ -320,11 +458,26 @@ defmodule ChipApi.Seeds do
 
         _beach_nourishment = %Adaptation.Strategy{
             name: "Beach Nourishment",
-            description: "The process of adding sediment (sand) to an eroding beach to widen or elevate the beach to maintain or advance the shoreline seaward. Sediment can be sourced from inland mining, dredging from navigation channels, and/or offshore mining.",
-            adaptation_categories: [protect],
-            coastal_hazards: [erosion, storm_surge],
+            description: "The process of adding sediment to an eroding beach to widen the beach and advance the shoreline seaward. Sources for sediment include inland mining, nearshore dredging including for navigation projects, and offshore mining.",
+            adaptation_categories: [protect, accommodate],
+            coastal_hazards: [erosion, sea_level_rise],
             impact_scales: [site, neighborhood],
             strategy_placements: [developed, undeveloped, coastal_dune],
+            adaptation_benefits: [habitat, aesthetics, flood_management, recreation_tourism],
+            currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Little post-construction disruption to the surrounding natural environment.", display_order: 0},
+                %Adaptation.Advantage{name: "Lower environmental impact than structural measures. Can be redesigned with relative ease.", display_order: 1},
+                %Adaptation.Advantage{name: "Create, restore or bolster habitat for some shorebirds, sea turtles and other flora/fauna.  Preserve beaches for recreational use.", display_order: 2},
+                %Adaptation.Advantage{name: "In Barnstable County, the County Dredge program provides dredging of municipal waterways at a reduced cost, providing a source of beach compatible sand.", display_order: 3}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Requires continual sand resources for renourishment.", display_order: 0},
+                %Adaptation.Disadvantage{name: "No high water protection.", display_order: 1},
+                %Adaptation.Disadvantage{name: "Can have negative impacts on marine life, beach life, and endangered species (piping plover) during construction and due to higher erosion rates (changing habitat).", display_order: 2},
+                %Adaptation.Disadvantage{name: "Expensive (several million dollars depending on the scale).", display_order: 3},
+                %Adaptation.Disadvantage{name: "Sediment sources, whether from inland mining, nearshore dredging, or offshore mining, may have adverse environmental effects.", display_order: 4}
+            ],
             is_active: true
         }
         |> Repo.insert!

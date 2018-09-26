@@ -83,6 +83,10 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         end
 
         # TODO add advantages
+        @desc "The advantages that are associated with the strategy"
+        field :advantages, list_of(:adaptation_advantages) do
+            resolve &Resolvers.Strategies.advantages_for_strategy/3
+        end
 
         #  TODO add disadvantages
 
@@ -123,6 +127,15 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         field :strategies, list_of(:adaptation_strategy) do
             resolve &Resolvers.Strategies.strategies_for_benefit/3
         end
+    end
+
+    # TODO Advantage
+    @desc "An adaptation advantage"
+    object :adaptation_advantages do
+        
+        @desc "The name of the advantage"
+        field :name, non_null(:string)
+
     end
 
     @desc "A coastal hazard"

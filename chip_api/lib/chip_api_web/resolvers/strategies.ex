@@ -45,6 +45,11 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_placements_for_strategy(strategy)}
     end
 
+    # TODO Advantages
+    def advantages_for_strategy(strategy, _args, _) do
+        {:ok, Strategies.list_advantages_for_strategy(strategy)}
+    end
+
     def strategies_for_category(category, _args, _) do
         {:ok, Strategies.list_strategies_for_category(category)}
     end
@@ -64,5 +69,6 @@ defmodule ChipApiWeb.Resolvers.Strategies do
     def strategies_for_placement(placement, _args, _) do
         {:ok, Strategies.list_strategies_for_placement(placement)}
     end
+
 
 end

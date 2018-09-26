@@ -4,6 +4,7 @@ defmodule ChipApi.Repo.Migrations.AdaptationDisadvantagesBelongsToAdaptationStra
   def change do
     alter table(:adaptation_disadvantages) do
       add :strategy_id, references(:adaptation_strategies)
+      # add :adaptation_strategies_id, references(:adaptation_strategies)
     end
   end
 end

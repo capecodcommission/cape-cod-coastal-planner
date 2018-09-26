@@ -32,6 +32,9 @@ defmodule ChipApi.Adaptation.Strategy do
     
     has_many :adaptation_advantages, ChipApi.Adaptation.Advantage, 
       on_delete: :delete_all, foreign_key: :strategy_id
+
+    # has_many :adaptation_advantages, ChipApi.Adaptation.Advantage, 
+    #   on_delete: :delete_all, foreign_key: :adaptation_strategies_id
     
     has_many :adaptation_disadvantages, ChipApi.Adaptation.Disadvantage, 
       on_delete: :delete_all, foreign_key: :strategy_id

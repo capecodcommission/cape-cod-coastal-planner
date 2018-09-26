@@ -774,7 +774,6 @@ defmodule ChipApi.Adaptation.Strategies do
         Repo.all(query)
     end
 
-    # TODO add for benefits
     @doc """
     Returns the list of benefits associated with the given strategy.
 
@@ -828,6 +827,21 @@ defmodule ChipApi.Adaptation.Strategies do
     """
     def list_placements_for_strategy(%Strategy{} = strategy) do
         query = Ecto.assoc(strategy, :strategy_placements)
+        Repo.all(query)
+    end
+
+    # TODO Advantages
+    @doc """
+    Returns the list of advantages associated with the given strategy.
+
+    ## Examples
+
+        iex> list_advantages_for_strategy(strategy)
+        [%Advantage{}, ...]
+
+    """
+    def list_advantages_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :adaptation_advantages)
         Repo.all(query)
     end
 
