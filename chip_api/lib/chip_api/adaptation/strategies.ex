@@ -143,12 +143,15 @@ defmodule ChipApi.Adaptation.Strategies do
 
     ## Examples
 
-        iex> change_category(category)
-        %Ecto.Changeset{source: %Category{}}
+        iex> change_category(category, %{field: new_value})
+        %Ecto.Changeset{data: %Category{}, changes: %{field: new_value}, ...}
+
+        iex> change_category(category, %{field: bad_value})
+        %Ecto.Changeset{data: %Category{}, changes: %{}, errors: [...]}
 
     """
-    def change_category(%Category{} = category) do
-        Category.changeset(category, %{})
+    def change_category(%Category{} = category, attrs) do
+        Category.changeset(category, attrs)
     end
 
 
@@ -288,12 +291,15 @@ defmodule ChipApi.Adaptation.Strategies do
 
     ## Examples
 
-        iex> change_hazard(hazard)
-        %Ecto.Changeset{source: %Hazard{}}
+        iex> change_hazard(hazard, %{field: new_value})
+        %Ecto.Changeset{data: %Hazard{}, changes: %{field: new_value}, ...}
+
+        iex> change_hazard(hazard, %{field: bad_value})
+        %Ecto.Changeset{data: %Hazard{}, changes: %{}, errors: [...]}
 
     """
-    def change_hazard(%Hazard{} = hazard) do
-        Hazard.changeset(hazard, %{})
+    def change_hazard(%Hazard{} = hazard, attrs) do
+        Hazard.changeset(hazard, attrs)
     end
 
     #
@@ -432,12 +438,15 @@ defmodule ChipApi.Adaptation.Strategies do
 
     ## Examples
 
-        iex> change_scale(scale)
-        %Ecto.Changeset{source: %Scale{}}
+        iex> change_scale(scale, %{field: new_value})
+        %Ecto.Changeset{data: %Scale{}, changes: %{field: new_value}, ...}
+
+        iex> change_scale(scale, %{field: bad_value})
+        %Ecto.Changeset{data: %Scale{}, changes: %{}, errors: [...]}
 
     """
-    def change_scale(%Scale{} = scale) do
-        Scale.changeset(scale, %{})
+    def change_scale(%Scale{} = scale, attrs) do
+        Scale.changeset(scale, attrs)
     end
 
     #
@@ -563,12 +572,161 @@ defmodule ChipApi.Adaptation.Strategies do
 
     ## Examples
 
-        iex> change_placement(placement)
-        %Ecto.Changeset{source: %Placement{}}
+        iex> change_placement(placement, %{field: new_value})
+        %Ecto.Changeset{data: %Placement{}, changes: %{field: new_value}, ...}
+
+        iex> change_placement(placement, %{field: bad_value})
+        %Ecto.Changeset{data: %Placement{}, changes: %{}, errors: [...]}
 
     """
-    def change_placement(%Placement{} = placement) do
-        Placement.changeset(placement, %{})
+    def change_placement(%Placement{} = placement, attrs) do
+        Placement.changeset(placement, attrs)
+    end
+
+    #
+    # ADAPTATION BENEFITS
+    #
+    
+    alias ChipApi.Adaptation.Benefit
+
+    @doc """
+    Returns the list of adaptation Benefits. When ordering by display_order,
+    nulls are returned first.
+
+    ## Examples
+
+        iex> list_benefits(%{order: :desc})
+        [%Benefit{}, ...]
+
+        iex> list_benefits()
+        [%Benefit{}, ...]
+
+    """
+    def list_benefits(args) do
+        args
+        |> Enum.reduce(Benefit, fn
+            {:order, order}, query ->
+                query |> order_by([{^order, :display_order}, {^order, :id}])
+        end)
+        |> Repo.all
+    end
+    def list_benefits do
+        Repo.all(Benefit)
+    end
+
+    @doc """
+    Returns the list of adaptation strategies associated with 
+    the given benefit.
+
+    ## Examples
+
+        iex> list_strategies_for_benefit(category)
+        [%Strategy{}, ...]
+
+    """
+    def list_strategies_for_benefit(%Benefit{} = benefit) do
+        query = Ecto.assoc(benefit, :adaptation_strategies)
+        Repo.all(query)
+    end
+
+    @doc """
+    Gets a single Benefit by id. 
+    
+    Raises `Ecto.NoResultsError` if the Benefit does not exist.
+
+    ## Examples
+
+        iex> get_benefit!(1)
+        %Benefit{}
+
+        iex> get_benefit!(100)
+        ** (Ecto.NoResultsError)
+
+    """
+    def get_benefit!(id), do: Repo.get!(Benefit, id)
+
+    @doc """
+    Gets a single Benefit by id. 
+    
+    Returns `nil` if the Benefit does not exist.
+
+    ## Examples
+
+        iex> get_benefit!(1)
+        %Benefit{}
+
+        iex> get_benefit!(100)
+        ** (Ecto.NoResultsError)
+
+    """
+    def get_benefit(id), do: Repo.get(Benefit, id)
+
+    @doc """
+    Creates a Benefit.
+
+    ## Examples
+
+        iex> create_benefit(%{field: value})
+        {:ok, %Benefit{}}
+
+        iex> create_benefit(%{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def create_benefit(attrs \\ %{}) do
+        %Benefit{}
+        |> Benefit.changeset(attrs)
+        |> Repo.insert()
+    end
+
+    @doc """
+    Updates a Benefit.
+
+    ## Examples
+
+        iex> update_benefit(benefit, %{field: new_value})
+        {:ok, %Benefit{}}
+
+        iex> update_benefit(benefit, %{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """    
+    def update_benefit(%Benefit{} = benefit, attrs) do
+        benefit
+        |> Benefit.changeset(attrs)
+        |> Repo.update()
+    end
+
+    @doc """
+    Deletes a Benefit.
+
+    ## Examples
+
+        iex> delete_benefit(benefit)
+        {:ok, %Category{}}
+
+        iex> delete_benefit(benefit)
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def delete_benefit(%Benefit{} = benefit) do
+        Repo.delete(benefit)
+    end
+
+    @doc """
+    Returns an `%Ecto.Changeset{}` for tracking benefit changes.
+
+    ## Examples
+
+        iex> change_benefit(benefit, %{field: new_value})
+        %Ecto.Changeset{data: %Benefit{}, changes: %{field: new_value}, ...}
+
+        iex> change_benefit(benefit, %{field: bad_value})
+        %Ecto.Changeset{data: %Benefit{}, changes: %{}, errors: [...]}
+
+    """
+    def change_benefit(%Benefit{} = benefit, attrs) do
+        Benefit.changeset(benefit, attrs)
     end
 
     #
@@ -632,6 +790,20 @@ defmodule ChipApi.Adaptation.Strategies do
     end
 
     @doc """
+    Returns the list of benefits associated with the given strategy.
+
+    ## Examples
+
+        iex> list_benefits_for_strategy(strategy)
+        [%Benefit{}, ...]
+
+    """
+    def list_benefits_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :adaptation_benefits)
+        Repo.all(query)
+    end
+
+    @doc """
     Returns the list of hazards associated with the given strategy.
 
     ## Examples
@@ -670,6 +842,36 @@ defmodule ChipApi.Adaptation.Strategies do
     """
     def list_placements_for_strategy(%Strategy{} = strategy) do
         query = Ecto.assoc(strategy, :strategy_placements)
+        Repo.all(query)
+    end
+
+    # TODO This does not seem to work correctly.  Will compile but when accessing via graphql it crashes.  
+    @doc """
+    Returns the list of advantages associated with the given strategy.
+
+    ## Examples
+
+        iex> list_advantages_for_strategy(strategy)
+        [%Advantage{}, ...]
+
+    """
+    def list_advantages_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :adaptation_advantages)
+        Repo.all(query)
+    end
+
+    # TODO This does not seem to work correctly.  Will compile but when accessing via graphql it crashes.  
+    @doc """
+    Returns the list of advantages associated with the given strategy.
+
+    ## Examples
+
+        iex> list_advantages_for_strategy(strategy)
+        [%Advantage{}, ...]
+
+    """
+    def list_disadvantages_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :adaptation_disadvantages)
         Repo.all(query)
     end
 
@@ -763,12 +965,15 @@ defmodule ChipApi.Adaptation.Strategies do
 
     ## Examples
 
-        iex> change_strategy(strategy)
-        %Ecto.Changeset{source: %Strategy{}}
+        iex> change_strategy(strategy, %{field: new_value})
+        %Ecto.Changeset{data: %Strategy{}, changes: %{field: new_value}, ...}
+
+        iex> change_strategy(strategy, %{field: bad_value})
+        %Ecto.Changeset{data: %Strategy{}, changes: %{}, errors: [...]}
 
     """
-    def change_strategy(%Strategy{} = strategy) do
-        Strategy.changeset(strategy, %{})
+    def change_strategy(%Strategy{} = strategy, attrs) do
+        Strategy.changeset(strategy, attrs)
     end
 
 

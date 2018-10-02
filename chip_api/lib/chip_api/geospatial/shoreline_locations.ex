@@ -135,12 +135,15 @@ defmodule ChipApi.Geospatial.ShorelineLocations do
 
     ## Examples
 
-        iex> change_littoral_cell(littoral_cell)
-        %Ecto.Changeset{source: %LittoralCell{}}
+        iex> change_littoral_cell(lit_cell, %{field: new_value})
+        %Ecto.Changeset{data: %LittoralCell{}, changes: %{field: new_value}, ...}
+
+        iex> change_littoral_cell(lit_cell, %{field: bad_value})
+        %Ecto.Changeset{data: %LittoralCell{}, changes: %{}, errors: [...]}
         
     """
-    def change_littoral_cell(%LittoralCell{} = lit_cell) do
-        LittoralCell.changeset(lit_cell, %{})
+    def change_littoral_cell(%LittoralCell{} = lit_cell, attrs) do
+        LittoralCell.changeset(lit_cell, attrs)
     end
 
 end

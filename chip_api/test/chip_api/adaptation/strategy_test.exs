@@ -4,6 +4,7 @@ defmodule ChipApi.Adaptation.StrategyTest do
 
     @moduletag :adaptation_case
     @moduletag :strategy_case
+    @moduletag :advantage_case
 
     setup do
         ChipApi.Fakes.run_all_adaptation()
@@ -43,6 +44,11 @@ defmodule ChipApi.Adaptation.StrategyTest do
         assert [data.cat1.name, data.cat2.name] == categories
     end
 
+    test "list_benefits_for_strategy returns all benefits for a strategy", %{data: data} do
+        benefits = for c <- Strategies.list_benefits_for_strategy(data.strat1), do: c.name
+        assert [data.benefit1.name, data.benefit2.name] == benefits
+    end
+
     test "list_hazards_for_strategy returns all hazards for a strategy", %{data: data} do
         hazards = for h <- Strategies.list_hazards_for_strategy(data.strat1), do: h.name
         assert [data.haz1.name, data.haz2.name] == hazards
@@ -53,9 +59,14 @@ defmodule ChipApi.Adaptation.StrategyTest do
         assert [data.scale1.name, data.scale2.name] == scales
     end
 
+    test "list_advantages_for_strategy returns all advantages for a strategy", %{data: data} do
+        advantages = for s <- Strategies.list_advantages_for_strategy(data.strat1), do: s.name
+        assert [data.advantage1.name, data.advantage2.name] == advantages
+    end
+
     test "list_placements_for_strategy returns all placements for a strategy", %{data: data} do
-        placements = for p <- Strategies.list_placements_for_strategy(data.strat1), do: p.name
-        assert [data.place1.name, data.place2.name] == placements
+        disadvantages = for p <- Strategies.list_disadvantages_for_strategy(data.strat1), do: p.name
+        assert [data.disadvantage1.name, data.disadvantage2.name] == disadvantages
     end
 
     test "get_strategy! with a good id returns the correct strategy", %{data: data} do

@@ -8,6 +8,7 @@ defmodule ChipApi.Adaptation.Strategy do
     field :name, :string
     field :display_order, :integer
     field :is_active, :boolean, default: false
+    field :currently_permittable, :string
 
     many_to_many :adaptation_categories, ChipApi.Adaptation.Category,
       join_through: "strategies_categories",
@@ -25,13 +26,23 @@ defmodule ChipApi.Adaptation.Strategy do
       join_through: "strategies_placements",
       on_delete: :delete_all
 
+    many_to_many :adaptation_benefits, ChipApi.Adaptation.Benefit,
+      join_through: "strategies_benefits",
+      on_delete: :delete_all
+    
+    has_many :adaptation_advantages, ChipApi.Adaptation.Advantage, 
+      on_delete: :delete_all #, foreign_key: :strategy_id
+    
+    has_many :adaptation_disadvantages, ChipApi.Adaptation.Disadvantage, 
+      on_delete: :delete_all #, foreign_key: :strategy_id
+
     timestamps()
   end
 
   @doc false
   def changeset(strategy, attrs) do
     strategy
-    |> cast(attrs, [:name, :description, :display_order])
+    |> cast(attrs, [:name, :description, :display_order, :currently_permittable])
     |> validate_required([:name, :is_active])
     |> unique_constraint(:name)
   end

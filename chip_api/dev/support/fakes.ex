@@ -1,6 +1,6 @@
 defmodule ChipApi.Fakes do
     alias ChipApi.Repo
-    alias ChipApi.Adaptation.{Strategy, Category, Hazard, Scale, Placement}
+    alias ChipApi.Adaptation.{Strategy, Category, Hazard, Scale, Placement, Benefit, Advantage, Disadvantage}
     alias ChipApi.Geospatial.LittoralCell
     alias Decimal, as: D
 
@@ -13,6 +13,14 @@ defmodule ChipApi.Fakes do
     @scale3 %Scale{name: "scale3", impact: 3, display_order: 2}
     @place1 %Placement{name: "place1"}
     @place2 %Placement{name: "place2"}
+    @benefit1 %Benefit{name: "benefit1", display_order: 0}
+    @benefit2 %Benefit{name: "benefit2", display_order: 1}
+    @advantage1 %Advantage{name: "advantage1", display_order: 0}
+    @advantage2 %Advantage{name: "advantage2", display_order: 1}
+    @advantage3 %Advantage{name: "advantage3", display_order: 0}
+    @disadvantage1 %Disadvantage{name: "disadvantage1", display_order: 0}
+    @disadvantage2 %Disadvantage{name: "disadvantage2", display_order: 1}
+    @disadvantage3 %Disadvantage{name: "disadvantage3", display_order: 0}
     @strat1 %Strategy{name: "strat1", description: "desc1", is_active: true, display_order: 1}
     @strat2 %Strategy{name: "strat2", description: "desc2", is_active: false, display_order: 2}
     @cell1 %LittoralCell{
@@ -35,7 +43,8 @@ defmodule ChipApi.Fakes do
         recreation_open_space_acres: D.new("10.01"),
         town_ways_to_water: 1,
         national_seashore: false,
-        total_assessed_value: D.new("1000.00")
+        total_assessed_value: D.new("1000.00"),
+        littoral_cell_id: 1
     }
     @cell2 %LittoralCell{
         name: "cell2", 
@@ -57,7 +66,8 @@ defmodule ChipApi.Fakes do
         recreation_open_space_acres: D.new("10.01"),
         town_ways_to_water: 1,
         national_seashore: true,
-        total_assessed_value: D.new("1000.00")
+        total_assessed_value: D.new("1000.00"),
+        littoral_cell_id: 2
     }
 
 
@@ -143,6 +153,26 @@ defmodule ChipApi.Fakes do
         }}
     end
 
+    def run_benefits do
+        benefit1 = @benefit1 |> Repo.insert!
+        benefit2 = @benefit2 |> Repo.insert!
+
+        strat1 = @strat1
+        |> Map.merge(%{adaptation_benefits: [benefit1, benefit2]})
+        |> Repo.insert!
+
+        strat2 = @strat2
+        |> Map.merge(%{adaptation_benefits: [benefit1, benefit2]})
+        |> Repo.insert!
+
+        {:ok, data: %{
+            benefit1: benefit1,
+            benefit2: benefit2,
+            strat1: strat1,
+            strat2: strat2
+        }}
+    end
+
     def run_littoral_cells do
         cell1 = @cell1 |> Repo.insert!
         cell2 = @cell2 |> Repo.insert!
@@ -162,13 +192,24 @@ defmodule ChipApi.Fakes do
         scale2 = @scale2 |> Repo.insert!
         place1 = @place1 |> Repo.insert!
         place2 = @place2 |> Repo.insert!
+        benefit1 = @benefit1 |> Repo.insert!
+        benefit2 = @benefit2 |> Repo.insert!
+        advantage1 = @advantage1 |> Repo.insert!
+        advantage2 = @advantage2 |> Repo.insert!
+        advantage3 = @advantage3 |> Repo.insert!
+        disadvantage1 = @disadvantage1 |> Repo.insert!
+        disadvantage2 = @disadvantage2 |> Repo.insert!
+        disadvantage3 = @disadvantage3 |> Repo.insert!
 
         strat1 = @strat1
         |> Map.merge(%{
             adaptation_categories: [cat1, cat2],
             coastal_hazards: [haz1, haz2],
             impact_scales: [scale1, scale2],
-            strategy_placements: [place1, place2]
+            strategy_placements: [place1, place2],
+            adaptation_benefits: [benefit1, benefit2],
+            adaptation_advantages: [advantage1, advantage2],
+            adaptation_disadvantages: [disadvantage1, disadvantage2]
         })
         |> Repo.insert!
 
@@ -177,7 +218,10 @@ defmodule ChipApi.Fakes do
             adaptation_categories: [cat1, cat2],
             coastal_hazards: [haz1, haz2],
             impact_scales: [scale1, scale2],
-            strategy_placements: [place1]
+            strategy_placements: [place1],
+            adaptation_benefits: [benefit1],
+            adaptation_advantages: [advantage3],
+            adaptation_disadvantages: [disadvantage3]
         })
         |> Repo.insert!
 
@@ -190,8 +234,14 @@ defmodule ChipApi.Fakes do
             scale2: scale2,
             place1: place1,
             place2: place2,
+            benefit1: benefit1,
+            benefit2: benefit2,
+            advantage1: advantage1,
+            advantage2: advantage2,
+            disadvantage1: disadvantage1,
+            disadvantage2: disadvantage2,
             strat1: strat1,
-            strat2: strat2
+            strat2: strat2            
         }}
     end
 end
