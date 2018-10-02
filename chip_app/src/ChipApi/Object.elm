@@ -5,8 +5,20 @@
 module ChipApi.Object exposing (..)
 
 
+type AdaptationAdvantages
+    = AdaptationAdvantages
+
+
+type AdaptationBenefit
+    = AdaptationBenefit
+
+
 type AdaptationCategory
     = AdaptationCategory
+
+
+type AdaptationDisadvantages
+    = AdaptationDisadvantages
 
 
 type AdaptationStrategy

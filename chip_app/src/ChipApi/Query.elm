@@ -28,6 +28,25 @@ selection constructor =
     Object.selection constructor
 
 
+type alias AdaptationBenefitsOptionalArguments =
+    { order : OptionalArgument ChipApi.Enum.SortOrder.SortOrder }
+
+
+{-| The list of adaptation benefits
+-}
+adaptationBenefits : (AdaptationBenefitsOptionalArguments -> AdaptationBenefitsOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.AdaptationBenefit -> Field (List decodesTo) RootQuery
+adaptationBenefits fillInOptionals object =
+    let
+        filledInOptionals =
+            fillInOptionals { order = Absent }
+
+        optionalArgs =
+            [ Argument.optional "order" filledInOptionals.order (Encode.enum ChipApi.Enum.SortOrder.toString) ]
+                |> List.filterMap identity
+    in
+    Object.selectionField "adaptationBenefits" optionalArgs object (identity >> Decode.list)
+
+
 type alias AdaptationCategoriesOptionalArguments =
     { order : OptionalArgument ChipApi.Enum.SortOrder.SortOrder }
 

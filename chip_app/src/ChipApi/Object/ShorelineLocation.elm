@@ -88,6 +88,13 @@ lengthMiles =
     Object.fieldDecoder "lengthMiles" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.Decimal)
 
 
+{-| The Littoral Cell ID of the shoreline location in AGS MapService
+-}
+littoralCellId : Field Int ChipApi.Object.ShorelineLocation
+littoralCellId =
+    Object.fieldDecoder "littoralCellId" [] Decode.int
+
+
 {-| The easternmost longitude of the location's extent
 -}
 maxX : Field Float ChipApi.Object.ShorelineLocation

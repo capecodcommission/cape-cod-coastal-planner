@@ -25,11 +25,32 @@ selection constructor =
     Object.selection constructor
 
 
+{-| The advantages that are associated with the strategy
+-}
+advantages : SelectionSet decodesTo ChipApi.Object.AdaptationAdvantages -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
+advantages object =
+    Object.selectionField "advantages" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+
+
+{-| The adaptation benefits that are associated with the strategy
+-}
+benefits : SelectionSet decodesTo ChipApi.Object.AdaptationBenefit -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
+benefits object =
+    Object.selectionField "benefits" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+
+
 {-| The adaptation categories that are associated with the strategy
 -}
 categories : SelectionSet decodesTo ChipApi.Object.AdaptationCategory -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
 categories object =
     Object.selectionField "categories" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+
+
+{-| The currently permittable status of the strategy
+-}
+currentlyPermittable : Field (Maybe String) ChipApi.Object.AdaptationStrategy
+currentlyPermittable =
+    Object.fieldDecoder "currentlyPermittable" [] (Decode.string |> Decode.nullable)
 
 
 {-| The description of the strategy
@@ -39,11 +60,25 @@ description =
     Object.fieldDecoder "description" [] (Decode.string |> Decode.nullable)
 
 
+{-| The disadvantages that are associated with the strategy
+-}
+disadvantages : SelectionSet decodesTo ChipApi.Object.AdaptationDisadvantages -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
+disadvantages object =
+    Object.selectionField "disadvantages" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+
+
 {-| The coastal hazards that the strategy helps mitigate
 -}
 hazards : SelectionSet decodesTo ChipApi.Object.CoastalHazard -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
 hazards object =
     Object.selectionField "hazards" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+
+
+{-| The server path to an image of the adaptation strategy
+-}
+imagePath : Field (Maybe String) ChipApi.Object.AdaptationStrategy
+imagePath =
+    Object.fieldDecoder "imagePath" [] (Decode.string |> Decode.nullable)
 
 
 {-| Denotes whether this strategy is currently available for planning
