@@ -128,7 +128,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [retreat],
             coastal_hazards: [],
             impact_scales: [site, community, neighborhood, regional],
-            strategy_placements: [],
+            strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
             adaptation_benefits: [habitat, aesthetics, recreation_tourism],
             adaptation_advantages: [
                 %Adaptation.Advantage{name: "Allows natural erosion and sediment processes to occur.", display_order: 0},

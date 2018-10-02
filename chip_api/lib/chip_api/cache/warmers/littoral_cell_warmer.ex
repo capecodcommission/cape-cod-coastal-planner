@@ -20,7 +20,7 @@ defmodule ChipApi.Cache.Warmers.LittoralCellWarmer do
     alias ChipApi.Geospatial.LittoralCell
 
     def interval,
-        do: :timer.seconds(30)
+        do: :timer.seconds(30000)
 
     @doc """
     In a successful operation, `execute/1` returns results in one of two forms: { :ok, pairs } or { :ok, pairs, options }.

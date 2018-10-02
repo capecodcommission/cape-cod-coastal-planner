@@ -31,10 +31,10 @@ defmodule ChipApi.Adaptation.Strategy do
       on_delete: :delete_all
     
     has_many :adaptation_advantages, ChipApi.Adaptation.Advantage, 
-      on_delete: :delete_all, foreign_key: :strategy_id
+      on_delete: :delete_all #, foreign_key: :strategy_id
     
     has_many :adaptation_disadvantages, ChipApi.Adaptation.Disadvantage, 
-      on_delete: :delete_all, foreign_key: :strategy_id
+      on_delete: :delete_all #, foreign_key: :strategy_id
 
     timestamps()
   end
