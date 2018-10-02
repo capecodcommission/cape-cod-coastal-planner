@@ -28,7 +28,8 @@ defmodule ChipApi.Geospatial.LittoralCell.UpdateLittoralCellTest do
         public_beach_count: 4,
         recreation_open_space_acres: D.new("55.55"),
         town_ways_to_water: 5,
-        total_assessed_value: D.new("66.66")
+        total_assessed_value: D.new("66.66"),
+        littoral_cell_id: 5
     }
     describe "update_littoral_cell/1" do
         test "with good values returns an updated littoral cell", %{data: data} do
@@ -46,33 +47,38 @@ defmodule ChipApi.Geospatial.LittoralCell.UpdateLittoralCellTest do
                     :imperv_percent, :critical_facilities_count, :coastal_structures_count,
                     :working_harbor, :public_buildings_count, :salt_marsh_acres,
                     :eelgrass_acres, :public_beach_count, :recreation_open_space_acres,
-                    :town_ways_to_water, :total_assessed_value
+                    :town_ways_to_water, :total_assessed_value, :littoral_cell_id
                 ])
         end
 
-        test "without a blank name value returns error and changeset", %{data: data} do
+        test "with a blank name value returns error and changeset", %{data: data} do
             assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, %{name: nil})
             assert "can't be blank" in errors_on(changeset).name
         end
 
-        test "without a blank min_x value returns error and changeset", %{data: data} do
+        test "with a blank min_x value returns error and changeset", %{data: data} do
             assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, %{min_x: nil})
             assert "can't be blank" in errors_on(changeset).min_x
         end
 
-        test "without a blank min_y value returns error and changeset", %{data: data} do
+        test "with a blank min_y value returns error and changeset", %{data: data} do
             assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, %{min_y: nil})
             assert "can't be blank" in errors_on(changeset).min_y
         end
 
-        test "without a blank max_x value returns error and changeset", %{data: data} do
+        test "with a blank max_x value returns error and changeset", %{data: data} do
             assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, %{max_x: nil})
             assert "can't be blank" in errors_on(changeset).max_x
         end
 
-        test "without a blank max_y value returns error and changeset", %{data: data} do
+        test "with a blank max_y value returns error and changeset", %{data: data} do
             assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, %{max_y: nil})
             assert "can't be blank" in errors_on(changeset).max_y
+        end
+
+        test "with a blank littoral_cell_id value returns error and changeset", %{data: data} do
+            assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, %{littoral_cell_id: nil})
+            assert "can't be blank" in errors_on(changeset).littoral_cell_id
         end
 
         test "with a duplicate name returns error and changeset", %{data: data} do
@@ -180,6 +186,12 @@ defmodule ChipApi.Geospatial.LittoralCell.UpdateLittoralCellTest do
         test "with a bad total_assessed_value value returns error and changeset", %{data: data} do
             assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, @attrs)
             assert "is invalid" in errors_on(changeset).total_assessed_value
+        end
+
+        @attrs %{littoral_cell_id: "bad"}
+        test "with a bad littoral_cell_id value returns error and changeset", %{data: data} do
+            assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, @attrs)
+            assert "is invalid" in errors_on(changeset).littoral_cell_id
         end
 
         @attrs %{min_x: 181.0}
@@ -300,6 +312,12 @@ defmodule ChipApi.Geospatial.LittoralCell.UpdateLittoralCellTest do
         test "with total_assessed_value value less than 0.0 returns error and changeset", %{data: data} do
             assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, @attrs)
             assert "cannot be less than 0.0" in errors_on(changeset).total_assessed_value
+        end
+
+        @attrs %{littoral_cell_id: -1}
+        test "with littoral_cell_id value less than 0 returns error and changeset", %{data: data} do
+            assert {:error, changeset} = ShorelineLocations.update_littoral_cell(data.cell1, @attrs)
+            assert "must be greater than or equal to 0" in errors_on(changeset).littoral_cell_id
         end
     end
 

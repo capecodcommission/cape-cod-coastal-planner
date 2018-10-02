@@ -17,8 +17,10 @@ defmodule ChipApi.Fakes do
     @benefit2 %Benefit{name: "benefit2", display_order: 1}
     @advantage1 %Advantage{name: "advantage1", display_order: 0}
     @advantage2 %Advantage{name: "advantage2", display_order: 1}
+    @advantage3 %Advantage{name: "advantage3", display_order: 0}
     @disadvantage1 %Disadvantage{name: "disadvantage1", display_order: 0}
     @disadvantage2 %Disadvantage{name: "disadvantage2", display_order: 1}
+    @disadvantage3 %Disadvantage{name: "disadvantage3", display_order: 0}
     @strat1 %Strategy{name: "strat1", description: "desc1", is_active: true, display_order: 1}
     @strat2 %Strategy{name: "strat2", description: "desc2", is_active: false, display_order: 2}
     @cell1 %LittoralCell{
@@ -41,7 +43,8 @@ defmodule ChipApi.Fakes do
         recreation_open_space_acres: D.new("10.01"),
         town_ways_to_water: 1,
         national_seashore: false,
-        total_assessed_value: D.new("1000.00")
+        total_assessed_value: D.new("1000.00"),
+        littoral_cell_id: 1
     }
     @cell2 %LittoralCell{
         name: "cell2", 
@@ -63,7 +66,8 @@ defmodule ChipApi.Fakes do
         recreation_open_space_acres: D.new("10.01"),
         town_ways_to_water: 1,
         national_seashore: true,
-        total_assessed_value: D.new("1000.00")
+        total_assessed_value: D.new("1000.00"),
+        littoral_cell_id: 2
     }
 
 
@@ -192,8 +196,10 @@ defmodule ChipApi.Fakes do
         benefit2 = @benefit2 |> Repo.insert!
         advantage1 = @advantage1 |> Repo.insert!
         advantage2 = @advantage2 |> Repo.insert!
+        advantage3 = @advantage3 |> Repo.insert!
         disadvantage1 = @disadvantage1 |> Repo.insert!
         disadvantage2 = @disadvantage2 |> Repo.insert!
+        disadvantage3 = @disadvantage3 |> Repo.insert!
 
         strat1 = @strat1
         |> Map.merge(%{
@@ -214,8 +220,8 @@ defmodule ChipApi.Fakes do
             impact_scales: [scale1, scale2],
             strategy_placements: [place1],
             adaptation_benefits: [benefit1],
-            adaptation_advantages: [advantage1],
-            adaptation_disadvantages: [disadvantage1]
+            adaptation_advantages: [advantage3],
+            adaptation_disadvantages: [disadvantage3]
         })
         |> Repo.insert!
 

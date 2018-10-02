@@ -95,13 +95,13 @@ defmodule ChipApi.Adaptation.BenefitTest do
     end
 
     # TODO Currently failing, not sure if we actually need this one for benefits though?  Does display order need validation?
-    # @attrs %{
-    #     display_order: "5"
-    # }
-    # test "update_benefit with a bad value returns error and changeset", %{data: data} do
-    #     assert {:error, changeset} = Strategies.update_benefit(data.benefit1, @attrs)
-    #     assert "is invalid" in errors_on(changeset).display_order
-    # end
+    @attrs %{
+        display_order: "bad_value"
+    }
+    test "update_benefit with a bad value returns error and changeset", %{data: data} do
+        assert {:error, changeset} = Strategies.update_benefit(data.benefit1, @attrs)        
+        assert "is invalid" in errors_on(changeset).display_order
+    end
 
     test "update_benefit with a taken name returns error and changeset", %{data: data} do
         assert {:error, changeset} = Strategies.update_benefit(data.benefit1, %{name: data.benefit2.name})

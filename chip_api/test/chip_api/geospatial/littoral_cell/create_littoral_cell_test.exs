@@ -28,7 +28,8 @@ defmodule ChipApi.Geospatial.LittoralCell.CreateLittoralCellTest do
         public_beach_count: 4,
         recreation_open_space_acres: D.new("55.55"),
         town_ways_to_water: 5,
-        total_assessed_value: D.new("66.66")
+        total_assessed_value: D.new("66.66"),
+        littoral_cell_id: 4
     }
     
     describe "create_littoral_cell/1" do
@@ -47,7 +48,7 @@ defmodule ChipApi.Geospatial.LittoralCell.CreateLittoralCellTest do
                     :imperv_percent, :critical_facilities_count, :coastal_structures_count,
                     :working_harbor, :public_buildings_count, :salt_marsh_acres,
                     :eelgrass_acres, :public_beach_count, :recreation_open_space_acres,
-                    :town_ways_to_water, :total_assessed_value
+                    :town_ways_to_water, :total_assessed_value, :littoral_cell_id
                 ])
                 
         end
@@ -64,16 +65,13 @@ defmodule ChipApi.Geospatial.LittoralCell.CreateLittoralCellTest do
             error_text = "can't be blank"
             errors = errors_on(changeset)
 
-            assert 5 = errors |> Map.keys() |> length()
+            assert 6 = errors |> Map.keys() |> length()
             assert error_text in errors.name
             assert error_text in errors.min_x
             assert error_text in errors.min_y
             assert error_text in errors.max_x
-            assert error_text in errors.max_y           
-        end
-
-        test "with bad value types returns errors and changeset" do
-            
+            assert error_text in errors.max_y
+            assert error_text in errors.littoral_cell_id
         end
 
         test "name field with bad value types returns error and changeset" do
@@ -176,6 +174,12 @@ defmodule ChipApi.Geospatial.LittoralCell.CreateLittoralCellTest do
             attrs = @attrs |> Map.replace!(:total_assessed_value, "bad")
             assert {:error, changeset} = ShorelineLocations.create_littoral_cell(attrs)
             assert "is invalid" in errors_on(changeset).total_assessed_value
+        end
+
+        test "littoral_cell_id field with bad value types returns error and changeset" do
+            attrs = @attrs |> Map.replace!(:littoral_cell_id, "bad")
+            assert {:error, changeset} = ShorelineLocations.create_littoral_cell(attrs)
+            assert "is invalid" in errors_on(changeset).littoral_cell_id
         end
 
         test "with min_x value greater than 180.0 returns error and changeset" do
@@ -296,6 +300,12 @@ defmodule ChipApi.Geospatial.LittoralCell.CreateLittoralCellTest do
             attrs = @attrs |> Map.replace!(:total_assessed_value, D.new("-0.1"))
             assert {:error, changeset} = ShorelineLocations.create_littoral_cell(attrs)
             assert "cannot be less than 0.0" in errors_on(changeset).total_assessed_value
+        end
+
+        test "littoral_cell_id field less than 0 returns error and changeset" do
+            attrs = @attrs |> Map.replace!(:littoral_cell_id, -10)
+            assert {:error, changeset} = ShorelineLocations.create_littoral_cell(attrs)
+            assert "must be greater than or equal to 0" in errors_on(changeset).littoral_cell_id
         end
 
     end

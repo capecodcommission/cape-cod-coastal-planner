@@ -103,6 +103,11 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         field :placements, list_of(:strategy_placement) do
             resolve &Resolvers.Strategies.placements_for_strategy/3
         end
+
+        @desc "The server path to an image of the adaptation strategy"
+        field :image_path, :string do
+            resolve &Resolvers.Strategies.image_path/3
+        end
     end
 
 
@@ -195,11 +200,4 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.strategies_for_placement/3
         end
     end
-
-    # TODO See error thrown in webapi/schema/strategies.ex
-    # @desc "The server path to an image of the adaptation strategy"
-    # field :image_path, :string do
-    #     resolve &Resolvers.Strategies.image_path/3
-    # end
-
 end

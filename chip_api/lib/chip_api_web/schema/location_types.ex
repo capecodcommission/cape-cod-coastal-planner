@@ -104,6 +104,9 @@ defmodule ChipApiWeb.Schema.LocationTypes do
             resolve &Resolvers.Locations.image_path/3
         end
 
+        @desc "The Littoral Cell ID of the shoreline location in AGS MapService"
+        field :littoral_cell_id, non_null(:integer)
+
     end
 
 end

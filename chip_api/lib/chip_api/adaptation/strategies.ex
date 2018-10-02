@@ -143,12 +143,15 @@ defmodule ChipApi.Adaptation.Strategies do
 
     ## Examples
 
-        iex> change_category(category)
-        %Ecto.Changeset{source: %Category{}}
+        iex> change_category(category, %{field: new_value})
+        %Ecto.Changeset{data: %Category{}, changes: %{field: new_value}, ...}
+
+        iex> change_category(category, %{field: bad_value})
+        %Ecto.Changeset{data: %Category{}, changes: %{}, errors: [...]}
 
     """
-    def change_category(%Category{} = category) do
-        Category.changeset(category, %{})
+    def change_category(%Category{} = category, attrs) do
+        Category.changeset(category, attrs)
     end
 
 
@@ -288,12 +291,15 @@ defmodule ChipApi.Adaptation.Strategies do
 
     ## Examples
 
-        iex> change_hazard(hazard)
-        %Ecto.Changeset{source: %Hazard{}}
+        iex> change_hazard(hazard, %{field: new_value})
+        %Ecto.Changeset{data: %Hazard{}, changes: %{field: new_value}, ...}
+
+        iex> change_hazard(hazard, %{field: bad_value})
+        %Ecto.Changeset{data: %Hazard{}, changes: %{}, errors: [...]}
 
     """
-    def change_hazard(%Hazard{} = hazard) do
-        Hazard.changeset(hazard, %{})
+    def change_hazard(%Hazard{} = hazard, attrs) do
+        Hazard.changeset(hazard, attrs)
     end
 
     #
@@ -432,12 +438,15 @@ defmodule ChipApi.Adaptation.Strategies do
 
     ## Examples
 
-        iex> change_scale(scale)
-        %Ecto.Changeset{source: %Scale{}}
+        iex> change_scale(scale, %{field: new_value})
+        %Ecto.Changeset{data: %Scale{}, changes: %{field: new_value}, ...}
+
+        iex> change_scale(scale, %{field: bad_value})
+        %Ecto.Changeset{data: %Scale{}, changes: %{}, errors: [...]}
 
     """
-    def change_scale(%Scale{} = scale) do
-        Scale.changeset(scale, %{})
+    def change_scale(%Scale{} = scale, attrs) do
+        Scale.changeset(scale, attrs)
     end
 
     #
@@ -563,12 +572,15 @@ defmodule ChipApi.Adaptation.Strategies do
 
     ## Examples
 
-        iex> change_placement(placement)
-        %Ecto.Changeset{source: %Placement{}}
+        iex> change_placement(placement, %{field: new_value})
+        %Ecto.Changeset{data: %Placement{}, changes: %{field: new_value}, ...}
+
+        iex> change_placement(placement, %{field: bad_value})
+        %Ecto.Changeset{data: %Placement{}, changes: %{}, errors: [...]}
 
     """
-    def change_placement(%Placement{} = placement) do
-        Placement.changeset(placement, %{})
+    def change_placement(%Placement{} = placement, attrs) do
+        Placement.changeset(placement, attrs)
     end
 
     #
@@ -706,12 +718,15 @@ defmodule ChipApi.Adaptation.Strategies do
 
     ## Examples
 
-        iex> change_benefit(benefit)
-        %Ecto.Changeset{source: %Benefit{}}
+        iex> change_benefit(benefit, %{field: new_value})
+        %Ecto.Changeset{data: %Benefit{}, changes: %{field: new_value}, ...}
+
+        iex> change_benefit(benefit, %{field: bad_value})
+        %Ecto.Changeset{data: %Benefit{}, changes: %{}, errors: [...]}
 
     """
-    def change_benefit(%Benefit{} = benefit) do
-        Benefit.changeset(benefit, %{})
+    def change_benefit(%Benefit{} = benefit, attrs) do
+        Benefit.changeset(benefit, attrs)
     end
 
     #
@@ -950,12 +965,15 @@ defmodule ChipApi.Adaptation.Strategies do
 
     ## Examples
 
-        iex> change_strategy(strategy)
-        %Ecto.Changeset{source: %Strategy{}}
+        iex> change_strategy(strategy, %{field: new_value})
+        %Ecto.Changeset{data: %Strategy{}, changes: %{field: new_value}, ...}
+
+        iex> change_strategy(strategy, %{field: bad_value})
+        %Ecto.Changeset{data: %Strategy{}, changes: %{}, errors: [...]}
 
     """
-    def change_strategy(%Strategy{} = strategy) do
-        Strategy.changeset(strategy, %{})
+    def change_strategy(%Strategy{} = strategy, attrs) do
+        Strategy.changeset(strategy, attrs)
     end
 
 
