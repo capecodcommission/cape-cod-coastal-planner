@@ -54,6 +54,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
     @desc "An adaptation strategy"
     object :adaptation_strategy do
+
+        @desc "The ID of the strategy"
+        field :id, non_null(:id)
         
         @desc "The name of the strategy"
         field :name, non_null(:string)

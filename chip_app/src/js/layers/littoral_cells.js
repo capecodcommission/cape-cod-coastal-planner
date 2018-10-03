@@ -60,7 +60,7 @@ function _onLoaded(source, map, data) {
 
 function _loaded(source, data) {
     if (data.error) {
-        source.removeLoadedExtent(extent);
+        source.removeLoadedExtent(source.getExtent());
     } else {
         let features = esrijsonformat.readFeaturesFromObject(data.response);
         if (features.length > 0) {
