@@ -8,7 +8,7 @@ import {layer as worldImagery} from "./layers/world_imagery";
 import {layer as massImagery} from "./layers/mass_imagery";
 import {layer as littoralCells} from "./layers/littoral_cells";
 import {layer as vulnRibbon} from "./layers/vulnerability_ribbon";
-import {layer as locHexes} from "./layers/location_hexes";
+//import {layer as locHexes} from "./layers/location_hexes";
 import {
     layer as impactZone
 } from "./layers/zone_of_impact";
@@ -29,7 +29,7 @@ export function init(onInit) {
     });
     map.addLayer(littoralCells(map));
     map.addLayer(vulnRibbon(map));
-    map.addLayer(locHexes(map));
+    //map.addLayer(locHexes(map));
 
     // wait until next frame to attempt rendering the map
     // ie: target div needs to exist before attempt

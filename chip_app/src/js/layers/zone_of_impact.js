@@ -18,7 +18,7 @@ export function layer(map) {
     let source = new VectorSource();
 
     let layer = new VectorLayer({
-        visible: true,
+        visible: false,
         source: source,
         style: new Style({
             fill: new Fill({
