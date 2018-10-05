@@ -5,7 +5,7 @@ import Types exposing (..)
 import Message exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Element.Events exposing (onClick, onMouseDown, onMouseUp)
+--import Element.Events exposing (onClick, onMouseDown, onMouseUp)
 import Styles exposing (..)
 import View.Helpers exposing (renderAnimation)
 
@@ -45,3 +45,4 @@ view { rightSidebarOpenness, rightSidebarAnimations } childViews =
             [ height fill, width (px 400) ]
             childViews
         )
+

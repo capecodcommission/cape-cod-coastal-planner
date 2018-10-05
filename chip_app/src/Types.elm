@@ -261,3 +261,8 @@ zoneOfImpactDecoder =
     D.map2 ZoneOfImpact
         (D.maybe (D.field "geometry" D.string))
         (D.field "num_selected" D.int)
+
+
+getId : Scalar.Id -> String
+getId (Scalar.Id id) =
+    id

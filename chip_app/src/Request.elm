@@ -5,16 +5,30 @@ import Http
 import Graphqelm.Http exposing (..)
 import Graphqelm.Operation exposing (RootQuery)
 import Graphqelm.SelectionSet exposing (SelectionSet, with)
-import RemoteData exposing (RemoteData, fromResult, sendRequest)
+import RemoteData as Remote exposing (RemoteData, fromResult, sendRequest, mapBoth)
 import QueryString as QS
 import Json.Decode as D
 import ChipApi.Object
 import ChipApi.Object.CoastalHazard as CH
 import ChipApi.Object.ShorelineLocation as SL
+import ChipApi.Object.AdaptationStrategy as AS
 import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
 import Types exposing (..)
 import Message exposing (..)
+import AdaptationStrategy exposing (queryAdaptationStrategies)
+
+
+--
+-- ADAPTATION STRATEGIES
+--
+
+
+getActiveAdaptationStrategies : Cmd Msg
+getActiveAdaptationStrategies =
+    queryAdaptationStrategies
+        |> queryRequest "./api"
+        |> send (Remote.fromResult >> HandleActiveAdaptationStrategiesResponse)
 
 
 --
@@ -35,11 +49,10 @@ coastalHazards =
 
 
 getCoastalHazards : Cmd Msg
-getCoastalHazards =
+getCoastalHazards =    
     queryCoastalHazards
         |> queryRequest "./api"
-        |> send (fromResult >> HandleCoastalHazardsResponse)
-
+        |> send (Remote.fromResult >> HandleCoastalHazardsResponse)
 
 
 --

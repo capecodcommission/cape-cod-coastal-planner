@@ -14,6 +14,7 @@ import Dict exposing (Dict)
 import Maybe
 import List.Extra as LEx
 import Types exposing (..)
+import AdaptationStrategy exposing (..)
 import Message exposing (..)
 import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
@@ -21,6 +22,7 @@ import View.Dropdown as Dropdown exposing (Dropdown)
 import View.BaselineInfo as BaselineInfo exposing (..)
 import View.RightSidebar as RSidebar
 import View.ZoneOfImpact as ZOI
+import View.StrategiesModal as Strategies
 import View.Helpers exposing (..)
 import Styles exposing (..)
 import ChipApi.Scalar as Scalar
@@ -40,7 +42,7 @@ type alias Model =
     , urlState : Maybe Route
     , device : Device
     , closePath : String
-    , coastalHazards : Dropdown CoastalHazards CoastalHazard
+    , coastalHazards : Dropdown CoastalHazards Types.CoastalHazard
     , shorelineLocations : Dropdown ShorelineExtents ShorelineExtent
     , baselineInformation : BaselineInformation
     , baselineModal : GqlData (Maybe BaselineInfo)
@@ -48,6 +50,9 @@ type alias Model =
     , zoneOfImpact : Maybe ZoneOfImpact
     , rightSidebarOpenness : Openness
     , rightSidebarAnimations : Animation.State
+    , strategies : Strategies
+    , activeStrategies : GqlData ActiveStrategies
+    , strategiesModalOpenness : Openness
     }
 
 
@@ -85,6 +90,10 @@ initialModel flags =
         -- right sidebar
         Closed
         (Animation.style <| .closed <| RSidebar.animations)
+        -- strategies
+        Dict.empty
+        NotAsked
+        Closed
 
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -312,12 +321,51 @@ updateModel msg model =
             , olCmd <| encodeOpenLayersCmd ClearZoneOfImpact
             )
 
-        -- ToggleRightSidebar ->
-        --     case model.rightSidebarOpenness of
-        --         Open ->
-        --             ( collapseRightSidebar model, Cmd.none )
-        --         Closed ->
-        --             ( expandRightSidebar model, Cmd.none )
+        AddStrategy ->
+            case activeStrategiesFromCache model.strategies of
+                [] ->
+                    ( model
+                        |> collapseRightSidebar
+                        |> \m -> 
+                            { m 
+                                | activeStrategies = Loading
+                                , strategiesModalOpenness = Open 
+                            }
+                    , getActiveAdaptationStrategies
+                    )
+
+                cache ->
+                    ( model
+                        |> collapseRightSidebar
+                        |> \m -> 
+                            { m 
+                                | activeStrategies = Success <| ActiveStrategies cache
+                                , strategiesModalOpenness = Open
+                            }
+                    , Cmd.none
+                    )
+
+        CloseStrategyModal ->
+            ( model
+                |> expandRightSidebar
+                |> \m -> { m | activeStrategies = NotAsked, strategiesModalOpenness = Closed }
+            , Cmd.none
+            )
+
+        HandleActiveAdaptationStrategiesResponse response ->
+            case response of
+                Success activeStrategies ->
+                    ( { model 
+                        | strategies = strategiesFromResponse activeStrategies
+                        , activeStrategies = response
+                      }
+                    , Cmd.none
+                    )
+
+                _ ->
+                    ( { model | activeStrategies = response }, Cmd.none)
+
+
         Animate animMsg ->
             ( { model
                 | rightSidebarAnimations = Animation.update animMsg model.rightSidebarAnimations
@@ -440,6 +488,7 @@ view app =
                                     [ getRightSidebarChildViews model
                                         |> RSidebar.view model
                                     ]
+                            , Strategies.view model
                             ]
                     ]
 

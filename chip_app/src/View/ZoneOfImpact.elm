@@ -23,6 +23,6 @@ view zoi =
         , row NoStyle
             [ spread, padding 25 ]
             [ button NoStyle [ onClick CancelZoneOfImpactSelection ] <| text "cancel"
-            , button NoStyle [] <| text "add strategy"
+            , button NoStyle [ onClick AddStrategy ] <| text "add strategy"
             ]
         ]

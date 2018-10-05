@@ -74,6 +74,13 @@ hazards object =
     Object.selectionField "hazards" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
 
 
+{-| The ID of the strategy
+-}
+id : Field ChipApi.Scalar.Id ChipApi.Object.AdaptationStrategy
+id =
+    Object.fieldDecoder "id" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.Id)
+
+
 {-| The server path to an image of the adaptation strategy
 -}
 imagePath : Field (Maybe String) ChipApi.Object.AdaptationStrategy

@@ -5,6 +5,7 @@ import Element.Input as Input
 import Animation
 import Window
 import Types exposing (..)
+import AdaptationStrategy exposing (ActiveStrategies)
 import Json.Decode as D
 import Http
 
@@ -26,5 +27,8 @@ type Msg
     | LoadLocationHexesResponse (Result Http.Error D.Value)
     | UpdateZoneOfImpact ZoneOfImpact
     | CancelZoneOfImpactSelection
+    | AddStrategy
+    | CloseStrategyModal
+    | HandleActiveAdaptationStrategiesResponse (GqlData ActiveStrategies)
     | Animate Animation.Msg
     | Resize Window.Size

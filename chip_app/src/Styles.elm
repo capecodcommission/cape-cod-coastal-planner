@@ -34,12 +34,19 @@ type MainStyles
     = NoStyle
     | Header HeaderStyles
     | Baseline BaselineStyles
+    | AddStrategies StrategiesStyles
     | Headings HeadingStyles
     | Sidebar
     | Popup
+    | Modal ModalStyles    
     | CloseIcon
     | FontLeft
     | FontRight
+
+
+type ModalStyles
+    = ModalBackground
+    | ModalContainer
 
 
 type HeadingStyles
@@ -62,10 +69,17 @@ type HeaderStyles
 
 type BaselineStyles
     = BaselineInfoBtn
-    | BaselineInfoModalBg
-    | BaselineInfoModal
     | BaselineInfoHeader
     | BaselineInfoText
+
+
+type StrategiesStyles
+    = StrategiesSidebar
+    | StrategiesSidebarHeader
+    | StrategiesSidebarList
+    | StrategiesSidebarFooter
+    | StrategiesDetailsHeader
+    | StrategiesDetailsMain
 
 
 type Variations
@@ -173,14 +187,7 @@ stylesheet =
                 , Color.border palette.mySin
                 , Transition.all
                 ]
-            ]
-        , Style.style (Baseline BaselineInfoModalBg)
-            [ Color.background <| rgba 0 0 0 0.59 ]
-        , Style.style (Baseline BaselineInfoModal)
-            [ Color.background <| rgba 0 0 0 0.7
-            , Border.rounded 4
-            , Font.lineHeight 1.29
-            ]
+            ]        
         , Style.style (Baseline BaselineInfoHeader)
             [ Color.background palette.chambray
             , Color.text white
@@ -192,6 +199,34 @@ stylesheet =
             [ Color.text white
             , Font.size 16
             , Font.typeface fontstack
+            , Font.lineHeight 1.29
+            ]
+        , Style.style (AddStrategies StrategiesSidebar)
+            [ Color.text white
+            , Color.border white
+            , Border.right 1
+            , Border.solid
+            , Font.typeface fontstack
+            , Font.lineHeight 1.4
+            ]
+        , Style.style (AddStrategies StrategiesSidebarHeader)
+            [ Color.background palette.havelockBlue
+            , Font.size 24
+            , Border.roundTopLeft 4
+            ]
+        , Style.style (AddStrategies StrategiesSidebarList)
+            [ Font.size 20
+            ]
+        , Style.style (AddStrategies StrategiesSidebarFooter)
+            [ Color.background black
+            , Border.roundBottomLeft 4
+            ]
+        , Style.style (AddStrategies StrategiesDetailsHeader)
+            [ Color.background palette.chambray
+            , Color.text white
+            ]
+        , Style.style (AddStrategies StrategiesDetailsMain)
+            [ Color.text white
             ]
         , Style.style (Headings H1) <| headingStyle 6
         , Style.style (Headings H2) <| headingStyle 5
@@ -202,6 +237,12 @@ stylesheet =
         , Style.style Popup
             [ Color.background palette.chambray
             , Color.text white
+            ]
+        , Style.style (Modal ModalBackground)
+            [ Color.background <| rgba 0 0 0 0.59 ]
+        , Style.style (Modal ModalContainer)
+            [ Color.background <| rgba 0 0 0 0.7
+            , Border.rounded 4
             ]
         , Style.style Sidebar
             [ Color.background <| Color.rgba 0 0 0 0.7

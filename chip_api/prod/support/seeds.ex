@@ -152,7 +152,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site],
             strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -175,7 +175,7 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Acquisition of land for new development.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Loss of coastal property values.", display_order: 2}
             ],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -198,7 +198,7 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "May encourage the development of previously undeveloped inland lands.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Limits development along coastline where higher returns on investment are possible.", display_order: 2}
             ],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -223,7 +223,7 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Loss of upland as the marsh expands with restored tidal flow. At minimum, short term loss of plants at site immediately after tidal restoration.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Potential impacts on coastal public access to water. Potentially higher cost than hard engineering structures.", display_order: 2}
             ],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -246,7 +246,7 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Perpetual conservation of the land may cause issues regarding development scenarios in the future.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Limits ability of property owner to make changes on land.", display_order: 2}
             ],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -270,7 +270,7 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "No high water protection.", display_order: 2},
                 %Adaptation.Disadvantage{name: "Reduces sediment and nutrient input into estuary.", display_order: 3}
             ],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -292,7 +292,7 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Impacts to existing habitat resources associated with beach nourishment.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Long term annual costs to construct and maintain system.", display_order: 2}
             ],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -303,7 +303,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood, community, regional],
             strategy_placements: [undeveloped],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -314,7 +314,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood],
             strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -352,7 +352,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion],
             impact_scales: [site, neighborhood],
             strategy_placements: [coastal_dune],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -406,7 +406,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placements: [coastal_dune],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -417,7 +417,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placements: [developed, undeveloped, coastal_dune],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 
@@ -452,7 +452,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placements: [developed, undeveloped, coastal_dune],
-            is_active: true
+            is_active: false
         }
         |> Repo.insert!
 

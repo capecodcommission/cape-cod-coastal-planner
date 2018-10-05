@@ -30,7 +30,13 @@ mainHeight device =
     (modalHeight device) - (headerHeight device)
 
 
-view : { config | device : Device, closePath : String, baselineModal : GqlData (Maybe BaselineInfo) } -> Element MainStyles Variations Msg
+view : 
+    { config 
+        | device : Device
+        , closePath : String
+        , baselineModal : GqlData (Maybe BaselineInfo) 
+    } 
+    -> Element MainStyles Variations Msg
 view config =
     case config.baselineModal of
         NotAsked ->
@@ -45,13 +51,13 @@ view config =
             column NoStyle
                 []
                 [ infoButtonView [] defaultButtonText
-                , modal (Baseline BaselineInfoModalBg)
+                , modal (Modal ModalBackground)
                     [ height fill
                     , width fill
                     , padding 90
                     ]
                   <|
-                    el (Baseline BaselineInfoModal)
+                    el (Modal ModalContainer)
                         [ width (px 900)
                         , maxHeight (px <| modalHeight config.device)
                         , center
@@ -72,7 +78,13 @@ view config =
             infoButtonView [] defaultButtonText
 
 
-headerView : { config | closePath : String, device : Device } -> BaselineInfo -> Element MainStyles Variations Msg
+headerView : 
+    { config 
+        | closePath : String
+        , device : Device 
+    } 
+    -> BaselineInfo 
+    -> Element MainStyles Variations Msg
 headerView { closePath, device } info =
     header (Baseline BaselineInfoHeader)
         [ width fill, height (px <| headerHeight device) ]
