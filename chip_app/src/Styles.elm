@@ -77,6 +77,7 @@ type StrategiesStyles
     = StrategiesSidebar
     | StrategiesSidebarHeader
     | StrategiesSidebarList
+    | StrategiesSidebarListBtn
     | StrategiesSidebarFooter
     | StrategiesDetailsHeader
     | StrategiesDetailsMain
@@ -217,6 +218,10 @@ stylesheet =
         , Style.style (AddStrategies StrategiesSidebarList)
             [ Font.size 20
             ]
+        , Style.style (AddStrategies StrategiesSidebarListBtn)
+            [ Color.background <| rgba 0 0 0 0
+            , Color.text white
+            ]
         , Style.style (AddStrategies StrategiesSidebarFooter)
             [ Color.background black
             , Border.roundBottomLeft 4
@@ -224,6 +229,7 @@ stylesheet =
         , Style.style (AddStrategies StrategiesDetailsHeader)
             [ Color.background palette.chambray
             , Color.text white
+            , Border.roundTopRight 4
             ]
         , Style.style (AddStrategies StrategiesDetailsMain)
             [ Color.text white

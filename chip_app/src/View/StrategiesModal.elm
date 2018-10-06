@@ -105,8 +105,6 @@ sidebarView config =
             )
         , column (AddStrategies StrategiesSidebarList)
             [ height ( px <|activeStrategiesHeight config.device ) 
-            , padding 16
-            , spacing 16
             ] <| 
                 activeStrategiesView config.activeStrategies
         , footer (AddStrategies StrategiesSidebarFooter)
@@ -143,10 +141,10 @@ activeStrategyView :
     }
     -> Element MainStyles Variations Msg
 activeStrategyView item =
-    el NoStyle
-        [
-        ] <|
-        Element.text item.name
+    button (AddStrategies StrategiesSidebarListBtn) 
+        [ height content
+        , padding 8
+        ] <| el NoStyle [ alignLeft, paddingXY 8 0 ] <| Element.text item.name
 
 
 
