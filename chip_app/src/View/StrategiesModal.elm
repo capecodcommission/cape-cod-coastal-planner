@@ -143,8 +143,8 @@ activeStrategyView :
 activeStrategyView item =
     button (AddStrategies StrategiesSidebarListBtn) 
         [ height content
-        , padding 8
-        ] <| el NoStyle [ alignLeft, paddingXY 8 0 ] <| Element.text item.name
+        , paddingXY 16 8
+        ] <| paragraph NoStyle [] [ Element.text item.name ]
 
 
 
