@@ -11,7 +11,7 @@ import Json.Decode as D
 import ChipApi.Object
 import ChipApi.Object.CoastalHazard as CH
 import ChipApi.Object.ShorelineLocation as SL
-import ChipApi.Object.AdaptationStrategy as AS
+--import ChipApi.Object.AdaptationStrategy as AS
 import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
 import Types exposing (..)
@@ -28,7 +28,7 @@ getActiveAdaptationStrategies : Cmd Msg
 getActiveAdaptationStrategies =
     queryAdaptationStrategies
         |> queryRequest "./api"
-        |> send (Remote.fromResult >> HandleActiveAdaptationStrategiesResponse)
+        |> send (Remote.fromResult >> GotActiveStrategies)
 
 
 --
@@ -52,7 +52,7 @@ getCoastalHazards : Cmd Msg
 getCoastalHazards =    
     queryCoastalHazards
         |> queryRequest "./api"
-        |> send (Remote.fromResult >> HandleCoastalHazardsResponse)
+        |> send (Remote.fromResult >> GotCoastalHazards)
 
 
 --
@@ -81,7 +81,7 @@ getShorelineExtents : Cmd Msg
 getShorelineExtents =
     queryShorelineExtents
         |> queryRequest "./api"
-        |> send (fromResult >> HandleShorelineExtentsResponse)
+        |> send (fromResult >> GotShorelineExtents)
 
 
 
@@ -123,7 +123,7 @@ getBaselineInfo : Scalar.Id -> Cmd Msg
 getBaselineInfo id =
     queryBaselineInfo id
         |> queryRequest "./api"
-        |> send (fromResult >> HandleBaselineInfoResponse)
+        |> send (Remote.fromResult >> GotBaselineInfo)
 
 
 

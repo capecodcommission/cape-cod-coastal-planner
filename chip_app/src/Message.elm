@@ -5,20 +5,22 @@ import Element.Input as Input
 import Animation
 import Window
 import Types exposing (..)
-import AdaptationStrategy exposing (ActiveStrategies)
+import AdaptationStrategy exposing (ActiveStrategiesResponse)
 import Json.Decode as D
 import Http
+import Keyboard.Event exposing (KeyboardEvent)
+import ChipApi.Scalar as Scalar
 
 
 type Msg
     = Noop
     | UrlChange Navigation.Location
-    | HandleCoastalHazardsResponse (GqlData CoastalHazards)
+    | GotCoastalHazards (GqlData CoastalHazards)
     | SelectHazard (Input.SelectMsg CoastalHazard)
-    | HandleShorelineExtentsResponse (GqlData ShorelineExtents)
+    | GotShorelineExtents (GqlData ShorelineExtents)
     | SelectLocation (Input.SelectMsg ShorelineExtent)
     | GetBaselineInfo
-    | HandleBaselineInfoResponse (GqlData (Maybe BaselineInfo))
+    | GotBaselineInfo (GqlData (Maybe BaselineInfo))
     | CloseBaselineInfo
     | LoadLittoralCells Extent
     | LoadLittoralCellsResponse (Result Http.Error D.Value)
@@ -27,8 +29,10 @@ type Msg
     | LoadLocationHexesResponse (Result Http.Error D.Value)
     | UpdateZoneOfImpact ZoneOfImpact
     | CancelZoneOfImpactSelection
-    | AddStrategy
+    | PickStrategy
     | CloseStrategyModal
-    | HandleActiveAdaptationStrategiesResponse (GqlData ActiveStrategies)
+    | GotActiveStrategies (GqlData ActiveStrategiesResponse)
+    | SelectStrategy Scalar.Id
+    | HandleStrategyKeyboardEvent KeyboardEvent
     | Animate Animation.Msg
     | Resize Window.Size

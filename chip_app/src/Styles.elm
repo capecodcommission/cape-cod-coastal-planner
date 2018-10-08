@@ -78,6 +78,7 @@ type StrategiesStyles
     | StrategiesSidebarHeader
     | StrategiesSidebarList
     | StrategiesSidebarListBtn
+    | StrategiesSidebarListBtnSelected
     | StrategiesSidebarFooter
     | StrategiesDetailsHeader
     | StrategiesDetailsMain
@@ -220,6 +221,11 @@ stylesheet =
             ]
         , Style.style (AddStrategies StrategiesSidebarListBtn)
             [ Color.background <| rgba 0 0 0 0
+            , Color.text white
+            , Font.alignLeft
+            ]
+        , Style.style (AddStrategies StrategiesSidebarListBtnSelected)
+            [ Color.background <| fadeOut 0.7 palette.havelockBlue
             , Color.text white
             , Font.alignLeft
             ]

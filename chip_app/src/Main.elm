@@ -8,11 +8,14 @@ import Element.Input as Input exposing (..)
 import RemoteData exposing (WebData)
 import Animation
 import Window
-import RemoteData exposing (RemoteData(..))
+import RemoteData as Remote exposing (RemoteData(..))
 import Json.Decode as D exposing (..)
 import Dict exposing (Dict)
 import Maybe
+import Dom
+import Task
 import List.Extra as LEx
+import Keyboard.Key exposing (Key(Up, Down, Enter, Escape))
 import Types exposing (..)
 import AdaptationStrategy exposing (..)
 import Message exposing (..)
@@ -34,7 +37,7 @@ import Ports exposing (..)
 
 type App
     = Loaded Model
-    | Failure String
+    | Failed String
 
 
 type alias Model =
@@ -50,8 +53,7 @@ type alias Model =
     , zoneOfImpact : Maybe ZoneOfImpact
     , rightSidebarOpenness : Openness
     , rightSidebarAnimations : Animation.State
-    , strategies : Strategies
-    , activeStrategies : GqlData ActiveStrategies
+    , strategies : GqlData Strategies
     , strategiesModalOpenness : Openness
     }
 
@@ -91,7 +93,6 @@ initialModel flags =
         Closed
         (Animation.style <| .closed <| RSidebar.animations)
         -- strategies
-        Dict.empty
         NotAsked
         Closed
 
@@ -120,7 +121,7 @@ init flags location =
                 )
 
         Err err ->
-            ( Failure err, Cmd.none )
+            ( Failed err, Cmd.none )
 
 
 
@@ -134,8 +135,8 @@ update msg app =
             updateModel msg model
                 |> (\( model, cmds ) -> ( Loaded model, cmds ))
 
-        Failure err ->
-            ( Failure err, Cmd.none )
+        Failed err ->
+            ( Failed err, Cmd.none )
 
 
 updateModel : Msg -> Model -> ( Model, Cmd Msg )
@@ -153,7 +154,7 @@ updateModel msg model =
                 , Cmd.none
                 )
 
-        HandleCoastalHazardsResponse response ->
+        GotCoastalHazards response ->
             let
                 updatedHazards =
                     model.coastalHazards
@@ -188,7 +189,7 @@ updateModel msg model =
                 , Cmd.none
                 )
 
-        HandleShorelineExtentsResponse response ->
+        GotShorelineExtents response ->
             let
                 updatedLocations =
                     model.shorelineLocations
@@ -247,7 +248,7 @@ updateModel msg model =
                         Nothing ->
                             ( model, Cmd.none )
 
-        HandleBaselineInfoResponse response ->
+        GotBaselineInfo response ->
             case response of
                 Success (Just info) ->
                     ( { model
@@ -321,50 +322,76 @@ updateModel msg model =
             , olCmd <| encodeOpenLayersCmd ClearZoneOfImpact
             )
 
-        AddStrategy ->
-            case activeStrategiesFromCache model.strategies of
-                [] ->
+        PickStrategy ->
+            case model.strategies of
+                Success (Just strategies) ->
                     ( model
                         |> collapseRightSidebar
-                        |> \m -> 
-                            { m 
-                                | activeStrategies = Loading
-                                , strategiesModalOpenness = Open 
-                            }
-                    , getActiveAdaptationStrategies
+                        |> \m -> { m | strategiesModalOpenness = Open }
+                    , Cmd.none
                     )
 
-                cache ->
+                _ ->
                     ( model
                         |> collapseRightSidebar
-                        |> \m -> 
-                            { m 
-                                | activeStrategies = Success <| ActiveStrategies cache
-                                , strategiesModalOpenness = Open
-                            }
-                    , Cmd.none
+                        |> \m -> { m | strategies = Loading, strategiesModalOpenness = Open }
+                    , getActiveAdaptationStrategies
                     )
 
         CloseStrategyModal ->
             ( model
                 |> expandRightSidebar
-                |> \m -> { m | activeStrategies = NotAsked, strategiesModalOpenness = Closed }
+                |> \m -> { m | strategiesModalOpenness = Closed }
             , Cmd.none
             )
 
-        HandleActiveAdaptationStrategiesResponse response ->
+        GotActiveStrategies response ->
             case response of
+                NotAsked ->
+                    ( model, Cmd.none )
+
+                Loading ->
+                    ( model, Cmd.none )
+
                 Success activeStrategies ->
                     ( { model 
-                        | strategies = strategiesFromResponse activeStrategies
-                        , activeStrategies = response
+                        | strategies = Success <| strategiesFromResponse activeStrategies
                       }
                     , Cmd.none
                     )
 
-                _ ->
-                    ( { model | activeStrategies = response }, Cmd.none)
+                Failure err ->
+                    ( { model | strategies = Failure <| mapErrorFromResponse err } , Cmd.none)                
+                    
+        SelectStrategy id ->
+            let
+                ( newStrategies, newCmd ) =
+                    Remote.update (selectStrategy id) model.strategies
+            in
+            ( { model | strategies = newStrategies }, newCmd )
+            
 
+        HandleStrategyKeyboardEvent evt ->
+            case evt.keyCode of
+                Down ->
+                    let
+                        ( newStrategies, newCmd ) =
+                            Remote.update selectNextStrategy model.strategies
+                    in
+                    ( { model | strategies = newStrategies }, newCmd )
+
+                Up ->
+                    let
+                        ( newStrategies, newCmd ) =
+                            Remote.update selectPreviousStrategy model.strategies
+                    in
+                    ( { model | strategies = newStrategies }, newCmd )
+
+                Enter ->        
+                    ( model, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         Animate animMsg ->
             ( { model
@@ -377,6 +404,48 @@ updateModel msg model =
             ( { model | device = classifyDevice size }
             , Cmd.none
             )
+
+
+selectStrategy : Scalar.Id -> Strategies -> (Strategies, Cmd Msg)
+selectStrategy id strategies =
+    let
+        newStrategies = findStrategy id strategies
+
+        newCmd =
+            case getSelectedStrategyHtmlId newStrategies of
+                Just id -> focus id
+
+                Nothing -> Cmd.none
+    in
+    ( newStrategies, newCmd )
+
+
+selectNextStrategy : Strategies -> (Strategies, Cmd Msg)
+selectNextStrategy strategies =
+    let
+        newStrategies = nextStrategy strategies
+
+        newCmd = 
+            case getSelectedStrategyHtmlId newStrategies of
+                Just id -> focus id
+
+                Nothing -> Cmd.none
+    in
+    ( newStrategies, newCmd )
+
+
+selectPreviousStrategy : Strategies -> (Strategies, Cmd Msg)
+selectPreviousStrategy strategies =
+    let
+        newStrategies = previousStrategy strategies
+
+        newCmd = 
+            case getSelectedStrategyHtmlId newStrategies of
+                Just id -> focus id
+
+                Nothing -> Cmd.none
+    in
+    ( newStrategies, newCmd )
 
 
 collapseRightSidebar : Model -> Model
@@ -469,6 +538,17 @@ shouldLocationMenuChangeTriggerZoomTo message =
         String.contains "SelectValue" msg
 
 
+focus : String -> Cmd Msg
+focus elementId =
+    Task.attempt (\_ -> Noop) <|
+        Dom.focus elementId
+
+
+blur : String -> Cmd Msg
+blur elementId =
+    Task.attempt (\_ -> Noop) <|
+        Dom.blur elementId
+
 
 ---- VIEW ----
 
@@ -492,7 +572,7 @@ view app =
                             ]
                     ]
 
-        Failure err ->
+        Failed err ->
             Html.div []
                 [ Html.div [] [ Html.text "FAILED TO LOAD APP!" ]
                 , Html.div [] [ Html.text "TODO: Make prettier :D" ]
@@ -543,7 +623,7 @@ subscriptions app =
                 , olSub decodeOpenLayersSub
                 ]
 
-        Failure err ->
+        Failed err ->
             Sub.none
 
 

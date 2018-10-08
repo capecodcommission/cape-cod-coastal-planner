@@ -5,12 +5,14 @@ import Types exposing (..)
 import AdaptationStrategy exposing (..)
 import Message exposing (..)
 import Element exposing (..)
-import Element.Attributes exposing (..)
+import Element.Attributes as Attr exposing (..)
 import Element.Events exposing (..)
 import Styles exposing (..)
 import View.Helpers exposing (..)
 import RemoteData exposing (RemoteData(..))
-import ChipApi.Scalar as Scalar
+import Keyboard.Event exposing (decodeKeyboardEvent)
+import Json.Decode as D
+import List.Zipper as Zipper
 
 
 modalHeight : Device -> Float
@@ -39,8 +41,7 @@ view :
     { config
          | device : Device
          , closePath : String
-         , strategies : Strategies
-         , activeStrategies : GqlData ActiveStrategies
+         , strategies : GqlData Strategies
          , strategiesModalOpenness : Openness
     }
     -> Element MainStyles Variations Msg
@@ -57,8 +58,7 @@ modalView :
     { config 
         | device : Device
         , closePath : String
-        , strategies : Strategies
-        , activeStrategies : GqlData ActiveStrategies        
+        , strategies : GqlData Strategies
     }
     -> Element MainStyles Variations Msg
 modalView config =
@@ -86,7 +86,7 @@ modalView config =
 sidebarView :
     { config
         | device: Device
-        , activeStrategies : GqlData ActiveStrategies
+        , strategies : GqlData Strategies
     }
     -> Element MainStyles Variations Msg
 sidebarView config =
@@ -104,17 +104,17 @@ sidebarView config =
                     Element.text "Erosion Strategies" 
             )
         , column (AddStrategies StrategiesSidebarList)
-            [ height ( px <|activeStrategiesHeight config.device ) 
+            [ height ( px <| activeStrategiesHeight config.device ) 
             ] <| 
-                activeStrategiesView config.activeStrategies
+                strategiesView config.strategies
         , footer (AddStrategies StrategiesSidebarFooter)
             [ width fill, height (px 89) ]
             ( el NoStyle [ center, verticalCenter ] <| Element.text "APPLY STRATEGY" )
         ]
 
 
-activeStrategiesView : GqlData ActiveStrategies -> List (Element MainStyles Variations Msg)
-activeStrategiesView data = 
+strategiesView : GqlData Strategies -> List (Element MainStyles Variations Msg)
+strategiesView data = 
  case data of
     NotAsked ->
         [ el NoStyle [ center, verticalCenter ] <| Element.text "Reload Strategies"
@@ -124,9 +124,15 @@ activeStrategiesView data =
         [ el NoStyle [ center, verticalCenter ] <| Element.text "Loading Strategies"
         ]
 
-    Success { items } ->
-        List.map activeStrategyView items
+    Success (Just strategies) ->
+        ( Zipper.before strategies |> List.map strategyView )
+          ++ [ Zipper.current strategies |> selectedStrategyView ]
+          ++ ( Zipper.after strategies |> List.map strategyView )
+        
 
+    Success Nothing ->
+        [ el NoStyle [ center, verticalCenter ] <| Element.text "No active strategies found"
+        ]
 
     Failure err ->
         [ el NoStyle [ center, verticalCenter ] <| Element.text "Error loading strategies"
@@ -134,17 +140,25 @@ activeStrategiesView data =
         ]
 
 
-activeStrategyView : 
-    { item
-        | id : Scalar.Id
-        , name : String
-    }
-    -> Element MainStyles Variations Msg
-activeStrategyView item =
-    button (AddStrategies StrategiesSidebarListBtn) 
+strategyView : Strategy -> Element MainStyles Variations Msg
+strategyView ( Strategy { id, name } as strategy) =
+    button (AddStrategies StrategiesSidebarListBtn)
         [ height content
         , paddingXY 16 8
-        ] <| paragraph NoStyle [] [ Element.text item.name ]
+        , onClick (SelectStrategy id)
+        , Attr.id <| getStrategyHtmlId strategy
+        ] <| paragraph NoStyle [] [ Element.text name ]
+
+
+
+selectedStrategyView : Strategy -> Element MainStyles Variations Msg
+selectedStrategyView ( Strategy { id, name } as strategy) =
+    button (AddStrategies StrategiesSidebarListBtnSelected) 
+        [ height content
+        , paddingXY 16 8
+        , on "keydown" <| D.map HandleStrategyKeyboardEvent decodeKeyboardEvent
+        , Attr.id <| getStrategyHtmlId strategy
+        ] <| paragraph NoStyle [] [ Element.text name ]
 
 
 
