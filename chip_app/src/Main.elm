@@ -7,6 +7,7 @@ import Element.Attributes exposing (..)
 import Element.Input as Input exposing (..)
 import RemoteData exposing (WebData)
 import Animation
+import Animations
 import Window
 import RemoteData as Remote exposing (RemoteData(..))
 import Json.Decode as D exposing (..)
@@ -45,6 +46,8 @@ type alias Model =
     , urlState : Maybe Route
     , device : Device
     , closePath : String
+    , trianglePath : String
+    , zoiPath : String
     , coastalHazards : Dropdown CoastalHazards Types.CoastalHazard
     , shorelineLocations : Dropdown ShorelineExtents ShorelineExtent
     , baselineInformation : BaselineInformation
@@ -52,7 +55,8 @@ type alias Model =
     , vulnerabilityRibbon : WebData D.Value
     , zoneOfImpact : Maybe ZoneOfImpact
     , rightSidebarOpenness : Openness
-    , rightSidebarAnimations : Animation.State
+    , rightSidebarFx : Animation.State
+    , rightSidebarToggleFx : Animation.State
     , strategies : GqlData Strategies
     , strategiesModalOpenness : Openness
     }
@@ -67,8 +71,10 @@ initialModel flags =
         (Just Blank)
         -- initial Device
         (classifyDevice flags.size)
-        -- closePath
+        -- image paths
         flags.closePath
+        flags.trianglePath
+        flags.zoiPath
         -- Coastal Hazard Dropdown
         { data = RemoteData.Loading
         , menu = Input.dropMenu Nothing SelectHazard
@@ -87,11 +93,12 @@ initialModel flags =
         NotAsked
         -- Vulernability Ribbon segments
         NotAsked
-        -- Zone of Impact data
+        -- Zone of Impact data        
         Nothing
         -- right sidebar
         Closed
-        (Animation.style <| .closed <| RSidebar.animations)
+        (Animation.style <| .closed <| Animations.rightSidebarStates)
+        (Animation.style <| .rotateNeg180 <| Animations.toggleStates)
         -- strategies
         NotAsked
         Closed
@@ -406,10 +413,20 @@ updateModel msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        ToggleRightSidebar ->
+            case model.rightSidebarOpenness of
+                Open ->
+                    ( model |> collapseRightSidebar, Cmd.none )
+
+                Closed ->
+                    ( model |> expandRightSidebar, Cmd.none )
+
+
         Animate animMsg ->
             ( { model
-                | rightSidebarAnimations = Animation.update animMsg model.rightSidebarAnimations
-              }
+                | rightSidebarFx = Animation.update animMsg model.rightSidebarFx
+                , rightSidebarToggleFx = Animation.update animMsg model.rightSidebarToggleFx
+            }
             , Cmd.none
             )
 
@@ -478,21 +495,30 @@ collapseRightSidebar : Model -> Model
 collapseRightSidebar model =
     { model
         | rightSidebarOpenness = Closed
-        , rightSidebarAnimations =
+        , rightSidebarFx =
             Animation.interrupt
-                [ Animation.to <| .closed <| RSidebar.animations ]
-                model.rightSidebarAnimations
+                [ Animation.to <| .closed <| Animations.rightSidebarStates ]
+                model.rightSidebarFx
+        , rightSidebarToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
+                model.rightSidebarToggleFx
     }
+
 
 
 expandRightSidebar : Model -> Model
 expandRightSidebar model =
     { model
         | rightSidebarOpenness = Open
-        , rightSidebarAnimations =
+        , rightSidebarFx =
             Animation.interrupt
-                [ Animation.to <| .open <| RSidebar.animations ]
-                model.rightSidebarAnimations
+                [ Animation.to <| .open <| Animations.rightSidebarStates ]
+                model.rightSidebarFx
+        , rightSidebarToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                model.rightSidebarToggleFx
     }
 
 
@@ -625,14 +651,14 @@ headerView ({ device } as model) =
             ]
 
 
-getRightSidebarChildViews : Model -> List (Element MainStyles Variations Msg)
+getRightSidebarChildViews : Model -> (String, List (Element MainStyles Variations Msg))
 getRightSidebarChildViews model =
     case model.zoneOfImpact of
         Just zoi ->
-            [ ZOI.view zoi ]
+            ("ZONE OF IMPACT", [ ZOI.view model.trianglePath model.zoiPath zoi ])
 
         Nothing ->
-            [ el NoStyle [] empty ]
+            ("", [ el NoStyle [] empty ])
 
 
 
@@ -644,13 +670,18 @@ subscriptions app =
     case app of
         Loaded model ->
             Sub.batch
-                [ Animation.subscription Animate [ model.rightSidebarAnimations ]
+                [ Animation.subscription Animate (animations model)
                 , Window.resizes Resize
                 , olSub decodeOpenLayersSub
                 ]
 
         Failed err ->
             Sub.none
+
+
+animations : Model -> List Animation.State
+animations model =
+    [ model.rightSidebarFx, model.rightSidebarToggleFx ]
 
 
 

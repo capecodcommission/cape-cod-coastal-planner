@@ -9,26 +9,14 @@ import View.Helpers exposing (title)
 import Styles exposing (..)
 
 
-view : ZoneOfImpact -> Element MainStyles Variations Msg
-view zoi =
+view : String -> String -> ZoneOfImpact -> Element MainStyles Variations Msg
+view togglePath zoiPath zoi  =
     column NoStyle
         [ height fill ]
-        [ (header (Zoi ZoiHeader) [ height (px 72), width fill ] <| 
-            h5 (Headings H5) [ center, verticalCenter ] (text "ZONE OF IMPACT")
-          ) |> onLeft
-            [ el (Zoi ZoiToggle) [ height (px 72), width (px 70) ] <| 
-                el NoStyle 
-                    [ center
-                    , verticalCenter
-                    , height fill
-                    , width fill
-                    , moveRight 36
-                    ] <| text "T"
-            ]
-        , el NoStyle [ center, paddingTop 15 ] <|
-            text ("# selections: " ++ toString zoi.numSelected ++ " of 8")
+        [ el NoStyle [ center, verticalCenter, paddingXY 0 25 ] <| 
+            decorativeImage NoStyle [] { src = zoiPath }
         , textLayout (Zoi ZoiText) 
-            [ spacing 35, paddingXY 15 40, height fill ] <|
+            [ spacing 25, paddingXY 15 0, height fill ] <|
             [ paragraph NoStyle [] 
                 [ text "Each selection on the vulnerability ribbon consists of"
                 , el (Zoi ZoiCallout) [] <| text " five 100 ft. segments"
@@ -45,7 +33,13 @@ view zoi =
                 , el (Zoi ZoiCallout) [] <| text " immediate left or right"
                 , text " of the existing selection." ]
             ]
-        , footer SidebarFooter [ alignBottom, height (px 90) ] <|
+        , column (Zoi ZoiStat) [ height fill, verticalCenter, center, spacingXY 0 5 ] 
+            [ el NoStyle [ alignBottom ] <|
+                text ("Selections: " ++ toString zoi.numSelected ++ " of 8")
+            , el NoStyle [ alignTop ] <|
+                text ("Shoreline Extent: " ++ toString (round zoi.shapeLength) ++ " ft.")
+            ]
+        , footer (Sidebar SidebarFooter) [ alignBottom, height (px 90) ] <|
             row NoStyle
                 [ center, verticalCenter, spacingXY 20 0, width fill, height fill ]
                 [ button ActionButton 
@@ -62,3 +56,4 @@ view zoi =
                     ] <| text "cancel"
                 ]
         ]
+

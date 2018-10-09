@@ -3,6 +3,8 @@ import { Main } from './Main.elm';
 import MapHandler from "./js/map_handler";
 import { logError } from "./js/misc";
 import closePath from "./img/close.png";
+import trianglePath from "./img/triangle.png";
+import zoiPath from "./img/zoi.png";
 import registerServiceWorker from './registerServiceWorker';
 
 window.chip = window.chip || {};
@@ -19,6 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "agsHexUrl": process.env.ELM_APP_AGS_HEX_URL
         },
         "closePath": closePath,
+        "trianglePath": trianglePath,
+        "zoiPath": zoiPath,
         "size": {
             width: window.innerWidth,
             height: window.innerHeight

@@ -1,47 +1,54 @@
 module View.RightSidebar exposing (..)
 
 import Animation
-import Types exposing (..)
 import Message exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
---import Element.Events exposing (onClick, onMouseDown, onMouseUp)
+import Element.Events exposing (onClick)
 import Styles exposing (..)
+import View.ToggleButton as Toggle exposing (..)
 import View.Helpers exposing (renderAnimation)
-
-
-type alias Animations =
-    { open : List Animation.Property
-    , closed : List Animation.Property
-    }
-
-
-animations : Animations
-animations =
-    { open =
-        [ Animation.left (Animation.px 0.0) ]
-    , closed =
-        [ Animation.left (Animation.px 400.0) ]
-    }
+import Message exposing (Msg(..))
 
 
 view :
     { config
-        | rightSidebarOpenness : Openness
-        , rightSidebarAnimations : Animation.State
+        | trianglePath : String
+        , rightSidebarFx : Animation.State
+        , rightSidebarToggleFx : Animation.State
     }
-    -> List (Element MainStyles Variations Msg)
+    -> (String, List (Element MainStyles Variations Msg))
     -> Element MainStyles Variations Msg
-view { rightSidebarOpenness, rightSidebarAnimations } childViews =
+view config (titleText, childViews) =
     el NoStyle
-        (renderAnimation rightSidebarAnimations
+        (renderAnimation config.rightSidebarFx
             [ height fill
             , width content
             , paddingTop 20.0
             , alignRight
             ]
         )
-        (sidebar Sidebar
+        (sidebar (Sidebar SidebarContainer)
             [ height fill, width (px 400) ]
-            childViews
+            (headerView titleText config.trianglePath config.rightSidebarToggleFx :: childViews)
         )
+
+
+headerView : String -> String -> Animation.State -> Element MainStyles Variations Msg
+headerView titleText togglePath fx =
+    (header (Sidebar SidebarHeader) [ height (px 72), width fill ] <| 
+        h5 (Headings H5) [ center, verticalCenter ] (text "ZONE OF IMPACT")
+    ) |> onLeft
+    [ el (Sidebar SidebarToggle) 
+        [ height (px 72)
+        , width (px 70)
+        , onClick ToggleRightSidebar
+        ] <| 
+        el NoStyle 
+            [ center
+            , verticalCenter
+            , height fill
+            , width fill
+            , moveRight 18
+            ] <| Toggle.view togglePath fx
+    ]

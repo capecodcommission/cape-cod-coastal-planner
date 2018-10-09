@@ -34,5 +34,6 @@ type Msg
     | GotActiveStrategies (GqlData ActiveStrategiesResponse)
     | SelectStrategy Scalar.Id
     | HandleStrategyKeyboardEvent KeyboardEvent
+    | ToggleRightSidebar
     | Animate Animation.Msg
     | Resize Window.Size

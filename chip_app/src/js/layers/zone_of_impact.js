@@ -70,7 +70,8 @@ function _onUpdate(evt, layer) {
         "sub": "update_impact_zone",
         "data" : {
             "geometry": JSON.stringify(esrijson),
-            "num_selected": num_selected
+            "num_selected": num_selected,
+            "shape_length": evt.length
         }
     });
 }

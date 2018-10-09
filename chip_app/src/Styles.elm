@@ -1,7 +1,7 @@
 module Styles exposing (..)
 
 import Color exposing (..)
-import Color.Manipulate exposing (fadeOut)
+import Color.Manipulate exposing (..)
 import Style exposing (..)
 import Style.Color as Color
 import Style.Border as Border
@@ -42,8 +42,7 @@ type MainStyles
     | Baseline BaselineStyles
     | AddStrategies StrategiesStyles
     | Headings HeadingStyles
-    | Sidebar
-    | SidebarFooter
+    | Sidebar SidebarStyles
     | Popup
     | Modal ModalStyles
     | Zoi ZoneOfImpactStyles
@@ -83,6 +82,12 @@ type BaselineStyles
     | BaselineInfoText
 
 
+type SidebarStyles
+    = SidebarContainer
+    | SidebarHeader
+    | SidebarToggle
+    | SidebarFooter
+
 type StrategiesStyles
     = StrategiesSidebar
     | StrategiesSidebarHeader
@@ -96,8 +101,7 @@ type StrategiesStyles
 type ZoneOfImpactStyles
     = ZoiText
     | ZoiCallout
-    | ZoiHeader
-    | ZoiToggle
+    | ZoiStat
 
 
 type Variations
@@ -109,6 +113,7 @@ type Variations
     | SelectMenuOpen
     | SelectMenuError
     | Secondary
+    | Disabled
 
 
 choiceStateToVariation : ChoiceState -> Variations
@@ -265,13 +270,10 @@ stylesheet =
             [ Color.text palette.havelockBlue
             , Font.bold 
             ]
-        , Style.style (Zoi ZoiHeader)
-            [ Color.background palette.havelockBlue
-            ]
-        , Style.style (Zoi ZoiToggle)
-            [ Color.background palette.havelockBlue
-            , Border.roundTopLeft 36
-            , Border.roundBottomLeft 36
+        , Style.style (Zoi ZoiStat)
+            [ Font.size 22
+            , Color.text palette.havelockBlue
+            , Font.letterSpacing 1
             ]
         , Style.style (Headings H1) <| headingStyle 6
         , Style.style (Headings H2) <| headingStyle 5
@@ -289,12 +291,21 @@ stylesheet =
             [ Color.background <| rgba 0 0 0 0.7
             , Border.rounded 4
             ]
-        , Style.style Sidebar
+        , Style.style (Sidebar SidebarContainer)
             [ Color.background <| Color.rgba 0 0 0 0.7
             , Color.text white
             , Font.typeface fontstack
             ]
-        , Style.style SidebarFooter
+        , Style.style (Sidebar SidebarHeader)
+            [ Color.background palette.havelockBlue
+            ]
+        , Style.style (Sidebar SidebarToggle)
+            [ Color.background palette.havelockBlue
+            , Border.roundTopLeft 36
+            , Border.roundBottomLeft 36
+            , Style.cursor "pointer"
+            ]
+        , Style.style (Sidebar SidebarFooter)
             [ Color.background black
             , Font.typeface fontstack
             ]
@@ -307,7 +318,12 @@ stylesheet =
             , Font.letterSpacing 2.33
             , Color.text palette.walnut
             , Color.background palette.mySin
-            , Border.rounded 8
+            , Border.rounded 8            
+            , variation Disabled
+                [ Color.background <| darken 0.15 palette.mySin
+                , Color.text <| lighten 0.45 palette.walnut
+                , Style.hover []
+                ]
             ]
         , Style.style CancelButton
             [ Font.typeface fontstack
@@ -319,6 +335,11 @@ stylesheet =
             , Color.text white
             , Color.background palette.red
             , Border.rounded 8
+            , variation Disabled
+                [ Color.background <| darken 0.15 palette.red
+                , Color.text <| lighten 0.15 palette.red
+                , Style.hover []
+                ]
             ]
         , Style.style CloseIcon
             [ Style.cursor "pointer" ]

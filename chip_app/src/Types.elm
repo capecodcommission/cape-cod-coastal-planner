@@ -1,5 +1,7 @@
 module Types exposing (..)
 
+import Animation
+import Animations exposing (..)
 import Http exposing (..)
 import Graphqelm.Http
 import RemoteData exposing (RemoteData)
@@ -9,13 +11,14 @@ import Dict exposing (Dict)
 import Json.Encode as E
 import Json.Encode.Extra as EEx
 import Json.Decode as D exposing (Decoder)
-import Json.Decode.Extra as DEx
 import Json.Decode.Pipeline exposing (decode, required, custom, hardcoded)
 
 
 type alias Flags =
     { env : Env
     , closePath : String
+    , trianglePath : String
+    , zoiPath : String
     , size : Window.Size
     }
 
@@ -29,9 +32,11 @@ decodeWindowSize =
 
 decodeFlags : Decoder Flags
 decodeFlags =
-    D.map3 Flags
+    D.map5 Flags
         (D.field "env" decodeEnv)
         (D.field "closePath" D.string)
+        (D.field "trianglePath" D.string)
+        (D.field "zoiPath" D.string)
         (D.field "size" decodeWindowSize)
 
 
@@ -245,6 +250,7 @@ yesNoToBool yesNo =
 type alias ZoneOfImpact =
     { geometry : Maybe String
     , numSelected : Int
+    , shapeLength : Float
     }
 
 
@@ -253,14 +259,16 @@ encodeZoneOfImpact zoi =
     E.object
         [ ( "geometry", EEx.maybe E.string zoi.geometry )
         , ( "numSelected", E.int zoi.numSelected )
+        , ( "shapeLength", E.float zoi.shapeLength )
         ]
 
 
 zoneOfImpactDecoder : Decoder ZoneOfImpact
 zoneOfImpactDecoder =
-    D.map2 ZoneOfImpact
+    D.map3 ZoneOfImpact
         (D.maybe (D.field "geometry" D.string))
         (D.field "num_selected" D.int)
+        (D.field "shape_length" D.float)
 
 
 getId : Scalar.Id -> String
