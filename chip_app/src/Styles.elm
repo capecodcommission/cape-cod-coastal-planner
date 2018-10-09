@@ -38,7 +38,8 @@ type MainStyles
     | Headings HeadingStyles
     | Sidebar
     | Popup
-    | Modal ModalStyles    
+    | Modal ModalStyles
+    | Zoi ZoneOfImpactStyles
     | CloseIcon
     | FontLeft
     | FontRight
@@ -82,6 +83,12 @@ type StrategiesStyles
     | StrategiesSidebarFooter
     | StrategiesDetailsHeader
     | StrategiesDetailsMain
+
+type ZoneOfImpactStyles
+    = ZoiText
+    | ZoiCallout
+    | ZoiHeader
+    | ZoiToggle
 
 
 type Variations
@@ -240,6 +247,22 @@ stylesheet =
             ]
         , Style.style (AddStrategies StrategiesDetailsMain)
             [ Color.text white
+            ]
+        , Style.style (Zoi ZoiText)
+            [ Font.size 18
+            , Font.lineHeight 1.4
+            ]
+        , Style.style (Zoi ZoiCallout)
+            [ Color.text palette.havelockBlue
+            , Font.bold 
+            ]
+        , Style.style (Zoi ZoiHeader)
+            [ Color.background palette.havelockBlue
+            ]
+        , Style.style (Zoi ZoiToggle)
+            [ Color.background palette.havelockBlue
+            , Border.roundTopLeft 36
+            , Border.roundBottomLeft 36
             ]
         , Style.style (Headings H1) <| headingStyle 6
         , Style.style (Headings H2) <| headingStyle 5

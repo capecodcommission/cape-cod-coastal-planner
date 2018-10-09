@@ -325,10 +325,20 @@ updateModel msg model =
         PickStrategy ->
             case model.strategies of
                 Success (Just strategies) ->
+                    let
+                        newCmd =
+                            case getSelectedStrategyHtmlId (Just strategies) of
+                                Just id -> focus id
+
+                                Nothing -> Cmd.none
+                    in
                     ( model
                         |> collapseRightSidebar
-                        |> \m -> { m | strategiesModalOpenness = Open }
-                    , Cmd.none
+                        |> \m -> 
+                            { m | 
+                                strategiesModalOpenness = Open
+                            }
+                    , newCmd
                     )
 
                 _ ->

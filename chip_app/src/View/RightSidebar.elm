@@ -45,4 +45,3 @@ view { rightSidebarOpenness, rightSidebarAnimations } childViews =
             [ height fill, width (px 400) ]
             childViews
         )
-
