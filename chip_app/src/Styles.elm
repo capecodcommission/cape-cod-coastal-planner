@@ -22,6 +22,8 @@ palette =
     , havelockBlue = rgb 85 126 216
     , mySin = rgb 255 182 18
     , persimmon = rgb 255 85 85
+    , walnut = rgb 108 67 26
+    , red = rgb 255 18 18
     }
 
 
@@ -30,6 +32,10 @@ fontstack =
     [ Font.font "Segoe UI", Font.font "Tahoma", Font.font "Verdana", Font.sansSerif ]
 
 
+fontstack2 : List Font
+fontstack2 =
+    [ Font.font "Tahoma" ]
+
 type MainStyles
     = NoStyle
     | Header HeaderStyles
@@ -37,9 +43,12 @@ type MainStyles
     | AddStrategies StrategiesStyles
     | Headings HeadingStyles
     | Sidebar
+    | SidebarFooter
     | Popup
     | Modal ModalStyles
     | Zoi ZoneOfImpactStyles
+    | ActionButton
+    | CancelButton
     | CloseIcon
     | FontLeft
     | FontRight
@@ -284,6 +293,32 @@ stylesheet =
             [ Color.background <| Color.rgba 0 0 0 0.7
             , Color.text white
             , Font.typeface fontstack
+            ]
+        , Style.style SidebarFooter
+            [ Color.background black
+            , Font.typeface fontstack
+            ]
+        , Style.style ActionButton
+            [ Font.typeface fontstack
+            , Font.uppercase
+            , Font.bold
+            , Font.size 14
+            , Font.lineHeight 1.4
+            , Font.letterSpacing 2.33
+            , Color.text palette.walnut
+            , Color.background palette.mySin
+            , Border.rounded 8
+            ]
+        , Style.style CancelButton
+            [ Font.typeface fontstack
+            , Font.uppercase
+            , Font.bold
+            , Font.size 14
+            , Font.lineHeight 1.4
+            , Font.letterSpacing 2.33
+            , Color.text white
+            , Color.background palette.red
+            , Border.rounded 8
             ]
         , Style.style CloseIcon
             [ Style.cursor "pointer" ]
