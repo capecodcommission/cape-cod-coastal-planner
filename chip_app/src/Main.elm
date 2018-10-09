@@ -354,11 +354,14 @@ updateModel msg model =
                     ( model, Cmd.none )
 
                 Success activeStrategies ->
-                    ( { model 
-                        | strategies = Success <| strategiesFromResponse activeStrategies
-                      }
-                    , Cmd.none
-                    )
+                    let
+                        ( newStrategies, newCmd ) =
+                            activeStrategies
+                                |> mapStrategiesFromResponse
+                                |> Success
+                                |> Remote.update selectFirstStrategy                                
+                    in
+                    ( { model | strategies = newStrategies }, newCmd )
 
                 Failure err ->
                     ( { model | strategies = Failure <| mapErrorFromResponse err } , Cmd.none)                
@@ -419,6 +422,19 @@ selectStrategy id strategies =
     in
     ( newStrategies, newCmd )
 
+
+selectFirstStrategy : Strategies -> (Strategies, Cmd Msg)
+selectFirstStrategy strategies =
+    let
+        newStrategies = firstStrategy strategies
+
+        newCmd =
+            case getSelectedStrategyHtmlId newStrategies of
+                Just id -> focus id
+
+                Nothing -> Cmd.none
+    in
+    ( newStrategies, newCmd )
 
 selectNextStrategy : Strategies -> (Strategies, Cmd Msg)
 selectNextStrategy strategies =

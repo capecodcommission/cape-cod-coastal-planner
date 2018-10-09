@@ -117,6 +117,12 @@ currentStrategy strategies =
         |> Maybe.map Zipper.current
 
 
+firstStrategy : Strategies -> Strategies
+firstStrategy strategies =
+    strategies
+        |> Maybe.map Zipper.first
+
+
 findStrategy : Scalar.Id -> Strategies -> Strategies
 findStrategy id strategies =
     let 
@@ -160,8 +166,8 @@ matchesId (Scalar.Id targetId) (Strategy strategy) =
 -- TRANSFORM
 
 
-strategiesFromResponse : ActiveStrategiesResponse -> Strategies
-strategiesFromResponse response =
+mapStrategiesFromResponse : ActiveStrategiesResponse -> Strategies
+mapStrategiesFromResponse response =
     response.items
         |> List.map newStrategy
         |> Zipper.fromList
@@ -174,7 +180,7 @@ mapErrorFromResponse error =
             HttpError err
 
         GraphqlError (ParsedData parsed) errs ->
-            GraphqlError (ParsedData <| strategiesFromResponse parsed) errs
+            GraphqlError (ParsedData <| mapStrategiesFromResponse parsed) errs
 
         GraphqlError (UnparsedData val) errs ->
             GraphqlError (UnparsedData val) errs

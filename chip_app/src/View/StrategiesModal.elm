@@ -104,7 +104,7 @@ sidebarView config =
                     Element.text "Erosion Strategies" 
             )
         , column (AddStrategies StrategiesSidebarList)
-            [ height ( px <| activeStrategiesHeight config.device ) 
+            [ height ( px <| activeStrategiesHeight config.device )
             ] <| 
                 strategiesView config.strategies
         , footer (AddStrategies StrategiesSidebarFooter)
@@ -161,7 +161,6 @@ selectedStrategyView ( Strategy { id, name } as strategy) =
         ] <| paragraph NoStyle [] [ Element.text name ]
 
 
-
 mainContentView : 
     { config
         | device : Device
@@ -191,7 +190,3 @@ mainContentView config =
             )
             
         ]
-
-        
-
-
