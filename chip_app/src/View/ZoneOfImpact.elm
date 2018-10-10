@@ -19,12 +19,12 @@ view togglePath zoiPath zoi  =
             [ spacing 25, paddingXY 15 0, height fill ] <|
             [ paragraph NoStyle [] 
                 [ text "Each selection on the vulnerability ribbon consists of"
-                , el (Zoi ZoiCallout) [] <| text " five 100 ft. segments"
-                , text " for a total of 500 ft. per selection." ]
+                , el (Zoi ZoiCallout) [] <| text " five ~100 ft. segments"
+                , text " for a total of ~500 ft. per selection." ]
             , paragraph NoStyle [] 
                 [ text "You may make up to "
                 , el (Zoi ZoiCallout) [] <| text " eight contiguous selections"
-                , text " for a maximum planning area of 4000 ft." 
+                , text " for a maximum planning area of ~4000 ft." 
                 ]
             , paragraph NoStyle [] 
                 [ text "A contiguous selection may be made by selecting "

@@ -12,6 +12,13 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.adaptation_strategies/3
         end
 
+        @desc "Details for an individual adaptation strategy matched on id"
+        field :adaptation_strategy, :adaptation_strategy do
+            @desc "The ID of the adaptation strategy"
+            arg :id, non_null(:id)
+            resolve &Resolvers.Strategies.adaptation_strategy/3
+        end
+
         @desc "The list of adaptation categories"
         field :adaptation_categories, non_null(list_of(non_null(:adaptation_category))) do
             arg :order, type: :sort_order, default_value: :asc

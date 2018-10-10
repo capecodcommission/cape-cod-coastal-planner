@@ -14,11 +14,20 @@ defmodule ChipApi.Application do
       # Start the endpoint when the application starts
       supervisor(ChipApiWeb.Endpoint, []),
       # Start your own worker by calling: ChipApi.Worker.start_link(arg1, arg2, arg3)
-      worker(Cachex, [ :littoral_cell_cache, [
-        warmers: [
-          warmer(module: ChipApi.Cache.Warmers.LittoralCellWarmer)
+      worker(Cachex, [ 
+        :littoral_cell_cache, [
+          warmers: [
+            warmer(module: ChipApi.Cache.Warmers.LittoralCellWarmer)
           ]
-      ] ]),
+        ] 
+      ], id: :cachex_worker_1),
+      worker(Cachex, [ 
+        :adaptation_strategy_cache, [
+          warmers: [
+            warmer(module: ChipApi.Cache.Warmers.AdaptationStrategyWarmer)
+          ]
+        ]
+      ], id: :cachex_worker_2)
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

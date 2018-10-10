@@ -1,8 +1,26 @@
 defmodule ChipApiWeb.Resolvers.Strategies do
     alias ChipApi.Adaptation.Strategies
+    alias Cachex
 
     def adaptation_strategies(_, args, _) do
         {:ok, Strategies.list_strategies(args)}
+    end
+
+    def adaptation_strategy(_, %{id: id}, _) do
+        Cachex.fetch(:adaptation_strategy_cache, String.to_integer(id), fn(id) ->
+            case Strategies.get_strategy(id) do
+                strategy -> {:commit, strategy}
+                nil -> {:ignore, nil}
+            end
+        end)
+        |> case do
+            {:error, err} ->
+                {:ok, nil}
+            {:ignore, _} ->
+                {:ok, nil}
+            {success, value} when success in [:ok, :commit] ->
+                {:ok, value}
+        end
     end
 
     def adaptation_categories(_, args, _) do
