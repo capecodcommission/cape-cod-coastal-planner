@@ -250,9 +250,13 @@ headerDetailsView config =
         ]
         (column NoStyle
             [ height fill, width fill, paddingXY 40 10, spacingXY 0 5 ]
-            [ h3 (Headings H3) [ width fill, height (px 65) ] 
-                <| Element.text config.name 
-            
+            [ el NoStyle [ width fill, height (percent 40) ] 
+                <| el (AddStrategies StrategiesSheetHeading) [ verticalCenter ] <| 
+                    Element.text "ADAPTATION STRATEGIES SHEET"
+            , column NoStyle [ width fill, height (percent 60), verticalCenter ]
+                [ el (AddStrategies StrategiesSubHeading) [] <| Element.text "Strategy:"
+                , el (AddStrategies StrategiesMainHeading) [] <| Element.text config.name
+                ]
             ]
             |> within 
                 [ closeIconView config.closePath 
@@ -261,6 +265,9 @@ headerDetailsView config =
         )
 
 
+--
+-- STRATEGY CATEGORIES
+--
 
 categoriesView : GqlData Categories -> Categories -> Element MainStyles Variations Msg
 categoriesView allCategories stratCategories =

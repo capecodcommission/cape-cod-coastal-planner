@@ -97,6 +97,9 @@ type StrategiesStyles
     | StrategiesSidebarListBtnSelected
     | StrategiesSidebarFooter
     | StrategiesDetailsHeader
+    | StrategiesSheetHeading
+    | StrategiesSubHeading
+    | StrategiesMainHeading
     | StrategiesDetailsCategories
     | StrategiesDetailsCategoryIcon
     | StrategiesDetailsMain
@@ -262,6 +265,24 @@ stylesheet =
             , Color.text white
             , Border.roundTopRight 4
             ]
+        , Style.style (AddStrategies StrategiesSheetHeading)
+            [ Font.typeface fontstack
+            , Font.size 18
+            , Font.letterSpacing 2.6
+            , Font.lineHeight 1.4
+            ]
+        , Style.style (AddStrategies StrategiesSubHeading)
+            [ Font.typeface fontstack
+            , Font.letterSpacing 2.6
+            , Font.lineHeight 1.4
+            , Font.size 26
+            ]
+        , Style.style (AddStrategies StrategiesMainHeading)
+            [ Font.typeface fontstack
+            , Font.letterSpacing 2.6
+            , Font.lineHeight 1.4
+            , Font.size 36
+            ]
         , Style.style (AddStrategies StrategiesDetailsCategories)
             [ Color.text white
             , Font.typeface fontstack
@@ -375,6 +396,7 @@ headingStyle scale =
     , Font.size (scaled scale)
     , Font.typeface fontstack
     , Font.weight 300
+    , Font.lineHeight 1.4
     , variation Secondary
         [ Color.text palette.havelockBlue
         , Font.weight 400
