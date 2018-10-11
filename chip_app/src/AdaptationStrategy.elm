@@ -5,7 +5,7 @@ import Graphqelm.Http exposing (..)
 import Graphqelm.Operation exposing (RootQuery)
 import Graphqelm.SelectionSet exposing (SelectionSet, with)
 import Graphqelm.Http.GraphqlError exposing (PossiblyParsedData(..))
-import RemoteData exposing (RemoteData(..))
+import RemoteData as Remote exposing (RemoteData(..))
 import ChipApi.Object
 import ChipApi.Object.AdaptationStrategy as AS
 import ChipApi.Object.AdaptationCategory as AC
@@ -92,7 +92,15 @@ getSelectedStrategyHtmlId : Strategies -> Maybe String
 getSelectedStrategyHtmlId strategies =
     strategies
         |> Maybe.map Zipper.current
-        |> Maybe.map getStrategyHtmlId            
+        |> Maybe.map getStrategyHtmlId
+
+
+loadDetailsFor : Strategy -> Maybe Scalar.Id
+loadDetailsFor (Strategy s) =
+    if Remote.isSuccess s.details == True then
+        Nothing
+    else
+        Just s.id 
 
 
 currentStrategy : Strategies -> Maybe Strategy

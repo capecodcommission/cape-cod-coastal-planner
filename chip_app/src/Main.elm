@@ -387,7 +387,7 @@ updateModel msg model =
         SelectStrategy id ->
             let
                 ( newStrategies, newCmd ) =
-                    Remote.update (selectStrategy id) model.strategies
+                    Remote.update (selectStrategyById id) model.strategies
             in
             ( { model | strategies = newStrategies }, newCmd )
             
@@ -481,59 +481,48 @@ updateStrategiesWithStrategyDetails id details strategies =
     ( newStrategies, newCmd )
 
 
-selectStrategy : Scalar.Id -> Strategies -> (Strategies, Cmd Msg)
-selectStrategy id strategies =
+
+
+selectStrategy : (Strategies -> Strategies) -> Strategies -> (Strategies, Cmd Msg)
+selectStrategy selectFn strategies =
     let
-        newStrategies = AS.findStrategy id strategies
+        newStrategies = selectFn strategies
 
-        newCmd =
-            case AS.getSelectedStrategyHtmlId newStrategies of
-                Just id -> focus id
+        focusCmd = case AS.getSelectedStrategyHtmlId newStrategies of
+            Just id -> focus id
 
-                Nothing -> Cmd.none
+            Nothing -> Cmd.none
+
+        getDetailsCmd = 
+            newStrategies
+                |> AS.currentStrategy
+                |> Maybe.andThen AS.loadDetailsFor
+                |> Maybe.map (\id -> getAdaptationStrategyDetailsById id)
+                |> Maybe.withDefault Cmd.none
+
+        newCmds = Cmd.batch [ focusCmd, getDetailsCmd ]
     in
-    ( newStrategies, newCmd )
+    ( newStrategies, newCmds )
+    
+
+selectStrategyById : Scalar.Id -> Strategies -> (Strategies, Cmd Msg)
+selectStrategyById id strategies =
+    selectStrategy (AS.findStrategy id) strategies
 
 
 selectFirstStrategy : Strategies -> (Strategies, Cmd Msg)
 selectFirstStrategy strategies =
-    let
-        newStrategies = AS.firstStrategy strategies
+    selectStrategy AS.firstStrategy strategies
 
-        newCmd =
-            case AS.getSelectedStrategyHtmlId newStrategies of
-                Just id -> focus id
-
-                Nothing -> Cmd.none
-    in
-    ( newStrategies, newCmd )
 
 selectNextStrategy : Strategies -> (Strategies, Cmd Msg)
 selectNextStrategy strategies =
-    let
-        newStrategies = AS.nextStrategy strategies
-
-        newCmd = 
-            case AS.getSelectedStrategyHtmlId newStrategies of
-                Just id -> focus id
-
-                Nothing -> Cmd.none
-    in
-    ( newStrategies, newCmd )
+    selectStrategy AS.nextStrategy strategies
 
 
 selectPreviousStrategy : Strategies -> (Strategies, Cmd Msg)
 selectPreviousStrategy strategies =
-    let
-        newStrategies = AS.previousStrategy strategies
-
-        newCmd = 
-            case AS.getSelectedStrategyHtmlId newStrategies of
-                Just id -> focus id
-
-                Nothing -> Cmd.none
-    in
-    ( newStrategies, newCmd )
+    selectStrategy AS.previousStrategy strategies
 
 
 collapseRightSidebar : Model -> Model
