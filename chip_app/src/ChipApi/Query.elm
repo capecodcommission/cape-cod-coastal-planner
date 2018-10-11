@@ -85,6 +85,20 @@ adaptationStrategies fillInOptionals object =
     Object.selectionField "adaptationStrategies" optionalArgs object (identity >> Decode.list)
 
 
+type alias AdaptationStrategyRequiredArguments =
+    { id : ChipApi.Scalar.Id }
+
+
+{-| Details for an individual adaptation strategy matched on id
+
+  - id - The ID of the adaptation strategy
+
+-}
+adaptationStrategy : AdaptationStrategyRequiredArguments -> SelectionSet decodesTo ChipApi.Object.AdaptationStrategy -> Field (Maybe decodesTo) RootQuery
+adaptationStrategy requiredArgs object =
+    Object.selectionField "adaptationStrategy" [ Argument.required "id" requiredArgs.id (\(ChipApi.Scalar.Id raw) -> Encode.string raw) ] object (identity >> Decode.nullable)
+
+
 type alias CoastalHazardsOptionalArguments =
     { order : OptionalArgument ChipApi.Enum.SortOrder.SortOrder }
 

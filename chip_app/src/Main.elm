@@ -16,9 +16,10 @@ import Maybe
 import Dom
 import Task
 import List.Extra as LEx
+import List.Zipper as Zipper
 import Keyboard.Key exposing (Key(Up, Down, Enter, Escape))
 import Types exposing (..)
-import AdaptationStrategy exposing (..)
+import AdaptationStrategy as AS exposing (Strategy(..), Strategies, StrategyDetails)
 import Message exposing (..)
 import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
@@ -26,7 +27,7 @@ import View.Dropdown as Dropdown exposing (Dropdown)
 import View.BaselineInfo as BaselineInfo exposing (..)
 import View.RightSidebar as RSidebar
 import View.ZoneOfImpact as ZOI
-import View.StrategiesModal as Strategies
+import View.StrategiesModal as StrategiesModal
 import View.Helpers exposing (..)
 import Styles exposing (..)
 import ChipApi.Scalar as Scalar
@@ -334,7 +335,7 @@ updateModel msg model =
                 Success (Just strategies) ->
                     let
                         newCmd =
-                            case getSelectedStrategyHtmlId (Just strategies) of
+                            case AS.getSelectedStrategyHtmlId (Just strategies) of
                                 Just id -> focus id
 
                                 Nothing -> Cmd.none
@@ -374,14 +375,14 @@ updateModel msg model =
                     let
                         ( newStrategies, newCmd ) =
                             activeStrategies
-                                |> mapStrategiesFromResponse
+                                |> AS.mapStrategiesFromActiveStrategies
                                 |> Success
                                 |> Remote.update selectFirstStrategy                                
                     in
                     ( { model | strategies = newStrategies }, newCmd )
 
                 Failure err ->
-                    ( { model | strategies = Failure <| mapErrorFromResponse err } , Cmd.none)                
+                    ( { model | strategies = Failure <| AS.mapErrorFromActiveStrategies err } , Cmd.none)                
                     
         SelectStrategy id ->
             let
@@ -407,11 +408,19 @@ updateModel msg model =
                     in
                     ( { model | strategies = newStrategies }, newCmd )
 
-                Enter ->        
+                Enter ->
                     ( model, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
+
+        GotStrategyDetails id response ->
+            let
+                ( newStrategies, newCmd ) =
+                    Remote.update (updateStrategiesWithStrategyDetails id response) model.strategies
+            in
+            ( { model | strategies = newStrategies }, newCmd )
+
 
         ToggleRightSidebar ->
             case model.rightSidebarOpenness of
@@ -436,13 +445,49 @@ updateModel msg model =
             )
 
 
+updateStrategiesWithStrategyDetails : 
+    Scalar.Id 
+    -> (GqlData (Maybe StrategyDetails)) 
+    -> Strategies 
+    -> (Strategies, Cmd Msg)
+updateStrategiesWithStrategyDetails id details strategies =
+    let
+        currentStrategyId = 
+            strategies
+                |> AS.currentStrategy
+                |> Maybe.map (\(Strategy s) -> s.id)
+
+        ( newStrategies, newCmd ) =
+            if currentStrategyId == Just id then
+                strategies 
+                    |> Maybe.map 
+                        (Zipper.mapCurrent <| 
+                            AS.updateStrategyDetails details
+                        )
+                    |> \z -> ( z, Cmd.none )
+            else
+                strategies
+                    |> Maybe.map
+                        (Zipper.map <|
+                            (\(Strategy s) ->
+                                if s.id == id then
+                                    AS.updateStrategyDetails details (Strategy s)
+                                else
+                                    Strategy s
+                            )
+                        )
+                    |> \z -> ( z, Cmd.none )
+    in
+    ( newStrategies, newCmd )
+
+
 selectStrategy : Scalar.Id -> Strategies -> (Strategies, Cmd Msg)
 selectStrategy id strategies =
     let
-        newStrategies = findStrategy id strategies
+        newStrategies = AS.findStrategy id strategies
 
         newCmd =
-            case getSelectedStrategyHtmlId newStrategies of
+            case AS.getSelectedStrategyHtmlId newStrategies of
                 Just id -> focus id
 
                 Nothing -> Cmd.none
@@ -453,10 +498,10 @@ selectStrategy id strategies =
 selectFirstStrategy : Strategies -> (Strategies, Cmd Msg)
 selectFirstStrategy strategies =
     let
-        newStrategies = firstStrategy strategies
+        newStrategies = AS.firstStrategy strategies
 
         newCmd =
-            case getSelectedStrategyHtmlId newStrategies of
+            case AS.getSelectedStrategyHtmlId newStrategies of
                 Just id -> focus id
 
                 Nothing -> Cmd.none
@@ -466,10 +511,10 @@ selectFirstStrategy strategies =
 selectNextStrategy : Strategies -> (Strategies, Cmd Msg)
 selectNextStrategy strategies =
     let
-        newStrategies = nextStrategy strategies
+        newStrategies = AS.nextStrategy strategies
 
         newCmd = 
-            case getSelectedStrategyHtmlId newStrategies of
+            case AS.getSelectedStrategyHtmlId newStrategies of
                 Just id -> focus id
 
                 Nothing -> Cmd.none
@@ -480,10 +525,10 @@ selectNextStrategy strategies =
 selectPreviousStrategy : Strategies -> (Strategies, Cmd Msg)
 selectPreviousStrategy strategies =
     let
-        newStrategies = previousStrategy strategies
+        newStrategies = AS.previousStrategy strategies
 
         newCmd = 
-            case getSelectedStrategyHtmlId newStrategies of
+            case AS.getSelectedStrategyHtmlId newStrategies of
                 Just id -> focus id
 
                 Nothing -> Cmd.none
@@ -620,7 +665,7 @@ view app =
                                     [ getRightSidebarChildViews model
                                         |> RSidebar.view model
                                     ]
-                            , Strategies.view model
+                            , StrategiesModal.view model
                             ]
                     ]
 

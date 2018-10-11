@@ -34,6 +34,6 @@ name =
 
 {-| The adaptation strategies that are associated with the benefit
 -}
-strategies : SelectionSet decodesTo ChipApi.Object.AdaptationStrategy -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationBenefit
+strategies : SelectionSet decodesTo ChipApi.Object.AdaptationStrategy -> Field (List decodesTo) ChipApi.Object.AdaptationBenefit
 strategies object =
-    Object.selectionField "strategies" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "strategies" [] object (identity >> Decode.list)

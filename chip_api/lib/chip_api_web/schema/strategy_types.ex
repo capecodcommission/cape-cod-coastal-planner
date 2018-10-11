@@ -78,39 +78,39 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         field :is_active, non_null(:boolean)
 
         @desc "The adaptation categories that are associated with the strategy"
-        field :categories, list_of(:adaptation_category) do
+        field :categories, non_null(list_of(non_null(:adaptation_category))) do
             resolve &Resolvers.Strategies.categories_for_strategy/3
         end
 
         @desc "The adaptation benefits that are associated with the strategy"
-        field :benefits, list_of(:adaptation_benefit) do
+        field :benefits, non_null(list_of(non_null(:adaptation_benefit))) do
             resolve &Resolvers.Strategies.benefits_for_strategy/3
         end
 
         @desc "The coastal hazards that the strategy helps mitigate"
-        field :hazards, list_of(:coastal_hazard) do
+        field :hazards, non_null(list_of(non_null(:coastal_hazard))) do
             resolve &Resolvers.Strategies.hazards_for_strategy/3
         end
 
         # TODO This API response will crash the app.  I think I am missing something RE the 1:M association
         @desc "The advantages that are associated with the strategy"
-        field :advantages, list_of(:adaptation_advantages) do
+        field :advantages, non_null(list_of(non_null(:adaptation_advantages))) do
             resolve &Resolvers.Strategies.advantages_for_strategy/3
         end
 
         # TODO This API response will crash the app.  I think I am missing something RE the 1:M association
         @desc "The disadvantages that are associated with the strategy"
-        field :disadvantages, list_of(:adaptation_disadvantages) do
+        field :disadvantages, non_null(list_of(non_null(:adaptation_disadvantages))) do
             resolve &Resolvers.Strategies.disadvantages_for_strategy/3
         end
 
         @desc "The geographic scales of impact the strategy can target"
-        field :scales, list_of(:impact_scale) do
+        field :scales, non_null(list_of(non_null(:impact_scale))) do
             resolve &Resolvers.Strategies.scales_for_strategy/3
         end
 
         @desc "The list of valid placements the strategies can be used in"
-        field :placements, list_of(:strategy_placement) do
+        field :placements, non_null(list_of(non_null(:strategy_placement))) do
             resolve &Resolvers.Strategies.placements_for_strategy/3
         end
 
@@ -131,7 +131,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         field :description, :string
 
         @desc "The adaptation strategies that are associated with the category"
-        field :strategies, list_of(:adaptation_strategy) do
+        field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
             resolve &Resolvers.Strategies.strategies_for_category/3
         end
     end
@@ -143,7 +143,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         field :name, non_null(:string)
 
         @desc "The adaptation strategies that are associated with the benefit"
-        field :strategies, list_of(:adaptation_strategy) do
+        field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
             resolve &Resolvers.Strategies.strategies_for_benefit/3
         end
     end
@@ -176,7 +176,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         field :description, :string
 
         @desc "The adaptation strategies that are associated with the hazard"
-        field :strategies, list_of(:adaptation_strategy) do
+        field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
             resolve &Resolvers.Strategies.strategies_for_hazard/3
         end
     end
@@ -194,7 +194,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         field :impact, non_null(:integer)
 
         @desc "The adaptation strategies that are associated with the scale of impact"
-        field :strategies, list_of(:adaptation_strategy) do
+        field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
             resolve &Resolvers.Strategies.strategies_for_scale/3
         end
     end
@@ -206,7 +206,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         field :name, non_null(:string)
 
         @desc "The adaptation strategies that are associated with the placement"
-        field :strategies, list_of(:adaptation_strategy) do
+        field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
             resolve &Resolvers.Strategies.strategies_for_placement/3
         end
     end

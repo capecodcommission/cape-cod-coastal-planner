@@ -16,7 +16,7 @@ import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
 import Types exposing (..)
 import Message exposing (..)
-import AdaptationStrategy exposing (queryAdaptationStrategies)
+import AdaptationStrategy exposing (queryAdaptationStrategies, queryAdaptationStrategyById)
 
 
 --
@@ -29,6 +29,14 @@ getActiveAdaptationStrategies =
     queryAdaptationStrategies
         |> queryRequest "./api"
         |> send (Remote.fromResult >> GotActiveStrategies)
+
+
+getAdaptationStrategyDetailsById : Scalar.Id -> Cmd Msg
+getAdaptationStrategyDetailsById id =
+    queryAdaptationStrategyById id
+        |> queryRequest "./api"
+        |> send (Remote.fromResult >> (GotStrategyDetails id))
+
 
 
 --

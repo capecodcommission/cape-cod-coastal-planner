@@ -5,7 +5,7 @@ import Element.Input as Input
 import Animation
 import Window
 import Types exposing (..)
-import AdaptationStrategy exposing (ActiveStrategiesResponse)
+import AdaptationStrategy exposing (ActiveStrategies, StrategyDetails)
 import Json.Decode as D
 import Http
 import Keyboard.Event exposing (KeyboardEvent)
@@ -31,9 +31,10 @@ type Msg
     | CancelZoneOfImpactSelection
     | PickStrategy
     | CloseStrategyModal
-    | GotActiveStrategies (GqlData ActiveStrategiesResponse)
+    | GotActiveStrategies (GqlData ActiveStrategies)
     | SelectStrategy Scalar.Id
     | HandleStrategyKeyboardEvent KeyboardEvent
+    | GotStrategyDetails Scalar.Id (GqlData (Maybe StrategyDetails))
     | ToggleRightSidebar
     | Animate Animation.Msg
     | Resize Window.Size

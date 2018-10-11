@@ -27,23 +27,23 @@ selection constructor =
 
 {-| The advantages that are associated with the strategy
 -}
-advantages : SelectionSet decodesTo ChipApi.Object.AdaptationAdvantages -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
+advantages : SelectionSet decodesTo ChipApi.Object.AdaptationAdvantages -> Field (List decodesTo) ChipApi.Object.AdaptationStrategy
 advantages object =
-    Object.selectionField "advantages" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "advantages" [] object (identity >> Decode.list)
 
 
 {-| The adaptation benefits that are associated with the strategy
 -}
-benefits : SelectionSet decodesTo ChipApi.Object.AdaptationBenefit -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
+benefits : SelectionSet decodesTo ChipApi.Object.AdaptationBenefit -> Field (List decodesTo) ChipApi.Object.AdaptationStrategy
 benefits object =
-    Object.selectionField "benefits" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "benefits" [] object (identity >> Decode.list)
 
 
 {-| The adaptation categories that are associated with the strategy
 -}
-categories : SelectionSet decodesTo ChipApi.Object.AdaptationCategory -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
+categories : SelectionSet decodesTo ChipApi.Object.AdaptationCategory -> Field (List decodesTo) ChipApi.Object.AdaptationStrategy
 categories object =
-    Object.selectionField "categories" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "categories" [] object (identity >> Decode.list)
 
 
 {-| The currently permittable status of the strategy
@@ -62,16 +62,16 @@ description =
 
 {-| The disadvantages that are associated with the strategy
 -}
-disadvantages : SelectionSet decodesTo ChipApi.Object.AdaptationDisadvantages -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
+disadvantages : SelectionSet decodesTo ChipApi.Object.AdaptationDisadvantages -> Field (List decodesTo) ChipApi.Object.AdaptationStrategy
 disadvantages object =
-    Object.selectionField "disadvantages" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "disadvantages" [] object (identity >> Decode.list)
 
 
 {-| The coastal hazards that the strategy helps mitigate
 -}
-hazards : SelectionSet decodesTo ChipApi.Object.CoastalHazard -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
+hazards : SelectionSet decodesTo ChipApi.Object.CoastalHazard -> Field (List decodesTo) ChipApi.Object.AdaptationStrategy
 hazards object =
-    Object.selectionField "hazards" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "hazards" [] object (identity >> Decode.list)
 
 
 {-| The ID of the strategy
@@ -104,13 +104,13 @@ name =
 
 {-| The list of valid placements the strategies can be used in
 -}
-placements : SelectionSet decodesTo ChipApi.Object.StrategyPlacement -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
+placements : SelectionSet decodesTo ChipApi.Object.StrategyPlacement -> Field (List decodesTo) ChipApi.Object.AdaptationStrategy
 placements object =
-    Object.selectionField "placements" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "placements" [] object (identity >> Decode.list)
 
 
 {-| The geographic scales of impact the strategy can target
 -}
-scales : SelectionSet decodesTo ChipApi.Object.ImpactScale -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.AdaptationStrategy
+scales : SelectionSet decodesTo ChipApi.Object.ImpactScale -> Field (List decodesTo) ChipApi.Object.AdaptationStrategy
 scales object =
-    Object.selectionField "scales" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "scales" [] object (identity >> Decode.list)

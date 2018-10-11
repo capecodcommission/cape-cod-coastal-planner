@@ -5,11 +5,20 @@ import Graphqelm.Http exposing (..)
 import Graphqelm.Operation exposing (RootQuery)
 import Graphqelm.SelectionSet exposing (SelectionSet, with)
 import Graphqelm.Http.GraphqlError exposing (PossiblyParsedData(..))
+import RemoteData exposing (RemoteData(..))
 import ChipApi.Object
 import ChipApi.Object.AdaptationStrategy as AS
+import ChipApi.Object.AdaptationCategory as AC
+import ChipApi.Object.CoastalHazard as CH
+import ChipApi.Object.ImpactScale as IS
+import ChipApi.Object.StrategyPlacement as SP
+import ChipApi.Object.AdaptationBenefit as AB
+import ChipApi.Object.AdaptationAdvantages as AA
+import ChipApi.Object.AdaptationDisadvantages as AD
 import Graphqelm.OptionalArgument exposing (..)
 import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
+import Types exposing (GqlData)
 
 
 -- TYPES
@@ -22,55 +31,39 @@ type Strategy =
     Strategy
         { id : Scalar.Id
         , name : String
-        , description : Maybe String
-        , currentlyPermittable : Maybe String
-        , imagePath : Maybe String
-        , categories : List Category
-        , hazards : List CoastalHazard
-        , scales : List ImpactScale
-        , placements : List Placement
-        , benefits : List Benefit
-        , advantages : List Advantage
-        , disadvantages : List Disadvantage
+        , details : GqlData (Maybe StrategyDetails)
         }
 
 
-type Category =
-    Category
-        { name : String
-        , description : Maybe String
-        }
+type alias Category =
+    { name : String
+    , description : Maybe String
+    }
 
 
-type CoastalHazard =
-    CoastalHazard
-        { name : String
-        , description : Maybe String
-        }
+type alias CoastalHazard =
+    { name : String
+    , description : Maybe String
+    }
 
 
-type ImpactScale =
-    ImpactScale
-        { name : String
-        , impact : Int
-        , description : Maybe String
-        }
+type alias ImpactScale =
+    { name : String
+    , impact : Int
+    , description : Maybe String
+    }
 
 
-type Placement =
-    Placement String
+type alias Placement = { name : String }
 
 
-type Benefit =
-    Benefit String
+type alias Benefit = { name : String }
 
 
-type Advantage =
-    Advantage String
+type alias Advantage = { name : String }
 
 
-type Disadvantage =
-    Disadvantage String
+type alias Disadvantage = { name : String }
 
 
 -- CREATE
@@ -81,16 +74,7 @@ newStrategy { id, name } =
     Strategy
         { id = id
         , name = name
-        , description = Nothing
-        , currentlyPermittable = Nothing
-        , imagePath = Nothing
-        , categories = []
-        , hazards = []
-        , scales = []
-        , placements = []
-        , benefits = []
-        , advantages = []
-        , disadvantages = []
+        , details = NotAsked
         }
 
 
@@ -163,30 +147,39 @@ matchesId (Scalar.Id targetId) (Strategy strategy) =
             theId == targetId
 
 
+-- UPDATE
+
+
+updateStrategyDetails : (GqlData (Maybe StrategyDetails)) -> Strategy -> Strategy
+updateStrategyDetails newDetails (Strategy ({ details } as strategy)) =
+    Strategy <| { strategy | details = newDetails }
+
+
+
 -- TRANSFORM
 
 
-mapStrategiesFromResponse : ActiveStrategiesResponse -> Strategies
-mapStrategiesFromResponse response =
+mapStrategiesFromActiveStrategies : ActiveStrategies -> Strategies
+mapStrategiesFromActiveStrategies response =
     response.items
         |> List.map newStrategy
         |> Zipper.fromList
 
 
-mapErrorFromResponse : Graphqelm.Http.Error ActiveStrategiesResponse -> Graphqelm.Http.Error Strategies
-mapErrorFromResponse error =
+mapErrorFromActiveStrategies : Graphqelm.Http.Error ActiveStrategies -> Graphqelm.Http.Error Strategies
+mapErrorFromActiveStrategies error =
     case error of
         HttpError err ->
             HttpError err
 
         GraphqlError (ParsedData parsed) errs ->
-            GraphqlError (ParsedData <| mapStrategiesFromResponse parsed) errs
+            GraphqlError (ParsedData <| mapStrategiesFromActiveStrategies parsed) errs
 
         GraphqlError (UnparsedData val) errs ->
             GraphqlError (UnparsedData val) errs
 
 
--- HTTP
+-- GRAPHQL
 
 
 type alias ActiveStrategy = 
@@ -195,27 +188,106 @@ type alias ActiveStrategy =
     }
 
 
-type alias ActiveStrategiesResponse =
+type alias ActiveStrategies =
     { items : List ActiveStrategy }
 
 
-queryAdaptationStrategies : SelectionSet ActiveStrategiesResponse RootQuery
+queryAdaptationStrategies : SelectionSet ActiveStrategies RootQuery
 queryAdaptationStrategies =
-    Query.selection ActiveStrategiesResponse
+    Query.selection ActiveStrategies
         |> with 
             (Query.adaptationStrategies 
                 (\optionals -> 
                     { optionals 
                         | filter = Present { isActive = Present True, name = Absent }
                     } 
-                ) activeAdaptationStrategies
+                ) selectActiveAdaptationStrategies
             )
 
 
-activeAdaptationStrategies : SelectionSet ActiveStrategy ChipApi.Object.AdaptationStrategy
-activeAdaptationStrategies =
+selectActiveAdaptationStrategies : SelectionSet ActiveStrategy ChipApi.Object.AdaptationStrategy
+selectActiveAdaptationStrategies =
     AS.selection ActiveStrategy
         |> with AS.id
         |> with AS.name
         
 
+type alias StrategyDetails =
+    { description : Maybe String
+    , currentlyPermittable : Maybe String
+    , imagePath : Maybe String
+    , categories : List Category
+    , hazards : List CoastalHazard
+    , scales : List ImpactScale
+    , placements : List Placement
+    , benefits : List Benefit
+    , advantages : List Advantage
+    , disadvantages : List Disadvantage
+    }
+
+
+queryAdaptationStrategyById : Scalar.Id -> SelectionSet (Maybe StrategyDetails) RootQuery
+queryAdaptationStrategyById id =
+    Query.selection identity
+        |> with (Query.adaptationStrategy { id = id } selectStrategyDetails)
+
+
+selectStrategyDetails : SelectionSet StrategyDetails ChipApi.Object.AdaptationStrategy
+selectStrategyDetails =
+    AS.selection StrategyDetails
+        |> with AS.description
+        |> with AS.currentlyPermittable
+        |> with AS.imagePath
+        |> with (AS.categories selectCategory)
+        |> with (AS.hazards selectCoastalHazard)
+        |> with (AS.scales selectImpactScale)
+        |> with (AS.placements selectPlacement)
+        |> with (AS.benefits selectBenefit)
+        |> with (AS.advantages selectAdvantage)
+        |> with (AS.disadvantages selectDisadvantage)
+
+
+selectCategory : SelectionSet Category ChipApi.Object.AdaptationCategory
+selectCategory =
+    AC.selection Category
+        |> with AC.name
+        |> with AC.description
+
+
+selectCoastalHazard : SelectionSet CoastalHazard ChipApi.Object.CoastalHazard
+selectCoastalHazard =
+    CH.selection CoastalHazard
+        |> with CH.name
+        |> with CH.description
+
+
+selectImpactScale : SelectionSet ImpactScale ChipApi.Object.ImpactScale
+selectImpactScale =
+    IS.selection ImpactScale
+        |> with IS.name
+        |> with IS.impact
+        |> with IS.description
+
+
+selectPlacement : SelectionSet Placement ChipApi.Object.StrategyPlacement
+selectPlacement =
+    SP.selection Placement
+        |> with SP.name
+        
+
+selectBenefit : SelectionSet Benefit ChipApi.Object.AdaptationBenefit
+selectBenefit =
+    AB.selection Benefit
+        |> with AB.name
+
+
+selectAdvantage : SelectionSet Advantage ChipApi.Object.AdaptationAdvantages
+selectAdvantage =
+    AA.selection Advantage
+        |> with AA.name
+
+
+selectDisadvantage : SelectionSet Disadvantage ChipApi.Object.AdaptationDisadvantages
+selectDisadvantage =
+    AD.selection Disadvantage
+        |> with AD.name

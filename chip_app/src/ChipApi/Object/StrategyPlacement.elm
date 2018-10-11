@@ -34,6 +34,6 @@ name =
 
 {-| The adaptation strategies that are associated with the placement
 -}
-strategies : SelectionSet decodesTo ChipApi.Object.AdaptationStrategy -> Field (Maybe (List (Maybe decodesTo))) ChipApi.Object.StrategyPlacement
+strategies : SelectionSet decodesTo ChipApi.Object.AdaptationStrategy -> Field (List decodesTo) ChipApi.Object.StrategyPlacement
 strategies object =
-    Object.selectionField "strategies" [] object (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionField "strategies" [] object (identity >> Decode.list)
