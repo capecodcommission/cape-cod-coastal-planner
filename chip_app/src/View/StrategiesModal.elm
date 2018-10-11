@@ -11,6 +11,7 @@ import Styles exposing (..)
 import View.Helpers exposing (..)
 import RemoteData exposing (RemoteData(..))
 import Keyboard.Event exposing (decodeKeyboardEvent)
+import Graphqelm.Http exposing (Error(..), mapError)
 import Json.Decode as D
 import List.Zipper as Zipper
 
@@ -35,6 +36,27 @@ sidebarFooterHeight = 89
 activeStrategiesHeight : Device -> Float
 activeStrategiesHeight device =
     (modalHeight device) - (sidebarHeaderHeight + sidebarFooterHeight)
+
+
+strategiesToCurrentDetails : GqlData Strategies -> ( Maybe String, GqlData (Maybe StrategyDetails) )
+strategiesToCurrentDetails data =
+    case data of
+        NotAsked -> 
+            ( Nothing, NotAsked )
+
+        Loading -> 
+            ( Nothing, Loading )
+
+        Success Nothing -> 
+            ( Nothing, Success Nothing )
+
+        Success (Just strategies) ->
+            strategies
+                |> Zipper.current
+                |> \(Strategy s) -> ( Just s.name, s.details )
+
+        Failure err ->
+            ( Nothing, Failure <| mapError (always Nothing) err )
 
 
 view :
@@ -165,28 +187,68 @@ mainContentView :
     { config
         | device : Device
         , closePath : String
+        , strategies : GqlData Strategies
     }
     -> Element MainStyles Variations Msg
 mainContentView config =
     column NoStyle
         [ scrollbars, height fill, width fill ]
-        [ header (AddStrategies StrategiesDetailsHeader)
-            [ width fill
-            , height (px <| detailsHeaderHeight config.device)
-            ]
-            (column NoStyle
-                [ height fill, width fill, paddingXY 40 10, spacingXY 0 5 ]
-                [ h3 (Headings H3) [ width fill, height (px 65) ] <| Element.text "TITLE" ]
-                |> within
-                    [ image CloseIcon 
-                        [ alignRight
-                        , moveDown 15
-                        , moveLeft 15
-                        , title "Close strategy selection"
-                        , onClick CloseStrategyModal
-                        ]
-                        { src = config.closePath, caption = "Close Modal" }
-                    ]
-            )
-            
+        ( case strategiesToCurrentDetails config.strategies of
+            (_, NotAsked) ->
+                [ Element.text "Not Asked" ]
+
+            (_, Loading) ->
+                [ Element.text "Loading" ]
+
+            (Just name, Success (Just details)) ->
+                [ headerDetailsView 
+                    { device = config.device
+                    , closePath = config.closePath
+                    , name = name
+                    , details = details
+                    }
+                ]
+
+            (Just name, Success Nothing) ->
+                [ Element.text <| "Details for " ++ name ++ " not found" ]
+
+            (Nothing, Success _) ->
+                [ Element.text "Strategy details not found" ]
+
+            (_, Failure err) ->
+                err 
+                    |> parseErrors 
+                    |> List.map 
+                        (\(s1, s2) ->
+                            Element.text (s1 ++ ": " ++ s2)
+                        )
+
+        )
+        
+headerDetailsView : 
+    { config
+        | device : Device
+        , name : String
+        , closePath : String
+        , details : StrategyDetails
+    }
+    -> Element MainStyles Variations Msg
+headerDetailsView config =
+    header (AddStrategies StrategiesDetailsHeader)
+        [ width fill
+        , height (px <| detailsHeaderHeight config.device)
         ]
+        (column NoStyle
+            [ height fill, width fill, paddingXY 40 10, spacingXY 0 5 ]
+            [ h3 (Headings H3) [ width fill, height (px 65) ] <| Element.text config.name ]
+            |> within
+                [ image CloseIcon 
+                    [ alignRight
+                    , moveDown 15
+                    , moveLeft 15
+                    , title "Close strategy selection"
+                    , onClick CloseStrategyModal
+                    ]
+                    { src = config.closePath, caption = "Close Modal" }
+                ]
+        )

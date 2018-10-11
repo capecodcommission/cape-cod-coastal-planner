@@ -376,8 +376,24 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
+        # NOTE: Shortening name to just Bank Stabilization since this is the only 
+        # one being included at release. Should Bank Stabilization: Coir Envelopes
+        # be added at a later date, you may want to change the name of this entry
+        # back to Bank Stabilization: Fiber/Coir Roll
+        #
+        # WARNING: Changing the name of a strategy WILL affect how the server creates
+        # the url to the strategy image! Change the strategy name, change the image name!
+        #
+        # ex: 
+        #    Bank Stabilization -> 
+        #        bank_stabilization
+        #
+        #    Bank Stabilization: Fiber/Coir Roll -> 
+        #        bank_stabilization_fibercoir_roll
+        
         _bank_stabilization_fiber_coir_roll = %Adaptation.Strategy{
-            name: "Bank Stabilization: Fiber/Coir Roll",
+            #name: "Bank Stabilization: Fiber/Coir Roll",
+            name: "Bank Stabilization",
             description: "Cylindrical rolls, 12-20 inches in diameter & 10-20 feet long, made of coir (coconut) fiber held together by a fiber mesh, covered with sand, and are planted with salt-tolerant vegetation with extensive root systems. These reinforced banks act as physical barriers to waves, tides, and currents. They typically disintegrate over 5-7 years to allow plants time to grow their root systems to keep sand and soil in place.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
@@ -421,8 +437,24 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
+        # NOTE: Shortening name to just Living Shoreline since this is the only 
+        # one being included at release. Should other types of Living Shoreline 
+        # be added at a later date, you may want to change the name of this entry 
+        # back to Living Shoreline: Combined Vegetation and Structural Measures
+        #
+        # WARNING: Changing the name of a strategy WILL affect how the server creates
+        # the url to the strategy image! Change the strategy name, change the image name!
+        #
+        # ex: 
+        #    Living Shoreline ->
+        #        living_shoreline
+        #
+        #    Living Shoreline: Combined Vegetation and Structural Measures -> 
+        #        living_shoreline_combined_vegetation_and_structural_measures
+
         _living_shoreline_vegetation_structural = %Adaptation.Strategy{
-            name: "Living Shoreline: Combined Vegetation and Structural Measures",
+            #name: "Living Shoreline: Combined Vegetation and Structural Measures",
+            name: "Living Shoreline",
             description: "A living shoreline has a footprint that is made up mostly of native material.  It incorporates vegetation or other living, natural “soft” elements alone or in combination with some other type of harder shoreline structure (e.g. oyster reefs or rock sills) for added stability. A combined approach integrates living components, such as plantings, with strategically placed structural elements, such as sills, revetments, and breakwaters.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
