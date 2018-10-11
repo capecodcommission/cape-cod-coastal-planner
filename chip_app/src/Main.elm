@@ -49,6 +49,8 @@ type alias Model =
     , closePath : String
     , trianglePath : String
     , zoiPath : String
+    , adaptationCategories : GqlData AS.Categories
+    , adaptationBenefits : GqlData AS.Benefits
     , coastalHazards : Dropdown CoastalHazards Types.CoastalHazard
     , shorelineLocations : Dropdown ShorelineExtents ShorelineExtent
     , baselineInformation : BaselineInformation
@@ -76,6 +78,10 @@ initialModel flags =
         flags.closePath
         flags.trianglePath
         flags.zoiPath
+        -- Adaptation Categories
+        NotAsked
+        -- Adaptation Benefits
+        NotAsked
         -- Coastal Hazard Dropdown
         { data = RemoteData.Loading
         , menu = Input.dropMenu Nothing SelectHazard
@@ -120,6 +126,8 @@ init flags location =
                     Cmd.batch
                         [ getCoastalHazards
                         , getShorelineExtents
+                        , getAdaptationCategories
+                        , getAdaptationBenefits
                         , olCmd <| encodeOpenLayersCmd InitMap
                         , routeFx
                         ]
@@ -161,6 +169,22 @@ updateModel msg model =
                 ( { model | urlState = newState }
                 , Cmd.none
                 )
+
+        GotAdaptationCategories response ->
+            response
+                |> Remote.mapBoth
+                    AS.mapCategoriesFromAdaptationCategories
+                    AS.mapErrorFromAdaptationCategories
+                |> \newCategories -> 
+                    ({ model | adaptationCategories = newCategories }, Cmd.none )
+
+        GotAdaptationBenefits response ->
+            response
+                |> Remote.mapBoth
+                    AS.mapBenefitsFromAdaptationBenefits
+                    AS.mapErrorFromAdaptationBenefits
+                |> \newBenefits ->
+                    ({ model | adaptationBenefits = newBenefits }, Cmd.none )
 
         GotCoastalHazards response ->
             let
@@ -364,25 +388,13 @@ updateModel msg model =
             )
 
         GotActiveStrategies response ->
-            case response of
-                NotAsked ->
-                    ( model, Cmd.none )
-
-                Loading ->
-                    ( model, Cmd.none )
-
-                Success activeStrategies ->
-                    let
-                        ( newStrategies, newCmd ) =
-                            activeStrategies
-                                |> AS.mapStrategiesFromActiveStrategies
-                                |> Success
-                                |> Remote.update selectFirstStrategy                                
-                    in
-                    ( { model | strategies = newStrategies }, newCmd )
-
-                Failure err ->
-                    ( { model | strategies = Failure <| AS.mapErrorFromActiveStrategies err } , Cmd.none)                
+            response
+                |> Remote.mapBoth
+                    AS.mapStrategiesFromActiveStrategies
+                    AS.mapErrorFromActiveStrategies
+                |> Remote.update selectFirstStrategy
+                |> \(newStrategies, newCmd) ->
+                        ( { model | strategies = newStrategies }, newCmd )
                     
         SelectStrategy id ->
             let

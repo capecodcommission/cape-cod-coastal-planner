@@ -5,7 +5,7 @@ import Http
 import Graphqelm.Http exposing (..)
 import Graphqelm.Operation exposing (RootQuery)
 import Graphqelm.SelectionSet exposing (SelectionSet, with)
-import RemoteData as Remote exposing (RemoteData, fromResult, sendRequest, mapBoth)
+import RemoteData as Remote exposing (RemoteData, fromResult, sendRequest)
 import QueryString as QS
 import Json.Decode as D
 import ChipApi.Object
@@ -16,7 +16,13 @@ import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
 import Types exposing (..)
 import Message exposing (..)
-import AdaptationStrategy exposing (queryAdaptationStrategies, queryAdaptationStrategyById)
+import AdaptationStrategy 
+    exposing 
+        ( queryAdaptationStrategies
+        , queryAdaptationStrategyById 
+        , queryAdaptationCategories
+        , queryAdaptationBenefits
+        )
 
 
 --
@@ -37,6 +43,27 @@ getAdaptationStrategyDetailsById id =
         |> queryRequest "./api"
         |> send (Remote.fromResult >> (GotStrategyDetails id))
 
+
+--
+-- ADAPTATION CATEGORIES
+--
+
+getAdaptationCategories : Cmd Msg
+getAdaptationCategories =
+    queryAdaptationCategories
+        |> queryRequest "./api"
+        |> send (Remote.fromResult >> GotAdaptationCategories)
+
+
+--
+-- ADAPTATION BENEFITS
+--
+
+getAdaptationBenefits : Cmd Msg
+getAdaptationBenefits =
+    queryAdaptationBenefits
+        |> queryRequest "./api"
+        |> send (Remote.fromResult >> GotAdaptationBenefits)
 
 
 --

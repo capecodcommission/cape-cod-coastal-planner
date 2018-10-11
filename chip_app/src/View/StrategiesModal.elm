@@ -63,6 +63,8 @@ view :
     { config
          | device : Device
          , closePath : String
+         , adaptationCategories : GqlData Categories
+         , adaptationBenefits : GqlData Benefits
          , strategies : GqlData Strategies
          , strategiesModalOpenness : Openness
     }
@@ -80,6 +82,8 @@ modalView :
     { config 
         | device : Device
         , closePath : String
+        , adaptationCategories : GqlData Categories
+        , adaptationBenefits : GqlData Benefits
         , strategies : GqlData Strategies
     }
     -> Element MainStyles Variations Msg
@@ -187,6 +191,8 @@ mainContentView :
     { config
         | device : Device
         , closePath : String
+        , adaptationCategories : GqlData Categories
+        , adaptationBenefits : GqlData Benefits
         , strategies : GqlData Strategies
     }
     -> Element MainStyles Variations Msg
@@ -205,6 +211,8 @@ mainContentView config =
                     { device = config.device
                     , closePath = config.closePath
                     , name = name
+                    , categories = config.adaptationCategories
+                    , benefits = config.adaptationBenefits
                     , details = details
                     }
                 ]
@@ -228,8 +236,10 @@ mainContentView config =
 headerDetailsView : 
     { config
         | device : Device
-        , name : String
         , closePath : String
+        , name : String
+        , categories : GqlData Categories
+        , benefits : GqlData Benefits
         , details : StrategyDetails
     }
     -> Element MainStyles Variations Msg
@@ -240,15 +250,87 @@ headerDetailsView config =
         ]
         (column NoStyle
             [ height fill, width fill, paddingXY 40 10, spacingXY 0 5 ]
-            [ h3 (Headings H3) [ width fill, height (px 65) ] <| Element.text config.name ]
-            |> within
-                [ image CloseIcon 
-                    [ alignRight
-                    , moveDown 15
-                    , moveLeft 15
-                    , title "Close strategy selection"
-                    , onClick CloseStrategyModal
-                    ]
-                    { src = config.closePath, caption = "Close Modal" }
+            [ h3 (Headings H3) [ width fill, height (px 65) ] 
+                <| Element.text config.name 
+            
+            ]
+            |> within 
+                [ closeIconView config.closePath 
+                , categoriesView config.categories config.details.categories
                 ]
         )
+
+
+
+categoriesView : GqlData Categories -> Categories -> Element MainStyles Variations Msg
+categoriesView allCategories stratCategories =
+    case ( allCategories, stratCategories ) of
+        ( Success allCats, cats ) ->
+            -- show available categories as compared with master list
+            allCats
+                |> List.map
+                    (\c -> categoryView (hasCategory cats c) c)
+                |> categoriesRowView
+
+        ( _, [] ) ->
+            -- show empty stuff?
+            empty
+        
+        ( _, cats ) ->
+            -- show available categories
+            cats
+                |> List.map (categoryView True) 
+                |> categoriesRowView
+        
+
+categoriesRowView : List (Element MainStyles Variations Msg) -> Element MainStyles Variations Msg
+categoriesRowView views =
+    el NoStyle 
+        [ alignRight 
+        , moveDown 50
+        , moveLeft 50
+        ] <| 
+        row NoStyle [ spacingXY 20 0 ] views
+
+categoryView : Bool -> Category -> Element MainStyles Variations Msg
+categoryView matched category = 
+    column NoStyle
+        []
+        [ circle 39 (AddStrategies StrategiesDetailsCategoryIcon) 
+            [ center
+            , verticalCenter
+            , vary Disabled (not matched) 
+            ] <| 
+                el (AddStrategies StrategiesDetailsCategories) 
+                    [ center
+                    , verticalCenter 
+                    , vary Disabled (not matched)
+                    ] <| 
+                        Element.text "icon"
+        , el (AddStrategies StrategiesDetailsCategories) 
+            [ center
+            , verticalCenter
+            , paddingTop 8
+            , vary Disabled (not matched) 
+            ] <| 
+                Element.text category.name
+        ]
+
+
+hasCategory : Categories -> Category -> Bool
+hasCategory categories category =
+    categories
+        |> List.filter (\c -> c.name == category.name)
+        |> (not << List.isEmpty)
+
+
+closeIconView : String -> Element MainStyles Variations Msg
+closeIconView srcPath =
+    image CloseIcon 
+        [ alignRight
+        , moveDown 15
+        , moveLeft 15
+        , title "Close strategy selection"
+        , onClick CloseStrategyModal
+        ]
+        { src = srcPath, caption = "Close Modal" }

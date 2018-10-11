@@ -20,6 +20,7 @@ scaled =
 palette =
     { chambray = rgb 54 77 127
     , havelockBlue = rgb 85 126 216
+    , malibu = rgb 93 151 255
     , mySin = rgb 255 182 18
     , persimmon = rgb 255 85 85
     , walnut = rgb 108 67 26
@@ -96,6 +97,8 @@ type StrategiesStyles
     | StrategiesSidebarListBtnSelected
     | StrategiesSidebarFooter
     | StrategiesDetailsHeader
+    | StrategiesDetailsCategories
+    | StrategiesDetailsCategoryIcon
     | StrategiesDetailsMain
 
 type ZoneOfImpactStyles
@@ -258,6 +261,25 @@ stylesheet =
             [ Color.background palette.chambray
             , Color.text white
             , Border.roundTopRight 4
+            ]
+        , Style.style (AddStrategies StrategiesDetailsCategories)
+            [ Color.text white
+            , Font.typeface fontstack
+            , Font.size 10
+            , Font.weight 500
+            , Font.letterSpacing 1.44
+            , variation Disabled
+                [ Color.text palette.malibu
+                ]
+            ]
+        , Style.style (AddStrategies StrategiesDetailsCategoryIcon)
+            [ Color.background palette.mySin
+            , variation Disabled
+                [ Color.background <| rgba 0 0 0 0
+                , Color.border palette.malibu
+                , Border.all 1
+                , Border.solid
+                ]
             ]
         , Style.style (AddStrategies StrategiesDetailsMain)
             [ Color.text white

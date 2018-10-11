@@ -1,7 +1,7 @@
 module AdaptationStrategy exposing (..)
 
 import List.Zipper as Zipper exposing (..)
-import Graphqelm.Http exposing (..)
+import Graphqelm.Http as GHttp exposing (..)
 import Graphqelm.Operation exposing (RootQuery)
 import Graphqelm.SelectionSet exposing (SelectionSet, with)
 import Graphqelm.Http.GraphqlError exposing (PossiblyParsedData(..))
@@ -41,6 +41,10 @@ type alias Category =
     }
 
 
+type alias Categories =
+    List Category
+
+
 type alias CoastalHazard =
     { name : String
     , description : Maybe String
@@ -58,6 +62,10 @@ type alias Placement = { name : String }
 
 
 type alias Benefit = { name : String }
+
+
+type alias Benefits =
+    List Benefit
 
 
 type alias Advantage = { name : String }
@@ -168,26 +176,38 @@ updateStrategyDetails newDetails (Strategy ({ details } as strategy)) =
 
 
 mapStrategiesFromActiveStrategies : ActiveStrategies -> Strategies
-mapStrategiesFromActiveStrategies response =
-    response.items
+mapStrategiesFromActiveStrategies data =
+    data.items
         |> List.map newStrategy
         |> Zipper.fromList
 
 
-mapErrorFromActiveStrategies : Graphqelm.Http.Error ActiveStrategies -> Graphqelm.Http.Error Strategies
+mapErrorFromActiveStrategies : GHttp.Error ActiveStrategies -> GHttp.Error Strategies
 mapErrorFromActiveStrategies error =
-    case error of
-        HttpError err ->
-            HttpError err
-
-        GraphqlError (ParsedData parsed) errs ->
-            GraphqlError (ParsedData <| mapStrategiesFromActiveStrategies parsed) errs
-
-        GraphqlError (UnparsedData val) errs ->
-            GraphqlError (UnparsedData val) errs
+    GHttp.mapError mapStrategiesFromActiveStrategies error
 
 
--- GRAPHQL
+mapCategoriesFromAdaptationCategories : AdaptationCategories -> Categories
+mapCategoriesFromAdaptationCategories data =
+    data.items
+
+mapErrorFromAdaptationCategories : GHttp.Error AdaptationCategories -> GHttp.Error Categories
+mapErrorFromAdaptationCategories error =
+    GHttp.mapError mapCategoriesFromAdaptationCategories error
+
+
+mapBenefitsFromAdaptationBenefits : AdaptationBenefits -> Benefits
+mapBenefitsFromAdaptationBenefits data =
+    data.items
+
+
+mapErrorFromAdaptationBenefits : GHttp.Error AdaptationBenefits -> GHttp.Error Benefits
+mapErrorFromAdaptationBenefits error =
+    GHttp.mapError mapBenefitsFromAdaptationBenefits error
+
+
+
+-- GRAPHQL - QUERY ACTIVE ADAPTATION STRATEGIES
 
 
 type alias ActiveStrategy = 
@@ -219,6 +239,8 @@ selectActiveAdaptationStrategies =
         |> with AS.id
         |> with AS.name
         
+
+-- GRAPHQL - QUERY ADAPTATION STRATEGY + DETAILS BY ID
 
 type alias StrategyDetails =
     { description : Maybe String
@@ -299,3 +321,30 @@ selectDisadvantage : SelectionSet Disadvantage ChipApi.Object.AdaptationDisadvan
 selectDisadvantage =
     AD.selection Disadvantage
         |> with AD.name
+
+
+
+-- GRAPHQL - QUERY LIST OF ADAPTATION CATEGORIES
+
+
+type alias AdaptationCategories =
+    { items : Categories }
+
+
+queryAdaptationCategories : SelectionSet AdaptationCategories RootQuery
+queryAdaptationCategories =
+    Query.selection AdaptationCategories
+        |> with (Query.adaptationCategories identity selectCategory)
+
+
+-- GRAPHQL - QUERY LIST OF ADAPTATION BENEFITS
+
+
+type alias AdaptationBenefits =
+    { items : Benefits }
+
+
+queryAdaptationBenefits : SelectionSet AdaptationBenefits RootQuery
+queryAdaptationBenefits =
+    Query.selection AdaptationBenefits
+        |> with (Query.adaptationBenefits identity selectBenefit)
