@@ -567,21 +567,40 @@ selectHazardByName name hazards =
 selectStrategy : (Strategies -> Strategies) -> Strategies -> (Strategies, Cmd Msg)
 selectStrategy selectFn strategies =
     let
-        newStrategies = selectFn strategies
+        selectedStrategies = selectFn strategies
 
-        focusCmd = case AS.getSelectedStrategyHtmlId newStrategies of
+        focusCmd = case AS.getSelectedStrategyHtmlId selectedStrategies of
             Just id -> focus id
 
             Nothing -> Cmd.none
 
-        getDetailsCmd = 
-            newStrategies
+        detailsUpdates : ( GqlData (Maybe StrategyDetails), Cmd Msg )
+        detailsUpdates = 
+            selectedStrategies
                 |> ZipHelp.tryCurrent
                 |> Maybe.andThen AS.loadDetailsFor
-                |> Maybe.map (\id -> getAdaptationStrategyDetailsById id)
-                |> Maybe.withDefault Cmd.none
+                |> Maybe.map 
+                    (\( strategyId, details ) ->
+                        case strategyId of 
+                            Just id ->
+                                ( details, getAdaptationStrategyDetailsById id )
 
-        newCmds = Cmd.batch [ focusCmd, getDetailsCmd ]
+                            Nothing ->
+                                ( details, Cmd.none )
+                    )
+                |> Maybe.withDefault ( NotAsked, Cmd.none )
+
+        newStrategies = 
+            selectedStrategies
+                |> Maybe.map
+                    (\strats ->
+                        Zipper.mapCurrent
+                            (\current -> { current | details = Tuple.first detailsUpdates })
+                            strats
+                    )
+                |> MEx.orElse selectedStrategies
+
+        newCmds = Cmd.batch [ focusCmd, Tuple.second detailsUpdates ]
     in
     ( newStrategies, newCmds )
     

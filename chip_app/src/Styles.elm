@@ -25,6 +25,9 @@ palette =
     , persimmon = rgb 255 85 85
     , walnut = rgb 108 67 26
     , red = rgb 255 18 18
+    , jaffa = rgb 237 127 52
+    , ming = rgb 59 130 132
+    , mediumRedViolet = rgb 165 56 165
     }
 
 
@@ -101,7 +104,7 @@ type StrategiesStyles
     | StrategiesSubHeading
     | StrategiesMainHeading
     | StrategiesDetailsCategories
-    | StrategiesDetailsCategoryIcon
+    | StrategiesDetailsCategoryCircle
     | StrategiesDetailsMain
 
 type ZoneOfImpactStyles
@@ -119,6 +122,7 @@ type Variations
     | SelectMenuOpen
     | SelectMenuError
     | Secondary
+    | Tertiary
     | Disabled
 
 
@@ -287,19 +291,28 @@ stylesheet =
             [ Color.text white
             , Font.typeface fontstack
             , Font.size 10
-            , Font.weight 500
+            , Font.bold
             , Font.letterSpacing 1.44
             , variation Disabled
                 [ Color.text palette.malibu
                 ]
             ]
-        , Style.style (AddStrategies StrategiesDetailsCategoryIcon)
-            [ Color.background palette.mySin
+        , Style.style (AddStrategies StrategiesDetailsCategoryCircle)
+            [ Color.background palette.jaffa
+            , Color.border palette.jaffa
+            , Border.all 1.5
+            , Border.solid
+            , variation Secondary
+                [ Color.background palette.ming
+                , Color.border palette.ming
+                ]
+            , variation Tertiary
+                [ Color.background palette.mediumRedViolet
+                , Color.border palette.mediumRedViolet
+                ]
             , variation Disabled
                 [ Color.background <| rgba 0 0 0 0
                 , Color.border palette.malibu
-                , Border.all 1
-                , Border.solid
                 ]
             ]
         , Style.style (AddStrategies StrategiesDetailsMain)

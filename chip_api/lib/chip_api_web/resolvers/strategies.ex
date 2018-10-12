@@ -93,32 +93,72 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_strategies_for_placement(placement)}
     end
 
-    # TODO Throws error: Invalid schema notation: `field` must only be used within `input_object`, `interface`, `object`
-    @public_path "/images/strategies/"
+    @public_strategies_path "/images/strategies/"
     @valid_extensions ~w(.jpg .JPG .jpeg .png .gif)
-    def image_path(strategy, _args, _) do
+    def strategy_image_path(strategy, _args, _) do
         priv_dir = :code.priv_dir(:chip_api)
         static_dir = Path.join priv_dir, "static"
 
-        file_name = location_to_file_name(strategy)
-        file_root = static_dir <> @public_path <> file_name
+        file_name = strategy_to_file_name(strategy)
+        file_root = static_dir <> @public_strategies_path <> file_name
 
         case Enum.find @valid_extensions, &(image_exists?(file_root, &1)) do
             extension when is_binary(extension) -> 
-                {:ok, @public_path <> file_name <> extension}
+                {:ok, @public_strategies_path <> file_name <> extension}
 
             _ ->
                 {:ok, nil}
         end
     end
 
-    defp location_to_file_name(strategy) do
+    @public_categories_path "/images/categories/"
+    def category_active_image_path(category, _args, _) do
+        priv_dir = :code.priv_dir(:chip_api)
+        static_dir = Path.join priv_dir, "static"
+
+        file_name = category_to_file_name(category, :active)
+        file_root = static_dir <> @public_categories_path <> file_name
+
+        case Enum.find @valid_extensions, &(image_exists?(file_root, &1)) do
+            extension when is_binary(extension) -> 
+                {:ok, @public_categories_path <> file_name <> extension}
+
+            _ ->
+                {:ok, nil}
+        end
+    end
+
+    def category_inactive_image_path(category, _args, _) do
+        priv_dir = :code.priv_dir(:chip_api)
+        static_dir = Path.join priv_dir, "static"
+
+        file_name = category_to_file_name(category, :inactive)
+        file_root = static_dir <> @public_categories_path <> file_name
+
+        case Enum.find @valid_extensions, &(image_exists?(file_root, &1)) do
+            extension when is_binary(extension) -> 
+                {:ok, @public_categories_path <> file_name <> extension}
+
+            _ ->
+                {:ok, nil}
+        end
+    end
+
+    defp strategy_to_file_name(strategy) do
         strategy.name
             |> Zarex.sanitize
             |> String.downcase
             |> String.replace(" ", "_")
     end
-    
+
+    defp category_to_file_name(category, activeness) when is_atom(activeness) do
+        category.name
+            |> Zarex.sanitize
+            |> String.downcase
+            |> String.replace(" ", "_")
+            |> (&(&1 <> "_" <> to_string activeness)).()
+    end
+
     defp image_exists?(file_root, extension) do
         (file_root <> extension)
         |> File.exists?

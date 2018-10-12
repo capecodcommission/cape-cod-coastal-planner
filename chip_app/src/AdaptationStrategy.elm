@@ -35,6 +35,8 @@ type alias Strategies = Maybe (Zipper Strategy)
 type alias Category =
     { name : String
     , description : Maybe String
+    , imagePathActive : Maybe String
+    , imagePathInactive : Maybe String
     }
 
 
@@ -102,12 +104,12 @@ getSelectedStrategyHtmlId strategies =
         |> Maybe.map getStrategyHtmlId
 
 
-loadDetailsFor : Strategy -> Maybe Scalar.Id
+loadDetailsFor : Strategy -> Maybe ( Maybe Scalar.Id, GqlData (Maybe StrategyDetails) )
 loadDetailsFor s =
     if Remote.isSuccess s.details == True then
-        Nothing
+        Just ( Nothing, s.details )
     else
-        Just s.id 
+        Just ( Just s.id, Loading )
 
 
 -- UPDATE
@@ -193,6 +195,8 @@ selectCategory =
     AC.selection Category
         |> with AC.name
         |> with AC.description
+        |> with AC.imagePathActive
+        |> with AC.imagePathInactive
 
 
 selectCoastalHazard : SelectionSet CoastalHazard ChipApi.Object.CoastalHazard

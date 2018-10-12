@@ -5,6 +5,7 @@ import Types exposing (..)
 import AdaptationStrategy exposing (..)
 import Message exposing (..)
 import Element exposing (..)
+import Element.Keyed as Keyed
 import Element.Attributes as Attr exposing (..)
 import Element.Events exposing (..)
 import Styles exposing (..)
@@ -212,19 +213,30 @@ mainContentView config =
     column NoStyle
         [ scrollbars, height fill, width fill ]
         ( case strategiesToCurrentDetails config.strategies of
-            (_, NotAsked) ->
-                [ Element.text "Not Asked" ]
+            (maybeName, NotAsked) ->
+                [ headerDetailsLoadingView
+                    { device = config.device 
+                    , closePath = config.closePath
+                    , name = maybeName
+                    , categories = config.adaptationCategories
+                    } 
+                ]
 
-            (_, Loading) ->
-                [ Element.text "Loading" ]
+            (maybeName, Loading) ->
+                [ headerDetailsLoadingView
+                    { device = config.device 
+                    , closePath = config.closePath
+                    , name = maybeName
+                    , categories = config.adaptationCategories
+                    }
+                ]
 
             (Just name, Success (Just details)) ->
-                [ headerDetailsView 
+                [ headerDetailsView
                     { device = config.device
                     , closePath = config.closePath
                     , name = name
                     , categories = config.adaptationCategories
-                    , benefits = config.adaptationBenefits
                     , details = details
                     }
                 ]
@@ -251,7 +263,6 @@ headerDetailsView :
         , closePath : String
         , name : String
         , categories : GqlData Categories
-        , benefits : GqlData Benefits
         , details : StrategyDetails
     }
     -> Element MainStyles Variations Msg
@@ -266,13 +277,47 @@ headerDetailsView config =
                 <| el (AddStrategies StrategiesSheetHeading) [ verticalCenter ] <| 
                     Element.text "ADAPTATION STRATEGIES SHEET"
             , column NoStyle [ width fill, height (percent 60), verticalCenter ]
-                [ el (AddStrategies StrategiesSubHeading) [] <| Element.text "Strategy:"
-                , el (AddStrategies StrategiesMainHeading) [] <| Element.text config.name
+                [ el (AddStrategies StrategiesSubHeading) [] <| 
+                    Element.text "Strategy:"
+                , el (AddStrategies StrategiesMainHeading) [] <| 
+                    Element.text config.name
                 ]
             ]
             |> within 
                 [ closeIconView config.closePath 
                 , categoriesView config.categories config.details.categories
+                ]
+        )
+
+
+headerDetailsLoadingView : 
+    { config
+        | device : Device
+        , closePath : String
+        , name : Maybe String
+        , categories : GqlData Categories
+    }
+    -> Element MainStyles Variations Msg
+headerDetailsLoadingView config =
+    header (AddStrategies StrategiesDetailsHeader)
+        [ width fill
+        , height (px <| detailsHeaderHeight config.device)
+        ]
+        (column NoStyle
+            [ height fill, width fill, paddingXY 40 10, spacingXY 0 5 ]
+            [ el NoStyle [ width fill, height (percent 40) ] 
+                <| el (AddStrategies StrategiesSheetHeading) [ verticalCenter ] <| 
+                    Element.text "ADAPTATION STRATEGIES SHEET"
+            , column NoStyle [ width fill, height (percent 60), verticalCenter ]
+                [ el (AddStrategies StrategiesSubHeading) [] <| 
+                    Element.text "Strategy:"
+                , el (AddStrategies StrategiesMainHeading) [] <| 
+                    Element.text " "
+                ]
+            ]
+            |> within 
+                [ closeIconView config.closePath 
+                , categoriesView config.categories []
                 ]
         )
 
@@ -284,21 +329,37 @@ headerDetailsView config =
 categoriesView : GqlData Categories -> Categories -> Element MainStyles Variations Msg
 categoriesView allCategories stratCategories =
     case ( allCategories, stratCategories ) of
+        ( NotAsked, [] ) ->
+            [ 0, 1, 2 ]
+                |> List.map categoryLoadingView
+                |> categoriesRowView
+
+        ( Loading, [] ) ->
+            [ 0, 1, 2 ]
+                |> List.map categoryLoadingView
+                |> categoriesRowView
+
+        ( Success _, [] ) ->
+            [ 0, 1, 2 ]
+                |> List.map categoryLoadingView
+                |> categoriesRowView
+
+        ( Failure _, [] ) ->
+            [ 0, 1, 2 ]
+                |> List.map categoryErrorView
+                |> categoriesRowView
+        
         ( Success allCats, cats ) ->
             -- show available categories as compared with master list
             allCats
-                |> List.map
-                    (\c -> categoryView (hasCategory cats c) c)
+                |> List.indexedMap
+                    (\i c -> categoryView (hasCategory cats c) i c)
                 |> categoriesRowView
-
-        ( _, [] ) ->
-            -- show empty stuff?
-            empty
-        
+       
         ( _, cats ) ->
-            -- show available categories
+            -- show available categories from strategy
             cats
-                |> List.map (categoryView True) 
+                |> List.indexedMap (categoryView True) 
                 |> categoriesRowView
         
 
@@ -311,30 +372,100 @@ categoriesRowView views =
         ] <| 
         row NoStyle [ spacingXY 20 0 ] views
 
-categoryView : Bool -> Category -> Element MainStyles Variations Msg
-categoryView matched category = 
-    column NoStyle
-        []
-        [ circle 39 (AddStrategies StrategiesDetailsCategoryIcon) 
-            [ center
-            , verticalCenter
-            , vary Disabled (not matched) 
-            ] <| 
-                el (AddStrategies StrategiesDetailsCategories) 
-                    [ center
-                    , verticalCenter 
-                    , vary Disabled (not matched)
-                    ] <| 
-                        Element.text "icon"
-        , el (AddStrategies StrategiesDetailsCategories) 
-            [ center
-            , verticalCenter
-            , paddingTop 8
-            , vary Disabled (not matched) 
-            ] <| 
-                Element.text category.name
+
+categoryView : Bool -> Int -> Category -> Element MainStyles Variations Msg
+categoryView matched index category = 
+    let
+        srcPath =
+            if matched == True then
+                category.imagePathActive
+            else 
+                category.imagePathInactive
+    in
+    Keyed.column NoStyle
+        [ minWidth (px 84) ]
+        [ case srcPath of
+            Just path ->
+                categoryIconView path category.name matched
+
+            Nothing ->
+                categoryMissingIconView index "?" matched
+        , categoryLabelView category.name matched
         ]
 
+
+categoryLoadingView : Int -> Element MainStyles Variations Msg
+categoryLoadingView index =
+    Keyed.column NoStyle
+        [ minWidth (px 84) ]
+        [ categoryMissingIconView index "..." False 
+        , categoryLabelView "loading" False 
+        ]
+
+
+categoryErrorView : Int -> Element MainStyles Variations Msg
+categoryErrorView index =
+    Keyed.column NoStyle
+        [ minWidth (px 84) ]
+        [ categoryMissingIconView index "!" False 
+        , categoryLabelView "error" False
+        ]
+
+
+categoryLabelView : String -> Bool -> ( String, Element MainStyles Variations Msg )
+categoryLabelView lbl matched =
+    ( "category_label_" ++ lbl
+    , el (AddStrategies StrategiesDetailsCategories) 
+        [ center
+        , verticalCenter
+        , paddingTop 8
+        , vary Disabled (not matched) 
+        ] <| 
+            Element.text lbl
+    )
+
+
+categoryIconView : String -> String -> Bool -> ( String, Element MainStyles Variations Msg )
+categoryIconView srcPath captionText matched =
+    let
+        keySuffix = 
+            if matched == True then
+                "active"
+            else
+                "inactive"
+    in
+    ( "category_icon_" ++ captionText ++ "_" ++ keySuffix
+    , image NoStyle [ center, verticalCenter ]
+        { src = srcPath, caption = captionText  }
+    )
+    
+
+
+categoryMissingIconView : Int -> String -> Bool -> ( String, Element MainStyles Variations Msg )
+categoryMissingIconView index lbl matched =
+    let
+        keySuffix =
+            if matched == True then
+                "active"
+            else
+                "inactive"
+    in
+    ( "category_icon_missing_" ++ keySuffix
+    , circle 39 (AddStrategies StrategiesDetailsCategoryCircle) 
+        [ center
+        , verticalCenter
+        , vary Secondary (matched && index == 1)
+        , vary Tertiary (matched && index == 2)
+        , vary Disabled (not matched) 
+        ] <| 
+            el (AddStrategies StrategiesDetailsCategories) 
+                [ center
+                , verticalCenter
+                , vary Disabled (not matched)
+                ] <| 
+                    Element.text lbl
+    )
+    
 
 hasCategory : Categories -> Category -> Bool
 hasCategory categories category =

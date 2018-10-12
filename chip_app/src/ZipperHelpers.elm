@@ -1,6 +1,7 @@
 module ZipperHelpers exposing (..)
 
 
+import Maybe.Extra as MEx
 import List.Zipper as Zipper exposing (Zipper)
 import ChipApi.Scalar as Scalar
 
@@ -13,8 +14,8 @@ import ChipApi.Scalar as Scalar
 tryFindFirst : (a -> Bool) -> Maybe (Zipper a) -> Maybe (Zipper a)
 tryFindFirst predicate items =
     items
-        |> Maybe.map (Zipper.findFirst predicate)
-        |> Maybe.withDefault items
+        |> Maybe.andThen (Zipper.findFirst predicate)
+        |> MEx.orElse items
 
 
 tryCurrent : Maybe (Zipper a) -> Maybe a
@@ -30,15 +31,15 @@ tryFirst items =
 tryNext : Maybe (Zipper a) -> Maybe (Zipper a)
 tryNext items =
     items
-        |> Maybe.map Zipper.next
-        |> Maybe.withDefault items        
+        |> Maybe.andThen Zipper.next
+        |> MEx.orElse items        
 
 
 tryPrevious : Maybe (Zipper a) -> Maybe (Zipper a)
 tryPrevious items =
     items
-        |> Maybe.map Zipper.previous
-        |> Maybe.withDefault items
+        |> Maybe.andThen Zipper.previous
+        |> MEx.orElse items
 
 
 --

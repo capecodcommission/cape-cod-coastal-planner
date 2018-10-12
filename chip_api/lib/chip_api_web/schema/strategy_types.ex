@@ -116,7 +116,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
         @desc "The server path to an image of the adaptation strategy"
         field :image_path, :string do
-            resolve &Resolvers.Strategies.image_path/3
+            resolve &Resolvers.Strategies.strategy_image_path/3
         end
     end
 
@@ -129,6 +129,16 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
         @desc "The description of the category"
         field :description, :string
+
+        @desc "The server path to an image of the adaptation category when it is applicable"
+        field :image_path_active, :string do
+            resolve &Resolvers.Strategies.category_active_image_path/3
+        end
+
+        @desc "The server path to an image of the adapation category when it is inapplicable"
+        field :image_path_inactive, :string do
+            resolve &Resolvers.Strategies.category_inactive_image_path/3
+        end
 
         @desc "The adaptation strategies that are associated with the category"
         field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do

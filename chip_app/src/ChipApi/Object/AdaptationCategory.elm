@@ -32,6 +32,20 @@ description =
     Object.fieldDecoder "description" [] (Decode.string |> Decode.nullable)
 
 
+{-| The server path to an image of the adaptation category when it is applicable
+-}
+imagePathActive : Field (Maybe String) ChipApi.Object.AdaptationCategory
+imagePathActive =
+    Object.fieldDecoder "imagePathActive" [] (Decode.string |> Decode.nullable)
+
+
+{-| The server path to an image of the adapation category when it is inapplicable
+-}
+imagePathInactive : Field (Maybe String) ChipApi.Object.AdaptationCategory
+imagePathInactive =
+    Object.fieldDecoder "imagePathInactive" [] (Decode.string |> Decode.nullable)
+
+
 {-| The name of the category
 -}
 name : Field String ChipApi.Object.AdaptationCategory
