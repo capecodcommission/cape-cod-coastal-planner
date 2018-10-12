@@ -53,7 +53,7 @@ strategiesToCurrentDetails data =
         Success (Just strategies) ->
             strategies
                 |> Zipper.current
-                |> \(Strategy s) -> ( Just s.name, s.details )
+                |> \s -> ( Just s.name, s.details )
 
         Failure err ->
             ( Nothing, Failure <| mapError (always Nothing) err )
@@ -65,6 +65,7 @@ view :
          , closePath : String
          , adaptationCategories : GqlData Categories
          , adaptationBenefits : GqlData Benefits
+         , coastalHazards : GqlData CoastalHazards
          , strategies : GqlData Strategies
          , strategiesModalOpenness : Openness
     }
@@ -173,7 +174,7 @@ strategiesView data =
 
 
 strategyView : Strategy -> Element MainStyles Variations Msg
-strategyView ( Strategy { id, name } as strategy) =
+strategyView ({ id, name } as strategy) =
     button (AddStrategies StrategiesSidebarListBtn)
         [ height content
         , paddingXY 16 8
@@ -184,7 +185,7 @@ strategyView ( Strategy { id, name } as strategy) =
 
 
 selectedStrategyView : Strategy -> Element MainStyles Variations Msg
-selectedStrategyView ( Strategy { id, name } as strategy) =
+selectedStrategyView ({ id, name } as strategy) =
     button (AddStrategies StrategiesSidebarListBtnSelected) 
         [ height content
         , paddingXY 16 8

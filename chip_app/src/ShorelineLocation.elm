@@ -84,3 +84,21 @@ extentToString extent =
     [ extent.minX, extent.minY, extent.maxX, extent.maxY ]
         |> List.map toString
         |> String.join ","
+
+
+-- ACCESS
+
+
+matchesName : String -> { a | name : String } -> Bool
+matchesName name item =
+    name == item.name
+
+findLocationByName : String -> ShorelineExtents -> ShorelineExtents
+findLocationByName name locations =
+    let 
+        found = locations |> Maybe.andThen (Zipper.findFirst (matchesName name))
+    in
+        case found of
+            Just foundLocations -> Just foundLocations
+
+            Nothing -> locations

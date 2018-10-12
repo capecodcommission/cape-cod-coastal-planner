@@ -13,14 +13,16 @@ import RemoteData as Remote exposing (RemoteData(..))
 import Json.Decode as D exposing (..)
 import Dict exposing (Dict)
 import Maybe
+import Maybe.Extra as MEx
 import Dom
 import Task
 import List.Extra as LEx
 import List.Zipper as Zipper
+import ZipperHelpers as ZipHelp
 import Keyboard.Key exposing (Key(Up, Down, Enter, Escape))
 import Types exposing (..)
-import AdaptationStrategy as AS exposing (Strategy(..), Strategies, StrategyDetails)
-import ShorelineLocation as SL exposing (BaselineInfo, ShorelineExtent)
+import AdaptationStrategy as AS exposing (Strategy, Strategies, StrategyDetails, CoastalHazards)
+import ShorelineLocation as SL exposing (BaselineInfo, ShorelineExtent, ShorelineExtents)
 import Message exposing (..)
 import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
@@ -54,8 +56,8 @@ type alias Model =
     , adaptationBenefits : GqlData AS.Benefits
     , coastalHazards : GqlData AS.CoastalHazards
     , coastalHazardsDropdown : Dropdown AS.CoastalHazard
-    , shorelineLocations : GqlData SL.ShorelineExtents
-    , shorelineLocationsDropdown : Dropdown SL.ShorelineExtent
+    , shorelineLocations : GqlData ShorelineExtents
+    , shorelineLocationsDropdown : Dropdown ShorelineExtent
     , baselineInformation : BaselineInformation
     , baselineModal : GqlData (Maybe BaselineInfo)
     , vulnerabilityRibbon : WebData D.Value
@@ -87,13 +89,13 @@ initialModel flags =
         NotAsked
         -- Coastal Hazards + Menu
         RemoteData.Loading
-        { menu = Input.dropMenu Nothing SelectHazard
+        { menu = Input.dropMenu Nothing SelectHazardInput
         , isOpen = False
-        , name = "Hazard"
+        , name = "Coastal Hazard"
         }
         -- Shoreline Location + Menu
         RemoteData.Loading
-        { menu = Input.dropMenu Nothing SelectLocation
+        { menu = Input.dropMenu Nothing SelectLocationInput
         , isOpen = False
         , name = "Shoreline Location"
         }
@@ -190,36 +192,65 @@ updateModel msg model =
                     ({ model | adaptationBenefits = newBenefits }, Cmd.none )
 
         GotCoastalHazards response ->
-            response
-                |> Remote.mapBoth
-                    (zipMapGqlList identity)
-                    (mapGqlError <| zipMapGqlList identity)
-                |> \newHazards ->
-                    ({ model | coastalHazards = newHazards }, Cmd.none )
-
-        SelectHazard msg ->
             let
-                updatedHazardsDropdown =
-                    case parseMenuOpeningOrClosing msg of
-                        Just val ->
-                            model.coastalHazardsDropdown
-                                |> (\hazards ->
-                                        { hazards
-                                            | menu = Input.updateSelection msg hazards.menu
-                                            , isOpen = val
-                                        }
-                                   )
+                newHazards : GqlData AS.CoastalHazards
+                newHazards =
+                    response
+                        |> Remote.mapBoth
+                            (zipMapGqlList identity)
+                            (mapGqlError <| zipMapGqlList identity)
+                            
 
-                        Nothing ->
-                            model.coastalHazardsDropdown
-                                |> (\hazards ->
-                                        { hazards
-                                            | menu = Input.updateSelection msg hazards.menu
-                                        }
-                                   )
+                updatedMenu =
+                    newHazards
+                        |> Remote.toMaybe
+                        |> MEx.join
+                        |> Maybe.map Zipper.current
+                        |> \currentHazard ->
+                                Input.dropMenu currentHazard SelectHazardInput
+
+                updatedDropdown =
+                    model.coastalHazardsDropdown
+                        |> \l -> { l | menu = updatedMenu }
             in
-                ( { model | coastalHazardsDropdown = updatedHazardsDropdown }
-                , Cmd.none
+                ( { model 
+                    | coastalHazards = newHazards
+                    , coastalHazardsDropdown = updatedDropdown
+                  } 
+                , Cmd.none 
+                )
+
+        SelectHazardInput msg ->
+            let
+                updatedMenu =
+                    Input.updateSelection msg model.coastalHazardsDropdown.menu
+
+                updatedHazardsDropdown =
+                    model.coastalHazardsDropdown
+                        |> \dd ->
+                                case parseMenuOpeningOrClosing msg of
+                                    Just val ->
+                                        { dd | menu = updatedMenu, isOpen = val }
+
+                                    Nothing ->
+                                        { dd | menu = updatedMenu }
+
+                ( newHazards, newHazardCmds ) =
+                    updatedHazardsDropdown.menu
+                        |> Input.selected 
+                        |> Maybe.map 
+                            (\{name} ->
+                                Remote.update 
+                                    (selectHazardByName name) 
+                                    model.coastalHazards
+                            )
+                        |> Maybe.withDefault ( model.coastalHazards, Cmd.none )
+            in
+                ( { model 
+                    | coastalHazardsDropdown = updatedHazardsDropdown 
+                    , coastalHazards = newHazards
+                  }
+                , newHazardCmds
                 )
 
         GotShorelineExtents response ->
@@ -230,40 +261,52 @@ updateModel msg model =
                 |> \newLocations ->
                     ({ model | shorelineLocations = newLocations }, Cmd.none)
 
-        SelectLocation msg ->
+        SelectLocationInput msg ->
             let
                 updatedMenu =
                     Input.updateSelection msg model.shorelineLocationsDropdown.menu
 
-                selectedLocation =
-                    Input.selected updatedMenu
-
-                selectedLocationFx =
-                    selectedLocation
-                        |> Maybe.map
-                            (\selection ->
-                                if shouldLocationMenuChangeTriggerZoomTo msg then
-                                    ZoomToShorelineLocation selection
-                                        |> encodeOpenLayersCmd
-                                        |> olCmd
-                                else
-                                    Cmd.none
-                            )
-                        |> Maybe.withDefault Cmd.none
-
                 updatedLocationsDropdown =
                     model.shorelineLocationsDropdown
-                        |> (\l ->
+                        |> \dd ->
                                 case parseMenuOpeningOrClosing msg of
                                     Just val ->
-                                        { l | menu = updatedMenu, isOpen = val }
+                                        { dd | menu = updatedMenu, isOpen = val }
 
                                     Nothing ->
-                                        { l | menu = updatedMenu }
-                           )
+                                        { dd | menu = updatedMenu }
+
+                ( newLocations, newLocationsCmds ) =
+                    updatedLocationsDropdown.menu
+                        |> Input.selected
+                        |> Maybe.map
+                            (\selection ->
+                                let 
+                                    ( nl, nc1 ) =
+                                        Remote.update
+                                            (selectLocationByName selection.name)
+                                            model.shorelineLocations
+
+                                    nc2 =
+                                        if shouldLocationMenuChangeTriggerZoomTo msg then
+                                            Cmd.batch 
+                                                [ ZoomToShorelineLocation selection
+                                                    |> encodeOpenLayersCmd
+                                                    |> olCmd
+                                                , sendGetVulnRibbonRequest model.env selection
+                                                ]
+                                        else
+                                            Cmd.none
+                                in
+                                ( nl, Cmd.batch [ nc1, nc2 ] )
+                            )
+                        |> Maybe.withDefault ( model.shorelineLocations, Cmd.none )
             in
-                ( { model | shorelineLocationsDropdown = updatedLocationsDropdown }
-                , selectedLocationFx
+                ( { model 
+                    | shorelineLocationsDropdown = updatedLocationsDropdown 
+                    , shorelineLocations = newLocations
+                  }
+                , newLocationsCmds
                 )
 
         GetBaselineInfo ->
@@ -310,7 +353,7 @@ updateModel msg model =
                 Just selection ->
                     let
                         updatedMenu =
-                            Input.dropMenu (Just selection) SelectLocation
+                            Input.dropMenu (Just selection) SelectLocationInput
 
                         updatedLocationsDropdown =
                             model.shorelineLocationsDropdown
@@ -322,7 +365,6 @@ updateModel msg model =
                                 |> encodeOpenLayersCmd
                                 |> olCmd
                             , sendGetVulnRibbonRequest model.env selection
-                            , sendGetHexesRequest model.env selection
                             ]
                         )
 
@@ -465,8 +507,8 @@ updateStrategiesWithStrategyDetails id details strategies =
     let
         currentStrategyId = 
             strategies
-                |> AS.currentStrategy
-                |> Maybe.map (\(Strategy s) -> s.id)
+                |> ZipHelp.tryCurrent
+                |> Maybe.map .id
 
         ( newStrategies, newCmd ) =
             if currentStrategyId == Just id then
@@ -480,11 +522,11 @@ updateStrategiesWithStrategyDetails id details strategies =
                 strategies
                     |> Maybe.map
                         (Zipper.map <|
-                            (\(Strategy s) ->
+                            (\s ->
                                 if s.id == id then
-                                    AS.updateStrategyDetails details (Strategy s)
+                                    AS.updateStrategyDetails details s
                                 else
-                                    Strategy s
+                                    s
                             )
                         )
                     |> \z -> ( z, Cmd.none )
@@ -492,6 +534,34 @@ updateStrategiesWithStrategyDetails id details strategies =
     ( newStrategies, newCmd )
 
 
+selectLocation : (ShorelineExtents -> ShorelineExtents) -> ShorelineExtents -> (ShorelineExtents, Cmd Msg)
+selectLocation selectFn locations =
+    let
+        newLocations = selectFn locations
+
+        newCmds = Cmd.none
+    in
+    (newLocations, newCmds)
+
+
+selectLocationByName : String -> ShorelineExtents -> (ShorelineExtents, Cmd Msg)
+selectLocationByName name locations =
+    selectLocation (SL.findLocationByName name) locations
+
+
+selectHazard : (CoastalHazards -> CoastalHazards) -> CoastalHazards -> (CoastalHazards, Cmd Msg)
+selectHazard selectFn hazards =
+    let
+        newHazards = selectFn hazards
+
+        newCmds = Cmd.none
+    in
+    (newHazards, newCmds)
+
+
+selectHazardByName : String -> CoastalHazards -> (CoastalHazards, Cmd Msg)
+selectHazardByName name hazards =
+    selectHazard (ZipHelp.tryFindFirst <| ZipHelp.matchesName name) hazards
 
 
 selectStrategy : (Strategies -> Strategies) -> Strategies -> (Strategies, Cmd Msg)
@@ -506,7 +576,7 @@ selectStrategy selectFn strategies =
 
         getDetailsCmd = 
             newStrategies
-                |> AS.currentStrategy
+                |> ZipHelp.tryCurrent
                 |> Maybe.andThen AS.loadDetailsFor
                 |> Maybe.map (\id -> getAdaptationStrategyDetailsById id)
                 |> Maybe.withDefault Cmd.none
@@ -518,22 +588,22 @@ selectStrategy selectFn strategies =
 
 selectStrategyById : Scalar.Id -> Strategies -> (Strategies, Cmd Msg)
 selectStrategyById id strategies =
-    selectStrategy (AS.findStrategy id) strategies
+    selectStrategy (ZipHelp.tryFindFirst <| ZipHelp.matchesId id) strategies
 
 
 selectFirstStrategy : Strategies -> (Strategies, Cmd Msg)
 selectFirstStrategy strategies =
-    selectStrategy AS.firstStrategy strategies
+    selectStrategy ZipHelp.tryFirst strategies
 
 
 selectNextStrategy : Strategies -> (Strategies, Cmd Msg)
 selectNextStrategy strategies =
-    selectStrategy AS.nextStrategy strategies
+    selectStrategy ZipHelp.tryNext strategies
 
 
 selectPreviousStrategy : Strategies -> (Strategies, Cmd Msg)
 selectPreviousStrategy strategies =
-    selectStrategy AS.previousStrategy strategies
+    selectStrategy ZipHelp.tryPrevious strategies
 
 
 collapseRightSidebar : Model -> Model
@@ -596,7 +666,7 @@ getSelectedLocationId dropdown =
         |> Maybe.map .id
 
 
-getLocationByName : String -> GqlData SL.ShorelineExtents -> Maybe SL.ShorelineExtent
+getLocationByName : String -> GqlData ShorelineExtents -> Maybe ShorelineExtent
 getLocationByName name data =
     data
         |> Remote.withDefault Nothing

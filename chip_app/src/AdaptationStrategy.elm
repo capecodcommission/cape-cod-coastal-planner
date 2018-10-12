@@ -22,12 +22,11 @@ import Types exposing (GqlData, GqlList)
 -- TYPES
 
 
-type Strategy =
-    Strategy
-        { id : Scalar.Id
-        , name : String
-        , details : GqlData (Maybe StrategyDetails)
-        }
+type alias Strategy =
+    { id : Scalar.Id
+    , name : String
+    , details : GqlData (Maybe StrategyDetails)
+    }
 
 
 type alias Strategies = Maybe (Zipper Strategy)
@@ -80,18 +79,17 @@ type alias Disadvantage = { name : String }
 
 newStrategy : { a | id : Scalar.Id, name : String } -> Strategy
 newStrategy { id, name } = 
-    Strategy
-        { id = id
-        , name = name
-        , details = NotAsked
-        }
+    { id = id
+    , name = name
+    , details = NotAsked
+    }
 
 
 -- ACCESS
 
 
 getStrategyHtmlId : Strategy -> String
-getStrategyHtmlId (Strategy { id }) =
+getStrategyHtmlId { id } =
     case id of
         Scalar.Id theId ->
             "strategy-" ++ theId
@@ -105,71 +103,19 @@ getSelectedStrategyHtmlId strategies =
 
 
 loadDetailsFor : Strategy -> Maybe Scalar.Id
-loadDetailsFor (Strategy s) =
+loadDetailsFor s =
     if Remote.isSuccess s.details == True then
         Nothing
     else
         Just s.id 
 
 
-currentStrategy : Strategies -> Maybe Strategy
-currentStrategy strategies =
-    strategies
-        |> Maybe.map Zipper.current
-
-
-firstStrategy : Strategies -> Strategies
-firstStrategy strategies =
-    strategies
-        |> Maybe.map Zipper.first
-
-
-findStrategy : Scalar.Id -> Strategies -> Strategies
-findStrategy id strategies =
-    let 
-        found = strategies |> Maybe.andThen (Zipper.findFirst (matchesId id))
-    in
-        case found of
-            Just foundStrategies -> Just foundStrategies
-
-            Nothing -> strategies
-
-
-nextStrategy : Strategies -> Strategies
-nextStrategy strategies =
-    let
-        next = strategies |> Maybe.andThen Zipper.next
-    in
-        case next of
-            Just nextStrategies -> Just nextStrategies
-
-            Nothing -> strategies
-
-
-previousStrategy : Strategies -> Strategies
-previousStrategy strategies =
-    let
-        previous = strategies |> Maybe.andThen Zipper.previous
-    in
-        case previous of
-            Just previousStrategies -> Just previousStrategies
-
-            Nothing -> strategies
-
-
-matchesId : Scalar.Id -> Strategy -> Bool
-matchesId (Scalar.Id targetId) (Strategy strategy) =
-    case strategy.id of
-        Scalar.Id theId ->
-            theId == targetId
-
-
 -- UPDATE
 
 
 updateStrategyDetails : (GqlData (Maybe StrategyDetails)) -> Strategy -> Strategy
-updateStrategyDetails newDetails (Strategy ({ details } as strategy)) =
-    Strategy <| { strategy | details = newDetails }
+updateStrategyDetails newDetails ({ details } as strategy) =
+    { strategy | details = newDetails }
 
 
 -- GRAPHQL - QUERY ACTIVE ADAPTATION STRATEGIES

@@ -19,9 +19,9 @@ type Msg
     | GotAdaptationCategories (GqlData (GqlList AS.Category))
     | GotAdaptationBenefits (GqlData (GqlList AS.Benefit))
     | GotCoastalHazards (GqlData (GqlList AS.CoastalHazard))
-    | SelectHazard (Input.SelectMsg AS.CoastalHazard)
+    | SelectHazardInput (Input.SelectMsg AS.CoastalHazard)
     | GotShorelineExtents (GqlData (GqlList SL.ShorelineExtent))
-    | SelectLocation (Input.SelectMsg SL.ShorelineExtent)
+    | SelectLocationInput (Input.SelectMsg SL.ShorelineExtent)
     | GetBaselineInfo
     | GotBaselineInfo (GqlData (Maybe SL.BaselineInfo))
     | CloseBaselineInfo

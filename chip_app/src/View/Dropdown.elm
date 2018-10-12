@@ -13,6 +13,29 @@ import Styles exposing (..)
 import View.Helpers exposing (..)
 
 
+{-| BIG NOTICE TO MAINTAINERS!
+
+    This module needs a total rewrite to a custom Dropdown menu, and is an unfortunate
+    prerequisite to migration to Elm 0.19. The built-in component for style-elements 4.3.0 
+    was discovered to have numerous implementation details that have proven difficult 
+    to work with. I suspect these difficulties are part of the reason why autocompletes 
+    and drop menus were not included in the rewrite of style-elements to elm-ui. 
+
+    Even though style-elements was also ported to Elm 0.19, intact with the autocompletes and
+    drop menus, we cannot take advantage of it to upgrade the app because our hacks to
+    get the behavior we want from the component rely on using `toString` in a dirty way
+    to read SelectMsg states to determine the state of the menu. Elm 0.19 removed `toString`
+    because it was, itself, implemented in a dirty way, moved it to the Debug module, and 
+    added `String.fromInt` and `String.fromFloat` for production use. Furthermore, Debug
+    module functions are sanitized from production builds, so there's no way to rely on 
+    `toString` in any way in Elm 0.19 to accommodate our hacks. 
+
+    Long story short...the sooner we can write a customized Dropdown menu that doesn't rely
+    on the old style-elements component, the sooner we can upgrade to Elm 0.19 and take
+    advantage of all it has to offer. If that can't happen, so be it, but...it should happen :)
+
+-}
+
 type alias Dropdown a =
     { menu : SelectWith { a | name : String } Msg
     , isOpen : Bool
