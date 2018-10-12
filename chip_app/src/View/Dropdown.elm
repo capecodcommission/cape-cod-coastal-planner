@@ -4,24 +4,27 @@ import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Input as Input exposing (..)
 import RemoteData exposing (RemoteData(..))
-import Graphqelm.Http exposing (Error(..))
+import Graphqelm.Http as GHttp exposing (Error(..))
 import String.Extra as SEx
+import List.Zipper as Zipper exposing (Zipper)
 import Message exposing (..)
 import Types exposing (..)
 import Styles exposing (..)
 import View.Helpers exposing (..)
 
 
-type alias Dropdown a b =
-    { data : GqlData { a | items : List { b | name : String } }
-    , menu : SelectWith { b | name : String } Msg
+type alias Dropdown a =
+    { menu : SelectWith { a | name : String } Msg
     , isOpen : Bool
     , name : String
     }
 
 
-view : Dropdown a b -> Element MainStyles Variations Msg
-view dropdown =
+view : 
+    Dropdown a 
+    -> GqlData (Maybe (Zipper { a | name : String }))
+    -> Element MainStyles Variations Msg
+view dropdown data =
     let
         placeholderPadding =
             dropdown.menu
@@ -35,20 +38,23 @@ view dropdown =
             , paddingLeft placeholderPadding
             , paddingRight 16
             , vary SelectMenuOpen dropdown.isOpen
-            , vary SelectMenuError <| RemoteData.isFailure dropdown.data
+            , vary SelectMenuError <| RemoteData.isFailure data
             ]
-            { label = dropdownPlaceholder dropdown.name dropdown.data
+            { label = dropdownPlaceholder dropdown.name data
             , with = dropdown.menu
-            , max = getMaxItems dropdown.data
-            , options = dropdownOptions dropdown.data
+            , max = getMaxItems data
+            , options = dropdownOptions data
             , menu =
                 Input.menu (Header HeaderSubMenu)
                     [ forceTransparent 327 500 ]
-                    (menuItemsView dropdown.data)
+                    (menuItemsView data)
             }
 
 
-dropdownPlaceholder : String -> GqlData { a | items : List { b | name : String } } -> Label MainStyles Variations Msg
+dropdownPlaceholder : 
+    String 
+    -> GqlData (Maybe (Zipper { a | name : String }))
+    -> Label MainStyles Variations Msg
 dropdownPlaceholder name data =
     let
         titlecased =
@@ -77,28 +83,38 @@ dropdownPlaceholder name data =
             }
 
 
-dropdownOptions : GqlData { a | items : List { b | name : String } } -> List (Input.Option MainStyles Variations Msg)
+dropdownOptions : 
+    GqlData (Maybe (Zipper { a | name : String })) 
+    -> List (Input.Option MainStyles Variations Msg)
 dropdownOptions data =
     case data of
-        Success _ ->
+        Success (Just items) ->
             []
 
         _ ->
             [ Input.disabled ]
 
 
-menuItemsView : GqlData { a | items : List { b | name : String } } -> List (Input.Choice { b | name : String } MainStyles Variations Msg)
+menuItemsView : 
+    GqlData (Maybe (Zipper { a | name : String })) 
+    -> List (Input.Choice { a | name : String } MainStyles Variations Msg)
 menuItemsView data =
     case data of
-        Success data ->
-            data.items
-                |> List.indexedMap (menuItemView ((List.length data.items) - 1))
+        Success (Just items) ->
+            let
+                listItems = Zipper.toList items
+            in
+            List.indexedMap (menuItemView ((List.length listItems) - 1)) listItems
 
         _ ->
             []
 
 
-menuItemView : Int -> Int -> { b | name : String } -> Input.Choice { b | name : String } MainStyles Variations Msg
+menuItemView : 
+    Int 
+    -> Int 
+    -> { a | name : String } 
+    -> Input.Choice { a | name : String } MainStyles Variations Msg
 menuItemView lastIndex currentIndex item =
     Input.styledSelectChoice item <|
         (\state ->
@@ -111,23 +127,17 @@ menuItemView lastIndex currentIndex item =
         )
 
 
-getMaxItems : GqlData { a | items : List { b | name : String } } -> Int
+getMaxItems : GqlData (Maybe (Zipper { b | name : String })) -> Int
 getMaxItems data =
     case data of
-        NotAsked ->
-            0
+        Success (Just items) ->
+            List.length <| Zipper.toList items
 
-        Loading ->
-            0
-
-        Success val ->
-            List.length val.items
-
-        Failure _ ->
+        _ -> 
             0
 
 
-errorText : String -> Graphqelm.Http.Error a -> ( String, String )
+errorText : String -> GHttp.Error a -> ( String, String )
 errorText name error =
     error
         |> parseErrors

@@ -134,8 +134,14 @@ sidebarView config =
             ] <| 
                 strategiesView config.strategies
         , footer (AddStrategies StrategiesSidebarFooter)
-            [ width fill, height (px 89) ]
-            ( el NoStyle [ center, verticalCenter ] <| Element.text "APPLY STRATEGY" )
+            [ width fill, height (px 90) ]
+            ( el NoStyle [ center, verticalCenter ] <| 
+                button ActionButton
+                    [ width (px 274)
+                    , height (px 42)
+                    , title "Apply strategy"
+                    ] <| Element.text "APPLY STRATEGY"         
+            )
         ]
 
 
@@ -185,6 +191,11 @@ selectedStrategyView ( Strategy { id, name } as strategy) =
         , on "keydown" <| D.map HandleStrategyKeyboardEvent decodeKeyboardEvent
         , Attr.id <| getStrategyHtmlId strategy
         ] <| paragraph NoStyle [] [ Element.text name ]
+
+
+--
+-- MAIN CONTENT VIEWS 
+--
 
 
 mainContentView : 

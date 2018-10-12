@@ -7,12 +7,13 @@ import Element.Events exposing (onClick)
 import RemoteData exposing (RemoteData(..))
 import Message exposing (..)
 import Types exposing (..)
+import ShorelineLocation as SL
 import Styles exposing (..)
 import View.Helpers exposing (..)
 
 
 type alias BaselineInformation =
-    Dict String BaselineInfo
+    Dict String SL.BaselineInfo
 
 
 modalHeight : Device -> Float
@@ -34,7 +35,7 @@ view :
     { config 
         | device : Device
         , closePath : String
-        , baselineModal : GqlData (Maybe BaselineInfo) 
+        , baselineModal : GqlData (Maybe SL.BaselineInfo) 
     } 
     -> Element MainStyles Variations Msg
 view config =
@@ -83,7 +84,7 @@ headerView :
         | closePath : String
         , device : Device 
     } 
-    -> BaselineInfo 
+    -> SL.BaselineInfo 
     -> Element MainStyles Variations Msg
 headerView { closePath, device } info =
     header (Baseline BaselineInfoHeader)
@@ -111,7 +112,7 @@ headerView { closePath, device } info =
         )
 
 
-mainContentView : { config | device : Device } -> BaselineInfo -> Element MainStyles Variations Msg
+mainContentView : { config | device : Device } -> SL.BaselineInfo -> Element MainStyles Variations Msg
 mainContentView { device } info =
     column NoStyle
         [ scrollbars, height (px <| mainHeight device) ]

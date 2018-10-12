@@ -1,10 +1,8 @@
 module AdaptationStrategy exposing (..)
 
 import List.Zipper as Zipper exposing (..)
-import Graphqelm.Http as GHttp exposing (..)
 import Graphqelm.Operation exposing (RootQuery)
 import Graphqelm.SelectionSet exposing (SelectionSet, with)
-import Graphqelm.Http.GraphqlError exposing (PossiblyParsedData(..))
 import RemoteData as Remote exposing (RemoteData(..))
 import ChipApi.Object
 import ChipApi.Object.AdaptationStrategy as AS
@@ -18,14 +16,11 @@ import ChipApi.Object.AdaptationDisadvantages as AD
 import Graphqelm.OptionalArgument exposing (..)
 import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
-import Types exposing (GqlData)
+import Types exposing (GqlData, GqlList)
 
 
 -- TYPES
 
-
-type alias Strategies = Maybe (Zipper Strategy)
-    
 
 type Strategy =
     Strategy
@@ -33,6 +28,9 @@ type Strategy =
         , name : String
         , details : GqlData (Maybe StrategyDetails)
         }
+
+
+type alias Strategies = Maybe (Zipper Strategy)
 
 
 type alias Category =
@@ -49,6 +47,9 @@ type alias CoastalHazard =
     { name : String
     , description : Maybe String
     }
+
+
+type alias CoastalHazards = Maybe (Zipper CoastalHazard)
 
 
 type alias ImpactScale =
@@ -171,42 +172,6 @@ updateStrategyDetails newDetails (Strategy ({ details } as strategy)) =
     Strategy <| { strategy | details = newDetails }
 
 
-
--- TRANSFORM
-
-
-mapStrategiesFromActiveStrategies : ActiveStrategies -> Strategies
-mapStrategiesFromActiveStrategies data =
-    data.items
-        |> List.map newStrategy
-        |> Zipper.fromList
-
-
-mapErrorFromActiveStrategies : GHttp.Error ActiveStrategies -> GHttp.Error Strategies
-mapErrorFromActiveStrategies error =
-    GHttp.mapError mapStrategiesFromActiveStrategies error
-
-
-mapCategoriesFromAdaptationCategories : AdaptationCategories -> Categories
-mapCategoriesFromAdaptationCategories data =
-    data.items
-
-mapErrorFromAdaptationCategories : GHttp.Error AdaptationCategories -> GHttp.Error Categories
-mapErrorFromAdaptationCategories error =
-    GHttp.mapError mapCategoriesFromAdaptationCategories error
-
-
-mapBenefitsFromAdaptationBenefits : AdaptationBenefits -> Benefits
-mapBenefitsFromAdaptationBenefits data =
-    data.items
-
-
-mapErrorFromAdaptationBenefits : GHttp.Error AdaptationBenefits -> GHttp.Error Benefits
-mapErrorFromAdaptationBenefits error =
-    GHttp.mapError mapBenefitsFromAdaptationBenefits error
-
-
-
 -- GRAPHQL - QUERY ACTIVE ADAPTATION STRATEGIES
 
 
@@ -216,13 +181,13 @@ type alias ActiveStrategy =
     }
 
 
-type alias ActiveStrategies =
-    { items : List ActiveStrategy }
+-- type alias ActiveStrategies =
+--     { items : List ActiveStrategy }
 
 
-queryAdaptationStrategies : SelectionSet ActiveStrategies RootQuery
+queryAdaptationStrategies : SelectionSet (GqlList ActiveStrategy) RootQuery
 queryAdaptationStrategies =
-    Query.selection ActiveStrategies
+    Query.selection GqlList
         |> with 
             (Query.adaptationStrategies 
                 (\optionals -> 
@@ -327,24 +292,26 @@ selectDisadvantage =
 -- GRAPHQL - QUERY LIST OF ADAPTATION CATEGORIES
 
 
-type alias AdaptationCategories =
-    { items : Categories }
-
-
-queryAdaptationCategories : SelectionSet AdaptationCategories RootQuery
+queryAdaptationCategories : SelectionSet (GqlList Category) RootQuery
 queryAdaptationCategories =
-    Query.selection AdaptationCategories
+    Query.selection GqlList
         |> with (Query.adaptationCategories identity selectCategory)
 
 
 -- GRAPHQL - QUERY LIST OF ADAPTATION BENEFITS
 
 
-type alias AdaptationBenefits =
-    { items : Benefits }
-
-
-queryAdaptationBenefits : SelectionSet AdaptationBenefits RootQuery
+queryAdaptationBenefits : SelectionSet (GqlList Benefit) RootQuery
 queryAdaptationBenefits =
-    Query.selection AdaptationBenefits
+    Query.selection GqlList
         |> with (Query.adaptationBenefits identity selectBenefit)
+
+
+-- GRAPHQL - QUERY COASTAL HAZARDS
+
+
+queryCoastalHazards : SelectionSet (GqlList CoastalHazard) RootQuery
+queryCoastalHazards =
+    Query.selection GqlList
+        |> with (Query.coastalHazards identity selectCoastalHazard)
+

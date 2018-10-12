@@ -4,6 +4,7 @@ import Http
 import Json.Encode as E
 import Json.Decode as D exposing (Decoder)
 import Types exposing (..)
+import ShorelineLocation as SL
 import Message exposing (..)
 import Result
 
@@ -19,7 +20,7 @@ port olCmd : E.Value -> Cmd msg
 
 type OpenLayersCmd
     = InitMap
-    | ZoomToShorelineLocation ShorelineExtent
+    | ZoomToShorelineLocation SL.ShorelineExtent
     | LittoralCellsLoaded (Result Http.Error D.Value)
     | RenderVulnerabilityRibbon (Result Http.Error D.Value)
     | ClearZoneOfImpact
@@ -37,7 +38,7 @@ encodeOpenLayersCmd cmd =
         ZoomToShorelineLocation location ->
             E.object
                 [ ( "cmd", E.string "zoom_to_shoreline_location" )
-                , ( "data", encodeShorelineExtent location )
+                , ( "data", SL.encodeShorelineExtent location )
                 ]
 
         LittoralCellsLoaded response ->
@@ -68,6 +69,7 @@ encodeOpenLayersCmd cmd =
 -- SUBSCRIPTION PORTS (INBOUND)
 
 
+
 port olSub : (D.Value -> msg) -> Sub msg
 
 
@@ -79,7 +81,7 @@ decodeOpenLayersSub value =
             case sub of
                 "load_littoral_cells" ->
                     D.field "data"
-                        (D.map4 Extent
+                        (D.map4 SL.Extent
                             (D.field "min_x" D.float)
                             (D.field "min_y" D.float)
                             (D.field "max_x" D.float)

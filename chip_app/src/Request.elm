@@ -11,10 +11,10 @@ import Json.Decode as D
 import ChipApi.Object
 import ChipApi.Object.CoastalHazard as CH
 import ChipApi.Object.ShorelineLocation as SL
---import ChipApi.Object.AdaptationStrategy as AS
 import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
 import Types exposing (..)
+import ShorelineLocation exposing (Extent, ShorelineExtent, BaselineInfo, extentToString, shorelineExtentToExtent)
 import Message exposing (..)
 import AdaptationStrategy 
     exposing 
@@ -22,6 +22,7 @@ import AdaptationStrategy
         , queryAdaptationStrategyById 
         , queryAdaptationCategories
         , queryAdaptationBenefits
+        , queryCoastalHazards
         )
 
 
@@ -71,18 +72,6 @@ getAdaptationBenefits =
 --
 
 
-queryCoastalHazards : SelectionSet CoastalHazards RootQuery
-queryCoastalHazards =
-    Query.selection CoastalHazards
-        |> with (Query.coastalHazards identity coastalHazards)
-
-
-coastalHazards : SelectionSet Types.CoastalHazard ChipApi.Object.CoastalHazard
-coastalHazards =
-    CH.selection Types.CoastalHazard
-        |> with CH.name
-
-
 getCoastalHazards : Cmd Msg
 getCoastalHazards =    
     queryCoastalHazards
@@ -95,9 +84,9 @@ getCoastalHazards =
 --
 
 
-queryShorelineExtents : SelectionSet ShorelineExtents RootQuery
+queryShorelineExtents : SelectionSet (GqlList ShorelineExtent) RootQuery
 queryShorelineExtents =
-    Query.selection ShorelineExtents
+    Query.selection GqlList
         |> with (Query.shorelineLocations identity shorelineLocations)
 
 

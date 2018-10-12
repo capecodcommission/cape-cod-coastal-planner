@@ -3,11 +3,12 @@ module Types exposing (..)
 import Animation
 import Animations exposing (..)
 import Http exposing (..)
-import Graphqelm.Http
+import Graphqelm.Http as GHttp
 import RemoteData exposing (RemoteData)
 import ChipApi.Scalar as Scalar
 import Window
 import Dict exposing (Dict)
+import List.Zipper as Zipper exposing (Zipper)
 import Json.Encode as E
 import Json.Encode.Extra as EEx
 import Json.Decode as D exposing (Decoder)
@@ -61,87 +62,99 @@ type Openness
 
 
 type alias GqlData a =
-    RemoteData (Graphqelm.Http.Error a) a
+    RemoteData (GHttp.Error a) a
 
 
-type alias CoastalHazard =
-    { name : String
-    }
+type alias GqlList a =
+    { items : List a }
 
 
-type alias CoastalHazards =
-    { items : List CoastalHazard
-    }
+unwrapGqlList : GqlList a -> List a
+unwrapGqlList gqlList =
+    gqlList.items
 
 
-type alias ShorelineExtent =
-    { id : Scalar.Id
-    , name : String
-    , minX : Float
-    , minY : Float
-    , maxX : Float
-    , maxY : Float
-    }
+mapGqlError : (a -> b) -> GHttp.Error a -> GHttp.Error b
+mapGqlError fn error =
+    GHttp.mapError fn error
 
 
-shorelineExtentToExtent : ShorelineExtent -> Extent
-shorelineExtentToExtent { minX, minY, maxX, maxY } =
-    Extent minX minY maxX maxY
+zipMapGqlList : (a -> b) -> GqlList a -> Maybe (Zipper b)
+zipMapGqlList fn gqlList =
+    gqlList.items
+        |> List.map fn
+        |> Zipper.fromList
 
 
-encodeShorelineExtent : ShorelineExtent -> E.Value
-encodeShorelineExtent location =
-    let
-        extent =
-            [ location.minX, location.minY, location.maxX, location.maxY ]
-                |> List.map E.float
-    in
-        E.object
-            [ ( "name", E.string location.name )
-            , ( "extent", E.list extent )
-            ]
+
+-- type alias ShorelineExtent =
+--     { id : Scalar.Id
+--     , name : String
+--     , minX : Float
+--     , minY : Float
+--     , maxX : Float
+--     , maxY : Float
+--     }
 
 
-type alias ShorelineExtents =
-    { items : List ShorelineExtent
-    }
+-- shorelineExtentToExtent : ShorelineExtent -> Extent
+-- shorelineExtentToExtent { minX, minY, maxX, maxY } =
+--     Extent minX minY maxX maxY
 
 
-type alias BaselineInfo =
-    { id : Scalar.Id
-    , name : String
-    , imagePath : Maybe String
-    , lengthMiles : Scalar.Decimal
-    , impervPercent : Scalar.Decimal
-    , criticalFacilitiesCount : Int
-    , coastalStructuresCount : Int
-    , workingHarbor : Bool
-    , publicBuildingsCount : Int
-    , saltMarshAcres : Scalar.Decimal
-    , eelgrassAcres : Scalar.Decimal
-    , coastalDuneAcres : Scalar.Decimal
-    , rareSpeciesAcres : Scalar.Decimal
-    , publicBeachCount : Int
-    , recreationOpenSpaceAcres : Scalar.Decimal
-    , townWaysToWater : Int
-    , nationalSeashore : Bool
-    , totalAssessedValue : Scalar.Decimal
-    }
+-- encodeShorelineExtent : ShorelineExtent -> E.Value
+-- encodeShorelineExtent location =
+--     let
+--         extent =
+--             [ location.minX, location.minY, location.maxX, location.maxY ]
+--                 |> List.map E.float
+--     in
+--         E.object
+--             [ ( "name", E.string location.name )
+--             , ( "extent", E.list extent )
+--             ]
 
 
-type alias Extent =
-    { minX : Float
-    , minY : Float
-    , maxX : Float
-    , maxY : Float
-    }
+-- type alias ShorelineExtents =
+--     { items : List ShorelineExtent
+--     }
 
 
-extentToString : Extent -> String
-extentToString extent =
-    [ extent.minX, extent.minY, extent.maxX, extent.maxY ]
-        |> List.map toString
-        |> String.join ","
+-- type alias BaselineInfo =
+--     { id : Scalar.Id
+--     , name : String
+--     , imagePath : Maybe String
+--     , lengthMiles : Scalar.Decimal
+--     , impervPercent : Scalar.Decimal
+--     , criticalFacilitiesCount : Int
+--     , coastalStructuresCount : Int
+--     , workingHarbor : Bool
+--     , publicBuildingsCount : Int
+--     , saltMarshAcres : Scalar.Decimal
+--     , eelgrassAcres : Scalar.Decimal
+--     , coastalDuneAcres : Scalar.Decimal
+--     , rareSpeciesAcres : Scalar.Decimal
+--     , publicBeachCount : Int
+--     , recreationOpenSpaceAcres : Scalar.Decimal
+--     , townWaysToWater : Int
+--     , nationalSeashore : Bool
+--     , totalAssessedValue : Scalar.Decimal
+--     }
+
+
+-- type alias Extent =
+--     { minX : Float
+--     , minY : Float
+--     , maxX : Float
+--     , maxY : Float
+--     }
+
+
+-- extentToString : Extent -> String
+-- extentToString extent =
+--     [ extent.minX, extent.minY, extent.maxX, extent.maxY ]
+--         |> List.map toString
+--         |> String.join ","
 
 
 encodeRawResponse : Result Http.Error D.Value -> E.Value

@@ -6,6 +6,7 @@ import Animation
 import Window
 import Types exposing (..)
 import AdaptationStrategy as AS
+import ShorelineLocation as SL
 import Json.Decode as D
 import Http
 import Keyboard.Event exposing (KeyboardEvent)
@@ -15,16 +16,16 @@ import ChipApi.Scalar as Scalar
 type Msg
     = Noop
     | UrlChange Navigation.Location
-    | GotAdaptationCategories (GqlData AS.AdaptationCategories)
-    | GotAdaptationBenefits (GqlData AS.AdaptationBenefits)
-    | GotCoastalHazards (GqlData CoastalHazards)
-    | SelectHazard (Input.SelectMsg CoastalHazard)
-    | GotShorelineExtents (GqlData ShorelineExtents)
-    | SelectLocation (Input.SelectMsg ShorelineExtent)
+    | GotAdaptationCategories (GqlData (GqlList AS.Category))
+    | GotAdaptationBenefits (GqlData (GqlList AS.Benefit))
+    | GotCoastalHazards (GqlData (GqlList AS.CoastalHazard))
+    | SelectHazard (Input.SelectMsg AS.CoastalHazard)
+    | GotShorelineExtents (GqlData (GqlList SL.ShorelineExtent))
+    | SelectLocation (Input.SelectMsg SL.ShorelineExtent)
     | GetBaselineInfo
-    | GotBaselineInfo (GqlData (Maybe BaselineInfo))
+    | GotBaselineInfo (GqlData (Maybe SL.BaselineInfo))
     | CloseBaselineInfo
-    | LoadLittoralCells Extent
+    | LoadLittoralCells SL.Extent
     | LoadLittoralCellsResponse (Result Http.Error D.Value)
     | MapSelectLittoralCell String
     | LoadVulnerabilityRibbonResponse (Result Http.Error D.Value)
@@ -33,7 +34,7 @@ type Msg
     | CancelZoneOfImpactSelection
     | PickStrategy
     | CloseStrategyModal
-    | GotActiveStrategies (GqlData AS.ActiveStrategies)
+    | GotActiveStrategies (GqlData (GqlList AS.ActiveStrategy))
     | SelectStrategy Scalar.Id
     | HandleStrategyKeyboardEvent KeyboardEvent
     | GotStrategyDetails Scalar.Id (GqlData (Maybe AS.StrategyDetails))
