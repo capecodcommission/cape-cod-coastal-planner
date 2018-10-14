@@ -363,17 +363,17 @@ categoriesView allCategories stratCategories =
                 |> categoriesRowView
         
 
-categoriesRowView : List (Element MainStyles Variations Msg) -> Element MainStyles Variations Msg
+categoriesRowView : List (String, Element MainStyles Variations Msg) -> Element MainStyles Variations Msg
 categoriesRowView views =
     el NoStyle 
         [ alignRight 
         , moveDown 50
         , moveLeft 50
         ] <| 
-        row NoStyle [ spacingXY 20 0 ] views
+        Keyed.row NoStyle [ spacingXY 20 0 ] views
 
 
-categoryView : Bool -> Int -> Category -> Element MainStyles Variations Msg
+categoryView : Bool -> Int -> Category -> (String, Element MainStyles Variations Msg)
 categoryView matched index category = 
     let
         srcPath =
@@ -382,8 +382,9 @@ categoryView matched index category =
             else 
                 category.imagePathInactive
     in
-    Keyed.column NoStyle
-        [ minWidth (px 84) ]
+    ( "category_view_" ++ toString index
+    , Keyed.column NoStyle
+        [ width (px 84), height (px 100) ]
         [ case srcPath of
             Just path ->
                 categoryIconView path category.name matched
@@ -392,24 +393,32 @@ categoryView matched index category =
                 categoryMissingIconView index "?" matched
         , categoryLabelView category.name matched
         ]
+    )
+    
 
 
-categoryLoadingView : Int -> Element MainStyles Variations Msg
+categoryLoadingView : Int -> ( String, Element MainStyles Variations Msg )
 categoryLoadingView index =
-    Keyed.column NoStyle
-        [ minWidth (px 84) ]
+    ( "category_loading_view_" ++ toString index
+    , Keyed.column NoStyle
+        [ width (px 84), height (px 100) ]
         [ categoryMissingIconView index "..." False 
         , categoryLabelView "loading" False 
         ]
+    )
+    
 
 
-categoryErrorView : Int -> Element MainStyles Variations Msg
+categoryErrorView : Int -> (String, Element MainStyles Variations Msg)
 categoryErrorView index =
-    Keyed.column NoStyle
-        [ minWidth (px 84) ]
+    ( "category_error_view_" ++ toString index
+    , Keyed.column NoStyle
+        [ width (px 84), height (px 100) ]
         [ categoryMissingIconView index "!" False 
         , categoryLabelView "error" False
         ]
+    )
+    
 
 
 categoryLabelView : String -> Bool -> ( String, Element MainStyles Variations Msg )
@@ -435,7 +444,7 @@ categoryIconView srcPath captionText matched =
                 "inactive"
     in
     ( "category_icon_" ++ captionText ++ "_" ++ keySuffix
-    , image NoStyle [ center, verticalCenter ]
+    , image NoStyle [ center, verticalCenter, width (px 84), height (px 84) ]
         { src = srcPath, caption = captionText  }
     )
     
