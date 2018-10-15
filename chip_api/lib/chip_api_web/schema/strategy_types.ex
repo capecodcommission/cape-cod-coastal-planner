@@ -37,6 +37,13 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.coastal_hazards/3
         end
 
+        @desc "A coastal hazard matched on id"
+        field :coastal_hazard, :coastal_hazard do
+            @desc "The ID of the coastal hazard"
+            arg :id, non_null(:id)
+            resolve &Resolvers.Strategies.coastal_hazard/3
+        end
+
         @desc "The list of geographic scales of impact"
         field :impact_scales, non_null(list_of(non_null(:impact_scale))) do
             arg :order, type: :sort_order, default_value: :asc
@@ -57,6 +64,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
         @desc "Is currently available for planning or not"
         field :is_active, :boolean
+
+        @desc "Is applicable to the given coastal hazard"
+        field :hazard_id, :id
     end
 
     @desc "An adaptation strategy"
@@ -158,7 +168,6 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         end
     end
 
-    # TODO Advantage
     @desc "An adaptation advantage"
     object :adaptation_advantages do
         
@@ -167,7 +176,6 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
     end
 
-    # TODO Disadvantage
     @desc "An adaptation disadvantage"
     object :adaptation_disadvantages do
         
@@ -178,6 +186,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
     @desc "A coastal hazard"
     object :coastal_hazard do
+
+        @desc "The ID of the hazard"
+        field :id, non_null(:id)
         
         @desc "The name of the hazard"
         field :name, non_null(:string)

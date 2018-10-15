@@ -32,6 +32,13 @@ description =
     Object.fieldDecoder "description" [] (Decode.string |> Decode.nullable)
 
 
+{-| The ID of the hazard
+-}
+id : Field ChipApi.Scalar.Id ChipApi.Object.CoastalHazard
+id =
+    Object.fieldDecoder "id" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.Id)
+
+
 {-| The name of the hazard
 -}
 name : Field String ChipApi.Object.CoastalHazard

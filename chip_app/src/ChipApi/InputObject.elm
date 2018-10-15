@@ -50,19 +50,19 @@ buildStrategyFilter fillOptionals =
     let
         optionals =
             fillOptionals
-                { isActive = Absent, name = Absent }
+                { hazardId = Absent, isActive = Absent, name = Absent }
     in
-    { isActive = optionals.isActive, name = optionals.name }
+    { hazardId = optionals.hazardId, isActive = optionals.isActive, name = optionals.name }
 
 
 type alias StrategyFilterOptionalFields =
-    { isActive : OptionalArgument Bool, name : OptionalArgument String }
+    { hazardId : OptionalArgument ChipApi.Scalar.Id, isActive : OptionalArgument Bool, name : OptionalArgument String }
 
 
 {-| Type for the StrategyFilter input object.
 -}
 type alias StrategyFilter =
-    { isActive : OptionalArgument Bool, name : OptionalArgument String }
+    { hazardId : OptionalArgument ChipApi.Scalar.Id, isActive : OptionalArgument Bool, name : OptionalArgument String }
 
 
 {-| Encode a StrategyFilter into a value that can be used as an argument.
@@ -70,4 +70,4 @@ type alias StrategyFilter =
 encodeStrategyFilter : StrategyFilter -> Value
 encodeStrategyFilter input =
     Encode.maybeObject
-        [ ( "isActive", Encode.bool |> Encode.optional input.isActive ), ( "name", Encode.string |> Encode.optional input.name ) ]
+        [ ( "hazardId", (\(ChipApi.Scalar.Id raw) -> Encode.string raw) |> Encode.optional input.hazardId ), ( "isActive", Encode.bool |> Encode.optional input.isActive ), ( "name", Encode.string |> Encode.optional input.name ) ]
