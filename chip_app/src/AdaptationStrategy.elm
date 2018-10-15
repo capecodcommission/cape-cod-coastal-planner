@@ -1,8 +1,9 @@
 module AdaptationStrategy exposing (..)
 
+import Dict exposing (Dict)
 import List.Zipper as Zipper exposing (..)
 import Graphqelm.Operation exposing (RootQuery)
-import Graphqelm.SelectionSet exposing (SelectionSet, with)
+import Graphqelm.SelectionSet exposing (..)
 import RemoteData as Remote exposing (RemoteData(..))
 import ChipApi.Object
 import ChipApi.Object.AdaptationStrategy as AS
@@ -19,21 +20,88 @@ import ChipApi.Scalar as Scalar
 import Types exposing (GqlData, GqlList)
 
 
--- TYPES
+--
+-- STRATEGIES BY HAZARD
+--
+
+
+type alias StrategiesByHazard = 
+    Dict HazardId (List StrategyId)
+
+--
+-- COASTAL HAZARDS
+--
+
+
+type alias HazardId = 
+    Scalar.Id
+
+
+type alias CoastalHazard =
+    { id : HazardId
+    , name : String
+    , description : Maybe String
+    }
+
+
+type alias CoastalHazards = 
+    Dict HazardId CoastalHazard
+
+
+type alias CoastalHazardZipper = 
+    Zipper HazardId
+
+
+--
+-- ADAPTATION STRATEGIES
+--
+
+
+type alias StrategyId = 
+    Scalar.Id
 
 
 type alias Strategy =
-    { id : Scalar.Id
+    { id : StrategyId
     , name : String
     , details : GqlData (Maybe StrategyDetails)
     }
 
 
-type alias Strategies = Maybe (Zipper Strategy)
+type alias Strategies = 
+    Dict StrategyId Strategy
+
+
+type alias StrategyZipper = 
+    Zipper StrategyId
+
+
+--
+-- STRATEGY DETAILS, ETC.
+--
+
+
+type alias StrategyDetails =
+    { description : Maybe String
+    , currentlyPermittable : Maybe String
+    , imagePath : Maybe String
+    , categories : List CategoryId
+    , hazards : List CoastalHazard
+    , scales : List ImpactScale
+    , placements : List Placement
+    , benefits : List Benefit
+    , advantages : List Advantage
+    , disadvantages : List Disadvantage
+    }
+
+
+type alias CategoryId =
+    Scalar.Id
 
 
 type alias Category =
-    { name : String
+    { id : CategoryId
+    , name : String
     , description : Maybe String
     , imagePathActive : Maybe String
     , imagePathInactive : Maybe String
@@ -41,17 +109,7 @@ type alias Category =
 
 
 type alias Categories =
-    List Category
-
-
-type alias CoastalHazard =
-    { id : Scalar.Id
-    , name : String
-    , description : Maybe String
-    }
-
-
-type alias CoastalHazards = Maybe (Zipper CoastalHazard)
+    Dict CategoryId Category
 
 
 type alias ImpactScale =
@@ -61,26 +119,30 @@ type alias ImpactScale =
     }
 
 
-type alias Placement = { name : String }
+type alias Placement = 
+    { name : String }
 
 
-type alias Benefit = { name : String }
+type alias Benefit = 
+    { name : String }
 
 
 type alias Benefits =
     List Benefit
 
 
-type alias Advantage = { name : String }
+type alias Advantage = 
+    { name : String }
 
 
-type alias Disadvantage = { name : String }
+type alias Disadvantage = 
+    { name : String }
 
 
 -- CREATE
 
 
-newStrategy : { a | id : Scalar.Id, name : String } -> Strategy
+newStrategy : { a | id : StrategyId, name : String } -> Strategy
 newStrategy { id, name } = 
     { id = id
     , name = name
@@ -91,18 +153,18 @@ newStrategy { id, name } =
 -- ACCESS
 
 
-getStrategyHtmlId : Strategy -> String
-getStrategyHtmlId { id } =
+getStrategyHtmlId : StrategyId -> String
+getStrategyHtmlId id =
     case id of
         Scalar.Id theId ->
             "strategy-" ++ theId
 
 
-getSelectedStrategyHtmlId : Strategies -> Maybe String
+getSelectedStrategyHtmlId : StrategyZipper -> String
 getSelectedStrategyHtmlId strategies =
     strategies
-        |> Maybe.map Zipper.current
-        |> Maybe.map getStrategyHtmlId
+        |> Zipper.current
+        |> getStrategyHtmlId
 
 
 loadDetailsFor : Strategy -> Maybe ( Maybe Scalar.Id, GqlData (Maybe StrategyDetails) )
@@ -130,20 +192,26 @@ type alias ActiveStrategy =
     }
 
 
--- type alias ActiveStrategies =
---     { items : List ActiveStrategy }
 
-
-queryAdaptationStrategies : SelectionSet (GqlList ActiveStrategy) RootQuery
-queryAdaptationStrategies =
+queryAdaptationStrategies : Maybe Scalar.Id -> SelectionSet (GqlList ActiveStrategy) RootQuery
+queryAdaptationStrategies hazardId =
+    let
+        strategyFilter =
+            Present 
+                { isActive = Present True
+                , hazardId = 
+                    hazardId 
+                        |> Maybe.map Present 
+                        |> Maybe.withDefault Absent
+                , name = Absent 
+                }
+                
+    in
     Query.selection GqlList
         |> with 
-            (Query.adaptationStrategies 
-                (\optionals -> 
-                    { optionals 
-                        | filter = Present { isActive = Present True, name = Absent }
-                    } 
-                ) selectActiveAdaptationStrategies
+            (Query.adaptationStrategies
+                (\optionals -> { optionals | filter = strategyFilter }) 
+                selectActiveAdaptationStrategies
             )
 
 
@@ -155,19 +223,6 @@ selectActiveAdaptationStrategies =
         
 
 -- GRAPHQL - QUERY ADAPTATION STRATEGY + DETAILS BY ID
-
-type alias StrategyDetails =
-    { description : Maybe String
-    , currentlyPermittable : Maybe String
-    , imagePath : Maybe String
-    , categories : List Category
-    , hazards : List CoastalHazard
-    , scales : List ImpactScale
-    , placements : List Placement
-    , benefits : List Benefit
-    , advantages : List Advantage
-    , disadvantages : List Disadvantage
-    }
 
 
 queryAdaptationStrategyById : Scalar.Id -> SelectionSet (Maybe StrategyDetails) RootQuery
@@ -182,7 +237,7 @@ selectStrategyDetails =
         |> with AS.description
         |> with AS.currentlyPermittable
         |> with AS.imagePath
-        |> with (AS.categories selectCategory)
+        |> with (AS.categories selectCategoryId)
         |> with (AS.hazards selectCoastalHazard)
         |> with (AS.scales selectImpactScale)
         |> with (AS.placements selectPlacement)
@@ -191,9 +246,15 @@ selectStrategyDetails =
         |> with (AS.disadvantages selectDisadvantage)
 
 
+selectCategoryId : SelectionSet CategoryId ChipApi.Object.AdaptationCategory
+selectCategoryId =
+    fieldSelection AC.id
+
+
 selectCategory : SelectionSet Category ChipApi.Object.AdaptationCategory
 selectCategory =
     AC.selection Category
+        |> with AC.id
         |> with AC.name
         |> with AC.description
         |> with AC.imagePathActive

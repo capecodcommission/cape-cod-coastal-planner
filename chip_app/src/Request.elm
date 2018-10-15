@@ -16,7 +16,7 @@ import ChipApi.Scalar as Scalar
 import Types exposing (..)
 import ShorelineLocation exposing (Extent, ShorelineExtent, BaselineInfo, extentToString, shorelineExtentToExtent)
 import Message exposing (..)
-import AdaptationStrategy 
+import AdaptationStrategy as AS
     exposing 
         ( queryAdaptationStrategies
         , queryAdaptationStrategyById 
@@ -31,9 +31,9 @@ import AdaptationStrategy
 --
 
 
-getActiveAdaptationStrategies : Cmd Msg
-getActiveAdaptationStrategies =
-    queryAdaptationStrategies
+getActiveAdaptationStrategiesByHazard : AS.CoastalHazard -> Cmd Msg
+getActiveAdaptationStrategiesByHazard hazard =
+    queryAdaptationStrategies (Just hazard.id)
         |> queryRequest "./api"
         |> send (Remote.fromResult >> GotActiveStrategies)
 

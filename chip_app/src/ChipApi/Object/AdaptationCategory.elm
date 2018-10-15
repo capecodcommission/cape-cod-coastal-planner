@@ -32,6 +32,13 @@ description =
     Object.fieldDecoder "description" [] (Decode.string |> Decode.nullable)
 
 
+{-| The ID of the category
+-}
+id : Field ChipApi.Scalar.Id ChipApi.Object.AdaptationCategory
+id =
+    Object.fieldDecoder "id" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.Id)
+
+
 {-| The server path to an image of the adaptation category when it is applicable
 -}
 imagePathActive : Field (Maybe String) ChipApi.Object.AdaptationCategory

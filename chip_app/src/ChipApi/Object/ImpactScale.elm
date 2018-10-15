@@ -32,6 +32,13 @@ description =
     Object.fieldDecoder "description" [] (Decode.string |> Decode.nullable)
 
 
+{-| The ID of the scale of impact
+-}
+id : Field ChipApi.Scalar.Id ChipApi.Object.ImpactScale
+id =
+    Object.fieldDecoder "id" [] (Decode.oneOf [ Decode.string, Decode.float |> Decode.map toString, Decode.int |> Decode.map toString, Decode.bool |> Decode.map toString ] |> Decode.map ChipApi.Scalar.Id)
+
+
 {-| The impact is an integer representing the relative scale of impact. A larger number means a larger scale
 -}
 impact : Field Int ChipApi.Object.ImpactScale

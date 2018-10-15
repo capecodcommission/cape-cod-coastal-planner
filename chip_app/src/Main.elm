@@ -21,7 +21,7 @@ import List.Zipper as Zipper
 import ZipperHelpers as ZipHelp
 import Keyboard.Key exposing (Key(Up, Down, Enter, Escape))
 import Types exposing (..)
-import AdaptationStrategy as AS exposing (Strategy, Strategies, StrategyDetails, CoastalHazards)
+import AdaptationStrategy as AS exposing (..)
 import ShorelineLocation as SL exposing (BaselineInfo, ShorelineExtent, ShorelineExtents)
 import Message exposing (..)
 import Request exposing (..)
@@ -52,10 +52,14 @@ type alias Model =
     , closePath : String
     , trianglePath : String
     , zoiPath : String
-    , adaptationCategories : GqlData AS.Categories
-    , adaptationBenefits : GqlData AS.Benefits
-    , coastalHazards : GqlData AS.CoastalHazards
-    , coastalHazardsDropdown : Dropdown AS.CoastalHazard
+    , categories : GqlData AS.Categories
+    , benefits : GqlData AS.Benefits
+    , hazards : GqlData AS.CoastalHazards
+    , hazardSelections : Maybe AS.CoastalHazardZipper
+    , strategies : GqlData AS.Strategies
+    , strategiesByHazard : GqlData AS.StrategiesByHazard
+    , strategySelections : Maybe AS.StrategyZipper
+    , strategiesModalOpenness : Openness
     , shorelineLocations : GqlData ShorelineExtents
     , shorelineLocationsDropdown : Dropdown ShorelineExtent
     , baselineInformation : BaselineInformation
@@ -65,8 +69,6 @@ type alias Model =
     , rightSidebarOpenness : Openness
     , rightSidebarFx : Animation.State
     , rightSidebarToggleFx : Animation.State
-    , strategies : GqlData Strategies
-    , strategiesModalOpenness : Openness
     }
 
 
@@ -87,12 +89,13 @@ initialModel flags =
         NotAsked
         -- Adaptation Benefits
         NotAsked
-        -- Coastal Hazards + Menu
-        RemoteData.Loading
-        { menu = Input.dropMenu Nothing SelectHazardInput
-        , isOpen = False
-        , name = "Coastal Hazard"
-        }
+        -- Coastal Hazards
+        NotAsked
+        Nothing
+        -- Adaptation Strategies
+        NotAsked
+        NotAsked
+        Nothing
         -- Shoreline Location + Menu
         RemoteData.Loading
         { menu = Input.dropMenu Nothing SelectLocationInput
@@ -111,9 +114,6 @@ initialModel flags =
         Closed
         (Animation.style <| .closed <| Animations.rightSidebarStates)
         (Animation.style <| .rotateNeg180 <| Animations.toggleStates)
-        -- strategies
-        NotAsked
-        Closed
 
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -200,7 +200,6 @@ updateModel msg model =
                             (zipMapGqlList identity)
                             (mapGqlError <| zipMapGqlList identity)
                             
-
                 updatedMenu =
                     newHazards
                         |> Remote.toMaybe
@@ -396,8 +395,14 @@ updateModel msg model =
             )
 
         PickStrategy ->
-            case model.strategies of
-                Success (Just strategies) ->
+            let
+                ( hazardData, strategyData ) =
+                    model.strategies
+                        |> Maybe.map Zipper.current
+                        |> Maybe.withDefault ( NotAsked, NotAsked )
+            in
+            case ( hazardData, strategyData ) of
+                ( _, Success (Just strategies) ) ->
                     let
                         newCmd =
                             case AS.getSelectedStrategyHtmlId (Just strategies) of
@@ -414,11 +419,11 @@ updateModel msg model =
                     , newCmd
                     )
 
-                _ ->
+                ( _, Success (Just hazards) ) ->
                     ( model
                         |> collapseRightSidebar
                         |> \m -> { m | strategies = Loading, strategiesModalOpenness = Open }
-                    , getActiveAdaptationStrategies
+                    , getActiveAdaptationStrategiesByHazard
                     )
 
         CloseStrategyModal ->
@@ -752,7 +757,12 @@ view app =
                                     [ getRightSidebarChildViews model
                                         |> RSidebar.view model
                                     ]
-                            , StrategiesModal.view model
+                            , case config.strategiesModalOpenness of
+                                Closed ->
+                                    el NoStyle [] empty
+
+                                Open ->
+                                    StrategiesModal.view model
                             ]
                     ]
 

@@ -133,6 +133,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
     @desc "An adaptation category"
     object :adaptation_category do
+
+        @desc "The ID of the category"
+        field :id, non_null(:id)
         
         @desc "The name of the category"
         field :name, non_null(:string)
@@ -158,6 +161,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
     @desc "An adaptation benefit"
     object :adaptation_benefit do
+
+        @desc "The ID of the benefit"
+        field :id, non_null(:id)
         
         @desc "The name of the benefit"
         field :name, non_null(:string)
@@ -204,6 +210,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
     @desc "A geographic scale of impact"
     object :impact_scale do
+
+        @desc "The ID of the scale of impact"
+        field :id, non_null(:id)
 
         @desc "The name of the scale of impact"        
         field :name, non_null(:string)

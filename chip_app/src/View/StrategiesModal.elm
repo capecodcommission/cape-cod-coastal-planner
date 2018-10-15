@@ -39,9 +39,16 @@ activeStrategiesHeight device =
     (modalHeight device) - (sidebarHeaderHeight + sidebarFooterHeight)
 
 
-strategiesToCurrentDetails : GqlData Strategies -> ( Maybe String, GqlData (Maybe StrategyDetails) )
+strategiesToCurrentDetails : StrategiesByHazard -> ( Maybe String, GqlData (Maybe StrategyDetails) )
 strategiesToCurrentDetails data =
-    case data of
+    let
+        strategiesByHazard =
+            data
+                |> Maybe.map Zipper.current
+                |> Maybe.map Tuple.second
+                |> Maybe.withDefault NotAsked    
+    in
+    case strategiesByHazard of
         NotAsked -> 
             ( Nothing, NotAsked )
 
@@ -60,36 +67,17 @@ strategiesToCurrentDetails data =
             ( Nothing, Failure <| mapError (always Nothing) err )
 
 
-view :
-    { config
-         | device : Device
-         , closePath : String
-         , adaptationCategories : GqlData Categories
-         , adaptationBenefits : GqlData Benefits
-         , coastalHazards : GqlData CoastalHazards
-         , strategies : GqlData Strategies
-         , strategiesModalOpenness : Openness
-    }
-    -> Element MainStyles Variations Msg
-view config =
-    case config.strategiesModalOpenness of
-        Closed ->
-            el NoStyle [] empty
 
-        Open ->
-            modalView config
-
-
-modalView : 
+view : 
     { config 
         | device : Device
         , closePath : String
         , adaptationCategories : GqlData Categories
         , adaptationBenefits : GqlData Benefits
-        , strategies : GqlData Strategies
+        , strategies : StrategiesByHazard --GqlData Strategies
     }
     -> Element MainStyles Variations Msg
-modalView config =
+view config =
     column NoStyle
         []
         [ modal (Modal ModalBackground)
@@ -114,7 +102,7 @@ modalView config =
 sidebarView :
     { config
         | device: Device
-        , strategies : GqlData Strategies
+        , strategies : StrategiesByHazard --GqlData Strategies
     }
     -> Element MainStyles Variations Msg
 sidebarView config =
@@ -147,31 +135,38 @@ sidebarView config =
         ]
 
 
-strategiesView : GqlData Strategies -> List (Element MainStyles Variations Msg)
-strategiesView data = 
- case data of
-    NotAsked ->
-        [ el NoStyle [ center, verticalCenter ] <| Element.text "Reload Strategies"
-        ]
+strategiesView : StrategiesByHazard -> List (Element MainStyles Variations Msg)
+strategiesView data =
+    let
+        strategiesByHazard =
+            data
+                |> Maybe.map Zipper.current
+                |> Maybe.map Tuple.second
+                |> Maybe.withDefault NotAsked
+    in
+    case strategiesByHazard of
+        NotAsked ->
+            [ el NoStyle [ center, verticalCenter ] <| Element.text "Reload Strategies"
+            ]
 
-    Loading ->
-        [ el NoStyle [ center, verticalCenter ] <| Element.text "Loading Strategies"
-        ]
+        Loading ->
+            [ el NoStyle [ center, verticalCenter ] <| Element.text "Loading Strategies"
+            ]
 
-    Success (Just strategies) ->
-        ( Zipper.before strategies |> List.map strategyView )
-          ++ [ Zipper.current strategies |> selectedStrategyView ]
-          ++ ( Zipper.after strategies |> List.map strategyView )
-        
+        Success (Just strategies) ->
+            ( Zipper.before strategies |> List.map strategyView )
+            ++ [ Zipper.current strategies |> selectedStrategyView ]
+            ++ ( Zipper.after strategies |> List.map strategyView )
+            
 
-    Success Nothing ->
-        [ el NoStyle [ center, verticalCenter ] <| Element.text "No active strategies found"
-        ]
+        Success Nothing ->
+            [ el NoStyle [ center, verticalCenter ] <| Element.text "No active strategies found"
+            ]
 
-    Failure err ->
-        [ el NoStyle [ center, verticalCenter ] <| Element.text "Error loading strategies"
-        , el NoStyle [ center, verticalCenter ] <| Element.text "Reload Strategies"
-        ]
+        Failure err ->
+            [ el NoStyle [ center, verticalCenter ] <| Element.text "Error loading strategies"
+            , el NoStyle [ center, verticalCenter ] <| Element.text "Reload Strategies"
+            ]
 
 
 strategyView : Strategy -> Element MainStyles Variations Msg
@@ -206,7 +201,7 @@ mainContentView :
         , closePath : String
         , adaptationCategories : GqlData Categories
         , adaptationBenefits : GqlData Benefits
-        , strategies : GqlData Strategies
+        , strategies : StrategiesByHazard --GqlData Strategies
     }
     -> Element MainStyles Variations Msg
 mainContentView config =
