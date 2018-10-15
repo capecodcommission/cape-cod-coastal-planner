@@ -35,6 +35,10 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_hazards(args)}
     end
 
+    def coastal_hazard(_, %{id: id}, _) do
+        {:ok, Strategies.get_hazard(id)}
+    end
+
     def impact_scales(_, args, _) do
         {:ok, Strategies.list_scales(args)}
     end

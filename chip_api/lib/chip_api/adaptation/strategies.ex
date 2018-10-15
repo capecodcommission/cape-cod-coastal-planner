@@ -772,6 +772,10 @@ defmodule ChipApi.Adaptation.Strategies do
                 from q in query, where: ilike(q.name, ^"%#{name}%")
             {:is_active, is_active}, query ->
                 from q in query, where: q.is_active == ^is_active
+            {:hazard_id, hazard_id}, query ->
+                from q in query,
+                    join: h in assoc(q, :coastal_hazards),
+                    where: h.id == ^hazard_id
         end)
     end
 

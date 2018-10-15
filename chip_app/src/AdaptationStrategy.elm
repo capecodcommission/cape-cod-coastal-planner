@@ -45,7 +45,8 @@ type alias Categories =
 
 
 type alias CoastalHazard =
-    { name : String
+    { id : Scalar.Id
+    , name : String
     , description : Maybe String
     }
 
@@ -202,6 +203,7 @@ selectCategory =
 selectCoastalHazard : SelectionSet CoastalHazard ChipApi.Object.CoastalHazard
 selectCoastalHazard =
     CH.selection CoastalHazard
+        |> with CH.id
         |> with CH.name
         |> with CH.description
 

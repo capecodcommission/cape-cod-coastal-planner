@@ -99,6 +99,20 @@ adaptationStrategy requiredArgs object =
     Object.selectionField "adaptationStrategy" [ Argument.required "id" requiredArgs.id (\(ChipApi.Scalar.Id raw) -> Encode.string raw) ] object (identity >> Decode.nullable)
 
 
+type alias CoastalHazardRequiredArguments =
+    { id : ChipApi.Scalar.Id }
+
+
+{-| A coastal hazard matched on id
+
+  - id - The ID of the coastal hazard
+
+-}
+coastalHazard : CoastalHazardRequiredArguments -> SelectionSet decodesTo ChipApi.Object.CoastalHazard -> Field (Maybe decodesTo) RootQuery
+coastalHazard requiredArgs object =
+    Object.selectionField "coastalHazard" [ Argument.required "id" requiredArgs.id (\(ChipApi.Scalar.Id raw) -> Encode.string raw) ] object (identity >> Decode.nullable)
+
+
 type alias CoastalHazardsOptionalArguments =
     { order : OptionalArgument ChipApi.Enum.SortOrder.SortOrder }
 
