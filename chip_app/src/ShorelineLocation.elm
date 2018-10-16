@@ -8,7 +8,7 @@ import ChipApi.Object
 import Graphqelm.OptionalArgument exposing (..)
 import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
-import Types exposing (GqlData, GqlList)
+import Types exposing (GqlData, GqlList, zipperFromGqlList, mapGqlError)
 import Json.Encode as E
 
 
@@ -59,6 +59,18 @@ type alias BaselineInfo =
 
 
 -- TRANSFORM
+
+locationsFromResponse : (GqlList ShorelineExtent) -> ShorelineExtents
+locationsFromResponse =
+    zipperFromGqlList identity
+
+
+transformLocationsResponse : (GqlData (GqlList ShorelineExtent)) -> GqlData ShorelineExtents
+transformLocationsResponse response =
+    response
+        |> Remote.mapBoth
+            locationsFromResponse
+            (mapGqlError locationsFromResponse)
 
 
 shorelineExtentToExtent : ShorelineExtent -> Extent

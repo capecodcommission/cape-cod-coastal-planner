@@ -2,6 +2,8 @@ module AdaptationStrategy exposing (..)
 
 import Dict exposing (Dict)
 import List.Zipper as Zipper exposing (..)
+import ZipperHelpers as ZipHelp
+import Maybe.Extra as MEx
 import Graphqelm.Operation exposing (RootQuery)
 import Graphqelm.SelectionSet exposing (..)
 import RemoteData as Remote exposing (RemoteData(..))
@@ -17,7 +19,7 @@ import ChipApi.Object.AdaptationDisadvantages as AD
 import Graphqelm.OptionalArgument exposing (..)
 import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
-import Types exposing (GqlData, GqlList)
+import Types exposing (GqlData, GqlList, getId, dictFromGqlList, unwrapGqlList, mapGqlError)
 
 
 --
@@ -34,22 +36,43 @@ type alias StrategiesByHazard =
 
 
 type alias HazardId = 
-    Scalar.Id
+    String
 
 
 type alias CoastalHazard =
-    { id : HazardId
+    { id : Scalar.Id
     , name : String
     , description : Maybe String
     }
 
 
 type alias CoastalHazards = 
-    Dict HazardId CoastalHazard
+    Dict String CoastalHazard
 
 
 type alias CoastalHazardZipper = 
     Zipper HazardId
+
+
+hazardsToZipper : GqlData CoastalHazards -> Maybe CoastalHazardZipper
+hazardsToZipper data =
+    data
+        |> Remote.toMaybe
+        |> Maybe.map ZipHelp.fromDictKeys
+        |> Maybe.withDefault Nothing
+
+
+hazardsFromResponse : (GqlList CoastalHazard) -> CoastalHazards
+hazardsFromResponse =
+    dictFromGqlList (\c -> ( getId c.id, c ))
+
+
+transformHazardsResponse : (GqlData (GqlList CoastalHazard)) -> GqlData CoastalHazards
+transformHazardsResponse response =
+    response
+        |> Remote.mapBoth
+            hazardsFromResponse
+            (mapGqlError hazardsFromResponse)
 
 
 --
@@ -58,11 +81,11 @@ type alias CoastalHazardZipper =
 
 
 type alias StrategyId = 
-    Scalar.Id
+    String
 
 
 type alias Strategy =
-    { id : StrategyId
+    { id : Scalar.Id
     , name : String
     , details : GqlData (Maybe StrategyDetails)
     }
@@ -74,6 +97,36 @@ type alias Strategies =
 
 type alias StrategyZipper = 
     Zipper StrategyId
+
+
+strategiesToZipper : GqlData Strategies -> Maybe StrategyZipper
+strategiesToZipper data =
+    data
+        |> Remote.toMaybe
+        |> Maybe.map ZipHelp.fromDictKeys
+        |> Maybe.withDefault Nothing
+
+
+strategiesFromResponse : (GqlList ActiveStrategy) -> Strategies
+strategiesFromResponse =
+    dictFromGqlList ( newStrategy >> (\c -> ( getId c.id, c )) )
+
+
+transformStrategiesResponse : (GqlData (GqlList ActiveStrategy)) -> GqlData Strategies
+transformStrategiesResponse response =
+    response
+        |> Remote.mapBoth
+            strategiesFromResponse
+            (mapGqlError strategiesFromResponse)
+
+
+strategyHasCategory : Category -> Strategy -> Bool
+strategyHasCategory category { details } =
+    details
+        |> Remote.toMaybe
+        |> MEx.join
+        |> Maybe.map (strategyDetailsHasCategory category)
+        |> Maybe.withDefault False
 
 
 --
@@ -95,6 +148,11 @@ type alias StrategyDetails =
     }
 
 
+strategyDetailsHasCategory : Category -> StrategyDetails -> Bool
+strategyDetailsHasCategory category { categories } =
+    categoryIdsHasCategory category categories
+
+
 type alias CategoryId =
     Scalar.Id
 
@@ -109,7 +167,37 @@ type alias Category =
 
 
 type alias Categories =
-    Dict CategoryId Category
+    Dict String Category
+                
+
+categoriesFromResponse : (GqlList Category) -> Categories
+categoriesFromResponse =
+    dictFromGqlList (\c -> ( getId c.id, c ))
+
+
+transformCategoriesResponse : (GqlData (GqlList Category)) -> GqlData Categories
+transformCategoriesResponse response =
+    response
+        |> Remote.mapBoth
+            categoriesFromResponse
+            (mapGqlError categoriesFromResponse)
+
+
+categoryIdsHasCategory : Category -> List CategoryId -> Bool
+categoryIdsHasCategory category ids =
+    ids |> List.member category.id
+
+
+categoryIdsToCategories : Categories -> List CategoryId -> List Category
+categoryIdsToCategories categories ids =
+    ids
+        |> List.map (categoryIdToCategory categories)
+        |> MEx.values
+            
+        
+categoryIdToCategory : Categories -> CategoryId -> Maybe Category
+categoryIdToCategory categories (Scalar.Id id) =
+    Dict.get id categories
 
 
 type alias ImpactScale =
@@ -127,8 +215,26 @@ type alias Benefit =
     { name : String }
 
 
+--
+-- STRATEGY BENEFITS
+--
+
+
 type alias Benefits =
     List Benefit
+
+
+benefitsFromResponse : (GqlList Benefit) -> Benefits
+benefitsFromResponse =
+    unwrapGqlList
+
+
+transformBenefitsResponse : (GqlData (GqlList Benefit)) -> GqlData Benefits
+transformBenefitsResponse response =
+    response
+        |> Remote.mapBoth
+            unwrapGqlList
+            (mapGqlError unwrapGqlList)
 
 
 type alias Advantage = 
@@ -142,7 +248,7 @@ type alias Disadvantage =
 -- CREATE
 
 
-newStrategy : { a | id : StrategyId, name : String } -> Strategy
+newStrategy : { a | id : Scalar.Id, name : String } -> Strategy
 newStrategy { id, name } = 
     { id = id
     , name = name
@@ -155,9 +261,7 @@ newStrategy { id, name } =
 
 getStrategyHtmlId : StrategyId -> String
 getStrategyHtmlId id =
-    case id of
-        Scalar.Id theId ->
-            "strategy-" ++ theId
+    "strategy-" ++ id
 
 
 getSelectedStrategyHtmlId : StrategyZipper -> String
@@ -181,6 +285,8 @@ loadDetailsFor s =
 updateStrategyDetails : (GqlData (Maybe StrategyDetails)) -> Strategy -> Strategy
 updateStrategyDetails newDetails ({ details } as strategy) =
     { strategy | details = newDetails }
+
+
 
 
 -- GRAPHQL - QUERY ACTIVE ADAPTATION STRATEGIES
@@ -328,3 +434,22 @@ queryCoastalHazards =
     Query.selection GqlList
         |> with (Query.coastalHazards identity selectCoastalHazard)
 
+
+-- GRAPHQL - QUERY STRATEGY IDS BY HAZARD
+
+
+selectCoastalHazardStrategies : SelectionSet (List Scalar.Id) ChipApi.Object.CoastalHazard
+selectCoastalHazardStrategies =
+    fieldSelection <| 
+        CH.strategies selectStrategyId
+
+
+selectStrategyId : SelectionSet Scalar.Id ChipApi.Object.AdaptationStrategy
+selectStrategyId =
+    fieldSelection AS.id
+
+
+queryStrategyIdsByHazard : Scalar.Id -> SelectionSet (Maybe (List Scalar.Id)) RootQuery
+queryStrategyIdsByHazard hazardId =
+    Query.selection identity
+        |> with (Query.coastalHazard { id = hazardId } selectCoastalHazardStrategies)

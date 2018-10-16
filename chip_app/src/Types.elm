@@ -79,11 +79,18 @@ mapGqlError fn error =
     GHttp.mapError fn error
 
 
-zipMapGqlList : (a -> b) -> GqlList a -> Maybe (Zipper b)
-zipMapGqlList fn gqlList =
+zipperFromGqlList : (a -> b) -> GqlList a -> Maybe (Zipper b)
+zipperFromGqlList fn gqlList =
     gqlList.items
         |> List.map fn
         |> Zipper.fromList
+
+
+dictFromGqlList : (a -> ( comparable, b )) -> GqlList a -> Dict comparable b
+dictFromGqlList fn gqlList =
+    gqlList.items
+        |> List.map fn
+        |> Dict.fromList
 
 
 encodeRawResponse : Result Http.Error D.Value -> E.Value

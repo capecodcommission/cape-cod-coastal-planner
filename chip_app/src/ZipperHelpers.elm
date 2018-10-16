@@ -1,9 +1,22 @@
 module ZipperHelpers exposing (..)
 
-
+import Dict exposing (Dict)
 import Maybe.Extra as MEx
 import List.Zipper as Zipper exposing (Zipper)
 import ChipApi.Scalar as Scalar
+
+
+--
+-- CREATE ZIPPERS
+--
+
+
+fromDictKeys : Dict comparable a -> Maybe (Zipper comparable)
+fromDictKeys dict =
+    dict
+        |> Dict.keys
+        |> Zipper.fromList
+
 
 
 --

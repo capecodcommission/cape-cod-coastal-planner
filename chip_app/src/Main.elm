@@ -22,7 +22,7 @@ import ZipperHelpers as ZipHelp
 import Keyboard.Key exposing (Key(Up, Down, Enter, Escape))
 import Types exposing (..)
 import AdaptationStrategy as AS exposing (..)
-import ShorelineLocation as SL exposing (BaselineInfo, ShorelineExtent, ShorelineExtents)
+import ShorelineLocation as SL exposing (..)
 import Message exposing (..)
 import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
@@ -96,8 +96,9 @@ initialModel flags =
         NotAsked
         NotAsked
         Nothing
+        Closed
         -- Shoreline Location + Menu
-        RemoteData.Loading
+        Loading
         { menu = Input.dropMenu Nothing SelectLocationInput
         , isOpen = False
         , name = "Shoreline Location"
@@ -176,87 +177,35 @@ updateModel msg model =
                 )
 
         GotAdaptationCategories response ->
-            response
-                |> Remote.mapBoth
-                    unwrapGqlList
-                    (mapGqlError unwrapGqlList)
+            response 
+                |> transformCategoriesResponse
                 |> \newCategories -> 
-                    ({ model | adaptationCategories = newCategories }, Cmd.none )
+                    ( { model | categories = newCategories }, Cmd.none )
 
         GotAdaptationBenefits response ->
             response
-                |> Remote.mapBoth
-                    unwrapGqlList
-                    (mapGqlError unwrapGqlList)
+                |> transformBenefitsResponse
                 |> \newBenefits ->
-                    ({ model | adaptationBenefits = newBenefits }, Cmd.none )
-
+                    ( { model | benefits = newBenefits }, Cmd.none )
+           
         GotCoastalHazards response ->
             let
-                newHazards : GqlData AS.CoastalHazards
-                newHazards =
-                    response
-                        |> Remote.mapBoth
-                            (zipMapGqlList identity)
-                            (mapGqlError <| zipMapGqlList identity)
-                            
-                updatedMenu =
-                    newHazards
-                        |> Remote.toMaybe
-                        |> MEx.join
-                        |> Maybe.map Zipper.current
-                        |> \currentHazard ->
-                                Input.dropMenu currentHazard SelectHazardInput
+                newHazards = 
+                    transformHazardsResponse response
 
-                updatedDropdown =
-                    model.coastalHazardsDropdown
-                        |> \l -> { l | menu = updatedMenu }
+                newHazardSelections =
+                    hazardsToZipper newHazards
             in
-                ( { model 
-                    | coastalHazards = newHazards
-                    , coastalHazardsDropdown = updatedDropdown
-                  } 
-                , Cmd.none 
-                )
-
-        SelectHazardInput msg ->
-            let
-                updatedMenu =
-                    Input.updateSelection msg model.coastalHazardsDropdown.menu
-
-                updatedHazardsDropdown =
-                    model.coastalHazardsDropdown
-                        |> \dd ->
-                                case parseMenuOpeningOrClosing msg of
-                                    Just val ->
-                                        { dd | menu = updatedMenu, isOpen = val }
-
-                                    Nothing ->
-                                        { dd | menu = updatedMenu }
-
-                ( newHazards, newHazardCmds ) =
-                    updatedHazardsDropdown.menu
-                        |> Input.selected 
-                        |> Maybe.map 
-                            (\{name} ->
-                                Remote.update 
-                                    (selectHazardByName name) 
-                                    model.coastalHazards
-                            )
-                        |> Maybe.withDefault ( model.coastalHazards, Cmd.none )
-            in
-                ( { model 
-                    | coastalHazardsDropdown = updatedHazardsDropdown 
-                    , coastalHazards = newHazards
-                  }
-                , newHazardCmds
-                )
-
+            ( { model 
+                | hazards = newHazards
+                , hazardSelections = newHazardSelections
+              }
+            , Cmd.none
+            )
+            
         GotShorelineExtents response ->
             response
-                |> Remote.mapBoth
-                    (zipMapGqlList identity)
-                    (mapGqlError <| zipMapGqlList identity)
+                |> transformLocationsResponse
                 |> \newLocations ->
                     ({ model | shorelineLocations = newLocations }, Cmd.none)
 
@@ -395,36 +344,37 @@ updateModel msg model =
             )
 
         PickStrategy ->
-            let
-                ( hazardData, strategyData ) =
-                    model.strategies
-                        |> Maybe.map Zipper.current
-                        |> Maybe.withDefault ( NotAsked, NotAsked )
-            in
-            case ( hazardData, strategyData ) of
-                ( _, Success (Just strategies) ) ->
-                    let
-                        newCmd =
-                            case AS.getSelectedStrategyHtmlId (Just strategies) of
-                                Just id -> focus id
+            ( model, Cmd.none )
+            -- let
+            --     ( hazardData, strategyData ) =
+            --         model.strategies
+            --             |> Maybe.map Zipper.current
+            --             |> Maybe.withDefault ( NotAsked, NotAsked )
+            -- in
+            -- case ( hazardData, strategyData ) of
+            --     ( _, Success (Just strategies) ) ->
+            --         let
+            --             newCmd =
+            --                 case AS.getSelectedStrategyHtmlId (Just strategies) of
+            --                     Just id -> focus id
 
-                                Nothing -> Cmd.none
-                    in
-                    ( model
-                        |> collapseRightSidebar
-                        |> \m -> 
-                            { m | 
-                                strategiesModalOpenness = Open
-                            }
-                    , newCmd
-                    )
+            --                     Nothing -> Cmd.none
+            --         in
+            --         ( model
+            --             |> collapseRightSidebar
+            --             |> \m -> 
+            --                 { m | 
+            --                     strategiesModalOpenness = Open
+            --                 }
+            --         , newCmd
+            --         )
 
-                ( _, Success (Just hazards) ) ->
-                    ( model
-                        |> collapseRightSidebar
-                        |> \m -> { m | strategies = Loading, strategiesModalOpenness = Open }
-                    , getActiveAdaptationStrategiesByHazard
-                    )
+            --     ( _, Success (Just hazards) ) ->
+            --         ( model
+            --             |> collapseRightSidebar
+            --             |> \m -> { m | strategies = Loading, strategiesModalOpenness = Open }
+            --         , getActiveAdaptationStrategiesByHazard
+            --         )
 
         CloseStrategyModal ->
             ( model
@@ -435,49 +385,49 @@ updateModel msg model =
 
         GotActiveStrategies response ->
             response
-                |> Remote.mapBoth
-                    (zipMapGqlList AS.newStrategy)
-                    (mapGqlError <| zipMapGqlList AS.newStrategy)
-                |> Remote.update selectFirstStrategy
-                |> \(newStrategies, newCmd) ->
-                        ( { model | strategies = newStrategies }, newCmd )
+                |> transformStrategiesResponse
+                |> \newStrategies ->
+                        ( { model | strategies = newStrategies }, Cmd.none )
                     
         SelectStrategy id ->
-            let
-                ( newStrategies, newCmd ) =
-                    Remote.update (selectStrategyById id) model.strategies
-            in
-            ( { model | strategies = newStrategies }, newCmd )
+            ( model, Cmd.none )
+            -- let
+            --     ( newStrategies, newCmd ) =
+            --         Remote.update (selectStrategyById id) model.strategies
+            -- in
+            -- ( { model | strategies = newStrategies }, newCmd )
             
 
         HandleStrategyKeyboardEvent evt ->
-            case evt.keyCode of
-                Down ->
-                    let
-                        ( newStrategies, newCmd ) =
-                            Remote.update selectNextStrategy model.strategies
-                    in
-                    ( { model | strategies = newStrategies }, newCmd )
+            ( model, Cmd.none )
+            -- case evt.keyCode of
+            --     Down ->
+            --         let
+            --             ( newStrategies, newCmd ) =
+            --                 Remote.update selectNextStrategy model.strategies
+            --         in
+            --         ( { model | strategies = newStrategies }, newCmd )
 
-                Up ->
-                    let
-                        ( newStrategies, newCmd ) =
-                            Remote.update selectPreviousStrategy model.strategies
-                    in
-                    ( { model | strategies = newStrategies }, newCmd )
+            --     Up ->
+            --         let
+            --             ( newStrategies, newCmd ) =
+            --                 Remote.update selectPreviousStrategy model.strategies
+            --         in
+            --         ( { model | strategies = newStrategies }, newCmd )
 
-                Enter ->
-                    ( model, Cmd.none )
+            --     Enter ->
+            --         ( model, Cmd.none )
 
-                _ ->
-                    ( model, Cmd.none )
+            --     _ ->
+            --         ( model, Cmd.none )
 
         GotStrategyDetails id response ->
-            let
-                ( newStrategies, newCmd ) =
-                    Remote.update (updateStrategiesWithStrategyDetails id response) model.strategies
-            in
-            ( { model | strategies = newStrategies }, newCmd )
+            ( model, Cmd.none )
+            -- let
+            --     ( newStrategies, newCmd ) =
+            --         Remote.update (updateStrategiesWithStrategyDetails id response) model.strategies
+            -- in
+            -- ( { model | strategies = newStrategies }, newCmd )
 
 
         ToggleRightSidebar ->
@@ -503,40 +453,40 @@ updateModel msg model =
             )
 
 
-updateStrategiesWithStrategyDetails : 
-    Scalar.Id 
-    -> (GqlData (Maybe StrategyDetails)) 
-    -> Strategies 
-    -> (Strategies, Cmd Msg)
-updateStrategiesWithStrategyDetails id details strategies =
-    let
-        currentStrategyId = 
-            strategies
-                |> ZipHelp.tryCurrent
-                |> Maybe.map .id
+-- updateStrategiesWithStrategyDetails : 
+--     Scalar.Id 
+--     -> (GqlData (Maybe StrategyDetails)) 
+--     -> Strategies 
+--     -> (Strategies, Cmd Msg)
+-- updateStrategiesWithStrategyDetails id details strategies =
+--     let
+--         currentStrategyId = 
+--             strategies
+--                 |> ZipHelp.tryCurrent
+--                 |> Maybe.map .id
 
-        ( newStrategies, newCmd ) =
-            if currentStrategyId == Just id then
-                strategies 
-                    |> Maybe.map 
-                        (Zipper.mapCurrent <| 
-                            AS.updateStrategyDetails details
-                        )
-                    |> \z -> ( z, Cmd.none )
-            else
-                strategies
-                    |> Maybe.map
-                        (Zipper.map <|
-                            (\s ->
-                                if s.id == id then
-                                    AS.updateStrategyDetails details s
-                                else
-                                    s
-                            )
-                        )
-                    |> \z -> ( z, Cmd.none )
-    in
-    ( newStrategies, newCmd )
+--         ( newStrategies, newCmd ) =
+--             if currentStrategyId == Just id then
+--                 strategies 
+--                     |> Maybe.map 
+--                         (Zipper.mapCurrent <| 
+--                             AS.updateStrategyDetails details
+--                         )
+--                     |> \z -> ( z, Cmd.none )
+--             else
+--                 strategies
+--                     |> Maybe.map
+--                         (Zipper.map <|
+--                             (\s ->
+--                                 if s.id == id then
+--                                     AS.updateStrategyDetails details s
+--                                 else
+--                                     s
+--                             )
+--                         )
+--                     |> \z -> ( z, Cmd.none )
+--     in
+--     ( newStrategies, newCmd )
 
 
 selectLocation : (ShorelineExtents -> ShorelineExtents) -> ShorelineExtents -> (ShorelineExtents, Cmd Msg)
@@ -564,70 +514,70 @@ selectHazard selectFn hazards =
     (newHazards, newCmds)
 
 
-selectHazardByName : String -> CoastalHazards -> (CoastalHazards, Cmd Msg)
-selectHazardByName name hazards =
-    selectHazard (ZipHelp.tryFindFirst <| ZipHelp.matchesName name) hazards
+-- selectHazardByName : String -> CoastalHazards -> (CoastalHazards, Cmd Msg)
+-- selectHazardByName name hazards =
+--     selectHazard (ZipHelp.tryFindFirst <| ZipHelp.matchesName name) hazards
 
 
-selectStrategy : (Strategies -> Strategies) -> Strategies -> (Strategies, Cmd Msg)
-selectStrategy selectFn strategies =
-    let
-        selectedStrategies = selectFn strategies
+-- selectStrategy : (Strategies -> Strategies) -> Strategies -> (Strategies, Cmd Msg)
+-- selectStrategy selectFn strategies =
+--     let
+--         selectedStrategies = selectFn strategies
 
-        focusCmd = case AS.getSelectedStrategyHtmlId selectedStrategies of
-            Just id -> focus id
+--         focusCmd = case AS.getSelectedStrategyHtmlId selectedStrategies of
+--             Just id -> focus id
 
-            Nothing -> Cmd.none
+--             Nothing -> Cmd.none
 
-        detailsUpdates : ( GqlData (Maybe StrategyDetails), Cmd Msg )
-        detailsUpdates = 
-            selectedStrategies
-                |> ZipHelp.tryCurrent
-                |> Maybe.andThen AS.loadDetailsFor
-                |> Maybe.map 
-                    (\( strategyId, details ) ->
-                        case strategyId of 
-                            Just id ->
-                                ( details, getAdaptationStrategyDetailsById id )
+--         detailsUpdates : ( GqlData (Maybe StrategyDetails), Cmd Msg )
+--         detailsUpdates = 
+--             selectedStrategies
+--                 |> ZipHelp.tryCurrent
+--                 |> Maybe.andThen AS.loadDetailsFor
+--                 |> Maybe.map 
+--                     (\( strategyId, details ) ->
+--                         case strategyId of 
+--                             Just id ->
+--                                 ( details, getAdaptationStrategyDetailsById id )
 
-                            Nothing ->
-                                ( details, Cmd.none )
-                    )
-                |> Maybe.withDefault ( NotAsked, Cmd.none )
+--                             Nothing ->
+--                                 ( details, Cmd.none )
+--                     )
+--                 |> Maybe.withDefault ( NotAsked, Cmd.none )
 
-        newStrategies = 
-            selectedStrategies
-                |> Maybe.map
-                    (\strats ->
-                        Zipper.mapCurrent
-                            (\current -> { current | details = Tuple.first detailsUpdates })
-                            strats
-                    )
-                |> MEx.orElse selectedStrategies
+--         newStrategies = 
+--             selectedStrategies
+--                 |> Maybe.map
+--                     (\strats ->
+--                         Zipper.mapCurrent
+--                             (\current -> { current | details = Tuple.first detailsUpdates })
+--                             strats
+--                     )
+--                 |> MEx.orElse selectedStrategies
 
-        newCmds = Cmd.batch [ focusCmd, Tuple.second detailsUpdates ]
-    in
-    ( newStrategies, newCmds )
+--         newCmds = Cmd.batch [ focusCmd, Tuple.second detailsUpdates ]
+--     in
+--     ( newStrategies, newCmds )
     
 
-selectStrategyById : Scalar.Id -> Strategies -> (Strategies, Cmd Msg)
-selectStrategyById id strategies =
-    selectStrategy (ZipHelp.tryFindFirst <| ZipHelp.matchesId id) strategies
+-- selectStrategyById : Scalar.Id -> Strategies -> (Strategies, Cmd Msg)
+-- selectStrategyById id strategies =
+--     selectStrategy (ZipHelp.tryFindFirst <| ZipHelp.matchesId id) strategies
 
 
-selectFirstStrategy : Strategies -> (Strategies, Cmd Msg)
-selectFirstStrategy strategies =
-    selectStrategy ZipHelp.tryFirst strategies
+-- selectFirstStrategy : Strategies -> (Strategies, Cmd Msg)
+-- selectFirstStrategy strategies =
+--     selectStrategy ZipHelp.tryFirst strategies
 
 
-selectNextStrategy : Strategies -> (Strategies, Cmd Msg)
-selectNextStrategy strategies =
-    selectStrategy ZipHelp.tryNext strategies
+-- selectNextStrategy : Strategies -> (Strategies, Cmd Msg)
+-- selectNextStrategy strategies =
+--     selectStrategy ZipHelp.tryNext strategies
 
 
-selectPreviousStrategy : Strategies -> (Strategies, Cmd Msg)
-selectPreviousStrategy strategies =
-    selectStrategy ZipHelp.tryPrevious strategies
+-- selectPreviousStrategy : Strategies -> (Strategies, Cmd Msg)
+-- selectPreviousStrategy strategies =
+--     selectStrategy ZipHelp.tryPrevious strategies
 
 
 collapseRightSidebar : Model -> Model
@@ -757,12 +707,13 @@ view app =
                                     [ getRightSidebarChildViews model
                                         |> RSidebar.view model
                                     ]
-                            , case config.strategiesModalOpenness of
+                            , case model.strategiesModalOpenness of
                                 Closed ->
                                     el NoStyle [] empty
 
                                 Open ->
-                                    StrategiesModal.view model
+                                    el NoStyle [] empty
+                                    --StrategiesModal.view model
                             ]
                     ]
 
@@ -785,8 +736,7 @@ headerView ({ device } as model) =
                 [ verticalCenter, alignRight, width fill ]
                 [ row NoStyle
                     [ spacingXY 16 0 ]
-                    [ Dropdown.view model.coastalHazardsDropdown model.coastalHazards
-                    , Dropdown.view model.shorelineLocationsDropdown model.shorelineLocations
+                    [ Dropdown.view model.shorelineLocationsDropdown model.shorelineLocations
                     , BaselineInfo.view model
                     ]
                 ]
