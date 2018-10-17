@@ -68,14 +68,13 @@ activeStrategiesHeight device =
 --             ( Nothing, Failure <| mapError (always Nothing) err )
 
 
-
 view : 
     { config 
         | device : Device
         , closePath : String
         , adaptationCategories : GqlData Categories
         , adaptationBenefits : GqlData Benefits
-        , strategies : StrategiesByHazard --GqlData Strategies
+        , strategies : StrategyIdsByHazard --GqlData Strategies
     }
     -> Element MainStyles Variations Msg
 view config =

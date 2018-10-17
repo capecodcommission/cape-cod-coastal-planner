@@ -23,6 +23,7 @@ import AdaptationStrategy as AS
         , queryAdaptationCategories
         , queryAdaptationBenefits
         , queryCoastalHazards
+        , queryHazardsByIdForStrategyIds
         )
 
 
@@ -39,10 +40,10 @@ getActiveAdaptationStrategiesByHazard hazard =
 
 
 getAdaptationStrategyDetailsById : Scalar.Id -> Cmd Msg
-getAdaptationStrategyDetailsById id =
-    queryAdaptationStrategyById id
+getAdaptationStrategyDetailsById strategyId =
+    queryAdaptationStrategyById strategyId
         |> queryRequest "./api"
-        |> send (Remote.fromResult >> (GotStrategyDetails id))
+        |> send (Remote.fromResult >> (GotStrategyDetails strategyId))
 
 
 --
@@ -77,6 +78,13 @@ getCoastalHazards =
     queryCoastalHazards
         |> queryRequest "./api"
         |> send (Remote.fromResult >> GotCoastalHazards)
+
+
+getStrategyIdsByHazard : Scalar.Id -> Cmd Msg
+getStrategyIdsByHazard hazardId =
+    queryHazardsByIdForStrategyIds hazardId
+        |> queryRequest "./api"
+        |> send (Remote.fromResult >> (GotStrategyIdsByHazard hazardId))
 
 
 --

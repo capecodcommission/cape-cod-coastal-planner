@@ -57,7 +57,7 @@ type alias Model =
     , hazards : GqlData AS.CoastalHazards
     , hazardSelections : Maybe AS.CoastalHazardZipper
     , strategies : GqlData AS.Strategies
-    , strategiesByHazard : GqlData AS.StrategiesByHazard
+    , strategyIdsByHazard : AS.StrategyIdsByHazard
     , strategySelections : Maybe AS.StrategyZipper
     , strategiesModalOpenness : Openness
     , shorelineLocations : GqlData ShorelineExtents
@@ -94,7 +94,7 @@ initialModel flags =
         Nothing
         -- Adaptation Strategies
         NotAsked
-        NotAsked
+        Dict.empty
         Nothing
         Closed
         -- Shoreline Location + Menu
@@ -195,12 +195,19 @@ updateModel msg model =
 
                 newHazardSelections =
                     hazardsToZipper newHazards
+
+                cmd = 
+                    newHazardSelections
+                        |> ZipHelp.tryCurrent
+                        |> Maybe.map Scalar.Id
+                        |> Maybe.map getStrategyIdsByHazard
+                        |> Maybe.withDefault Cmd.none
             in
             ( { model 
                 | hazards = newHazards
                 , hazardSelections = newHazardSelections
               }
-            , Cmd.none
+            , cmd
             )
             
         GotShorelineExtents response ->
@@ -383,6 +390,15 @@ updateModel msg model =
             , Cmd.none
             )
 
+        GotStrategyIdsByHazard hazardId response ->
+            let
+                strategyIds = transformStrategyIdsByHazardResponse response
+            in
+            model.strategyIdsByHazard
+                |> updateStrategyIdsByHazard hazardId strategyIds
+                |> \newIds ->
+                    ( { model | strategyIdsByHazard = newIds }, Cmd.none )
+            
         GotActiveStrategies response ->
             response
                 |> transformStrategiesResponse

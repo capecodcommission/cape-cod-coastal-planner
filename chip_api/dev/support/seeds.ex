@@ -126,7 +126,7 @@ defmodule ChipApi.Seeds do
             name: "No Action",
             description: "Take no action to address changes in the coast. Effects of erosion, SLR, and flooding will continue or intensify. Depending on conditions, coastal resources may not migrate naturally where steep topography or preexisting coastal erosion control structures are present. Structures or facilities may be threatened or undermined.",
             adaptation_categories: [retreat],
-            coastal_hazards: [],
+            coastal_hazards: [ erosion, storm_surge, sea_level_rise ],
             impact_scales: [site, community, neighborhood, regional],
             strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
             adaptation_benefits: [habitat, aesthetics, recreation_tourism],

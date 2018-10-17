@@ -27,8 +27,33 @@ import Types exposing (GqlData, GqlList, getId, dictFromGqlList, unwrapGqlList, 
 --
 
 
-type alias StrategiesByHazard = 
-    Dict HazardId (List StrategyId)
+type alias StrategyIdsByHazard = 
+    Dict HazardId (GqlData (List StrategyId))
+
+
+strategyIdsFromResponse : Maybe (List Scalar.Id) -> List StrategyId
+strategyIdsFromResponse maybeIds =
+    maybeIds
+        |> Maybe.map (List.map getId)
+        |> Maybe.withDefault []
+
+
+transformStrategyIdsByHazardResponse : (GqlData (Maybe (List Scalar.Id))) -> GqlData (List StrategyId)
+transformStrategyIdsByHazardResponse response =
+    response
+        |> Remote.mapBoth
+            strategyIdsFromResponse
+            (mapGqlError strategyIdsFromResponse)
+
+
+updateStrategyIdsByHazard : 
+    Scalar.Id 
+    -> GqlData (List StrategyId) 
+    -> StrategyIdsByHazard 
+    -> StrategyIdsByHazard
+updateStrategyIdsByHazard (Scalar.Id hazardId) data dict =
+    Dict.insert hazardId data dict
+
 
 --
 -- COASTAL HAZARDS
@@ -449,7 +474,7 @@ selectStrategyId =
     fieldSelection AS.id
 
 
-queryStrategyIdsByHazard : Scalar.Id -> SelectionSet (Maybe (List Scalar.Id)) RootQuery
-queryStrategyIdsByHazard hazardId =
+queryHazardsByIdForStrategyIds : Scalar.Id -> SelectionSet (Maybe (List Scalar.Id)) RootQuery
+queryHazardsByIdForStrategyIds hazardId =
     Query.selection identity
         |> with (Query.coastalHazard { id = hazardId } selectCoastalHazardStrategies)

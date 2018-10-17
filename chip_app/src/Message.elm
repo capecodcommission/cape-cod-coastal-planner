@@ -33,6 +33,7 @@ type Msg
     | CancelZoneOfImpactSelection
     | PickStrategy
     | CloseStrategyModal
+    | GotStrategyIdsByHazard Scalar.Id (GqlData (Maybe (List Scalar.Id)))
     | GotActiveStrategies (GqlData (GqlList AS.ActiveStrategy))
     | SelectStrategy Scalar.Id
     | HandleStrategyKeyboardEvent KeyboardEvent
