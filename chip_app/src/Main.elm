@@ -52,12 +52,8 @@ type alias Model =
     , closePath : String
     , trianglePath : String
     , zoiPath : String
-    , categories : GqlData AS.Categories
-    , benefits : GqlData AS.Benefits
-    , hazards : GqlData AS.CoastalHazards
+    , adaptationInfo : GqlData AS.AdaptationInfo
     , hazardSelections : Maybe AS.CoastalHazardZipper
-    , strategies : GqlData AS.Strategies
-    , strategyIdsByHazard : AS.StrategyIdsByHazard
     , strategySelections : Maybe AS.StrategyZipper
     , strategiesModalOpenness : Openness
     , shorelineLocations : GqlData ShorelineExtents
@@ -85,17 +81,13 @@ initialModel flags =
         flags.closePath
         flags.trianglePath
         flags.zoiPath
-        -- Adaptation Categories
-        NotAsked
-        -- Adaptation Benefits
-        NotAsked
-        -- Coastal Hazards
-        NotAsked
+        -- Adaptation Info (Categories, Hazards, Strategies)
+        Loading
+        -- Coastal Hazard Selections
         Nothing
-        -- Adaptation Strategies
-        NotAsked
-        Dict.empty
+        -- Adaptation Strategy Selections
         Nothing
+        -- Adaptation Strategy Modal Openness
         Closed
         -- Shoreline Location + Menu
         Loading
@@ -130,10 +122,8 @@ init flags location =
 
                 msgs =
                     Cmd.batch
-                        [ getCoastalHazards
+                        [ getAdaptationInfo
                         , getShorelineExtents
-                        , getAdaptationCategories
-                        , getAdaptationBenefits
                         , olCmd <| encodeOpenLayersCmd InitMap
                         , routeFx
                         ]
@@ -176,40 +166,22 @@ updateModel msg model =
                 , Cmd.none
                 )
 
-        GotAdaptationCategories response ->
-            response 
-                |> transformCategoriesResponse
-                |> \newCategories -> 
-                    ( { model | categories = newCategories }, Cmd.none )
+        GotAdaptationInfo response ->
+            case response of
+                Success info ->
+                    info.hazards
+                        |> ZipHelp.fromDictKeys
+                        |> \zipper ->
+                            ( { model 
+                                | adaptationInfo = response
+                                , hazardSelections = zipper
+                              }
+                            , Cmd.none 
+                            )
 
-        GotAdaptationBenefits response ->
-            response
-                |> transformBenefitsResponse
-                |> \newBenefits ->
-                    ( { model | benefits = newBenefits }, Cmd.none )
-           
-        GotCoastalHazards response ->
-            let
-                newHazards = 
-                    transformHazardsResponse response
-
-                newHazardSelections =
-                    hazardsToZipper newHazards
-
-                cmd = 
-                    newHazardSelections
-                        |> ZipHelp.tryCurrent
-                        |> Maybe.map Scalar.Id
-                        |> Maybe.map getStrategyIdsByHazard
-                        |> Maybe.withDefault Cmd.none
-            in
-            ( { model 
-                | hazards = newHazards
-                , hazardSelections = newHazardSelections
-              }
-            , cmd
-            )
-            
+                _ ->
+                    ( { model | adaptationInfo = response }, Cmd.none )
+                              
         GotShorelineExtents response ->
             response
                 |> transformLocationsResponse
@@ -351,37 +323,55 @@ updateModel msg model =
             )
 
         PickStrategy ->
-            ( model, Cmd.none )
-            -- let
-            --     ( hazardData, strategyData ) =
-            --         model.strategies
-            --             |> Maybe.map Zipper.current
-            --             |> Maybe.withDefault ( NotAsked, NotAsked )
-            -- in
-            -- case ( hazardData, strategyData ) of
-            --     ( _, Success (Just strategies) ) ->
-            --         let
-            --             newCmd =
-            --                 case AS.getSelectedStrategyHtmlId (Just strategies) of
-            --                     Just id -> focus id
+            case model.adaptationInfo of
+                NotAsked ->
+                    ( model
+                        |> collapseRightSidebar
+                        |> \m -> { m | adaptationInfo = Loading, strategiesModalOpenness = Open }
+                    , getAdaptationInfo
+                    )
 
-            --                     Nothing -> Cmd.none
-            --         in
-            --         ( model
-            --             |> collapseRightSidebar
-            --             |> \m -> 
-            --                 { m | 
-            --                     strategiesModalOpenness = Open
-            --                 }
-            --         , newCmd
-            --         )
+                Loading ->
+                    ( model
+                        |> collapseRightSidebar
+                        |> \m -> { m | strategiesModalOpenness = Open }
+                    , Cmd.none
+                    )
 
-            --     ( _, Success (Just hazards) ) ->
-            --         ( model
-            --             |> collapseRightSidebar
-            --             |> \m -> { m | strategies = Loading, strategiesModalOpenness = Open }
-            --         , getActiveAdaptationStrategiesByHazard
-            --         )
+                Success info ->
+                    let
+                        strategySelections : Maybe StrategyZipper
+                        strategySelections = 
+                            info.strategies |> ZipHelp.fromDictKeys
+
+                        focusCmd : Cmd Msg
+                        focusCmd =
+                            strategySelections
+                                |> Maybe.map getSelectedStrategyHtmlId
+                                |> Maybe.map focus
+                                |> Maybe.withDefault Cmd.none
+                    in
+                        ( model
+                            |> collapseRightSidebar
+                            |> \m ->
+                                { m 
+                                    | strategySelections = strategySelections
+                                    , strategiesModalOpenness = Open
+                                }
+                        , focusCmd
+                        )
+
+                Failure err ->
+                    ( model
+                        |> collapseRightSidebar
+                        |> \m -> 
+                            { m 
+                                | strategySelections = Nothing
+                                , strategiesModalOpenness = Open 
+                            }
+                    , Cmd.none
+                    )
+
 
         CloseStrategyModal ->
             ( model
@@ -390,21 +380,6 @@ updateModel msg model =
             , Cmd.none
             )
 
-        GotStrategyIdsByHazard hazardId response ->
-            let
-                strategyIds = transformStrategyIdsByHazardResponse response
-            in
-            model.strategyIdsByHazard
-                |> updateStrategyIdsByHazard hazardId strategyIds
-                |> \newIds ->
-                    ( { model | strategyIdsByHazard = newIds }, Cmd.none )
-            
-        GotActiveStrategies response ->
-            response
-                |> transformStrategiesResponse
-                |> \newStrategies ->
-                        ( { model | strategies = newStrategies }, Cmd.none )
-                    
         SelectStrategy id ->
             ( model, Cmd.none )
             -- let
@@ -467,42 +442,6 @@ updateModel msg model =
             ( { model | device = classifyDevice size }
             , Cmd.none
             )
-
-
--- updateStrategiesWithStrategyDetails : 
---     Scalar.Id 
---     -> (GqlData (Maybe StrategyDetails)) 
---     -> Strategies 
---     -> (Strategies, Cmd Msg)
--- updateStrategiesWithStrategyDetails id details strategies =
---     let
---         currentStrategyId = 
---             strategies
---                 |> ZipHelp.tryCurrent
---                 |> Maybe.map .id
-
---         ( newStrategies, newCmd ) =
---             if currentStrategyId == Just id then
---                 strategies 
---                     |> Maybe.map 
---                         (Zipper.mapCurrent <| 
---                             AS.updateStrategyDetails details
---                         )
---                     |> \z -> ( z, Cmd.none )
---             else
---                 strategies
---                     |> Maybe.map
---                         (Zipper.map <|
---                             (\s ->
---                                 if s.id == id then
---                                     AS.updateStrategyDetails details s
---                                 else
---                                     s
---                             )
---                         )
---                     |> \z -> ( z, Cmd.none )
---     in
---     ( newStrategies, newCmd )
 
 
 selectLocation : (ShorelineExtents -> ShorelineExtents) -> ShorelineExtents -> (ShorelineExtents, Cmd Msg)
@@ -609,7 +548,6 @@ collapseRightSidebar model =
                 [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
                 model.rightSidebarToggleFx
     }
-
 
 
 expandRightSidebar : Model -> Model
@@ -728,8 +666,7 @@ view app =
                                     el NoStyle [] empty
 
                                 Open ->
-                                    el NoStyle [] empty
-                                    --StrategiesModal.view model
+                                    StrategiesModal.view model
                             ]
                     ]
 

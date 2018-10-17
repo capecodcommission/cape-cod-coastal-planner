@@ -6,6 +6,7 @@ import ZipperHelpers as ZipHelp
 import Maybe.Extra as MEx
 import Graphqelm.Operation exposing (RootQuery)
 import Graphqelm.SelectionSet exposing (..)
+import Graphqelm.Field as Field
 import RemoteData as Remote exposing (RemoteData(..))
 import ChipApi.Object
 import ChipApi.Object.AdaptationStrategy as AS
@@ -23,36 +24,15 @@ import Types exposing (GqlData, GqlList, getId, dictFromGqlList, unwrapGqlList, 
 
 
 --
--- STRATEGIES BY HAZARD
+-- ADAPTATION INFO
 --
 
-
-type alias StrategyIdsByHazard = 
-    Dict HazardId (GqlData (List StrategyId))
-
-
-strategyIdsFromResponse : Maybe (List Scalar.Id) -> List StrategyId
-strategyIdsFromResponse maybeIds =
-    maybeIds
-        |> Maybe.map (List.map getId)
-        |> Maybe.withDefault []
-
-
-transformStrategyIdsByHazardResponse : (GqlData (Maybe (List Scalar.Id))) -> GqlData (List StrategyId)
-transformStrategyIdsByHazardResponse response =
-    response
-        |> Remote.mapBoth
-            strategyIdsFromResponse
-            (mapGqlError strategyIdsFromResponse)
-
-
-updateStrategyIdsByHazard : 
-    Scalar.Id 
-    -> GqlData (List StrategyId) 
-    -> StrategyIdsByHazard 
-    -> StrategyIdsByHazard
-updateStrategyIdsByHazard (Scalar.Id hazardId) data dict =
-    Dict.insert hazardId data dict
+type alias AdaptationInfo =
+    { benefits : Benefits
+    , categories : Categories
+    , hazards : CoastalHazards
+    , strategies : Strategies
+    }
 
 
 --
@@ -68,6 +48,7 @@ type alias CoastalHazard =
     { id : Scalar.Id
     , name : String
     , description : Maybe String
+    , strategies : List Scalar.Id
     }
 
 
@@ -79,25 +60,11 @@ type alias CoastalHazardZipper =
     Zipper HazardId
 
 
-hazardsToZipper : GqlData CoastalHazards -> Maybe CoastalHazardZipper
-hazardsToZipper data =
-    data
-        |> Remote.toMaybe
-        |> Maybe.map ZipHelp.fromDictKeys
-        |> Maybe.withDefault Nothing
-
-
-hazardsFromResponse : (GqlList CoastalHazard) -> CoastalHazards
-hazardsFromResponse =
-    dictFromGqlList (\c -> ( getId c.id, c ))
-
-
-transformHazardsResponse : (GqlData (GqlList CoastalHazard)) -> GqlData CoastalHazards
-transformHazardsResponse response =
-    response
-        |> Remote.mapBoth
-            hazardsFromResponse
-            (mapGqlError hazardsFromResponse)
+hazardsFromList : List CoastalHazard -> CoastalHazards
+hazardsFromList list =
+    list
+        |> List.map (\c -> ( getId c.id, c ))
+        |> Dict.fromList
 
 
 --
@@ -112,7 +79,7 @@ type alias StrategyId =
 type alias Strategy =
     { id : Scalar.Id
     , name : String
-    , details : GqlData (Maybe StrategyDetails)
+    --, details : GqlData (Maybe StrategyDetails)
     }
 
 
@@ -124,34 +91,20 @@ type alias StrategyZipper =
     Zipper StrategyId
 
 
-strategiesToZipper : GqlData Strategies -> Maybe StrategyZipper
-strategiesToZipper data =
-    data
-        |> Remote.toMaybe
-        |> Maybe.map ZipHelp.fromDictKeys
-        |> Maybe.withDefault Nothing
+strategiesFromList : List Strategy -> Strategies
+strategiesFromList list =
+    list
+        |> List.map (\s -> ( getId s.id, s ))
+        |> Dict.fromList
 
 
-strategiesFromResponse : (GqlList ActiveStrategy) -> Strategies
-strategiesFromResponse =
-    dictFromGqlList ( newStrategy >> (\c -> ( getId c.id, c )) )
-
-
-transformStrategiesResponse : (GqlData (GqlList ActiveStrategy)) -> GqlData Strategies
-transformStrategiesResponse response =
-    response
-        |> Remote.mapBoth
-            strategiesFromResponse
-            (mapGqlError strategiesFromResponse)
-
-
-strategyHasCategory : Category -> Strategy -> Bool
-strategyHasCategory category { details } =
-    details
-        |> Remote.toMaybe
-        |> MEx.join
-        |> Maybe.map (strategyDetailsHasCategory category)
-        |> Maybe.withDefault False
+-- strategyHasCategory : Category -> Strategy -> Bool
+-- strategyHasCategory category { details } =
+--     details
+--         |> Remote.toMaybe
+--         |> MEx.join
+--         |> Maybe.map (strategyDetailsHasCategory category)
+--         |> Maybe.withDefault False
 
 
 --
@@ -195,17 +148,11 @@ type alias Categories =
     Dict String Category
                 
 
-categoriesFromResponse : (GqlList Category) -> Categories
-categoriesFromResponse =
-    dictFromGqlList (\c -> ( getId c.id, c ))
-
-
-transformCategoriesResponse : (GqlData (GqlList Category)) -> GqlData Categories
-transformCategoriesResponse response =
-    response
-        |> Remote.mapBoth
-            categoriesFromResponse
-            (mapGqlError categoriesFromResponse)
+categoriesFromList : List Category -> Categories
+categoriesFromList list =
+    list 
+        |> List.map (\c -> ( getId c.id, c ))
+        |> Dict.fromList
 
 
 categoryIdsHasCategory : Category -> List CategoryId -> Bool
@@ -249,37 +196,12 @@ type alias Benefits =
     List Benefit
 
 
-benefitsFromResponse : (GqlList Benefit) -> Benefits
-benefitsFromResponse =
-    unwrapGqlList
-
-
-transformBenefitsResponse : (GqlData (GqlList Benefit)) -> GqlData Benefits
-transformBenefitsResponse response =
-    response
-        |> Remote.mapBoth
-            unwrapGqlList
-            (mapGqlError unwrapGqlList)
-
-
 type alias Advantage = 
     { name : String }
 
 
 type alias Disadvantage = 
     { name : String }
-
-
--- CREATE
-
-
-newStrategy : { a | id : Scalar.Id, name : String } -> Strategy
-newStrategy { id, name } = 
-    { id = id
-    , name = name
-    , details = NotAsked
-    }
-
 
 -- ACCESS
 
@@ -296,70 +218,75 @@ getSelectedStrategyHtmlId strategies =
         |> getStrategyHtmlId
 
 
-loadDetailsFor : Strategy -> Maybe ( Maybe Scalar.Id, GqlData (Maybe StrategyDetails) )
-loadDetailsFor s =
-    if Remote.isSuccess s.details == True then
-        Just ( Nothing, s.details )
-    else
-        Just ( Just s.id, Loading )
+-- loadDetailsFor : Strategy -> Maybe ( Maybe Scalar.Id, GqlData (Maybe StrategyDetails) )
+-- loadDetailsFor s =
+--     if Remote.isSuccess s.details == True then
+--         Just ( Nothing, s.details )
+--     else
+--         Just ( Just s.id, Loading )
 
 
 -- UPDATE
 
 
-updateStrategyDetails : (GqlData (Maybe StrategyDetails)) -> Strategy -> Strategy
-updateStrategyDetails newDetails ({ details } as strategy) =
-    { strategy | details = newDetails }
+-- updateStrategyDetails : (GqlData (Maybe StrategyDetails)) -> Strategy -> Strategy
+-- updateStrategyDetails newDetails ({ details } as strategy) =
+--     { strategy | details = newDetails }
 
 
 
 
--- GRAPHQL - QUERY ACTIVE ADAPTATION STRATEGIES
+--
+-- GRAPHQL QUERIES
+--
 
-
-type alias ActiveStrategy = 
-    { id : Scalar.Id
-    , name : String
-    }
-
-
-
-queryAdaptationStrategies : Maybe Scalar.Id -> SelectionSet (GqlList ActiveStrategy) RootQuery
-queryAdaptationStrategies hazardId =
-    let
-        strategyFilter =
-            Present 
-                { isActive = Present True
-                , hazardId = 
-                    hazardId 
-                        |> Maybe.map Present 
-                        |> Maybe.withDefault Absent
-                , name = Absent 
-                }
-                
-    in
-    Query.selection GqlList
+queryAdaptationInfo : SelectionSet AdaptationInfo RootQuery
+queryAdaptationInfo =
+    Query.selection AdaptationInfo
+        |> with
+            (Query.adaptationBenefits identity selectBenefit)
+        |> with 
+            (Query.adaptationCategories identity selectCategory
+                |> Field.map categoriesFromList
+            )
+        |> with 
+            (Query.coastalHazards identity selectCoastalHazardWithStrategyIds
+                |> Field.map hazardsFromList
+            )
         |> with 
             (Query.adaptationStrategies
-                (\optionals -> { optionals | filter = strategyFilter }) 
+                (\optionals -> 
+                    let
+                        strategyFilter =
+                            Present
+                                { isActive = Present True
+                                , hazardId = Absent
+                                , name = Absent
+                                }
+                    in
+                    { optionals | filter = strategyFilter }
+                )
                 selectActiveAdaptationStrategies
+                    |> Field.map strategiesFromList
             )
 
 
-selectActiveAdaptationStrategies : SelectionSet ActiveStrategy ChipApi.Object.AdaptationStrategy
-selectActiveAdaptationStrategies =
-    AS.selection ActiveStrategy
-        |> with AS.id
-        |> with AS.name
-        
-
--- GRAPHQL - QUERY ADAPTATION STRATEGY + DETAILS BY ID
-
-
-queryAdaptationStrategyById : Scalar.Id -> SelectionSet (Maybe StrategyDetails) RootQuery
-queryAdaptationStrategyById id =
+queryAdaptationStrategyDetailsById : Scalar.Id -> SelectionSet (Maybe StrategyDetails) RootQuery
+queryAdaptationStrategyDetailsById id =
     Query.selection identity
         |> with (Query.adaptationStrategy { id = id } selectStrategyDetails)
+
+
+--
+-- GRAPHQL SELECTORS
+--
+
+
+selectActiveAdaptationStrategies : SelectionSet Strategy ChipApi.Object.AdaptationStrategy
+selectActiveAdaptationStrategies =
+    AS.selection Strategy
+        |> with AS.id
+        |> with AS.name
 
 
 selectStrategyDetails : SelectionSet StrategyDetails ChipApi.Object.AdaptationStrategy
@@ -398,6 +325,16 @@ selectCoastalHazard =
         |> with CH.id
         |> with CH.name
         |> with CH.description
+        |> hardcoded []
+
+
+selectCoastalHazardWithStrategyIds : SelectionSet CoastalHazard ChipApi.Object.CoastalHazard
+selectCoastalHazardWithStrategyIds =
+    CH.selection CoastalHazard
+        |> with CH.id
+        |> with CH.name
+        |> with CH.description
+        |> with (CH.strategies <| fieldSelection AS.id)
 
 
 selectImpactScale : SelectionSet ImpactScale ChipApi.Object.ImpactScale
@@ -432,37 +369,6 @@ selectDisadvantage =
         |> with AD.name
 
 
-
--- GRAPHQL - QUERY LIST OF ADAPTATION CATEGORIES
-
-
-queryAdaptationCategories : SelectionSet (GqlList Category) RootQuery
-queryAdaptationCategories =
-    Query.selection GqlList
-        |> with (Query.adaptationCategories identity selectCategory)
-
-
--- GRAPHQL - QUERY LIST OF ADAPTATION BENEFITS
-
-
-queryAdaptationBenefits : SelectionSet (GqlList Benefit) RootQuery
-queryAdaptationBenefits =
-    Query.selection GqlList
-        |> with (Query.adaptationBenefits identity selectBenefit)
-
-
--- GRAPHQL - QUERY COASTAL HAZARDS
-
-
-queryCoastalHazards : SelectionSet (GqlList CoastalHazard) RootQuery
-queryCoastalHazards =
-    Query.selection GqlList
-        |> with (Query.coastalHazards identity selectCoastalHazard)
-
-
--- GRAPHQL - QUERY STRATEGY IDS BY HAZARD
-
-
 selectCoastalHazardStrategies : SelectionSet (List Scalar.Id) ChipApi.Object.CoastalHazard
 selectCoastalHazardStrategies =
     fieldSelection <| 
@@ -472,9 +378,3 @@ selectCoastalHazardStrategies =
 selectStrategyId : SelectionSet Scalar.Id ChipApi.Object.AdaptationStrategy
 selectStrategyId =
     fieldSelection AS.id
-
-
-queryHazardsByIdForStrategyIds : Scalar.Id -> SelectionSet (Maybe (List Scalar.Id)) RootQuery
-queryHazardsByIdForStrategyIds hazardId =
-    Query.selection identity
-        |> with (Query.coastalHazard { id = hazardId } selectCoastalHazardStrategies)

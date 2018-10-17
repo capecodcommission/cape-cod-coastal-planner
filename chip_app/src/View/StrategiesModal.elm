@@ -72,9 +72,7 @@ view :
     { config 
         | device : Device
         , closePath : String
-        , adaptationCategories : GqlData Categories
-        , adaptationBenefits : GqlData Benefits
-        , strategies : StrategyIdsByHazard --GqlData Strategies
+        , adaptationInfo : GqlData AdaptationInfo
     }
     -> Element MainStyles Variations Msg
 view config =

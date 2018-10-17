@@ -18,13 +18,20 @@ import ShorelineLocation exposing (Extent, ShorelineExtent, BaselineInfo, extent
 import Message exposing (..)
 import AdaptationStrategy as AS
     exposing 
-        ( queryAdaptationStrategies
-        , queryAdaptationStrategyById 
-        , queryAdaptationCategories
-        , queryAdaptationBenefits
-        , queryCoastalHazards
-        , queryHazardsByIdForStrategyIds
+        ( queryAdaptationInfo
+        , queryAdaptationStrategyDetailsById 
         )
+
+
+--
+-- ADAPTATION INFO
+--
+
+getAdaptationInfo : Cmd Msg
+getAdaptationInfo =
+    queryAdaptationInfo
+        |> queryRequest "./api"
+        |> send (Remote.fromResult >> GotAdaptationInfo)
 
 
 --
@@ -32,59 +39,11 @@ import AdaptationStrategy as AS
 --
 
 
-getActiveAdaptationStrategiesByHazard : AS.CoastalHazard -> Cmd Msg
-getActiveAdaptationStrategiesByHazard hazard =
-    queryAdaptationStrategies (Just hazard.id)
-        |> queryRequest "./api"
-        |> send (Remote.fromResult >> GotActiveStrategies)
-
-
 getAdaptationStrategyDetailsById : Scalar.Id -> Cmd Msg
 getAdaptationStrategyDetailsById strategyId =
-    queryAdaptationStrategyById strategyId
+    queryAdaptationStrategyDetailsById strategyId
         |> queryRequest "./api"
         |> send (Remote.fromResult >> (GotStrategyDetails strategyId))
-
-
---
--- ADAPTATION CATEGORIES
---
-
-getAdaptationCategories : Cmd Msg
-getAdaptationCategories =
-    queryAdaptationCategories
-        |> queryRequest "./api"
-        |> send (Remote.fromResult >> GotAdaptationCategories)
-
-
---
--- ADAPTATION BENEFITS
---
-
-getAdaptationBenefits : Cmd Msg
-getAdaptationBenefits =
-    queryAdaptationBenefits
-        |> queryRequest "./api"
-        |> send (Remote.fromResult >> GotAdaptationBenefits)
-
-
---
--- COASTAL HAZARDS
---
-
-
-getCoastalHazards : Cmd Msg
-getCoastalHazards =    
-    queryCoastalHazards
-        |> queryRequest "./api"
-        |> send (Remote.fromResult >> GotCoastalHazards)
-
-
-getStrategyIdsByHazard : Scalar.Id -> Cmd Msg
-getStrategyIdsByHazard hazardId =
-    queryHazardsByIdForStrategyIds hazardId
-        |> queryRequest "./api"
-        |> send (Remote.fromResult >> (GotStrategyIdsByHazard hazardId))
 
 
 --

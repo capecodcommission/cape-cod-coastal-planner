@@ -16,9 +16,7 @@ import ChipApi.Scalar as Scalar
 type Msg
     = Noop
     | UrlChange Navigation.Location
-    | GotAdaptationCategories (GqlData (GqlList AS.Category))
-    | GotAdaptationBenefits (GqlData (GqlList AS.Benefit))
-    | GotCoastalHazards (GqlData (GqlList AS.CoastalHazard))
+    | GotAdaptationInfo (GqlData AS.AdaptationInfo)
     | GotShorelineExtents (GqlData (GqlList SL.ShorelineExtent))
     | SelectLocationInput (Input.SelectMsg SL.ShorelineExtent)
     | GetBaselineInfo
@@ -33,8 +31,6 @@ type Msg
     | CancelZoneOfImpactSelection
     | PickStrategy
     | CloseStrategyModal
-    | GotStrategyIdsByHazard Scalar.Id (GqlData (Maybe (List Scalar.Id)))
-    | GotActiveStrategies (GqlData (GqlList AS.ActiveStrategy))
     | SelectStrategy Scalar.Id
     | HandleStrategyKeyboardEvent KeyboardEvent
     | GotStrategyDetails Scalar.Id (GqlData (Maybe AS.StrategyDetails))
