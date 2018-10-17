@@ -55,6 +55,21 @@ tryPrevious items =
         |> MEx.orElse items
 
 
+tryPreviousOrLast : Maybe (Zipper a) -> Maybe (Zipper a)
+tryPreviousOrLast items =
+    items
+        |> Maybe.andThen Zipper.previous
+        |> MEx.orElse (items |> Maybe.map Zipper.last)
+
+
+tryNextOrFirst : Maybe (Zipper a) -> Maybe (Zipper a)
+tryNextOrFirst items =
+    items 
+        |> Maybe.andThen Zipper.next
+        |> MEx.orElse (items |> Maybe.map Zipper.first)
+
+
+
 --
 -- COMMON PREDICATES
 -- 

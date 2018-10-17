@@ -3,7 +3,7 @@ module View.StrategiesModal exposing (..)
 
 import Dict as Dict exposing (Dict)
 import Types exposing (..)
-import AdaptationStrategy exposing (..)
+import AdaptationStrategy as AS exposing (..)
 import Message exposing (..)
 import Element exposing (..)
 import Element.Keyed as Keyed
@@ -72,7 +72,10 @@ view :
     { config 
         | device : Device
         , closePath : String
+        , trianglePath : String
         , adaptationInfo : GqlData AdaptationInfo
+        , hazardSelections : Maybe CoastalHazardZipper
+        , strategySelections : Maybe StrategyZipper
     }
     -> Element MainStyles Variations Msg
 view config =
@@ -91,46 +94,72 @@ view config =
                 ] <|
                 row NoStyle 
                     [ height fill ] 
-                    [ --sidebarView config
-                    --, mainContentView config
+                    [ sidebarView config
+                    , mainContentView config
                     ]
         ]
 
 
--- sidebarView :
---     { config
---         | device: Device
---         , strategies : StrategiesByHazard --GqlData Strategies
---     }
---     -> Element MainStyles Variations Msg
--- sidebarView config =
---     sidebar (AddStrategies StrategiesSidebar)
---         [ width (px 400)
---         , height fill
---         ]
---         [ header (AddStrategies StrategiesSidebarHeader)
---             [ width fill, height (px 58) ]
---             ( h5 (Headings H5) 
---                 [ center
---                 , verticalCenter
---                 , height fill
---                 ] <| 
---                     Element.text "Erosion Strategies" 
---             )
---         , column (AddStrategies StrategiesSidebarList)
---             [ height ( px <| activeStrategiesHeight config.device )
---             ] <| 
---                 strategiesView config.strategies
---         , footer (AddStrategies StrategiesSidebarFooter)
---             [ width fill, height (px 90) ]
---             ( el NoStyle [ center, verticalCenter ] <| 
---                 button ActionButton
---                     [ width (px 274)
---                     , height (px 42)
---                     , title "Apply strategy"
---                     ] <| Element.text "APPLY STRATEGY"         
---             )
---         ]
+sidebarView :
+    { config
+        | device : Device
+        , trianglePath : String
+        , adaptationInfo : GqlData AdaptationInfo
+        , hazardSelections : Maybe CoastalHazardZipper
+    }
+    -> Element MainStyles Variations Msg
+sidebarView config =
+    let
+        currentHazard = AS.currentHazard config.adaptationInfo config.hazardSelections
+    in
+    sidebar (AddStrategies StrategiesSidebar)
+        [ width (px 400)
+        , height fill
+        ]
+        [ header (AddStrategies StrategiesSidebarHeader)
+            [ width fill, height (px 58) ] <|
+                hazardPickerView config.device config.trianglePath currentHazard
+        , column (AddStrategies StrategiesSidebarList)
+            [ height ( px <| activeStrategiesHeight config.device ) ] <| 
+                [] --strategiesView config.strategies
+        , footer (AddStrategies StrategiesSidebarFooter)
+            [ width fill, height (px 90) ]
+            ( el NoStyle [ center, verticalCenter ] <| 
+                button ActionButton
+                    [ width (px 274)
+                    , height (px 42)
+                    , title "Apply strategy"
+                    ] <| Element.text "APPLY STRATEGY"         
+            )
+        ]
+
+
+hazardPickerView : Device -> String -> Maybe CoastalHazard -> Element MainStyles Variations Msg
+hazardPickerView device trianglePath currentHazard = 
+    h5 (Headings H5) 
+        [ height fill, width fill ] <| 
+            case currentHazard of
+                Just hazard ->
+                    row NoStyle
+                        [ verticalCenter, width fill, height fill ]
+                        [ image NoStyle 
+                            [ alignLeft
+                            , onClick SelectPreviousHazard
+                            , title "Select previous hazard"
+                            ] 
+                            { src = trianglePath, caption = "left arrow" }
+                        , el NoStyle [ width fill ] <| Element.text hazard.name
+                        , image NoStyle 
+                            [ alignRight
+                            , onClick SelectNextHazard
+                            , title "Select next hazard"
+                            ] 
+                            { src = trianglePath, caption = "right arrow" }
+                        ]
+
+                Nothing -> 
+                    el NoStyle [] empty
+    
 
 
 -- strategiesView : StrategiesByHazard -> List (Element MainStyles Variations Msg)
@@ -193,94 +222,93 @@ view config =
 -- --
 
 
--- mainContentView : 
---     { config
---         | device : Device
---         , closePath : String
---         , adaptationCategories : GqlData Categories
---         , adaptationBenefits : GqlData Benefits
---         , strategies : StrategiesByHazard --GqlData Strategies
---     }
---     -> Element MainStyles Variations Msg
--- mainContentView config =
---     column NoStyle
---         [ scrollbars, height fill, width fill ]
---         ( case strategiesToCurrentDetails config.strategies of
---             (maybeName, NotAsked) ->
---                 [ headerDetailsLoadingView
---                     { device = config.device 
---                     , closePath = config.closePath
---                     , name = maybeName
---                     , categories = config.adaptationCategories
---                     } 
---                 ]
+mainContentView : 
+    { config
+        | device : Device
+        , closePath : String
+        , adaptationInfo : GqlData AdaptationInfo
+    }
+    -> Element MainStyles Variations Msg
+mainContentView config =
+    column NoStyle
+        [ scrollbars, height fill, width fill ]
+        [ headerDetailsView config
+        ]
+        -- ( case strategiesToCurrentDetails config.strategies of
+        --     (maybeName, NotAsked) ->
+        --         [ headerDetailsLoadingView
+        --             { device = config.device 
+        --             , closePath = config.closePath
+        --             , name = maybeName
+        --             , categories = config.adaptationCategories
+        --             } 
+        --         ]
 
---             (maybeName, Loading) ->
---                 [ headerDetailsLoadingView
---                     { device = config.device 
---                     , closePath = config.closePath
---                     , name = maybeName
---                     , categories = config.adaptationCategories
---                     }
---                 ]
+        --     (maybeName, Loading) ->
+        --         [ headerDetailsLoadingView
+        --             { device = config.device 
+        --             , closePath = config.closePath
+        --             , name = maybeName
+        --             , categories = config.adaptationCategories
+        --             }
+        --         ]
 
---             (Just name, Success (Just details)) ->
---                 [ headerDetailsView
---                     { device = config.device
---                     , closePath = config.closePath
---                     , name = name
---                     , categories = config.adaptationCategories
---                     , details = details
---                     }
---                 ]
+        --     (Just name, Success (Just details)) ->
+        --         [ headerDetailsView
+        --             { device = config.device
+        --             , closePath = config.closePath
+        --             , name = name
+        --             , categories = config.adaptationCategories
+        --             , details = details
+        --             }
+        --         ]
 
---             (Just name, Success Nothing) ->
---                 [ Element.text <| "Details for " ++ name ++ " not found" ]
+        --     (Just name, Success Nothing) ->
+        --         [ Element.text <| "Details for " ++ name ++ " not found" ]
 
---             (Nothing, Success _) ->
---                 [ Element.text "Strategy details not found" ]
+        --     (Nothing, Success _) ->
+        --         [ Element.text "Strategy details not found" ]
 
---             (_, Failure err) ->
---                 err 
---                     |> parseErrors 
---                     |> List.map 
---                         (\(s1, s2) ->
---                             Element.text (s1 ++ ": " ++ s2)
---                         )
-
---         )
+        --     (_, Failure err) ->
+        --         err 
+        --             |> parseErrors 
+        --             |> List.map 
+        --                 (\(s1, s2) ->
+        --                     Element.text (s1 ++ ": " ++ s2)
+        --                 )
+        -- )
         
--- headerDetailsView : 
---     { config
---         | device : Device
---         , closePath : String
---         , name : String
---         , categories : GqlData Categories
---         , details : StrategyDetails
---     }
---     -> Element MainStyles Variations Msg
--- headerDetailsView config =
---     header (AddStrategies StrategiesDetailsHeader)
---         [ width fill
---         , height (px <| detailsHeaderHeight config.device)
---         ]
---         (column NoStyle
---             [ height fill, width fill, paddingXY 40 10, spacingXY 0 5 ]
---             [ el NoStyle [ width fill, height (percent 40) ] 
---                 <| el (AddStrategies StrategiesSheetHeading) [ verticalCenter ] <| 
---                     Element.text "ADAPTATION STRATEGIES SHEET"
---             , column NoStyle [ width fill, height (percent 60), verticalCenter ]
---                 [ el (AddStrategies StrategiesSubHeading) [] <| 
---                     Element.text "Strategy:"
---                 , el (AddStrategies StrategiesMainHeading) [] <| 
---                     Element.text config.name
---                 ]
---             ]
---             |> within 
---                 [ closeIconView config.closePath 
---                 , categoriesView config.categories config.details.categories
---                 ]
---         )
+headerDetailsView : 
+    { config
+        | device : Device
+        , closePath : String
+        --, name : String
+        --, categories : GqlData Categories
+        --, details : StrategyDetails
+    }
+    -> Element MainStyles Variations Msg
+headerDetailsView config =
+    header (AddStrategies StrategiesDetailsHeader)
+        [ width fill
+        , height (px <| detailsHeaderHeight config.device)
+        ]
+        (column NoStyle
+            [ height fill, width fill, paddingXY 40 10, spacingXY 0 5 ]
+            [ el NoStyle [ width fill, height (percent 40) ] 
+                <| el (AddStrategies StrategiesSheetHeading) [ verticalCenter ] <| 
+                    Element.text "ADAPTATION STRATEGIES SHEET"
+            , column NoStyle [ width fill, height (percent 60), verticalCenter ]
+                [ el (AddStrategies StrategiesSubHeading) [] <| 
+                    Element.text "Strategy:"
+                , el (AddStrategies StrategiesMainHeading) [] <| 
+                    Element.text "NAME" --config.name
+                ]
+            ]
+            |> within 
+                [ closeIconView config.closePath 
+                --, categoriesView config.categories config.details.categories
+                ]
+        )
 
 
 -- headerDetailsLoadingView : 
@@ -473,13 +501,13 @@ view config =
 --     )
     
 
--- closeIconView : String -> Element MainStyles Variations Msg
--- closeIconView srcPath =
---     image CloseIcon 
---         [ alignRight
---         , moveDown 15
---         , moveLeft 15
---         , title "Close strategy selection"
---         , onClick CloseStrategyModal
---         ]
---         { src = srcPath, caption = "Close Modal" }
+closeIconView : String -> Element MainStyles Variations Msg
+closeIconView srcPath =
+    image CloseIcon 
+        [ alignRight
+        , moveDown 15
+        , moveLeft 15
+        , title "Close strategy selection"
+        , onClick CloseStrategyModal
+        ]
+        { src = srcPath, caption = "Close Modal" }

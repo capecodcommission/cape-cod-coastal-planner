@@ -28,9 +28,11 @@ type Msg
     | LoadVulnerabilityRibbonResponse (Result Http.Error D.Value)
     | LoadLocationHexesResponse (Result Http.Error D.Value)
     | UpdateZoneOfImpact ZoneOfImpact
-    | CancelZoneOfImpactSelection
+    | CancelZoneOfImpactSelection    
     | PickStrategy
     | CloseStrategyModal
+    | SelectPreviousHazard
+    | SelectNextHazard
     | SelectStrategy Scalar.Id
     | HandleStrategyKeyboardEvent KeyboardEvent
     | GotStrategyDetails Scalar.Id (GqlData (Maybe AS.StrategyDetails))

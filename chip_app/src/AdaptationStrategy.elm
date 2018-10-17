@@ -67,6 +67,19 @@ hazardsFromList list =
         |> Dict.fromList
 
 
+currentHazard : GqlData AdaptationInfo -> Maybe CoastalHazardZipper -> Maybe CoastalHazard
+currentHazard data zipper =
+    zipper
+        |> Maybe.map2 
+            (\info selections -> 
+                Dict.get (Zipper.current selections) info.hazards    
+            )
+            (Remote.toMaybe data)
+        |> MEx.join
+        
+   
+
+
 --
 -- ADAPTATION STRATEGIES
 --

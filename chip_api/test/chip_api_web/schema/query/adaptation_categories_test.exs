@@ -1,6 +1,7 @@
 defmodule ChipApiWeb.Schema.Query.AdaptationCategoriesTest do
     use ChipApiWeb.ConnCase, async: true
 
+    @moduletag :api_case
     @moduletag :adaptation_categories_case
 
     setup do

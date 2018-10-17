@@ -380,6 +380,28 @@ updateModel msg model =
             , Cmd.none
             )
 
+        SelectPreviousHazard ->
+            let
+                newHazardSelections =
+                    ZipHelp.tryPreviousOrLast model.hazardSelections
+
+                -- next, update strategies and focus first
+            in
+            ( { model | hazardSelections = newHazardSelections }
+            , Cmd.none
+            )
+
+        SelectNextHazard -> 
+            let
+                newHazardSelections =
+                    ZipHelp.tryNextOrFirst model.hazardSelections
+
+                -- next, update strategies and focus first
+            in
+            ( { model | hazardSelections = newHazardSelections }
+            , Cmd.none
+            )
+
         SelectStrategy id ->
             ( model, Cmd.none )
             -- let
