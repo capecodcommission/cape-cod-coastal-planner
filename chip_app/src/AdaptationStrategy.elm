@@ -65,6 +65,17 @@ currentHazardFromInfo data =
         |> Maybe.map Zipper.current
         
 
+updateHazardStrategies : 
+    (Maybe StrategyIdZipper -> Maybe StrategyIdZipper) 
+    -> Maybe CoastalHazardZipper
+    -> Maybe CoastalHazardZipper
+updateHazardStrategies updateFn hazards =
+    hazards
+        |> ZipHelp.tryMapCurrent
+            (\hazard ->
+                { hazard | strategies = updateFn hazard.strategies }
+            )
+
 --
 -- ADAPTATION STRATEGIES
 --
@@ -103,7 +114,7 @@ getSelectedStrategyHtmlId hazards =
 
 getStrategyHtmlId : Scalar.Id -> String
 getStrategyHtmlId (Scalar.Id id) =
-    "strategy-" ++ id
+    Debug.log "id" <| "strategy-" ++ id
 
 
 -- strategyHasCategory : Category -> Strategy -> Bool
@@ -333,7 +344,7 @@ selectCoastalHazardWithStrategyIds =
         |> with CH.description
         |> with 
             ( fieldSelection AS.id
-                |> CH.strategies
+                |> CH.strategies (\optionals -> { optionals | isActive = Present True })
                 |> Field.map Zipper.fromList
             )
 
@@ -368,12 +379,6 @@ selectDisadvantage : SelectionSet Disadvantage ChipApi.Object.AdaptationDisadvan
 selectDisadvantage =
     AD.selection Disadvantage
         |> with AD.name
-
-
-selectCoastalHazardStrategies : SelectionSet (List Scalar.Id) ChipApi.Object.CoastalHazard
-selectCoastalHazardStrategies =
-    fieldSelection <| 
-        CH.strategies selectStrategyId
 
 
 selectStrategyId : SelectionSet Scalar.Id ChipApi.Object.AdaptationStrategy

@@ -197,6 +197,15 @@ defmodule ChipApi.Adaptation.Strategies do
         [%Strategy{}, ...]
 
     """
+    def list_strategies_for_hazard(%Hazard{} = hazard, args) do
+        query = Ecto.assoc(hazard, :adaptation_strategies)
+        args
+        |> Enum.reduce(query, fn
+            {:is_active, is_active}, query ->
+                from q in query, where: q.is_active == ^is_active
+        end)
+        |> Repo.all
+    end
     def list_strategies_for_hazard(%Hazard{} = hazard) do
         query = Ecto.assoc(hazard, :adaptation_strategies)
         Repo.all(query)

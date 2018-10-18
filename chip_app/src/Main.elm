@@ -19,7 +19,7 @@ import Task
 import List.Extra as LEx
 import List.Zipper as Zipper
 import ZipperHelpers as ZipHelp
-import Keyboard.Key exposing (Key(Up, Down, Enter, Escape))
+import Keyboard.Key exposing (Key(Up, Down, Left, Right, Enter, Escape))
 import Types exposing (..)
 import AdaptationStrategy as AS exposing (..)
 import ShorelineLocation as SL exposing (..)
@@ -398,27 +398,93 @@ updateModel msg model =
             
 
         HandleStrategyKeyboardEvent evt ->
-            ( model, Cmd.none )
-            -- case evt.keyCode of
-            --     Down ->
-            --         let
-            --             ( newStrategies, newCmd ) =
-            --                 Remote.update selectNextStrategy model.strategies
-            --         in
-            --         ( { model | strategies = newStrategies }, newCmd )
+            case evt.keyCode of
+                Down ->
+                    model.adaptationInfo
+                        |> Remote.update
+                            (\info ->
+                                let 
+                                    newHazards = 
+                                        info.hazards
+                                            |> updateHazardStrategies ZipHelp.tryNext
+                                in
+                                ( {info | hazards = newHazards}
+                                , newHazards
+                                    |> AS.getSelectedStrategyHtmlId
+                                    |> Maybe.map focus
+                                    |> Maybe.withDefault Cmd.none
+                                )
+                            )
+                        |> \(info, cmd) ->
+                            ( { model | adaptationInfo = info }, cmd )
 
-            --     Up ->
-            --         let
-            --             ( newStrategies, newCmd ) =
-            --                 Remote.update selectPreviousStrategy model.strategies
-            --         in
-            --         ( { model | strategies = newStrategies }, newCmd )
+                Up ->
+                    model.adaptationInfo
+                        |> Remote.update
+                            (\info ->
+                                let
+                                    newHazards =
+                                        info.hazards
+                                            |> updateHazardStrategies ZipHelp.tryPrevious
+                                in
+                                ( {info | hazards = newHazards}
+                                , newHazards
+                                    |> AS.getSelectedStrategyHtmlId
+                                    |> Maybe.map focus
+                                    |> Maybe.withDefault Cmd.none
+                                )
+                            )
+                        |> \(info, cmd) ->
+                            ( { model | adaptationInfo = info }, cmd )
 
-            --     Enter ->
-            --         ( model, Cmd.none )
+                Left ->
+                    model.adaptationInfo
+                        |> Remote.update
+                            (\info ->
+                                let
+                                    newHazards = 
+                                        ZipHelp.tryPreviousOrLast info.hazards                                    
+                                in
+                                ( { info | hazards = newHazards }
+                                , newHazards
+                                    |> AS.getSelectedStrategyHtmlId
+                                    |> Maybe.map focus
+                                    |> Maybe.withDefault Cmd.none                           
+                                )
+                            )
+                        |> \(info, cmd) ->
+                            ( {model | adaptationInfo = info }, cmd )
 
-            --     _ ->
-            --         ( model, Cmd.none )
+                Right ->
+                    model.adaptationInfo
+                        |> Remote.update
+                            (\info ->
+                                let
+                                    newHazards =
+                                        ZipHelp.tryNextOrFirst info.hazards
+                                in
+                                ( {info | hazards = newHazards }
+                                , newHazards
+                                    |> AS.getSelectedStrategyHtmlId
+                                    |> Maybe.map focus
+                                    |> Maybe.withDefault Cmd.none
+                                )
+                            )
+                        |> \(info, cmd) ->
+                            ( { model | adaptationInfo = info }, cmd )
+
+                Enter ->
+                    ( model, Cmd.none )
+
+                Escape ->
+                    ( model
+                        |> expandRightSidebar
+                        |> \m -> { m | strategiesModalOpenness = Closed }
+                    , Cmd.none
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
 
         GotStrategyDetails id response ->
             ( model, Cmd.none )

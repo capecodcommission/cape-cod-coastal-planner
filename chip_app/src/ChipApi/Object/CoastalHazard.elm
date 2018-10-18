@@ -46,8 +46,23 @@ name =
     Object.fieldDecoder "name" [] Decode.string
 
 
+type alias StrategiesOptionalArguments =
+    { isActive : OptionalArgument Bool }
+
+
 {-| The adaptation strategies that are associated with the hazard
+
+  - isActive - Is currently available for planning or not
+
 -}
-strategies : SelectionSet decodesTo ChipApi.Object.AdaptationStrategy -> Field (List decodesTo) ChipApi.Object.CoastalHazard
-strategies object =
-    Object.selectionField "strategies" [] object (identity >> Decode.list)
+strategies : (StrategiesOptionalArguments -> StrategiesOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.AdaptationStrategy -> Field (List decodesTo) ChipApi.Object.CoastalHazard
+strategies fillInOptionals object =
+    let
+        filledInOptionals =
+            fillInOptionals { isActive = Absent }
+
+        optionalArgs =
+            [ Argument.optional "isActive" filledInOptionals.isActive Encode.bool ]
+                |> List.filterMap identity
+    in
+    Object.selectionField "strategies" optionalArgs object (identity >> Decode.list)

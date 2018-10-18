@@ -85,8 +85,8 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_strategies_for_benefit(benefit)}
     end
 
-    def strategies_for_hazard(hazard, _args, _) do
-        {:ok, Strategies.list_strategies_for_hazard(hazard)}
+    def strategies_for_hazard(hazard, args, _) do
+        {:ok, Strategies.list_strategies_for_hazard(hazard, args)}
     end
 
     def strategies_for_scale(scale, _args, _) do

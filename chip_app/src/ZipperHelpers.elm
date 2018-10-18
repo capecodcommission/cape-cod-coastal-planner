@@ -69,6 +69,12 @@ tryNextOrFirst items =
         |> MEx.orElse (items |> Maybe.map Zipper.first)
 
 
+tryMapCurrent : (a -> a) -> Maybe (Zipper a) -> Maybe (Zipper a)
+tryMapCurrent fn items =
+    items
+        |> Maybe.map (Zipper.mapCurrent fn)
+        |> MEx.orElse items
+
 
 --
 -- COMMON PREDICATES

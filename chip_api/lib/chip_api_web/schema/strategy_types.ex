@@ -204,6 +204,8 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
         @desc "The adaptation strategies that are associated with the hazard"
         field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
+            @desc "Is currently available for planning or not"
+            arg :is_active, :boolean
             resolve &Resolvers.Strategies.strategies_for_hazard/3
         end
     end

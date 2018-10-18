@@ -2,6 +2,7 @@ module View.StrategiesModal exposing (..)
 
 
 import Dict as Dict exposing (Dict)
+import Maybe.Extra as MEx
 import Types exposing (..)
 import AdaptationStrategy as AS exposing (..)
 import Message exposing (..)
@@ -142,40 +143,52 @@ hazardPickerView device trianglePath currentHazard =
 strategiesView : Maybe Strategies -> Maybe StrategyIdZipper -> List (Element MainStyles Variations Msg)
 strategiesView maybeStrategies maybeSelections =
     case (maybeStrategies, maybeSelections) of
-        -- (Just strategies, Just selections) ->
-        --     ( Zipper.before selections |> List.map (strategyView strategies))
-        --     ++ [ Zipper.current selections |> selectedStrategyView strategies ]
-        --     ++ ( Zipper.after selections |> List.map (strategyView strategies) )
+        (Just strategies, Just selections) ->
+            let
+                before = ( Zipper.before selections |> List.map (strategyView strategies) )
 
+                selected = [ Zipper.current selections |> selectedStrategyView strategies ]
+
+                after = ( Zipper.after selections |> List.map (strategyView strategies) )
+            in
+                (before ++ selected ++ after)
+                    |> MEx.values
+            
         (_, _) ->
             [ el NoStyle [ center, verticalCenter ] <| 
                 Element.text "No active strategies found" 
             ]
 
 
--- strategyView : Strategies -> Scalar.Id -> Element MainStyles Variations Msg
--- strategyView strategies ((Scalar.Id id) as strategyId) =
---     let
---         strategy = strategies |> Dict.get id  
---     in
+strategyView : Strategies -> Scalar.Id -> Maybe (Element MainStyles Variations Msg)
+strategyView strategies ((Scalar.Id id) as strategyId) =
+    strategies
+        |> Dict.get id
+        |> Maybe.map 
+            (\strategy ->
+                button (AddStrategies StrategiesSidebarListBtn)
+                    [ height content
+                    , paddingXY 16 8
+                    , onClick (SelectStrategy strategyId)
+                    , Attr.id <| getStrategyHtmlId strategyId
+                    ] <| paragraph NoStyle [] [ Element.text strategy.name ]
+            )
+
+
+selectedStrategyView : Strategies -> Scalar.Id -> Maybe (Element MainStyles Variations Msg)
+selectedStrategyView strategies ((Scalar.Id id) as strategyId) =
+    strategies
+        |> Dict.get id
+        |> Maybe.map 
+            (\strategy ->
+                button (AddStrategies StrategiesSidebarListBtnSelected) 
+                    [ height content
+                    , paddingXY 16 8
+                    , on "keydown" <| D.map HandleStrategyKeyboardEvent decodeKeyboardEvent
+                    , Attr.id <| getStrategyHtmlId strategyId
+                    ] <| paragraph NoStyle [] [ Element.text strategy.name ]        
+            )
     
---     button (AddStrategies StrategiesSidebarListBtn)
---         [ height content
---         , paddingXY 16 8
---         , onClick (SelectStrategy strategyId)
---         , Attr.id <| getStrategyHtmlId strategyId
---         ] <| paragraph NoStyle [] [ Element.text name ]
-
-
-
--- selectedStrategyView : Strategy -> Element MainStyles Variations Msg
--- selectedStrategyView ({ id, name } as strategy) =
---     button (AddStrategies StrategiesSidebarListBtnSelected) 
---         [ height content
---         , paddingXY 16 8
---         , on "keydown" <| D.map HandleStrategyKeyboardEvent decodeKeyboardEvent
---         , Attr.id <| getStrategyHtmlId strategy
---         ] <| paragraph NoStyle [] [ Element.text name ]
 
 
 -- --
