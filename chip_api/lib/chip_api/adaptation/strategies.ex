@@ -460,6 +460,434 @@ defmodule ChipApi.Adaptation.Strategies do
 
    
     #
+    # IMPACT LIFE SPANS
+    #
+
+    alias ChipApi.Adaptation.Life_Span_Range
+
+
+    @doc """
+    Returns the list of impact life spans. When ordering by display_order,
+    nulls are returned first.
+
+    ## Examples
+
+        iex> list_life_spans(%{order: :desc})
+        [%Life_Span{}, ...]
+
+        iex> list_life_spans()
+        [%Life_Span{}, ...]
+
+    """
+    def list_life_spans(args) do
+        args
+        |> Enum.reduce(Life_Span, fn
+            {:order, order}, query ->
+                query |> order_by([{^order, :display_order}, {^order, :id}])
+        end)
+        |> Repo.all
+    end
+    def list_life_spans do
+        Repo.all(Life_Span)
+    end
+
+    @doc """
+    Returns the list of adaptation strategies associated with 
+    the given impact life span.
+
+    ## Examples
+
+        iex> list_strategies_for_life_span(life_span)
+        [%Strategy{}, ...]
+
+    """
+    def list_strategies_for_life_span(%Life_Span{} = life_span) do
+        query = Ecto.assoc(life_span, :adaptation_strategies)
+        Repo.all(query)
+    end
+
+    @doc """
+    Gets a single Life Span by id. 
+    
+    Raises `Ecto.NoResultsError` if the Life Span does not exist.
+
+    ## Examples
+
+        iex> get_life_span!(1)
+        %Life_Span{}
+
+        iex> get_life_span!(100)
+        ** (Ecto.NoResultsError)
+
+    """
+    def get_life_span!(id), do: Repo.get!(Life_Span, id)
+
+    @doc """
+    Gets a single Life Span by id. 
+    
+    Returns `nil` if the Life Span does not exist.
+
+    ## Examples
+
+        iex> get_life_span(1)
+        %Life_Span{}
+
+        iex> get_life_span(100)
+        nil
+
+    """
+    def get_life_span(id), do: Repo.get(Life_Span, id)
+
+    @doc """
+    Creates a Life Span.
+
+    ## Examples
+
+        iex> create_life_span(%{field: value})
+        {:ok, %Life_Span{}}
+
+        iex> create_life_span(%{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def create_life_span(attrs \\ %{}) do
+        %Life_Span{}
+        |> Life_Span.changeset(attrs)
+        |> Repo.insert()
+    end
+
+    @doc """
+    Updates a Life Span.
+
+    ## Examples
+
+        iex> update_life_span(life_span, %{field: new_value})
+        {:ok, %Life_Span{}}
+
+        iex> update_life_span(life_span, %{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """    
+    def update_life_span(%Life_Span{} = life_span, attrs) do
+        life_span
+        |> Life_Span.changeset(attrs)
+        |> Repo.update()
+    end
+
+    @doc """
+    Deletes a Life Span.
+
+    ## Examples
+
+        iex> delete_life_span(life_span)
+        {:ok, %Life_Span{}}
+
+        iex> delete_life_span(life_span)
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def delete_life_span(%Life_Span{} = life_span) do
+        Repo.delete(life_span)
+    end
+
+    @doc """
+    Returns an `%Ecto.Changeset{}` for tracking Life Span changes.
+
+    ## Examples
+
+        iex> change_life_span(life_span, %{field: new_value})
+        %Ecto.Changeset{data: %Life_Span{}, changes: %{field: new_value}, ...}
+
+        iex> change_life_span(life_span, %{field: bad_value})
+        %Ecto.Changeset{data: %Life_Span{}, changes: %{}, errors: [...]}
+
+    """
+    def change_life_span(%Life_Span{} = life_span, attrs) do
+        Scale.changeset(life_span, attrs)
+    end
+
+    #
+    # IMPACT COSTS
+    #
+
+    alias ChipApi.Adaptation.Cost_Range
+
+
+    @doc """
+    Returns the list of impact costs. When ordering by display_order,
+    nulls are returned first.
+
+    ## Examples
+
+        iex> list_costs(%{order: :desc})
+        [%Cost{}, ...]
+
+        iex> list_costs()
+        [%Cost{}, ...]
+
+    """
+    def list_costs(args) do
+        args
+        |> Enum.reduce(Cost, fn
+            {:order, order}, query ->
+                query |> order_by([{^order, :display_order}, {^order, :id}])
+        end)
+        |> Repo.all
+    end
+    def list_costs do
+        Repo.all(Cost)
+    end
+
+    @doc """
+    Returns the list of adaptation strategies associated with 
+    the given impact cost.
+
+    ## Examples
+
+        iex> list_strategies_for_cost(cost)
+        [%Cost{}, ...]
+
+    """
+    def list_strategies_for_cost(%Cost{} = cost) do
+        query = Ecto.assoc(cost, :adaptation_strategies)
+        Repo.all(query)
+    end
+
+    @doc """
+    Gets a single Cost by id. 
+    
+    Raises `Ecto.NoResultsError` if the Cost does not exist.
+
+    ## Examples
+
+        iex> get_cost!(1)
+        %Cost{}
+
+        iex> get_cost!(100)
+        ** (Ecto.NoResultsError)
+
+    """
+    def get_cost!(id), do: Repo.get!(Cost, id)
+
+    @doc """
+    Gets a single Cost by id. 
+    
+    Returns `nil` if the Cost does not exist.
+
+    ## Examples
+
+        iex> get_cost(1)
+        %Cost{}
+
+        iex> get_cost(100)
+        nil
+
+    """
+    def get_cost(id), do: Repo.get(Cost, id)
+
+    @doc """
+    Creates a Cost.
+
+    ## Examples
+
+        iex> create_cost(%{field: value})
+        {:ok, %Cost{}}
+
+        iex> create_cost(%{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def create_cost(attrs \\ %{}) do
+        %Cost{}
+        |> Cost.changeset(attrs)
+        |> Repo.insert()
+    end
+
+    @doc """
+    Updates a Cost.
+
+    ## Examples
+
+        iex> update_cost(cost, %{field: new_value})
+        {:ok, %Cost{}}
+
+        iex> update_cost(cost, %{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """    
+    def update_cost(%Cost{} = cost, attrs) do
+        cost
+        |> Cost.changeset(attrs)
+        |> Repo.update()
+    end
+
+    @doc """
+    Deletes a Cost.
+
+    ## Examples
+
+        iex> delete_cost(cost)
+        {:ok, %Cost{}}
+
+        iex> delete_cost(cost)
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def delete_cost(%Cost{} = cost) do
+        Repo.delete(cost)
+    end
+
+    @doc """
+    Returns an `%Ecto.Changeset{}` for tracking Cost changes.
+
+    ## Examples
+
+        iex> change_cost(cost, %{field: new_value})
+        %Ecto.Changeset{data: %Cost{}, changes: %{field: new_value}, ...}
+
+        iex> change_cost(cost, %{field: bad_value})
+        %Ecto.Changeset{data: %Cost{}, changes: %{}, errors: [...]}
+
+    """
+    def change_cost(%Cost{} = cost, attrs) do
+        Cost.changeset(cost, attrs)
+    end
+
+    #
+    # STRATEGY PLACEMENTS
+    #
+
+    alias ChipApi.Adaptation.Placement
+
+
+    @doc """
+    Returns the list of strategy Placements. 
+
+    ## Examples
+        iex> list_placements()
+        [%Placement{}, ...]
+
+    """
+    def list_placements do
+        Repo.all(Placement)
+    end
+
+    @doc """
+    Returns the list of adaptation strategies associated with 
+    the given strategy Placement.
+
+    ## Examples
+
+        iex> list_strategies_for_placement(placement)
+        [%Strategy{}, ...]
+
+    """
+    def list_strategies_for_placement(%Placement{} = placement) do
+        query = Ecto.assoc(placement, :adaptation_strategies)
+        Repo.all(query)
+    end
+
+    @doc """
+    Gets a single Placement by id. 
+    
+    Raises `Ecto.NoResultsError` if the Placement does not exist.
+
+    ## Examples
+
+        iex> get_placement!(1)
+        %Placement{}
+
+        iex> get_placement!(100)
+        ** (Ecto.NoResultsError)
+
+    """
+    def get_placement!(id), do: Repo.get!(Placement, id)
+
+    @doc """
+    Gets a single Placement by id. 
+    
+    Returns `nil` if the Placement does not exist.
+
+    ## Examples
+
+        iex> get_placement(1)
+        %Placement{}
+
+        iex> get_placement(100)
+        nil
+
+    """
+    def get_placement(id), do: Repo.get(Placement, id)
+
+    @doc """
+    Creates a Placement.
+
+    ## Examples
+
+        iex> create_placement(%{field: value})
+        {:ok, %Placement{}}
+
+        iex> create_placement(%{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def create_placement(attrs \\ %{}) do
+        %Placement{}
+        |> Placement.changeset(attrs)
+        |> Repo.insert()
+    end
+
+    @doc """
+    Updates a Placement.
+
+    ## Examples
+
+        iex> update_placement(placement, %{field: new_value})
+        {:ok, %Placement{}}
+
+        iex> update_placement(placement, %{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """    
+    def update_placement(%Placement{} = placement, attrs) do
+        placement
+        |> Placement.changeset(attrs)
+        |> Repo.update()
+    end
+
+    @doc """
+    Deletes a Placement.
+
+    ## Examples
+
+        iex> delete_placement(placement)
+        {:ok, %Placement{}}
+
+        iex> delete_placement(placement)
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def delete_placement(%Placement{} = placement) do
+        Repo.delete(placement)
+    end
+
+    @doc """
+    Returns an `%Ecto.Changeset{}` for tracking placement changes.
+
+    ## Examples
+
+        iex> change_placement(placement, %{field: new_value})
+        %Ecto.Changeset{data: %Placement{}, changes: %{field: new_value}, ...}
+
+        iex> change_placement(placement, %{field: bad_value})
+        %Ecto.Changeset{data: %Placement{}, changes: %{}, errors: [...]}
+
+    """
+    def change_placement(%Placement{} = placement, attrs) do
+        Placement.changeset(placement, attrs)
+    end
+
+    #
     # ADAPTATION BENEFITS
     #
     

@@ -22,6 +22,14 @@ defmodule ChipApi.Adaptation.Strategy do
     many_to_many :impact_scales, ChipApi.Adaptation.Scale,
       join_through: "strategies_scales",
       on_delete: :delete_all
+    
+    many_to_many :impact_costs, ChipApi.Adaptation.Cost_Range,
+      join_through: "strategies_costs",
+      on_delete: :delete_all
+    
+    many_to_many :impact_life_spans, ChipApi.Adaptation.Life_Span_Range,
+      join_through: "strategies__life_spans",
+      on_delete: :delete_all
 
     many_to_many :adaptation_benefits, ChipApi.Adaptation.Benefit,
       join_through: "strategies_benefits",
