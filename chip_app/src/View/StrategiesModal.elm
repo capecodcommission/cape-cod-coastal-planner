@@ -11,9 +11,10 @@ import Element.Attributes as Attr exposing (..)
 import Element.Events exposing (..)
 import Styles exposing (..)
 import View.Helpers exposing (..)
-import RemoteData exposing (RemoteData(..))
+import RemoteData as Remote exposing (RemoteData(..))
 import Keyboard.Event exposing (decodeKeyboardEvent)
 import Graphqelm.Http exposing (Error(..), mapError)
+import ChipApi.Scalar as Scalar
 import Json.Decode as D
 import List.Zipper as Zipper
 
@@ -40,42 +41,12 @@ activeStrategiesHeight device =
     (modalHeight device) - (sidebarHeaderHeight + sidebarFooterHeight)
 
 
--- strategiesToCurrentDetails : StrategiesByHazard -> ( Maybe String, GqlData (Maybe StrategyDetails) )
--- strategiesToCurrentDetails data =
---     let
---         strategiesByHazard =
---             data
---                 |> Maybe.map Zipper.current
---                 |> Maybe.map Tuple.second
---                 |> Maybe.withDefault NotAsked    
---     in
---     case strategiesByHazard of
---         NotAsked -> 
---             ( Nothing, NotAsked )
-
---         Loading -> 
---             ( Nothing, Loading )
-
---         Success Nothing -> 
---             ( Nothing, Success Nothing )
-
---         Success (Just strategies) ->
---             strategies
---                 |> Zipper.current
---                 |> \s -> ( Just s.name, s.details )
-
---         Failure err ->
---             ( Nothing, Failure <| mapError (always Nothing) err )
-
-
 view : 
     { config 
         | device : Device
         , closePath : String
         , trianglePath : String
         , adaptationInfo : GqlData AdaptationInfo
-        , hazardSelections : Maybe CoastalHazardZipper
-        , strategySelections : Maybe StrategyZipper
     }
     -> Element MainStyles Variations Msg
 view config =
@@ -105,12 +76,18 @@ sidebarView :
         | device : Device
         , trianglePath : String
         , adaptationInfo : GqlData AdaptationInfo
-        , hazardSelections : Maybe CoastalHazardZipper
     }
     -> Element MainStyles Variations Msg
 sidebarView config =
     let
-        currentHazard = AS.currentHazard config.adaptationInfo config.hazardSelections
+        maybeInfo = config.adaptationInfo |> Remote.toMaybe
+
+        strategies = maybeInfo |> Maybe.map .strategies
+
+        currentHazard = maybeInfo |> Maybe.andThen .hazards |> Maybe.map Zipper.current
+
+        strategyIds = 
+            currentHazard |> Maybe.andThen .strategies
     in
     sidebar (AddStrategies StrategiesSidebar)
         [ width (px 400)
@@ -121,7 +98,7 @@ sidebarView config =
                 hazardPickerView config.device config.trianglePath currentHazard
         , column (AddStrategies StrategiesSidebarList)
             [ height ( px <| activeStrategiesHeight config.device ) ] <| 
-                [] --strategiesView config.strategies
+                strategiesView strategies strategyIds
         , footer (AddStrategies StrategiesSidebarFooter)
             [ width fill, height (px 90) ]
             ( el NoStyle [ center, verticalCenter ] <| 
@@ -162,47 +139,31 @@ hazardPickerView device trianglePath currentHazard =
     
 
 
--- strategiesView : StrategiesByHazard -> List (Element MainStyles Variations Msg)
--- strategiesView data =
+strategiesView : Maybe Strategies -> Maybe StrategyIdZipper -> List (Element MainStyles Variations Msg)
+strategiesView maybeStrategies maybeSelections =
+    case (maybeStrategies, maybeSelections) of
+        -- (Just strategies, Just selections) ->
+        --     ( Zipper.before selections |> List.map (strategyView strategies))
+        --     ++ [ Zipper.current selections |> selectedStrategyView strategies ]
+        --     ++ ( Zipper.after selections |> List.map (strategyView strategies) )
+
+        (_, _) ->
+            [ el NoStyle [ center, verticalCenter ] <| 
+                Element.text "No active strategies found" 
+            ]
+
+
+-- strategyView : Strategies -> Scalar.Id -> Element MainStyles Variations Msg
+-- strategyView strategies ((Scalar.Id id) as strategyId) =
 --     let
---         strategiesByHazard =
---             data
---                 |> Maybe.map Zipper.current
---                 |> Maybe.map Tuple.second
---                 |> Maybe.withDefault NotAsked
+--         strategy = strategies |> Dict.get id  
 --     in
---     case strategiesByHazard of
---         NotAsked ->
---             [ el NoStyle [ center, verticalCenter ] <| Element.text "Reload Strategies"
---             ]
-
---         Loading ->
---             [ el NoStyle [ center, verticalCenter ] <| Element.text "Loading Strategies"
---             ]
-
---         Success (Just strategies) ->
---             ( Zipper.before strategies |> List.map strategyView )
---             ++ [ Zipper.current strategies |> selectedStrategyView ]
---             ++ ( Zipper.after strategies |> List.map strategyView )
-            
-
---         Success Nothing ->
---             [ el NoStyle [ center, verticalCenter ] <| Element.text "No active strategies found"
---             ]
-
---         Failure err ->
---             [ el NoStyle [ center, verticalCenter ] <| Element.text "Error loading strategies"
---             , el NoStyle [ center, verticalCenter ] <| Element.text "Reload Strategies"
---             ]
-
-
--- strategyView : Strategy -> Element MainStyles Variations Msg
--- strategyView ({ id, name } as strategy) =
+    
 --     button (AddStrategies StrategiesSidebarListBtn)
 --         [ height content
 --         , paddingXY 16 8
---         , onClick (SelectStrategy id)
---         , Attr.id <| getStrategyHtmlId strategy
+--         , onClick (SelectStrategy strategyId)
+--         , Attr.id <| getStrategyHtmlId strategyId
 --         ] <| paragraph NoStyle [] [ Element.text name ]
 
 

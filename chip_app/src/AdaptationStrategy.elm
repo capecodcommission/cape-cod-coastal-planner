@@ -30,7 +30,7 @@ import Types exposing (GqlData, GqlList, getId, dictFromGqlList, unwrapGqlList, 
 type alias AdaptationInfo =
     { benefits : Benefits
     , categories : Categories
-    , hazards : CoastalHazards
+    , hazards : Maybe CoastalHazardZipper
     , strategies : Strategies
     }
 
@@ -40,68 +40,49 @@ type alias AdaptationInfo =
 --
 
 
-type alias HazardId = 
-    String
-
-
 type alias CoastalHazard =
     { id : Scalar.Id
     , name : String
     , description : Maybe String
-    , strategies : List Scalar.Id
+    , strategies : Maybe StrategyIdZipper
     }
 
 
-type alias CoastalHazards = 
-    Dict String CoastalHazard
-
-
 type alias CoastalHazardZipper = 
-    Zipper HazardId
+    Zipper CoastalHazard
 
 
-hazardsFromList : List CoastalHazard -> CoastalHazards
+hazardsFromList : List CoastalHazard -> Maybe CoastalHazardZipper
 hazardsFromList list =
-    list
-        |> List.map (\c -> ( getId c.id, c ))
-        |> Dict.fromList
+    Zipper.fromList list
 
 
-currentHazard : GqlData AdaptationInfo -> Maybe CoastalHazardZipper -> Maybe CoastalHazard
-currentHazard data zipper =
-    zipper
-        |> Maybe.map2 
-            (\info selections -> 
-                Dict.get (Zipper.current selections) info.hazards    
-            )
-            (Remote.toMaybe data)
-        |> MEx.join
+currentHazardFromInfo : GqlData AdaptationInfo -> Maybe CoastalHazard
+currentHazardFromInfo data =
+    data
+        |> Remote.toMaybe
+        |> Maybe.andThen .hazards
+        |> Maybe.map Zipper.current
         
-   
-
 
 --
 -- ADAPTATION STRATEGIES
 --
 
 
-type alias StrategyId = 
-    String
-
-
 type alias Strategy =
     { id : Scalar.Id
     , name : String
-    --, details : GqlData (Maybe StrategyDetails)
+    , details : GqlData StrategyDetails
     }
 
 
 type alias Strategies = 
-    Dict StrategyId Strategy
+    Dict String Strategy
 
 
-type alias StrategyZipper = 
-    Zipper StrategyId
+type alias StrategyIdZipper = 
+    Zipper Scalar.Id
 
 
 strategiesFromList : List Strategy -> Strategies
@@ -109,6 +90,20 @@ strategiesFromList list =
     list
         |> List.map (\s -> ( getId s.id, s ))
         |> Dict.fromList
+
+
+getSelectedStrategyHtmlId : Maybe CoastalHazardZipper -> Maybe String
+getSelectedStrategyHtmlId hazards =
+    hazards
+        |> Maybe.map Zipper.current
+        |> Maybe.andThen .strategies
+        |> Maybe.map Zipper.current
+        |> Maybe.map getStrategyHtmlId
+
+
+getStrategyHtmlId : Scalar.Id -> String
+getStrategyHtmlId (Scalar.Id id) =
+    "strategy-" ++ id
 
 
 -- strategyHasCategory : Category -> Strategy -> Bool
@@ -216,19 +211,7 @@ type alias Advantage =
 type alias Disadvantage = 
     { name : String }
 
--- ACCESS
 
-
-getStrategyHtmlId : StrategyId -> String
-getStrategyHtmlId id =
-    "strategy-" ++ id
-
-
-getSelectedStrategyHtmlId : StrategyZipper -> String
-getSelectedStrategyHtmlId strategies =
-    strategies
-        |> Zipper.current
-        |> getStrategyHtmlId
 
 
 -- loadDetailsFor : Strategy -> Maybe ( Maybe Scalar.Id, GqlData (Maybe StrategyDetails) )
@@ -300,6 +283,7 @@ selectActiveAdaptationStrategies =
     AS.selection Strategy
         |> with AS.id
         |> with AS.name
+        |> hardcoded NotAsked
 
 
 selectStrategyDetails : SelectionSet StrategyDetails ChipApi.Object.AdaptationStrategy
@@ -338,7 +322,7 @@ selectCoastalHazard =
         |> with CH.id
         |> with CH.name
         |> with CH.description
-        |> hardcoded []
+        |> hardcoded Nothing
 
 
 selectCoastalHazardWithStrategyIds : SelectionSet CoastalHazard ChipApi.Object.CoastalHazard
@@ -347,7 +331,11 @@ selectCoastalHazardWithStrategyIds =
         |> with CH.id
         |> with CH.name
         |> with CH.description
-        |> with (CH.strategies <| fieldSelection AS.id)
+        |> with 
+            ( fieldSelection AS.id
+                |> CH.strategies
+                |> Field.map Zipper.fromList
+            )
 
 
 selectImpactScale : SelectionSet ImpactScale ChipApi.Object.ImpactScale

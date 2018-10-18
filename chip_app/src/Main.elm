@@ -53,8 +53,6 @@ type alias Model =
     , trianglePath : String
     , zoiPath : String
     , adaptationInfo : GqlData AS.AdaptationInfo
-    , hazardSelections : Maybe AS.CoastalHazardZipper
-    , strategySelections : Maybe AS.StrategyZipper
     , strategiesModalOpenness : Openness
     , shorelineLocations : GqlData ShorelineExtents
     , shorelineLocationsDropdown : Dropdown ShorelineExtent
@@ -83,10 +81,6 @@ initialModel flags =
         flags.zoiPath
         -- Adaptation Info (Categories, Hazards, Strategies)
         Loading
-        -- Coastal Hazard Selections
-        Nothing
-        -- Adaptation Strategy Selections
-        Nothing
         -- Adaptation Strategy Modal Openness
         Closed
         -- Shoreline Location + Menu
@@ -167,20 +161,8 @@ updateModel msg model =
                 )
 
         GotAdaptationInfo response ->
-            case response of
-                Success info ->
-                    info.hazards
-                        |> ZipHelp.fromDictKeys
-                        |> \zipper ->
-                            ( { model 
-                                | adaptationInfo = response
-                                , hazardSelections = zipper
-                              }
-                            , Cmd.none 
-                            )
+            ( { model | adaptationInfo = response }, Cmd.none )
 
-                _ ->
-                    ( { model | adaptationInfo = response }, Cmd.none )
                               
         GotShorelineExtents response ->
             response
@@ -340,24 +322,17 @@ updateModel msg model =
 
                 Success info ->
                     let
-                        strategySelections : Maybe StrategyZipper
-                        strategySelections = 
-                            info.strategies |> ZipHelp.fromDictKeys
-
-                        focusCmd : Cmd Msg
                         focusCmd =
-                            strategySelections
-                                |> Maybe.map getSelectedStrategyHtmlId
+                            model.adaptationInfo
+                                |> Remote.toMaybe
+                                |> Maybe.andThen .hazards
+                                |> AS.getSelectedStrategyHtmlId
                                 |> Maybe.map focus
                                 |> Maybe.withDefault Cmd.none
                     in
                         ( model
                             |> collapseRightSidebar
-                            |> \m ->
-                                { m 
-                                    | strategySelections = strategySelections
-                                    , strategiesModalOpenness = Open
-                                }
+                            |> \m -> { m | strategiesModalOpenness = Open }
                         , focusCmd
                         )
 
@@ -365,10 +340,7 @@ updateModel msg model =
                     ( model
                         |> collapseRightSidebar
                         |> \m -> 
-                            { m 
-                                | strategySelections = Nothing
-                                , strategiesModalOpenness = Open 
-                            }
+                            { m | strategiesModalOpenness = Open }
                     , Cmd.none
                     )
 
@@ -381,26 +353,40 @@ updateModel msg model =
             )
 
         SelectPreviousHazard ->
-            let
-                newHazardSelections =
-                    ZipHelp.tryPreviousOrLast model.hazardSelections
+            model.adaptationInfo
+                |> Remote.update
+                    (\info ->
+                        let
+                            newHazards = 
+                                ZipHelp.tryPreviousOrLast info.hazards                                    
+                        in
+                        ( { info | hazards = newHazards }
+                        , newHazards
+                            |> AS.getSelectedStrategyHtmlId
+                            |> Maybe.map focus
+                            |> Maybe.withDefault Cmd.none                           
+                        )
+                    )
+                |> \(info, cmd) ->
+                    ( {model | adaptationInfo = info }, cmd )
 
-                -- next, update strategies and focus first
-            in
-            ( { model | hazardSelections = newHazardSelections }
-            , Cmd.none
-            )
-
-        SelectNextHazard -> 
-            let
-                newHazardSelections =
-                    ZipHelp.tryNextOrFirst model.hazardSelections
-
-                -- next, update strategies and focus first
-            in
-            ( { model | hazardSelections = newHazardSelections }
-            , Cmd.none
-            )
+        SelectNextHazard ->
+            model.adaptationInfo
+                |> Remote.update
+                    (\info ->
+                        let
+                            newHazards =
+                                ZipHelp.tryNextOrFirst info.hazards
+                        in
+                        ( {info | hazards = newHazards }
+                        , newHazards
+                            |> AS.getSelectedStrategyHtmlId
+                            |> Maybe.map focus
+                            |> Maybe.withDefault Cmd.none
+                        )
+                    )
+                |> \(info, cmd) ->
+                    ( { model | adaptationInfo = info }, cmd )
 
         SelectStrategy id ->
             ( model, Cmd.none )
@@ -481,14 +467,14 @@ selectLocationByName name locations =
     selectLocation (SL.findLocationByName name) locations
 
 
-selectHazard : (CoastalHazards -> CoastalHazards) -> CoastalHazards -> (CoastalHazards, Cmd Msg)
-selectHazard selectFn hazards =
-    let
-        newHazards = selectFn hazards
+-- selectHazard : (CoastalHazards -> CoastalHazards) -> CoastalHazards -> (CoastalHazards, Cmd Msg)
+-- selectHazard selectFn hazards =
+--     let
+--         newHazards = selectFn hazards
 
-        newCmds = Cmd.none
-    in
-    (newHazards, newCmds)
+--         newCmds = Cmd.none
+--     in
+--     (newHazards, newCmds)
 
 
 -- selectHazardByName : String -> CoastalHazards -> (CoastalHazards, Cmd Msg)
