@@ -460,22 +460,22 @@ defmodule ChipApi.Adaptation.Strategies do
 
    
     #
-    # IMPACT LIFE SPAN RANGES
+    # LIFE SPAN RANGES
     #
 
     alias ChipApi.Adaptation.Life_Span_Range
 
 
     @doc """
-    Returns the list of impact life spans. When ordering by display_order,
+    Returns the list of life span ranges. When ordering by display_order,
     nulls are returned first.
 
     ## Examples
 
-        iex> list_life_spans(%{order: :desc})
+        iex> list_life_span_ranges(%{order: :desc})
         [%Life_Span{}, ...]
 
-        iex> list_life_spans()
+        iex> list_life_span_ranges()
         [%Life_Span{}, ...]
 
     """
@@ -487,270 +487,270 @@ defmodule ChipApi.Adaptation.Strategies do
         end)
         |> Repo.all
     end
-    def list_life_spans do
+    def list_life_spans_ranges do
         Repo.all(Life_Span_Range)
     end
 
     @doc """
     Returns the list of adaptation strategies associated with 
-    the given impact life span.
+    the given impact life span range.
 
     ## Examples
 
-        iex> list_strategies_for_life_span(life_span)
+        iex> list_strategies_for_life_span_range(life_span_range)
         [%Strategy{}, ...]
 
     """
-    def list_strategies_for_life_span(%Life_Span_Range{} = life_span) do
-        query = Ecto.assoc(life_span, :adaptation_strategies)
+    def list_strategies_for_life_span_range(%Life_Span_Range{} = life_span_range) do
+        query = Ecto.assoc(life_span_range, :adaptation_strategies)
         Repo.all(query)
     end
 
     @doc """
-    Gets a single Life Span by id. 
+    Gets a single Life Span Range by id. 
     
-    Raises `Ecto.NoResultsError` if the Life Span does not exist.
+    Raises `Ecto.NoResultsError` if the Life Span Range does not exist.
 
     ## Examples
 
-        iex> get_life_span!(1)
-        %Life_Span{}
+        iex> get_life_span_range!(1)
+        %Life_Span_Range{}
 
-        iex> get_life_span!(100)
+        iex> get_life_span_range!(100)
         ** (Ecto.NoResultsError)
 
     """
-    def get_life_span!(id), do: Repo.get!(Life_Span, id)
+    def get_life_span_range!(id), do: Repo.get!(Life_Span_Range, id)
 
     @doc """
-    Gets a single Life Span by id. 
+    Gets a single Life Span Range by id. 
     
-    Returns `nil` if the Life Span does not exist.
+    Returns `nil` if the Life Span Range does not exist.
 
     ## Examples
 
-        iex> get_life_span(1)
-        %Life_Span{}
+        iex> get_life_span_range(1)
+        %Life_Span_Range{}
 
-        iex> get_life_span(100)
+        iex> get_life_span_range(100)
         nil
 
     """
-    def get_life_span(id), do: Repo.get(Life_Span, id)
+    def get_life_span_range(id), do: Repo.get(Life_Span_Range, id)
 
     @doc """
     Creates a Life Span.
 
     ## Examples
 
-        iex> create_life_span(%{field: value})
-        {:ok, %Life_Span{}}
+        iex> create_life_span_range(%{field: value})
+        {:ok, %Life_Span_Range{}}
 
-        iex> create_life_span(%{field: bad_value})
+        iex> create_life_span_range(%{field: bad_value})
         {:error, %Ecto.Changeset{}}
 
     """
-    def create_life_span(attrs \\ %{}) do
-        %Life_Span{}
-        |> Life_Span.changeset(attrs)
+    def create_life_span_range(attrs \\ %{}) do
+        %Life_Span_Range{}
+        |> Life_Span_Range.changeset(attrs)
         |> Repo.insert()
     end
 
     @doc """
-    Updates a Life Span.
+    Updates a Life Span Range.
 
     ## Examples
 
-        iex> update_life_span(life_span, %{field: new_value})
-        {:ok, %Life_Span{}}
+        iex> update_life_span_range(life_span_range, %{field: new_value})
+        {:ok, %Life_Span_Range{}}
 
-        iex> update_life_span(life_span, %{field: bad_value})
+        iex> update_life_span_range(life_span_range, %{field: bad_value})
         {:error, %Ecto.Changeset{}}
 
     """    
-    def update_life_span(%Life_Span{} = life_span, attrs) do
-        life_span
-        |> Life_Span.changeset(attrs)
+    def update_life_span_range(%Life_Span_Range{} = life_span_range, attrs) do
+        life_span_range
+        |> Life_Span_Range.changeset(attrs)
         |> Repo.update()
     end
 
     @doc """
-    Deletes a Life Span.
+    Deletes a Life Span Range.
 
     ## Examples
 
-        iex> delete_life_span(life_span)
-        {:ok, %Life_Span{}}
+        iex> delete_life_span_range(life_span_range)
+        {:ok, %Life_Span_Range{}}
 
-        iex> delete_life_span(life_span)
+        iex> delete_life_span_range(life_span_range)
         {:error, %Ecto.Changeset{}}
 
     """
-    def delete_life_span(%Life_Span{} = life_span) do
-        Repo.delete(life_span)
+    def delete_life_span_range(%Life_Span_Range{} = life_span_range) do
+        Repo.delete(life_span_range)
     end
 
     @doc """
-    Returns an `%Ecto.Changeset{}` for tracking Life Span changes.
+    Returns an `%Ecto.Changeset{}` for tracking Life Span Range changes.
 
     ## Examples
 
-        iex> change_life_span(life_span, %{field: new_value})
-        %Ecto.Changeset{data: %Life_Span{}, changes: %{field: new_value}, ...}
+        iex> change_life_span_range(life_span_range, %{field: new_value})
+        %Ecto.Changeset{data: %Life_Span_Range{}, changes: %{field: new_value}, ...}
 
-        iex> change_life_span(life_span, %{field: bad_value})
-        %Ecto.Changeset{data: %Life_Span{}, changes: %{}, errors: [...]}
+        iex> change_life_span_range(life_span_range, %{field: bad_value})
+        %Ecto.Changeset{data: %Life_Span_Range{}, changes: %{}, errors: [...]}
 
     """
-    def change_life_span(%Life_Span{} = life_span, attrs) do
-        Scale.changeset(life_span, attrs)
+    def change_life_span_range(%Life_Span_Range{} = life_span_range, attrs) do
+        Scale.changeset(life_span_range, attrs)
     end
 
     #
-    # IMPACT COSTS
+    #  COST RANGES
     #
 
     alias ChipApi.Adaptation.Cost_Range
 
 
     @doc """
-    Returns the list of impact costs. When ordering by display_order,
+    Returns the list of cost ranges. When ordering by display_order,
     nulls are returned first.
 
     ## Examples
 
-        iex> list_costs(%{order: :desc})
-        [%Cost{}, ...]
+        iex> list_cost_ranges(%{order: :desc})
+        [%Cost_Ranges{}, ...]
 
-        iex> list_costs()
-        [%Cost{}, ...]
+        iex> list_cost_ranges()
+        [%Cost_Ranges{}, ...]
 
     """
-    def list_costs(args) do
+    def list_cost_ranges(args) do
         args
-        |> Enum.reduce(Cost, fn
+        |> Enum.reduce(Cost_Range, fn
             {:order, order}, query ->
                 query |> order_by([{^order, :display_order}, {^order, :id}])
         end)
         |> Repo.all
     end
-    def list_costs do
-        Repo.all(Cost)
+    def list_cost_ranges do
+        Repo.all(Cost_Range)
     end
 
     @doc """
     Returns the list of adaptation strategies associated with 
-    the given impact cost.
+    the given cost range.
 
     ## Examples
 
-        iex> list_strategies_for_cost(cost)
-        [%Cost{}, ...]
+        iex> list_strategies_for_cost_range(cost_range)
+        [%Costs{}, ...]
 
     """
-    def list_strategies_for_cost(%Cost{} = cost) do
-        query = Ecto.assoc(cost, :adaptation_strategies)
+    def list_strategies_for_cost_range(%Cost_Range{} = cost_range) do
+        query = Ecto.assoc(cost_range, :adaptation_strategies)
         Repo.all(query)
     end
 
     @doc """
-    Gets a single Cost by id. 
+    Gets a single Cost Range by id. 
     
-    Raises `Ecto.NoResultsError` if the Cost does not exist.
+    Raises `Ecto.NoResultsError` if the Cost Range does not exist.
 
     ## Examples
 
-        iex> get_cost!(1)
-        %Cost{}
+        iex> get_cost_range!(1)
+        %Cost_Range{}
 
-        iex> get_cost!(100)
+        iex> get_cost_range!(100)
         ** (Ecto.NoResultsError)
 
     """
-    def get_cost!(id), do: Repo.get!(Cost, id)
+    def get_cost_range!(id), do: Repo.get!(Cost_Range, id)
 
     @doc """
-    Gets a single Cost by id. 
+    Gets a single Cost Range by id. 
     
-    Returns `nil` if the Cost does not exist.
+    Returns `nil` if the Cost Range does not exist.
 
     ## Examples
 
-        iex> get_cost(1)
-        %Cost{}
+        iex> get_cost_range(1)
+        %Cost_Range{}
 
-        iex> get_cost(100)
+        iex> get_cost_range(100)
         nil
 
     """
-    def get_cost(id), do: Repo.get(Cost, id)
+    def get_cost_range(id), do: Repo.get(Cost_Range, id)
 
     @doc """
-    Creates a Cost.
+    Creates a Cost Range.
 
     ## Examples
 
-        iex> create_cost(%{field: value})
-        {:ok, %Cost{}}
+        iex> create_cost_range(%{field: value})
+        {:ok, %Cost_Range{}}
 
-        iex> create_cost(%{field: bad_value})
+        iex> create_cost_range(%{field: bad_value})
         {:error, %Ecto.Changeset{}}
 
     """
-    def create_cost(attrs \\ %{}) do
-        %Cost{}
-        |> Cost.changeset(attrs)
+    def create_cost_range(attrs \\ %{}) do
+        %Cost_Range{}
+        |> Cost_Range.changeset(attrs)
         |> Repo.insert()
     end
 
     @doc """
-    Updates a Cost.
+    Updates a Cost Range.
 
     ## Examples
 
-        iex> update_cost(cost, %{field: new_value})
-        {:ok, %Cost{}}
+        iex> update_cost_range(cost, %{field: new_value})
+        {:ok, %Cost_Range{}}
 
-        iex> update_cost(cost, %{field: bad_value})
+        iex> update_cost_range(cost, %{field: bad_value})
         {:error, %Ecto.Changeset{}}
 
     """    
-    def update_cost(%Cost{} = cost, attrs) do
-        cost
-        |> Cost.changeset(attrs)
+    def update_cost_range(%Cost{} = cost_range, attrs) do
+        cost_range
+        |> Cost_Range.changeset(attrs)
         |> Repo.update()
     end
 
     @doc """
-    Deletes a Cost.
+    Deletes a Cost Range.
 
     ## Examples
 
-        iex> delete_cost(cost)
-        {:ok, %Cost{}}
+        iex> delete_cost_range(cost_range)
+        {:ok, %Cost_Range{}}
 
-        iex> delete_cost(cost)
+        iex> delete_cost_range(cost_range)
         {:error, %Ecto.Changeset{}}
 
     """
-    def delete_cost(%Cost{} = cost) do
-        Repo.delete(cost)
+    def delete_cost_range(%Cost_Range{} = cost) do
+        Repo.delete(cost_range)
     end
 
     @doc """
-    Returns an `%Ecto.Changeset{}` for tracking Cost changes.
+    Returns an `%Ecto.Changeset{}` for tracking Cost Range changes.
 
     ## Examples
 
-        iex> change_cost(cost, %{field: new_value})
-        %Ecto.Changeset{data: %Cost{}, changes: %{field: new_value}, ...}
+        iex> change_cost_range(cost_range, %{field: new_value})
+        %Ecto.Changeset{data: %Cost_Range{}, changes: %{field: new_value}, ...}
 
-        iex> change_cost(cost, %{field: bad_value})
-        %Ecto.Changeset{data: %Cost{}, changes: %{}, errors: [...]}
+        iex> change_cost_range(cost_range, %{field: bad_value})
+        %Ecto.Changeset{data: %Cost_Range{}, changes: %{}, errors: [...]}
 
     """
-    def change_cost(%Cost{} = cost, attrs) do
-        Cost.changeset(cost, attrs)
+    def change_cost_range(%Cost_Range{} = cost_range, attrs) do
+        Cost_Range.changeset(cost_range, attrs)
     end
 
     #
