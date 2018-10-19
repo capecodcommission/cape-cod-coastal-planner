@@ -13,7 +13,6 @@ import RemoteData as Remote exposing (RemoteData(..))
 import Json.Decode as D exposing (..)
 import Dict exposing (Dict)
 import Maybe
-import Maybe.Extra as MEx
 import Dom
 import Task
 import List.Extra as LEx
@@ -322,18 +321,16 @@ updateModel msg model =
 
                 Success info ->
                     let
-                        focusCmd =
+                        cmds =
                             model.adaptationInfo
                                 |> Remote.toMaybe
-                                |> Maybe.andThen .hazards
-                                |> AS.getSelectedStrategyHtmlId
-                                |> Maybe.map focus
+                                |> Maybe.map changeStrategyCmds
                                 |> Maybe.withDefault Cmd.none
                     in
                         ( model
                             |> collapseRightSidebar
                             |> \m -> { m | strategiesModalOpenness = Open }
-                        , focusCmd
+                        , cmds
                         )
 
                 Failure err ->
@@ -354,56 +351,21 @@ updateModel msg model =
 
         SelectPreviousHazard ->
             model.adaptationInfo
-                |> Remote.update
-                    (\info ->
-                        let
-                            newHazards = 
-                                ZipHelp.tryPreviousOrLast info.hazards                                    
-                        in
-                        ( { info | hazards = newHazards }
-                        , newHazards
-                            |> AS.getSelectedStrategyHtmlId
-                            |> Maybe.map focus
-                            |> Maybe.withDefault Cmd.none                           
-                        )
-                    )
+                |> updateHazardsWith ZipHelp.tryPreviousOrLast
                 |> \(info, cmd) ->
-                    ( {model | adaptationInfo = info }, cmd )
+                    ( { model | adaptationInfo = info }, cmd )
 
         SelectNextHazard ->
             model.adaptationInfo
-                |> Remote.update
-                    (\info ->
-                        let
-                            newHazards =
-                                ZipHelp.tryNextOrFirst info.hazards
-                        in
-                        ( {info | hazards = newHazards }
-                        , newHazards
-                            |> AS.getSelectedStrategyHtmlId
-                            |> Maybe.map focus
-                            |> Maybe.withDefault Cmd.none
-                        )
-                    )
+                |> updateHazardsWith ZipHelp.tryNextOrFirst
                 |> \(info, cmd) ->
                     ( { model | adaptationInfo = info }, cmd )
 
         SelectStrategy id ->
             model.adaptationInfo
-                |> Remote.update
-                    (\info ->
-                        let 
-                            newHazards = 
-                                info.hazards
-                                    |> updateHazardStrategies 
-                                        (ZipHelp.tryFindFirst <| ZipHelp.matches id)
-                        in
-                        ( {info | hazards = newHazards}
-                        , newHazards
-                            |> AS.getSelectedStrategyHtmlId
-                            |> Maybe.map focus
-                            |> Maybe.withDefault Cmd.none
-                        )
+                |> updateHazardsWith
+                    (updateHazardStrategies 
+                        (ZipHelp.tryFindFirst <| ZipHelp.matches id)
                     )
                 |> \(info, cmd) ->
                     ( { model | adaptationInfo = info }, cmd )
@@ -412,75 +374,25 @@ updateModel msg model =
             case evt.keyCode of
                 Down ->
                     model.adaptationInfo
-                        |> Remote.update
-                            (\info ->
-                                let 
-                                    newHazards = 
-                                        info.hazards
-                                            |> updateHazardStrategies ZipHelp.tryNext
-                                in
-                                ( {info | hazards = newHazards}
-                                , newHazards
-                                    |> AS.getSelectedStrategyHtmlId
-                                    |> Maybe.map focus
-                                    |> Maybe.withDefault Cmd.none
-                                )
-                            )
+                        |> updateHazardsWith (updateHazardStrategies ZipHelp.tryNext)
                         |> \(info, cmd) ->
                             ( { model | adaptationInfo = info }, cmd )
 
                 Up ->
                     model.adaptationInfo
-                        |> Remote.update
-                            (\info ->
-                                let
-                                    newHazards =
-                                        info.hazards
-                                            |> updateHazardStrategies ZipHelp.tryPrevious
-                                in
-                                ( {info | hazards = newHazards}
-                                , newHazards
-                                    |> AS.getSelectedStrategyHtmlId
-                                    |> Maybe.map focus
-                                    |> Maybe.withDefault Cmd.none
-                                )
-                            )
+                        |> updateHazardsWith (updateHazardStrategies ZipHelp.tryPrevious)
                         |> \(info, cmd) ->
                             ( { model | adaptationInfo = info }, cmd )
 
                 Left ->
                     model.adaptationInfo
-                        |> Remote.update
-                            (\info ->
-                                let
-                                    newHazards = 
-                                        ZipHelp.tryPreviousOrLast info.hazards                                    
-                                in
-                                ( { info | hazards = newHazards }
-                                , newHazards
-                                    |> AS.getSelectedStrategyHtmlId
-                                    |> Maybe.map focus
-                                    |> Maybe.withDefault Cmd.none                           
-                                )
-                            )
+                        |> updateHazardsWith ZipHelp.tryPreviousOrLast
                         |> \(info, cmd) ->
                             ( {model | adaptationInfo = info }, cmd )
 
                 Right ->
                     model.adaptationInfo
-                        |> Remote.update
-                            (\info ->
-                                let
-                                    newHazards =
-                                        ZipHelp.tryNextOrFirst info.hazards
-                                in
-                                ( {info | hazards = newHazards }
-                                , newHazards
-                                    |> AS.getSelectedStrategyHtmlId
-                                    |> Maybe.map focus
-                                    |> Maybe.withDefault Cmd.none
-                                )
-                            )
+                        |> updateHazardsWith ZipHelp.tryNextOrFirst
                         |> \(info, cmd) ->
                             ( { model | adaptationInfo = info }, cmd )
 
@@ -498,13 +410,15 @@ updateModel msg model =
                     ( model, Cmd.none )
 
         GotStrategyDetails id response ->
-            ( model, Cmd.none )
-            -- let
-            --     ( newStrategies, newCmd ) =
-            --         Remote.update (updateStrategiesWithStrategyDetails id response) model.strategies
-            -- in
-            -- ( { model | strategies = newStrategies }, newCmd )
-
+            model.adaptationInfo
+                |> Remote.update
+                    (\info ->
+                        info.strategies
+                            |> updateStrategyDetails id response
+                            |> \newStrategies -> ( { info | strategies = newStrategies }, Cmd.none )
+                    )
+                |> \(info, cmd) -> 
+                    ( { model | adaptationInfo = info }, cmd )
 
         ToggleRightSidebar ->
             case model.rightSidebarOpenness of
@@ -544,80 +458,54 @@ selectLocationByName name locations =
     selectLocation (SL.findLocationByName name) locations
 
 
--- selectHazard : (CoastalHazards -> CoastalHazards) -> CoastalHazards -> (CoastalHazards, Cmd Msg)
--- selectHazard selectFn hazards =
---     let
---         newHazards = selectFn hazards
+updateHazardsWith : 
+    (Maybe CoastalHazardZipper -> Maybe CoastalHazardZipper) 
+    -> GqlData AdaptationInfo 
+    -> ( GqlData AdaptationInfo, Cmd Msg )
+updateHazardsWith zipMapFn info =
+    Remote.update
+        (\info ->
+            let
+                newHazards = zipMapFn info.hazards
 
---         newCmds = Cmd.none
---     in
---     (newHazards, newCmds)
+                newInfo = { info | hazards = newHazards }
+            in
+            ( newInfo, changeStrategyCmds newInfo )
+        )
+        info
 
 
--- selectHazardByName : String -> CoastalHazards -> (CoastalHazards, Cmd Msg)
--- selectHazardByName name hazards =
---     selectHazard (ZipHelp.tryFindFirst <| ZipHelp.matchesName name) hazards
+changeStrategyCmds : AdaptationInfo -> Cmd Msg
+changeStrategyCmds info =
+   Cmd.batch
+    [ focusStrategyCmd info.hazards
+    , fetchStrategyDetailsCmd info
+    ]
 
 
--- selectStrategy : (Strategies -> Strategies) -> Strategies -> (Strategies, Cmd Msg)
--- selectStrategy selectFn strategies =
---     let
---         selectedStrategies = selectFn strategies
+focusStrategyCmd : Maybe CoastalHazardZipper -> Cmd Msg
+focusStrategyCmd hazards =
+    hazards
+        |> AS.getSelectedStrategyHtmlId
+        |> Maybe.map focus
+        |> Maybe.withDefault Cmd.none
 
---         focusCmd = case AS.getSelectedStrategyHtmlId selectedStrategies of
---             Just id -> focus id
-
---             Nothing -> Cmd.none
-
---         detailsUpdates : ( GqlData (Maybe StrategyDetails), Cmd Msg )
---         detailsUpdates = 
---             selectedStrategies
---                 |> ZipHelp.tryCurrent
---                 |> Maybe.andThen AS.loadDetailsFor
---                 |> Maybe.map 
---                     (\( strategyId, details ) ->
---                         case strategyId of 
---                             Just id ->
---                                 ( details, getAdaptationStrategyDetailsById id )
-
---                             Nothing ->
---                                 ( details, Cmd.none )
---                     )
---                 |> Maybe.withDefault ( NotAsked, Cmd.none )
-
---         newStrategies = 
---             selectedStrategies
---                 |> Maybe.map
---                     (\strats ->
---                         Zipper.mapCurrent
---                             (\current -> { current | details = Tuple.first detailsUpdates })
---                             strats
---                     )
---                 |> MEx.orElse selectedStrategies
-
---         newCmds = Cmd.batch [ focusCmd, Tuple.second detailsUpdates ]
---     in
---     ( newStrategies, newCmds )
     
-
--- selectStrategyById : Scalar.Id -> Strategies -> (Strategies, Cmd Msg)
--- selectStrategyById id strategies =
---     selectStrategy (ZipHelp.tryFindFirst <| ZipHelp.matchesId id) strategies
-
-
--- selectFirstStrategy : Strategies -> (Strategies, Cmd Msg)
--- selectFirstStrategy strategies =
---     selectStrategy ZipHelp.tryFirst strategies
-
-
--- selectNextStrategy : Strategies -> (Strategies, Cmd Msg)
--- selectNextStrategy strategies =
---     selectStrategy ZipHelp.tryNext strategies
-
-
--- selectPreviousStrategy : Strategies -> (Strategies, Cmd Msg)
--- selectPreviousStrategy strategies =
---     selectStrategy ZipHelp.tryPrevious strategies
+fetchStrategyDetailsCmd : AdaptationInfo -> Cmd Msg
+fetchStrategyDetailsCmd info =
+    info
+        |> AS.currentStrategy
+        |> Maybe.map 
+            (\s ->  
+                s.details 
+                    |> Remote.isSuccess
+                    |> \isSuccess ->
+                        if isSuccess then 
+                            Cmd.none 
+                        else 
+                            getStrategyDetailsById s.id
+            )
+        |> Maybe.withDefault Cmd.none
 
 
 collapseRightSidebar : Model -> Model

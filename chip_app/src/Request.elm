@@ -39,8 +39,8 @@ getAdaptationInfo =
 --
 
 
-getAdaptationStrategyDetailsById : Scalar.Id -> Cmd Msg
-getAdaptationStrategyDetailsById strategyId =
+getStrategyDetailsById : Scalar.Id -> Cmd Msg
+getStrategyDetailsById strategyId =
     queryAdaptationStrategyDetailsById strategyId
         |> queryRequest "./api"
         |> send (Remote.fromResult >> (GotStrategyDetails strategyId))

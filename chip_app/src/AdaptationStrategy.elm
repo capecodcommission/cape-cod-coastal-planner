@@ -84,7 +84,7 @@ updateHazardStrategies updateFn hazards =
 type alias Strategy =
     { id : Scalar.Id
     , name : String
-    , details : GqlData StrategyDetails
+    , details : GqlData (Maybe StrategyDetails)
     }
 
 
@@ -114,6 +114,16 @@ currentStrategy info =
             (\id -> Dict.get id info.strategies)
 
 
+
+updateStrategyDetails : Scalar.Id -> (GqlData (Maybe StrategyDetails)) -> Strategies -> Strategies
+updateStrategyDetails (Scalar.Id id) response strategies =
+    strategies
+        |> Dict.get id
+        |> Maybe.map (\s -> { s | details = response })
+        |> Maybe.map (\s -> Dict.insert id s strategies)
+        |> Maybe.withDefault strategies
+
+
 getSelectedStrategyHtmlId : Maybe CoastalHazardZipper -> Maybe String
 getSelectedStrategyHtmlId hazards =
     hazards
@@ -126,15 +136,6 @@ getSelectedStrategyHtmlId hazards =
 getStrategyHtmlId : Scalar.Id -> String
 getStrategyHtmlId (Scalar.Id id) =
     "strategy-" ++ id
-
-
--- strategyHasCategory : Category -> Strategy -> Bool
--- strategyHasCategory category { details } =
---     details
---         |> Remote.toMaybe
---         |> MEx.join
---         |> Maybe.map (strategyDetailsHasCategory category)
---         |> Maybe.withDefault False
 
 
 --
@@ -189,12 +190,12 @@ categoryAppliesToStrategy : Maybe Strategy -> Category -> (Category, Bool)
 categoryAppliesToStrategy maybeStrategy category =
     maybeStrategy
         |> Maybe.map .details
-        |> Maybe.map Remote.toMaybe
+        |> Maybe.andThen Remote.toMaybe
         |> MEx.join
         |> Maybe.map .categories
         |> Maybe.map (categoryIdsHasCategory category)
-        |> MEx.isJust
-        |> \b -> (category, b)
+        |> Maybe.map (\b -> (category, b))
+        |> Maybe.withDefault (category, False)
 
 
 categoryIdsHasCategory : Category -> List CategoryId -> Bool
@@ -244,25 +245,6 @@ type alias Advantage =
 
 type alias Disadvantage = 
     { name : String }
-
-
-
-
--- loadDetailsFor : Strategy -> Maybe ( Maybe Scalar.Id, GqlData (Maybe StrategyDetails) )
--- loadDetailsFor s =
---     if Remote.isSuccess s.details == True then
---         Just ( Nothing, s.details )
---     else
---         Just ( Just s.id, Loading )
-
-
--- UPDATE
-
-
--- updateStrategyDetails : (GqlData (Maybe StrategyDetails)) -> Strategy -> Strategy
--- updateStrategyDetails newDetails ({ details } as strategy) =
---     { strategy | details = newDetails }
-
 
 
 
