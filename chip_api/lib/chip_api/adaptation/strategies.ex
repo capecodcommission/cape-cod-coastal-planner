@@ -460,7 +460,7 @@ defmodule ChipApi.Adaptation.Strategies do
 
    
     #
-    # IMPACT LIFE SPANS
+    # IMPACT LIFE SPAN RANGES
     #
 
     alias ChipApi.Adaptation.Life_Span_Range
@@ -479,16 +479,16 @@ defmodule ChipApi.Adaptation.Strategies do
         [%Life_Span{}, ...]
 
     """
-    def list_life_spans(args) do
+    def list_life_span_ranges(args) do
         args
-        |> Enum.reduce(Life_Span, fn
+        |> Enum.reduce(Life_Span_Range, fn
             {:order, order}, query ->
                 query |> order_by([{^order, :display_order}, {^order, :id}])
         end)
         |> Repo.all
     end
     def list_life_spans do
-        Repo.all(Life_Span)
+        Repo.all(Life_Span_Range)
     end
 
     @doc """
@@ -501,7 +501,7 @@ defmodule ChipApi.Adaptation.Strategies do
         [%Strategy{}, ...]
 
     """
-    def list_strategies_for_life_span(%Life_Span{} = life_span) do
+    def list_strategies_for_life_span(%Life_Span_Range{} = life_span) do
         query = Ecto.assoc(life_span, :adaptation_strategies)
         Repo.all(query)
     end
