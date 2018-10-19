@@ -103,6 +103,17 @@ strategiesFromList list =
         |> Dict.fromList
 
 
+currentStrategy : AdaptationInfo -> Maybe Strategy
+currentStrategy info =
+    info.hazards
+        |> Maybe.map Zipper.current
+        |> Maybe.andThen .strategies
+        |> Maybe.map Zipper.current
+        |> Maybe.map getId
+        |> Maybe.andThen
+            (\id -> Dict.get id info.strategies)
+
+
 getSelectedStrategyHtmlId : Maybe CoastalHazardZipper -> Maybe String
 getSelectedStrategyHtmlId hazards =
     hazards
@@ -114,7 +125,7 @@ getSelectedStrategyHtmlId hazards =
 
 getStrategyHtmlId : Scalar.Id -> String
 getStrategyHtmlId (Scalar.Id id) =
-    Debug.log "id" <| "strategy-" ++ id
+    "strategy-" ++ id
 
 
 -- strategyHasCategory : Category -> Strategy -> Bool
@@ -172,6 +183,18 @@ categoriesFromList list =
     list 
         |> List.map (\c -> ( getId c.id, c ))
         |> Dict.fromList
+
+
+categoryAppliesToStrategy : Maybe Strategy -> Category -> (Category, Bool)
+categoryAppliesToStrategy maybeStrategy category =
+    maybeStrategy
+        |> Maybe.map .details
+        |> Maybe.map Remote.toMaybe
+        |> MEx.join
+        |> Maybe.map .categories
+        |> Maybe.map (categoryIdsHasCategory category)
+        |> MEx.isJust
+        |> \b -> (category, b)
 
 
 categoryIdsHasCategory : Category -> List CategoryId -> Bool

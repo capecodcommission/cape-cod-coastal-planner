@@ -95,6 +95,7 @@ type SidebarStyles
 type StrategiesStyles
     = StrategiesSidebar
     | StrategiesSidebarHeader
+    | StrategiesHazardPicker
     | StrategiesSidebarList
     | StrategiesSidebarListBtn
     | StrategiesSidebarListBtnSelected
@@ -245,7 +246,14 @@ stylesheet =
         , Style.style (AddStrategies StrategiesSidebarHeader)
             [ Color.background palette.havelockBlue
             , Font.size 24
+            , Font.center
             , Border.roundTopLeft 4
+            ]
+        , Style.style (AddStrategies StrategiesHazardPicker)
+            [ Style.cursor "pointer"
+            , variation Secondary
+                [ Style.rotate pi
+                ]
             ]
         , Style.style (AddStrategies StrategiesSidebarList)
             [ Font.size 20

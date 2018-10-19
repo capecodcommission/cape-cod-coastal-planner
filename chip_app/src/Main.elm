@@ -389,14 +389,25 @@ updateModel msg model =
                     ( { model | adaptationInfo = info }, cmd )
 
         SelectStrategy id ->
-            ( model, Cmd.none )
-            -- let
-            --     ( newStrategies, newCmd ) =
-            --         Remote.update (selectStrategyById id) model.strategies
-            -- in
-            -- ( { model | strategies = newStrategies }, newCmd )
+            model.adaptationInfo
+                |> Remote.update
+                    (\info ->
+                        let 
+                            newHazards = 
+                                info.hazards
+                                    |> updateHazardStrategies 
+                                        (ZipHelp.tryFindFirst <| ZipHelp.matches id)
+                        in
+                        ( {info | hazards = newHazards}
+                        , newHazards
+                            |> AS.getSelectedStrategyHtmlId
+                            |> Maybe.map focus
+                            |> Maybe.withDefault Cmd.none
+                        )
+                    )
+                |> \(info, cmd) ->
+                    ( { model | adaptationInfo = info }, cmd )
             
-
         HandleStrategyKeyboardEvent evt ->
             case evt.keyCode of
                 Down ->

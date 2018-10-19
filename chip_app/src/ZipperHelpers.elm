@@ -81,6 +81,11 @@ tryMapCurrent fn items =
 -- 
 
 
+matches : a -> a -> Bool
+matches item1 item2 =
+    item1 == item2
+
+
 matchesId : Scalar.Id -> { a | id : Scalar.Id } -> Bool
 matchesId id item =
     id == item.id
