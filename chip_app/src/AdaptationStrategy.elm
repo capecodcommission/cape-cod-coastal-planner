@@ -2,6 +2,7 @@ module AdaptationStrategy exposing (..)
 
 import Dict exposing (Dict)
 import List.Zipper as Zipper exposing (..)
+import Set exposing (Set)
 import ZipperHelpers as ZipHelp
 import Maybe.Extra as MEx
 import Graphqelm.Operation exposing (RootQuery)
@@ -84,6 +85,7 @@ updateHazardStrategies updateFn hazards =
 type alias Strategy =
     { id : Scalar.Id
     , name : String
+    , placements : Set Placement
     , details : GqlData (Maybe StrategyDetails)
     }
 
@@ -150,10 +152,9 @@ type alias StrategyDetails =
     , categories : List CategoryId
     , hazards : List CoastalHazard
     , scales : List ImpactScale
-    , placements : List Placement
-    , benefits : List Benefit
-    , advantages : List Advantage
-    , disadvantages : List Disadvantage
+    , benefits : Set Benefit
+    , advantages : Set Advantage
+    , disadvantages : Set Disadvantage
     }
 
 
@@ -222,29 +223,22 @@ type alias ImpactScale =
     }
 
 
-type alias Placement = 
-    { name : String }
+type alias Placement = String
 
 
-type alias Benefit = 
-    { name : String }
-
-
---
--- STRATEGY BENEFITS
---
-
+type alias Benefit = String
+    
 
 type alias Benefits =
-    List Benefit
+    Set Benefit
 
 
 type alias Advantage = 
-    { name : String }
+    String
 
 
 type alias Disadvantage = 
-    { name : String }
+    String
 
 
 
@@ -256,7 +250,9 @@ queryAdaptationInfo : SelectionSet AdaptationInfo RootQuery
 queryAdaptationInfo =
     Query.selection AdaptationInfo
         |> with
-            (Query.adaptationBenefits identity selectBenefit)
+            (Query.adaptationBenefits identity selectBenefit
+                |> Field.map Set.fromList
+            )
         |> with 
             (Query.adaptationCategories identity selectCategory
                 |> Field.map categoriesFromList
@@ -299,6 +295,7 @@ selectActiveAdaptationStrategies =
     AS.selection Strategy
         |> with AS.id
         |> with AS.name
+        |> with (AS.placements selectPlacement |> Field.map Set.fromList)
         |> hardcoded NotAsked
 
 
@@ -311,10 +308,9 @@ selectStrategyDetails =
         |> with (AS.categories selectCategoryId)
         |> with (AS.hazards selectCoastalHazard)
         |> with (AS.scales selectImpactScale)
-        |> with (AS.placements selectPlacement)
-        |> with (AS.benefits selectBenefit)
-        |> with (AS.advantages selectAdvantage)
-        |> with (AS.disadvantages selectDisadvantage)
+        |> with (AS.benefits selectBenefit |> Field.map Set.fromList)
+        |> with (AS.advantages selectAdvantage |> Field.map Set.fromList)
+        |> with (AS.disadvantages selectDisadvantage |> Field.map Set.fromList)
 
 
 selectCategoryId : SelectionSet CategoryId ChipApi.Object.AdaptationCategory
@@ -364,25 +360,25 @@ selectImpactScale =
 
 selectPlacement : SelectionSet Placement ChipApi.Object.StrategyPlacement
 selectPlacement =
-    SP.selection Placement
+    SP.selection identity
         |> with SP.name
         
 
 selectBenefit : SelectionSet Benefit ChipApi.Object.AdaptationBenefit
 selectBenefit =
-    AB.selection Benefit
+    AB.selection identity
         |> with AB.name
 
 
 selectAdvantage : SelectionSet Advantage ChipApi.Object.AdaptationAdvantages
 selectAdvantage =
-    AA.selection Advantage
+    AA.selection identity
         |> with AA.name
 
 
 selectDisadvantage : SelectionSet Disadvantage ChipApi.Object.AdaptationDisadvantages
 selectDisadvantage =
-    AD.selection Disadvantage
+    AD.selection identity
         |> with AD.name
 
 
