@@ -35,7 +35,3 @@ type ImpactScale
 
 type ShorelineLocation
     = ShorelineLocation
-
-
-type StrategyPlacement
-    = StrategyPlacement

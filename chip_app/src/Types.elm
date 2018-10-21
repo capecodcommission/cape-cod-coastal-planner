@@ -196,10 +196,26 @@ yesNoToBool yesNo =
             Nothing
 
 
+type alias PlacementMajorities =
+    { majoritySaltMarsh : Bool
+    , majorityCoastalBank : Bool
+    , majorityUndeveloped : Bool
+    }
+
+
+placementMajoritiesDecoder : Decoder PlacementMajorities
+placementMajoritiesDecoder =
+    D.map3 PlacementMajorities
+        (D.field "majoritySaltMarsh" D.bool)
+        (D.field "majorityCoastalBank" D.bool)
+        (D.field "majorityUndeveloped" D.bool)
+
+
 type alias ZoneOfImpact =
     { geometry : Maybe String
     , numSelected : Int
     , shapeLength : Float
+    , placementMajorities : PlacementMajorities
     }
 
 
@@ -214,10 +230,11 @@ encodeZoneOfImpact zoi =
 
 zoneOfImpactDecoder : Decoder ZoneOfImpact
 zoneOfImpactDecoder =
-    D.map3 ZoneOfImpact
+    D.map4 ZoneOfImpact
         (D.maybe (D.field "geometry" D.string))
         (D.field "num_selected" D.int)
         (D.field "shape_length" D.float)
+        (D.field "placements" placementMajoritiesDecoder)
 
 
 getId : Scalar.Id -> String

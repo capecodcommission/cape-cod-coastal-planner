@@ -11,8 +11,6 @@ defmodule ChipApi.Fakes do
     @scale1 %Scale{name: "scale1", impact: 1, display_order: 1}
     @scale2 %Scale{name: "scale2", impact: 2}
     @scale3 %Scale{name: "scale3", impact: 3, display_order: 2}
-    @place1 %Placement{name: "place1"}
-    @place2 %Placement{name: "place2"}
     @benefit1 %Benefit{name: "benefit1", display_order: 0}
     @benefit2 %Benefit{name: "benefit2", display_order: 1}
     @advantage1 %Advantage{name: "advantage1", display_order: 0}
@@ -133,26 +131,6 @@ defmodule ChipApi.Fakes do
         }}
     end
 
-    def run_placements do
-        place1 = @place1 |> Repo.insert!
-        place2 = @place2 |> Repo.insert!
-
-        strat1 = @strat1
-        |> Map.merge(%{strategy_placements: [place1, place2]})
-        |> Repo.insert!
-
-        strat2 = @strat2
-        |> Map.merge(%{strategy_placements: [place1]})
-        |> Repo.insert!
-
-        {:ok, data: %{
-            place1: place1,
-            place2: place2,
-            strat1: strat1,
-            strat2: strat2
-        }}
-    end
-
     def run_benefits do
         benefit1 = @benefit1 |> Repo.insert!
         benefit2 = @benefit2 |> Repo.insert!
@@ -190,8 +168,6 @@ defmodule ChipApi.Fakes do
         haz2 = @haz2 |> Repo.insert!
         scale1 = @scale1 |> Repo.insert!
         scale2 = @scale2 |> Repo.insert!
-        place1 = @place1 |> Repo.insert!
-        place2 = @place2 |> Repo.insert!
         benefit1 = @benefit1 |> Repo.insert!
         benefit2 = @benefit2 |> Repo.insert!
         advantage1 = @advantage1 |> Repo.insert!
@@ -206,7 +182,6 @@ defmodule ChipApi.Fakes do
             adaptation_categories: [cat1, cat2],
             coastal_hazards: [haz1, haz2],
             impact_scales: [scale1, scale2],
-            strategy_placements: [place1, place2],
             adaptation_benefits: [benefit1, benefit2],
             adaptation_advantages: [advantage1, advantage2],
             adaptation_disadvantages: [disadvantage1, disadvantage2]
@@ -218,7 +193,6 @@ defmodule ChipApi.Fakes do
             adaptation_categories: [cat1, cat2],
             coastal_hazards: [haz1, haz2],
             impact_scales: [scale1, scale2],
-            strategy_placements: [place1],
             adaptation_benefits: [benefit1],
             adaptation_advantages: [advantage3],
             adaptation_disadvantages: [disadvantage3]
@@ -232,8 +206,6 @@ defmodule ChipApi.Fakes do
             haz2: haz2,
             scale1: scale1,
             scale2: scale2,
-            place1: place1,
-            place2: place2,
             benefit1: benefit1,
             benefit2: benefit2,
             advantage1: advantage1,

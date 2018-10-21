@@ -47,10 +47,11 @@ view :
         | device : Device
         , closePath : String
         , trianglePath : String
-        , adaptationInfo : GqlData AdaptationInfo
     }
+    -> GqlData AdaptationInfo
+    -> ZoneOfImpact
     -> Element MainStyles Variations Msg
-view config =
+view config adaptationInfo zoneOfImpact =
     column NoStyle
         []
         [ modal (Modal ModalBackground)
@@ -66,8 +67,8 @@ view config =
                 ] <|
                 row NoStyle 
                     [ height fill ] 
-                    [ sidebarView config
-                    , mainContentView config
+                    [ sidebarView config adaptationInfo zoneOfImpact
+                    , mainContentView config adaptationInfo
                     ]
         ]
 
@@ -76,12 +77,13 @@ sidebarView :
     { config
         | device : Device
         , trianglePath : String
-        , adaptationInfo : GqlData AdaptationInfo
     }
+    -> GqlData AdaptationInfo
+    -> ZoneOfImpact
     -> Element MainStyles Variations Msg
-sidebarView config =
+sidebarView config adaptationInfo zoneOfImpact =
     let
-        maybeInfo = config.adaptationInfo |> Remote.toMaybe
+        maybeInfo = adaptationInfo |> Remote.toMaybe
 
         strategies = maybeInfo |> Maybe.map .strategies
 
@@ -99,7 +101,7 @@ sidebarView config =
                 hazardPickerView config.device config.trianglePath currentHazard
         , column (AddStrategies StrategiesSidebarList)
             [ height ( px <| activeStrategiesHeight config.device ) ] <| 
-                strategiesView strategies strategyIds
+                strategiesView zoneOfImpact strategies strategyIds
         , footer (AddStrategies StrategiesSidebarFooter)
             [ width fill, height (px 90) ]
             ( el NoStyle [ center, verticalCenter ] <| 
@@ -145,16 +147,16 @@ hazardPickerView device trianglePath currentHazard =
     
 
 
-strategiesView : Maybe Strategies -> Maybe StrategyIdZipper -> List (Element MainStyles Variations Msg)
-strategiesView maybeStrategies maybeSelections =
+strategiesView : ZoneOfImpact -> Maybe Strategies -> Maybe StrategyIdZipper -> List (Element MainStyles Variations Msg)
+strategiesView zoneOfImpact maybeStrategies maybeSelections =
     case (maybeStrategies, maybeSelections) of
         (Just strategies, Just selections) ->
             let
-                before = ( Zipper.before selections |> List.map (strategyView strategies) )
+                before = ( Zipper.before selections |> List.map (strategyView zoneOfImpact strategies) )
 
                 selected = [ Zipper.current selections |> selectedStrategyView strategies ]
 
-                after = ( Zipper.after selections |> List.map (strategyView strategies) )
+                after = ( Zipper.after selections |> List.map (strategyView zoneOfImpact strategies) )
             in
                 (before ++ selected ++ after)
                     |> MEx.values
@@ -165,17 +167,21 @@ strategiesView maybeStrategies maybeSelections =
             ]
 
 
-strategyView : Strategies -> Scalar.Id -> Maybe (Element MainStyles Variations Msg)
-strategyView strategies ((Scalar.Id id) as strategyId) =
+strategyView : ZoneOfImpact -> Strategies -> Scalar.Id -> Maybe (Element MainStyles Variations Msg)
+strategyView zoneOfImpact strategies ((Scalar.Id id) as strategyId) =
     strategies
         |> Dict.get id
         |> Maybe.map 
             (\strategy ->
+                let
+                    isDisabled = AS.canStrategyBePlacedInZoneOfImpact zoneOfImpact strategy
+                in
                 button (AddStrategies StrategiesSidebarListBtn)
                     [ height content
                     , paddingXY 16 8
                     , onClick (SelectStrategy strategyId)
                     , Attr.id <| getStrategyHtmlId strategyId
+                    , vary Disabled isDisabled
                     ] <| paragraph NoStyle [] [ Element.text strategy.name ]
             )
 
@@ -193,6 +199,9 @@ selectedStrategyView strategies ((Scalar.Id id) as strategyId) =
                     , Attr.id <| getStrategyHtmlId strategyId
                     ] <| paragraph NoStyle [] [ Element.text strategy.name ]        
             )
+
+
+
     
 
 
@@ -205,10 +214,10 @@ mainContentView :
     { config
         | device : Device
         , closePath : String
-        , adaptationInfo : GqlData AdaptationInfo
     }
+    -> GqlData AdaptationInfo
     -> Element MainStyles Variations Msg
-mainContentView { device, closePath, adaptationInfo } =
+mainContentView { device, closePath } adaptationInfo =
     let
         ( lbl, childViews ) =
             case adaptationInfo of

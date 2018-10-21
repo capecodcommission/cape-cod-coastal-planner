@@ -5,8 +5,7 @@ defmodule ChipApi.Adaptation.Placement do
     schema "strategy_placements" do
         field :name, :string
 
-        many_to_many :adaptation_strategies, ChipApi.Adaptation.Strategy,
-            join_through: "strategies_placements",
+        has_many :adaptation_strategies, ChipApi.Adaptation.Strategy,
             on_delete: :delete_all
 
         timestamps()

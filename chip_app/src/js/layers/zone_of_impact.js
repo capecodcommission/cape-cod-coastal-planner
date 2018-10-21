@@ -71,7 +71,8 @@ function _onUpdate(evt, layer) {
         "data" : {
             "geometry": JSON.stringify(esrijson),
             "num_selected": num_selected,
-            "shape_length": evt.length
+            "shape_length": evt.length,
+            "placements": evt.placements
         }
     });
 }

@@ -151,13 +151,6 @@ impactScales fillInOptionals object =
     Object.selectionField "impactScales" optionalArgs object (identity >> Decode.list)
 
 
-{-| The list of valid placements for strategies
--}
-placements : SelectionSet decodesTo ChipApi.Object.StrategyPlacement -> Field (List decodesTo) RootQuery
-placements object =
-    Object.selectionField "placements" [] object (identity >> Decode.list)
-
-
 type alias ShorelineLocationRequiredArguments =
     { id : ChipApi.Scalar.Id }
 

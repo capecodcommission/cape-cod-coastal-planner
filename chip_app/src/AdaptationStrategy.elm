@@ -14,14 +14,22 @@ import ChipApi.Object.AdaptationStrategy as AS
 import ChipApi.Object.AdaptationCategory as AC
 import ChipApi.Object.CoastalHazard as CH
 import ChipApi.Object.ImpactScale as IS
-import ChipApi.Object.StrategyPlacement as SP
 import ChipApi.Object.AdaptationBenefit as AB
 import ChipApi.Object.AdaptationAdvantages as AA
 import ChipApi.Object.AdaptationDisadvantages as AD
 import Graphqelm.OptionalArgument exposing (..)
 import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
-import Types exposing (GqlData, GqlList, getId, dictFromGqlList, unwrapGqlList, mapGqlError)
+import Types 
+    exposing 
+        ( GqlData
+        , GqlList
+        , ZoneOfImpact
+        , getId
+        , dictFromGqlList
+        , unwrapGqlList
+        , mapGqlError
+        )
 
 
 --
@@ -85,7 +93,7 @@ updateHazardStrategies updateFn hazards =
 type alias Strategy =
     { id : Scalar.Id
     , name : String
-    , placements : Set Placement
+    , placement : Maybe Placement
     , details : GqlData (Maybe StrategyDetails)
     }
 
@@ -139,6 +147,27 @@ getStrategyHtmlId : Scalar.Id -> String
 getStrategyHtmlId (Scalar.Id id) =
     "strategy-" ++ id
 
+
+canStrategyBePlacedInZoneOfImpact : ZoneOfImpact -> Strategy -> Bool
+canStrategyBePlacedInZoneOfImpact { placementMajorities } { placement } =
+    case placement of
+        Just "anywhere" ->
+            True
+
+        Just "undeveloped_only" ->
+            placementMajorities.majorityUndeveloped
+
+        Just "coastal_bank_only" ->
+            placementMajorities.majorityCoastalBank
+
+        Just "anywhere_but_salt_marsh" ->
+            not placementMajorities.majoritySaltMarsh
+
+        Just _ ->
+            False
+
+        Nothing ->
+            True
 
 --
 -- STRATEGY DETAILS, ETC.
@@ -295,7 +324,7 @@ selectActiveAdaptationStrategies =
     AS.selection Strategy
         |> with AS.id
         |> with AS.name
-        |> with (AS.placements selectPlacement |> Field.map Set.fromList)
+        |> with AS.placement
         |> hardcoded NotAsked
 
 
@@ -356,13 +385,7 @@ selectImpactScale =
         |> with IS.name
         |> with IS.impact
         |> with IS.description
-
-
-selectPlacement : SelectionSet Placement ChipApi.Object.StrategyPlacement
-selectPlacement =
-    SP.selection identity
-        |> with SP.name
-        
+       
 
 selectBenefit : SelectionSet Benefit ChipApi.Object.AdaptationBenefit
 selectBenefit =

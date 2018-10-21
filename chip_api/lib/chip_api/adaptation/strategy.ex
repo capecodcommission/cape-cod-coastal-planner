@@ -9,6 +9,7 @@ defmodule ChipApi.Adaptation.Strategy do
     field :display_order, :integer
     field :is_active, :boolean, default: false
     field :currently_permittable, :string
+    field :strategy_placement, :string
 
     many_to_many :adaptation_categories, ChipApi.Adaptation.Category,
       join_through: "strategies_categories",
@@ -22,19 +23,15 @@ defmodule ChipApi.Adaptation.Strategy do
       join_through: "strategies_scales",
       on_delete: :delete_all
 
-    many_to_many :strategy_placements, ChipApi.Adaptation.Placement,
-      join_through: "strategies_placements",
-      on_delete: :delete_all
-
     many_to_many :adaptation_benefits, ChipApi.Adaptation.Benefit,
       join_through: "strategies_benefits",
       on_delete: :delete_all
     
     has_many :adaptation_advantages, ChipApi.Adaptation.Advantage, 
-      on_delete: :delete_all #, foreign_key: :strategy_id
+      on_delete: :delete_all
     
     has_many :adaptation_disadvantages, ChipApi.Adaptation.Disadvantage, 
-      on_delete: :delete_all #, foreign_key: :strategy_id
+      on_delete: :delete_all
 
     timestamps()
   end

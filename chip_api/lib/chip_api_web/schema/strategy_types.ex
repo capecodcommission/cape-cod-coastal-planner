@@ -50,10 +50,6 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.impact_scales/3
         end
 
-        @desc "The list of valid placements for strategies"
-        field :placements, non_null(list_of(non_null(:strategy_placement))) do
-            resolve &Resolvers.Strategies.strategy_placements/3
-        end
     end
 
     @desc "Filtering options for adaptation strategies"
@@ -87,6 +83,10 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "Denotes whether this strategy is currently available for planning"
         field :is_active, non_null(:boolean)
 
+        
+        @desc "Description of valid placement the strategy can be used in"
+        field :placement, :string
+
         @desc "The adaptation categories that are associated with the strategy"
         field :categories, non_null(list_of(non_null(:adaptation_category))) do
             resolve &Resolvers.Strategies.categories_for_strategy/3
@@ -115,11 +115,6 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The geographic scales of impact the strategy can target"
         field :scales, non_null(list_of(non_null(:impact_scale))) do
             resolve &Resolvers.Strategies.scales_for_strategy/3
-        end
-
-        @desc "The list of valid placements the strategies can be used in"
-        field :placements, non_null(list_of(non_null(:strategy_placement))) do
-            resolve &Resolvers.Strategies.placements_for_strategy/3
         end
 
         @desc "The server path to an image of the adaptation strategy"
@@ -226,18 +221,6 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The adaptation strategies that are associated with the scale of impact"
         field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
             resolve &Resolvers.Strategies.strategies_for_scale/3
-        end
-    end
-
-    @desc "A land characteristic used to determine where a strategy is allowed to be placed"
-    object :strategy_placement do
-        
-        @desc "The name of the placement"
-        field :name, non_null(:string)
-
-        @desc "The adaptation strategies that are associated with the placement"
-        field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
-            resolve &Resolvers.Strategies.strategies_for_placement/3
         end
     end
 end

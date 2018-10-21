@@ -634,12 +634,14 @@ view app =
                                     [ getRightSidebarChildViews model
                                         |> RSidebar.view model
                                     ]
-                            , case model.strategiesModalOpenness of
-                                Closed ->
-                                    el NoStyle [] empty
+                            -- strategiesModalOpenness should probably be refactored away
+                            -- ie: modal should never be open when zone of impact is Nothing (make impossible states impossible)
+                            , case ( model.zoneOfImpact, model.strategiesModalOpenness ) of
+                                ( Just zoi, Open ) ->
+                                    StrategiesModal.view model model.adaptationInfo zoi
 
-                                Open ->
-                                    StrategiesModal.view model
+                                ( _, _ ) ->
+                                    el NoStyle [] empty
                             ]
                     ]
 
