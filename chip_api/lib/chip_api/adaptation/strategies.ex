@@ -858,7 +858,6 @@ defmodule ChipApi.Adaptation.Strategies do
         Repo.all(query)
     end
 
-    # TODO This does not seem to work correctly.  Will compile but when accessing via graphql it crashes.  
     @doc """
     Returns the list of advantages associated with the given strategy.
 
@@ -873,7 +872,6 @@ defmodule ChipApi.Adaptation.Strategies do
         Repo.all(query)
     end
 
-    # TODO This does not seem to work correctly.  Will compile but when accessing via graphql it crashes.  
     @doc """
     Returns the list of advantages associated with the given strategy.
 

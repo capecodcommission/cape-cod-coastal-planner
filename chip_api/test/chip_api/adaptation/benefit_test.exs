@@ -94,7 +94,6 @@ defmodule ChipApi.Adaptation.BenefitTest do
             |> Map.take([:display_order])
     end
 
-    # TODO Currently failing, not sure if we actually need this one for benefits though?  Does display order need validation?
     @attrs %{
         display_order: "bad_value"
     }

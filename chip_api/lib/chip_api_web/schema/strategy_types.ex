@@ -102,13 +102,11 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.hazards_for_strategy/3
         end
 
-        # TODO This API response will crash the app.  I think I am missing something RE the 1:M association
         @desc "The advantages that are associated with the strategy"
         field :advantages, non_null(list_of(non_null(:adaptation_advantages))) do
             resolve &Resolvers.Strategies.advantages_for_strategy/3
         end
 
-        # TODO This API response will crash the app.  I think I am missing something RE the 1:M association
         @desc "The disadvantages that are associated with the strategy"
         field :disadvantages, non_null(list_of(non_null(:adaptation_disadvantages))) do
             resolve &Resolvers.Strategies.disadvantages_for_strategy/3

@@ -58,23 +58,33 @@ defmodule ChipApi.Seeds do
         # STRATEGY PLACEMENTS
         #
         
-        developed = %Adaptation.Placement{
-            name: "Developed"
+        undeveloped_required = %Adaptation.Placement{
+            name: "undeveloped_required"
         }
         |> Repo.insert!
 
-        undeveloped = %Adaptation.Placement{
-            name: "Undeveloped"
+        undeveloped_prohibited = %Adaptation.Placement{
+            name: "undeveloped_prohibited"
         }
         |> Repo.insert!
 
-        coastal_dune = %Adaptation.Placement{
-            name: "CoastalDune"
+        coastal_bank_required = %Adaptation.Placement{
+            name: "coastal_bank_required"
         }
         |> Repo.insert!
 
-        salt_marsh = %Adaptation.Placement{
-            name: "SaltMarsh"
+        coastal_bank_prohibited = %Adaptation.Placement{
+            name: "coastal_bank_prohibited"
+        }
+        |> Repo.insert!
+
+        salt_marsh_required = %Adaptation.Placement{
+            name: "salt_marsh_required"
+        }
+        |> Repo.insert!
+
+        salt_marsh_prohibited = %Adaptation.Placement{
+            name: "salt_marsh_prohibited"
         }
         |> Repo.insert!
 
@@ -128,7 +138,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [retreat],
             coastal_hazards: [ erosion, storm_surge, sea_level_rise ],
             impact_scales: [site, community, neighborhood, regional],
-            strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
+            strategy_placements: [],
             adaptation_benefits: [habitat, aesthetics, recreation_tourism],
             adaptation_advantages: [
                 %Adaptation.Advantage{name: "Allows natural erosion and sediment processes to occur.", display_order: 0},
@@ -150,8 +160,8 @@ defmodule ChipApi.Seeds do
             description: "Removing development from an existing location by land purchase, flood insurance buy-out programs, or other means.",
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
-            impact_scales: [site],
-            strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
+            impact_scales: [site],   
+            strategy_placements: [],
             is_active: false
         }
         |> Repo.insert!
@@ -302,7 +312,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect, retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood, community, regional],
-            strategy_placements: [undeveloped],
+            strategy_placements: [undeveloped_required],
             is_active: false
         }
         |> Repo.insert!
@@ -313,7 +323,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood],
-            strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
+            strategy_placements: [],
             is_active: false
         }
         |> Repo.insert!
@@ -324,7 +334,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            strategy_placements: [coastal_dune],
+            strategy_placements: [coastal_bank_required],
             adaptation_benefits: [habitat, flood_management],
             currently_permittable: "Various local, state, and federal permits required.",
             adaptation_advantages: [
@@ -351,7 +361,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion],
             impact_scales: [site, neighborhood],
-            strategy_placements: [coastal_dune],
+            strategy_placements: [coastal_bank_required],
             is_active: false
         }
         |> Repo.insert!
@@ -362,7 +372,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect, accommodate],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site],
-            strategy_placements: [developed, undeveloped, coastal_dune],
+            strategy_placements: [salt_marsh_prohibited],
             adaptation_benefits: [habitat, aesthetics, flood_management],
             currently_permittable: "Various local and state permits may be required.",
             adaptation_advantages: [
@@ -398,7 +408,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            strategy_placements: [coastal_dune],
+            strategy_placements: [coastal_bank_required],
             adaptation_benefits: [habitat, carbon_storage, flood_management],
             currently_permittable: "Local and state permits required, potentially federal permits depending on location.",
             adaptation_advantages: [
@@ -421,7 +431,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            strategy_placements: [coastal_dune],
+            strategy_placements: [coastal_bank_required],
             is_active: false
         }
         |> Repo.insert!
@@ -432,7 +442,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            strategy_placements: [developed, undeveloped, coastal_dune],
+            strategy_placements: [salt_marsh_prohibited],
             is_active: false
         }
         |> Repo.insert!
@@ -459,7 +469,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            strategy_placements: [developed, undeveloped, coastal_dune],
+            strategy_placements: [salt_marsh_prohibited],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
             adaptation_advantages: [
@@ -483,7 +493,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
-            strategy_placements: [developed, undeveloped, coastal_dune],
+            strategy_placements: [salt_marsh_prohibited],
             is_active: false
         }
         |> Repo.insert!
@@ -494,7 +504,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect, accommodate],
             coastal_hazards: [erosion, sea_level_rise],
             impact_scales: [site, neighborhood],
-            strategy_placements: [developed, undeveloped, coastal_dune],
+            strategy_placements: [salt_marsh_prohibited],
             adaptation_benefits: [habitat, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
             adaptation_advantages: [
