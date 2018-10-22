@@ -82,10 +82,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
         @desc "Denotes whether this strategy is currently available for planning"
         field :is_active, non_null(:boolean)
-
         
         @desc "Description of valid placement the strategy can be used in"
-        field :placement, :string
+        field :strategy_placement, :string
 
         @desc "The adaptation categories that are associated with the strategy"
         field :categories, non_null(list_of(non_null(:adaptation_category))) do

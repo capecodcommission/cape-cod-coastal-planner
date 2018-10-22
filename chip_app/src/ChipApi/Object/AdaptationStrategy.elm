@@ -102,15 +102,15 @@ name =
     Object.fieldDecoder "name" [] Decode.string
 
 
-{-| Description of valid placement the strategy can be used in
--}
-placement : Field (Maybe String) ChipApi.Object.AdaptationStrategy
-placement =
-    Object.fieldDecoder "placement" [] (Decode.string |> Decode.nullable)
-
-
 {-| The geographic scales of impact the strategy can target
 -}
 scales : SelectionSet decodesTo ChipApi.Object.ImpactScale -> Field (List decodesTo) ChipApi.Object.AdaptationStrategy
 scales object =
     Object.selectionField "scales" [] object (identity >> Decode.list)
+
+
+{-| Description of valid placement the strategy can be used in
+-}
+strategyPlacement : Field (Maybe String) ChipApi.Object.AdaptationStrategy
+strategyPlacement =
+    Object.fieldDecoder "strategyPlacement" [] (Decode.string |> Decode.nullable)

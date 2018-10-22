@@ -4,7 +4,7 @@ defmodule ChipApi.Cache.Warmers.AdaptationStrategyWarmer do
     alias ChipApi.Adaptation.Strategy
 
     def interval,
-        do: :timer.seconds(30)
+        do: :timer.seconds(300)
 
     @doc """
     In a successful operation, `execute/1` returns results in one of two forms: { :ok, pairs } or { :ok, pairs, options }.

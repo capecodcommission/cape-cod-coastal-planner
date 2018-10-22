@@ -10,6 +10,7 @@ import Element exposing (..)
 import Element.Keyed as Keyed
 import Element.Attributes as Attr exposing (..)
 import Element.Events exposing (..)
+import Element.Input exposing (disabled)
 import Styles exposing (..)
 import View.Helpers exposing (..)
 import RemoteData as Remote exposing (RemoteData(..))
@@ -174,15 +175,26 @@ strategyView zoneOfImpact strategies ((Scalar.Id id) as strategyId) =
         |> Maybe.map 
             (\strategy ->
                 let
-                    isDisabled = AS.canStrategyBePlacedInZoneOfImpact zoneOfImpact strategy
+                    isEnabled = AS.canStrategyBePlacedInZoneOfImpact zoneOfImpact strategy
                 in
-                button (AddStrategies StrategiesSidebarListBtn)
-                    [ height content
-                    , paddingXY 16 8
-                    , onClick (SelectStrategy strategyId)
-                    , Attr.id <| getStrategyHtmlId strategyId
-                    , vary Disabled isDisabled
-                    ] <| paragraph NoStyle [] [ Element.text strategy.name ]
+                case isEnabled of
+                    True ->
+                        button (AddStrategies StrategiesSidebarListBtn)
+                            [ height content
+                            , paddingXY 16 8
+                            , onClick <| SelectStrategy strategyId
+                            , Attr.id <| getStrategyHtmlId strategyId
+                            ] <| paragraph NoStyle [] [ el NoStyle [] <| Element.text strategy.name ]
+
+                    False ->
+                        el (AddStrategies StrategiesSidebarListBtnDisabled)
+                            [ height content
+                            , paddingXY 16 8
+                            , Attr.id <| getStrategyHtmlId strategyId
+                            ] <| paragraph NoStyle [] 
+                                [ el NoStyle [ width fill ] <| Element.text strategy.name
+                                , el NoStyle [ alignRight ] <| Element.text "(Not Applicable)"
+                                ]
             )
 
 

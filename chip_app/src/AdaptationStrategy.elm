@@ -324,7 +324,7 @@ selectActiveAdaptationStrategies =
     AS.selection Strategy
         |> with AS.id
         |> with AS.name
-        |> with AS.placement
+        |> with AS.strategyPlacement
         |> hardcoded NotAsked
 
 

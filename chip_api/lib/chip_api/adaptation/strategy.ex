@@ -39,7 +39,7 @@ defmodule ChipApi.Adaptation.Strategy do
   @doc false
   def changeset(strategy, attrs) do
     strategy
-    |> cast(attrs, [:name, :description, :display_order, :currently_permittable])
+    |> cast(attrs, [:name, :description, :display_order, :is_active, :currently_permittable, :strategy_placement])
     |> validate_required([:name, :is_active])
     |> unique_constraint(:name)
   end
