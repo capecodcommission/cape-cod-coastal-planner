@@ -463,7 +463,7 @@ defmodule ChipApi.Adaptation.Strategies do
     # LIFE SPAN RANGES
     #
 
-    alias ChipApi.Adaptation.Life_Span_Range
+    alias ChipApi.Adaptation.LifeSpanRange
 
 
     @doc """
@@ -473,22 +473,22 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> list_life_span_ranges(%{order: :desc})
-        [%Life_Span{}, ...]
+        [%LifeSpanRange{}, ...]
 
         iex> list_life_span_ranges()
-        [%Life_Span{}, ...]
+        [%LifeSpanRange{}, ...]
 
     """
     def list_life_span_ranges(args) do
         args
-        |> Enum.reduce(Life_Span_Range, fn
+        |> Enum.reduce(LifeSpanRange, fn
             {:order, order}, query ->
                 query |> order_by([{^order, :display_order}, {^order, :id}])
         end)
         |> Repo.all
     end
     def list_life_spans_ranges do
-        Repo.all(Life_Span_Range)
+        Repo.all(LifeSpanRange)
     end
 
     @doc """
@@ -501,7 +501,7 @@ defmodule ChipApi.Adaptation.Strategies do
         [%Strategy{}, ...]
 
     """
-    def list_strategies_for_life_span_range(%Life_Span_Range{} = life_span_range) do
+    def list_strategies_for_life_span_range(%LifeSpanRange{} = life_span_range) do
         query = Ecto.assoc(life_span_range, :adaptation_strategies)
         Repo.all(query)
     end
@@ -514,13 +514,13 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> get_life_span_range!(1)
-        %Life_Span_Range{}
+        %LifeSpanRange{}
 
         iex> get_life_span_range!(100)
         ** (Ecto.NoResultsError)
 
     """
-    def get_life_span_range!(id), do: Repo.get!(Life_Span_Range, id)
+    def get_life_span_range!(id), do: Repo.get!(LifeSpanRange, id)
 
     @doc """
     Gets a single Life Span Range by id. 
@@ -530,29 +530,29 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> get_life_span_range(1)
-        %Life_Span_Range{}
+        %LifeSpanRange{}
 
         iex> get_life_span_range(100)
         nil
 
     """
-    def get_life_span_range(id), do: Repo.get(Life_Span_Range, id)
+    def get_life_span_range(id), do: Repo.get(LifeSpanRange, id)
 
     @doc """
-    Creates a Life Span.
+    Creates a Life Span Range.
 
     ## Examples
 
         iex> create_life_span_range(%{field: value})
-        {:ok, %Life_Span_Range{}}
+        {:ok, %LifeSpanRange{}}
 
         iex> create_life_span_range(%{field: bad_value})
         {:error, %Ecto.Changeset{}}
 
     """
     def create_life_span_range(attrs \\ %{}) do
-        %Life_Span_Range{}
-        |> Life_Span_Range.changeset(attrs)
+        %LifeSpanRange{}
+        |> LifeSpanRange.changeset(attrs)
         |> Repo.insert()
     end
 
@@ -562,15 +562,15 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> update_life_span_range(life_span_range, %{field: new_value})
-        {:ok, %Life_Span_Range{}}
+        {:ok, %LifeSpanRange{}}
 
         iex> update_life_span_range(life_span_range, %{field: bad_value})
         {:error, %Ecto.Changeset{}}
 
     """    
-    def update_life_span_range(%Life_Span_Range{} = life_span_range, attrs) do
+    def update_life_span_range(%LifeSpanRange{} = life_span_range, attrs) do
         life_span_range
-        |> Life_Span_Range.changeset(attrs)
+        |> LifeSpanRange.changeset(attrs)
         |> Repo.update()
     end
 
@@ -580,13 +580,13 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> delete_life_span_range(life_span_range)
-        {:ok, %Life_Span_Range{}}
+        {:ok, %LifeSpanRange{}}
 
         iex> delete_life_span_range(life_span_range)
         {:error, %Ecto.Changeset{}}
 
     """
-    def delete_life_span_range(%Life_Span_Range{} = life_span_range) do
+    def delete_life_span_range(%LifeSpanRange{} = life_span_range) do
         Repo.delete(life_span_range)
     end
 
@@ -596,13 +596,13 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> change_life_span_range(life_span_range, %{field: new_value})
-        %Ecto.Changeset{data: %Life_Span_Range{}, changes: %{field: new_value}, ...}
+        %Ecto.Changeset{data: %LifeSpanRange{}, changes: %{field: new_value}, ...}
 
         iex> change_life_span_range(life_span_range, %{field: bad_value})
-        %Ecto.Changeset{data: %Life_Span_Range{}, changes: %{}, errors: [...]}
+        %Ecto.Changeset{data: %LifeSpanRange{}, changes: %{}, errors: [...]}
 
     """
-    def change_life_span_range(%Life_Span_Range{} = life_span_range, attrs) do
+    def change_life_span_range(%LifeSpanRange{} = life_span_range, attrs) do
         Scale.changeset(life_span_range, attrs)
     end
 
@@ -610,7 +610,7 @@ defmodule ChipApi.Adaptation.Strategies do
     #  COST RANGES
     #
 
-    alias ChipApi.Adaptation.Cost_Range
+    alias ChipApi.Adaptation.CostRange
 
 
     @doc """
@@ -620,22 +620,22 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> list_cost_ranges(%{order: :desc})
-        [%Cost_Ranges{}, ...]
+        [%CostRanges{}, ...]
 
         iex> list_cost_ranges()
-        [%Cost_Ranges{}, ...]
+        [%CostRanges{}, ...]
 
     """
     def list_cost_ranges(args) do
         args
-        |> Enum.reduce(Cost_Range, fn
+        |> Enum.reduce(CostRange, fn
             {:order, order}, query ->
                 query |> order_by([{^order, :display_order}, {^order, :id}])
         end)
         |> Repo.all
     end
     def list_cost_ranges do
-        Repo.all(Cost_Range)
+        Repo.all(CostRange)
     end
 
     @doc """
@@ -645,10 +645,10 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> list_strategies_for_cost_range(cost_range)
-        [%Costs{}, ...]
+        [%Strategy{}, ...]
 
     """
-    def list_strategies_for_cost_range(%Cost_Range{} = cost_range) do
+    def list_strategies_for_cost_range(%CostRange{} = cost_range) do
         query = Ecto.assoc(cost_range, :adaptation_strategies)
         Repo.all(query)
     end
@@ -661,13 +661,13 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> get_cost_range!(1)
-        %Cost_Range{}
+        %CostRange{}
 
         iex> get_cost_range!(100)
         ** (Ecto.NoResultsError)
 
     """
-    def get_cost_range!(id), do: Repo.get!(Cost_Range, id)
+    def get_cost_range!(id), do: Repo.get!(CostRange, id)
 
     @doc """
     Gets a single Cost Range by id. 
@@ -677,13 +677,13 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> get_cost_range(1)
-        %Cost_Range{}
+        %CostRange{}
 
         iex> get_cost_range(100)
         nil
 
     """
-    def get_cost_range(id), do: Repo.get(Cost_Range, id)
+    def get_cost_range(id), do: Repo.get(CostRange, id)
 
     @doc """
     Creates a Cost Range.
@@ -691,15 +691,15 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> create_cost_range(%{field: value})
-        {:ok, %Cost_Range{}}
+        {:ok, %CostRange{}}
 
         iex> create_cost_range(%{field: bad_value})
         {:error, %Ecto.Changeset{}}
 
     """
     def create_cost_range(attrs \\ %{}) do
-        %Cost_Range{}
-        |> Cost_Range.changeset(attrs)
+        %CostRange{}
+        |> CostRange.changeset(attrs)
         |> Repo.insert()
     end
 
@@ -709,15 +709,15 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> update_cost_range(cost, %{field: new_value})
-        {:ok, %Cost_Range{}}
+        {:ok, %CostRange{}}
 
-        iex> update_cost_range(cost, %{field: bad_value})
+        iex> update_cost_range(cost_range, %{field: bad_value})
         {:error, %Ecto.Changeset{}}
 
     """    
-    def update_cost_range(%Cost{} = cost_range, attrs) do
+    def update_cost_range(%CostRange{} = cost_range, attrs) do
         cost_range
-        |> Cost_Range.changeset(attrs)
+        |> CostRange.changeset(attrs)
         |> Repo.update()
     end
 
@@ -727,13 +727,13 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> delete_cost_range(cost_range)
-        {:ok, %Cost_Range{}}
+        {:ok, %CostRange{}}
 
         iex> delete_cost_range(cost_range)
         {:error, %Ecto.Changeset{}}
 
     """
-    def delete_cost_range(%Cost_Range{} = cost) do
+    def delete_cost_range(%CostRange{} = cost_range) do
         Repo.delete(cost_range)
     end
 
@@ -743,14 +743,14 @@ defmodule ChipApi.Adaptation.Strategies do
     ## Examples
 
         iex> change_cost_range(cost_range, %{field: new_value})
-        %Ecto.Changeset{data: %Cost_Range{}, changes: %{field: new_value}, ...}
+        %Ecto.Changeset{data: %CostRange{}, changes: %{field: new_value}, ...}
 
         iex> change_cost_range(cost_range, %{field: bad_value})
-        %Ecto.Changeset{data: %Cost_Range{}, changes: %{}, errors: [...]}
+        %Ecto.Changeset{data: %CostRange{}, changes: %{}, errors: [...]}
 
     """
-    def change_cost_range(%Cost_Range{} = cost_range, attrs) do
-        Cost_Range.changeset(cost_range, attrs)
+    def change_cost_range(%CostRange{} = cost_range, attrs) do
+        CostRange.changeset(cost_range, attrs)
     end
 
     #
