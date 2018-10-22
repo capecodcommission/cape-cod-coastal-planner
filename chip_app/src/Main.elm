@@ -374,7 +374,11 @@ updateModel msg model =
             case evt.keyCode of
                 Down ->
                     model.adaptationInfo
-                        |> updateHazardsWith (updateHazardStrategies ZipHelp.tryNext)
+                        |> updateHazardsWith 
+                            ( updateHazardStrategies <| 
+                                ZipHelp.tryNextUntil <|
+                                    (canStrategyFromInfoBePlacedInZoneOfImpact model.zoneOfImpact model.adaptationInfo)
+                            )
                         |> \(info, cmd) ->
                             ( { model | adaptationInfo = info }, cmd )
 

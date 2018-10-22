@@ -45,7 +45,28 @@ tryNext : Maybe (Zipper a) -> Maybe (Zipper a)
 tryNext items =
     items
         |> Maybe.andThen Zipper.next
-        |> MEx.orElse items        
+        |> MEx.orElse items
+
+
+tryNextUntil : (a -> Bool) -> Maybe (Zipper a) -> Maybe (Zipper a)
+tryNextUntil predicate items =
+    let
+        nextItems = items |> Maybe.andThen Zipper.next
+
+        next = nextItems |> Maybe.map Zipper.current
+    in
+    case next of
+        Just n ->
+            case predicate n of
+                True ->
+                    nextItems
+
+                False ->
+                    tryNextUntil predicate nextItems
+
+        Nothing ->
+            items
+
 
 
 tryPrevious : Maybe (Zipper a) -> Maybe (Zipper a)
