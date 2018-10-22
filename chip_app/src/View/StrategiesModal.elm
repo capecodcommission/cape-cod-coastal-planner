@@ -110,6 +110,8 @@ sidebarView config adaptationInfo zoneOfImpact =
                     [ width (px 274)
                     , height (px 42)
                     , title "Apply strategy"
+                    , onClick <| ApplyStrategy Nothing
+                    , on "keydown" <| D.map ApplyStrategy <| D.map Just decodeKeyboardEvent
                     ] <| Element.text "APPLY STRATEGY"         
             )
         ]

@@ -8,6 +8,7 @@ import Graphqelm.SelectionSet exposing (SelectionSet, with)
 import RemoteData as Remote exposing (RemoteData, fromResult, sendRequest)
 import QueryString as QS
 import Json.Decode as D
+import Json.Encode as E
 import ChipApi.Object
 import ChipApi.Object.CoastalHazard as CH
 import ChipApi.Object.ShorelineLocation as SL
@@ -188,29 +189,36 @@ getVulnRibbonForLocation env id =
 --
 
 
-sendGetHexesRequest : Env -> ShorelineExtent -> Cmd Msg
-sendGetHexesRequest env shorelineExtent =
-    shorelineExtent
-        |> shorelineExtentToExtent
-        |> getHexesForLocation env
-        |> Http.send LoadLocationHexesResponse
+sendGetHexesRequest : Env -> Maybe ZoneOfImpact -> Cmd Msg
+sendGetHexesRequest env zoneOfImpact =
+    zoneOfImpact
+        |> Maybe.andThen .geometry
+        |> Maybe.map (getHexesForZoneOfImpact env)
+        |> Maybe.map (Http.send LoadZoneOfImpactHexesResponse)
+        |> Maybe.withDefault Cmd.none
 
 
-getHexesForLocation : Env -> Extent -> Http.Request D.Value
-getHexesForLocation env extent =
+getHexesForZoneOfImpact : Env -> String -> Http.Request D.Value
+getHexesForZoneOfImpact env geometry =
     let
-        qs =
-            QS.empty
-                |> QS.add "f" "pjson"
-                |> QS.add "returnGeometry" "true"
-                |> QS.add "spatialRel" "esriSpatialRelIntersects"
-                |> QS.add "geometryType" "esriGeometryEnvelope"
-                |> QS.add "outFields" "*"
-                |> QS.add "inSR" "4326"
-                |> QS.add "outSR" "3857"
-                |> QS.add "geometry" (extentToString extent)
-
-        getUrl =
-            env.agsHexUrl ++ QS.render qs
+        body =
+            Http.multipartBody
+                [ Http.stringPart "f" "json"
+                , Http.stringPart "returnGeometry" "false"
+                , Http.stringPart "spatialRel" "esriSpatialRelIntersects"
+                , Http.stringPart "geometryType" "esriGeometryEnvelope" 
+                , Http.stringPart "outFields" "*"
+                , Http.stringPart "inSR" "3857"
+                , Http.stringPart "outSR" "3857"
+                , Http.stringPart "geometry" (""" " ++ geometry ++ " """)
+                ]
     in
-        Http.get getUrl D.value
+        Http.request
+            { method = "POST"
+            , headers = [ Http.header "Accept" "application/json, text/javascript, */*; q=0.01" ]
+            , url = env.agsHexUrl
+            , body = body
+            , expect = Http.expectJson D.value
+            , timeout = Nothing
+            , withCredentials = True
+            }

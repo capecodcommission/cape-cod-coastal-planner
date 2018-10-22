@@ -26,7 +26,7 @@ type Msg
     | LoadLittoralCellsResponse (Result Http.Error D.Value)
     | MapSelectLittoralCell String
     | LoadVulnerabilityRibbonResponse (Result Http.Error D.Value)
-    | LoadLocationHexesResponse (Result Http.Error D.Value)
+    | LoadZoneOfImpactHexesResponse (Result Http.Error D.Value)
     | UpdateZoneOfImpact ZoneOfImpact
     | CancelZoneOfImpactSelection    
     | PickStrategy
@@ -36,6 +36,7 @@ type Msg
     | SelectStrategy Scalar.Id
     | HandleStrategyKeyboardEvent KeyboardEvent
     | GotStrategyDetails Scalar.Id (GqlData (Maybe AS.StrategyDetails))
+    | ApplyStrategy (Maybe KeyboardEvent)
     | ToggleRightSidebar
     | Animate Animation.Msg
     | Resize Window.Size

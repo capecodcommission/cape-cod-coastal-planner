@@ -284,7 +284,7 @@ updateModel msg model =
             , olCmd <| encodeOpenLayersCmd (RenderVulnerabilityRibbon response)
             )
 
-        LoadLocationHexesResponse response ->
+        LoadZoneOfImpactHexesResponse response ->
             ( model
             , olCmd <| encodeOpenLayersCmd (RenderLocationHexes response)
             )
@@ -419,6 +419,26 @@ updateModel msg model =
                     )
                 |> \(info, cmd) -> 
                     ( { model | adaptationInfo = info }, cmd )
+
+        ApplyStrategy maybeEvt ->
+            maybeEvt
+                |> Maybe.map
+                    (\{ keyCode } ->
+                        case keyCode of
+                            Enter ->
+                                ( model, sendGetHexesRequest model.env model.zoneOfImpact )
+
+                            Escape ->
+                                ( model
+                                    |> expandRightSidebar
+                                    |> \m -> { m | strategiesModalOpenness = Closed }
+                                , Cmd.none
+                                )
+
+                            _ ->
+                                ( model, Cmd.none )
+                    )
+                |> Maybe.withDefault ( model, sendGetHexesRequest model.env model.zoneOfImpact )
 
         ToggleRightSidebar ->
             case model.rightSidebarOpenness of
