@@ -1,4 +1,4 @@
-defmodule ChipApi.Adaptation.Cost_Range do
+defmodule ChipApi.Adaptation.CostRange do
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -1,4 +1,4 @@
-defmodule ChipApi.Adaptation.Life_Span_Range do
+defmodule ChipApi.Adaptation.LifeSpanRange do
   use Ecto.Schema
   import Ecto.Changeset
 
