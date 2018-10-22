@@ -66,6 +66,7 @@ shorelineLocations =
         |> with SL.minY
         |> with SL.maxX
         |> with SL.maxY
+        |> with SL.littoralCellId
 
 
 getShorelineExtents : Cmd Msg
@@ -156,10 +157,8 @@ getLittoralCells env extent =
 
 
 sendGetVulnRibbonRequest : Env -> ShorelineExtent -> Cmd Msg
-sendGetVulnRibbonRequest env shorelineExtent =
-    --shorelineExtent
-    --|> shorelineExtentToExtent
-    136
+sendGetVulnRibbonRequest env { littoralCellId } =
+    littoralCellId
         |> getVulnRibbonForLocation env
         |> Http.send LoadVulnerabilityRibbonResponse
 

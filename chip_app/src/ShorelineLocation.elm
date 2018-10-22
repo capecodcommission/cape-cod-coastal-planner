@@ -22,6 +22,7 @@ type alias ShorelineExtent =
     , minY : Float
     , maxX : Float
     , maxY : Float
+    , littoralCellId : Int
     }
 
 
