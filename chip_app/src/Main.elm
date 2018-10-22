@@ -374,17 +374,13 @@ updateModel msg model =
             case evt.keyCode of
                 Down ->
                     model.adaptationInfo
-                        |> updateHazardsWith 
-                            ( updateHazardStrategies <| 
-                                ZipHelp.tryNextUntil <|
-                                    (canStrategyFromInfoBePlacedInZoneOfImpact model.zoneOfImpact model.adaptationInfo)
-                            )
+                        |> updateHazardsWith (selectNextStrategy model)
                         |> \(info, cmd) ->
                             ( { model | adaptationInfo = info }, cmd )
 
                 Up ->
                     model.adaptationInfo
-                        |> updateHazardsWith (updateHazardStrategies ZipHelp.tryPrevious)
+                        |> updateHazardsWith (selectPreviousStrategy model)
                         |> \(info, cmd) ->
                             ( { model | adaptationInfo = info }, cmd )
 
@@ -477,6 +473,23 @@ updateHazardsWith zipMapFn info =
             ( newInfo, changeStrategyCmds newInfo )
         )
         info
+
+
+selectNextStrategy : Model -> Maybe CoastalHazardZipper -> Maybe CoastalHazardZipper
+selectNextStrategy { adaptationInfo, zoneOfImpact } =
+    adaptationInfo
+        |> canStrategyFromInfoBePlacedInZoneOfImpact zoneOfImpact
+        |> ZipHelp.tryNextUntil
+        |> updateHazardStrategies
+
+
+selectPreviousStrategy : Model -> Maybe CoastalHazardZipper -> Maybe CoastalHazardZipper
+selectPreviousStrategy { adaptationInfo, zoneOfImpact } =
+    adaptationInfo
+        |> canStrategyFromInfoBePlacedInZoneOfImpact zoneOfImpact
+        |> ZipHelp.tryPreviousUntil
+        |> updateHazardStrategies
+
 
 
 changeStrategyCmds : AdaptationInfo -> Cmd Msg

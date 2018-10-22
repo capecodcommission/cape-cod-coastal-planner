@@ -172,17 +172,12 @@ canStrategyBePlacedInZoneOfImpact { placementMajorities } { placement } =
 
 canStrategyFromInfoBePlacedInZoneOfImpact : Maybe ZoneOfImpact -> GqlData AdaptationInfo -> Scalar.Id -> Bool
 canStrategyFromInfoBePlacedInZoneOfImpact zoneOfImpact info (Scalar.Id id) =
-    False
-    -- info
-    --     |> Remote.toMaybe
-    --     |> Maybe.andThen (\info -> info.strategies |> Dict.get id)
-    --     |> Maybe.map (canStrategyBePlacedInZoneOfImpact zoneOfImpact)
-    --     |> Maybe.withDefault False
+    info
+        |> Remote.toMaybe
+        |> Maybe.andThen (\info -> info.strategies |> Dict.get id)
+        |> Maybe.map2 canStrategyBePlacedInZoneOfImpact zoneOfImpact
+        |> Maybe.withDefault False
 
-    -- strategies
-    --     |> Dict.get id
-    --     |> Maybe.map (canStrategyBePlacedInZoneOfImpact zoneOfImpact)
-    --     |> Maybe.withDefault False
 
 --
 -- STRATEGY DETAILS, ETC.
