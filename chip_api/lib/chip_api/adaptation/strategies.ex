@@ -1140,6 +1140,49 @@ defmodule ChipApi.Adaptation.Strategies do
     end
 
     @doc """
+    Returns the list of cost ranges associated with the given strategy.
+
+    ## Examples
+
+        iex> list_cost_ranges_for_strategy(strategy)
+        [%CostRanges{}, ...]
+
+    """
+    def list_cost_ranges_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :cost_ranges)
+        Repo.all(query)
+    end
+
+    @doc """
+    Returns the list of life span ranges associated with the given strategy.
+
+    ## Examples
+
+        iex> list_life_span_ranges_for_strategy(strategy)
+        [%LifeSpanRanges{}, ...]
+
+    """
+    def list_life_span_ranges_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :life_span_ranges)
+        Repo.all(query)
+    end
+
+    @doc """
+    Returns the list of placements associated with the given strategy.
+
+    ## Examples
+
+        iex> list_placements_for_strategy(strategy)
+        [%Placement{}, ...]
+
+    """
+    def list_placements_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :strategy_placements)
+        Repo.all(query)
+    end
+
+    # TODO This does not seem to work correctly.  Will compile but when accessing via graphql it crashes.  
+    @doc """
     Returns the list of advantages associated with the given strategy.
 
     ## Examples
