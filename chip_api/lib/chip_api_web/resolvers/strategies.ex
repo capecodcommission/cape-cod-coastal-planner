@@ -44,11 +44,11 @@ defmodule ChipApiWeb.Resolvers.Strategies do
     end
 
     def impact_costs(_, args, _) do
-        {:ok, Strategies.list_costs(args)}
+        {:ok, Strategies.list_cost_ranges(args)}
     end
 
     def impact_life_spans(_, args, _) do
-        {:ok, Strategies.list_life_spans(args)}
+        {:ok, Strategies.list_life_span_ranges(args)}
     end
 
     def strategy_placements(_, args, _) do
@@ -72,11 +72,11 @@ defmodule ChipApiWeb.Resolvers.Strategies do
     end
 
     def costs_for_strategy(strategy, _args, _) do
-        {:ok, Strategies.list_costs_for_strategy(strategy)}
+        {:ok, Strategies.list_cost_ranges_for_strategy(strategy)}
     end
 
     def life_spans_for_strategy(strategy, _args, _) do
-        {:ok, Strategies.list_life_spans_for_strategy(strategy)}
+        {:ok, Strategies.list_life_span_ranges_for_strategy(strategy)}
     end
 
     def placements_for_strategy(strategy, _args, _) do
@@ -109,11 +109,11 @@ defmodule ChipApiWeb.Resolvers.Strategies do
     end
 
     def strategies_for_cost(cost, _args, _) do
-        {:ok, Strategies.list_strategies_for_cost(cost)}
+        {:ok, Strategies.list_strategies_for_cost_range(cost)}
     end
 
     def strategies_for_life_span(life_span, _args, _) do
-        {:ok, Strategies.list_strategies_for_life_span(life_span)}
+        {:ok, Strategies.list_strategies_for_life_span_range(life_span)}
     end
 
     def strategies_for_placement(placement, _args, _) do

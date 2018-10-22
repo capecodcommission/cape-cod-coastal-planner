@@ -53,13 +53,13 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The list of cost categories"
         field :impact_costs, non_null(list_of(non_null(:impact_cost))) do
             arg :order, type: :sort_order, default_value: :asc
-            resolve &Resolvers.Strategies.impact_cost/3
+            resolve &Resolvers.Strategies.impact_costs/3
         end
 
         @desc "The list of life span categories"
         field :impact_life_spans, non_null(list_of(non_null(:impact_life_span))) do
             arg :order, type: :sort_order, default_value: :asc
-            resolve &Resolvers.Strategies.impact_life_span/3
+            resolve &Resolvers.Strategies.impact_life_spans/3
         end
 
         @desc "The list of valid placements for strategies"
