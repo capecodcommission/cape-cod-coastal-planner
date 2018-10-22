@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.3
--- Dumped by pg_dump version 10.3
+-- Dumped from database version 10.4
+-- Dumped by pg_dump version 10.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -176,7 +176,8 @@ CREATE TABLE public.adaptation_strategies (
     updated_at timestamp without time zone NOT NULL,
     display_order integer,
     is_active boolean,
-    currently_permittable character varying(255)
+    currently_permittable character varying(255),
+    strategy_placement character varying(255)
 );
 
 
@@ -358,16 +359,6 @@ CREATE TABLE public.strategies_hazards (
 
 
 --
--- Name: strategies_placements; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.strategies_placements (
-    strategy_id bigint NOT NULL,
-    placement_id bigint NOT NULL
-);
-
-
---
 -- Name: strategies_scales; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -375,37 +366,6 @@ CREATE TABLE public.strategies_scales (
     strategy_id bigint NOT NULL,
     scale_id bigint NOT NULL
 );
-
-
---
--- Name: strategy_placements; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.strategy_placements (
-    id bigint NOT NULL,
-    name character varying(255) NOT NULL,
-    inserted_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: strategy_placements_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.strategy_placements_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: strategy_placements_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.strategy_placements_id_seq OWNED BY public.strategy_placements.id;
 
 
 --
@@ -462,13 +422,6 @@ ALTER TABLE ONLY public.impact_scales ALTER COLUMN id SET DEFAULT nextval('publi
 --
 
 ALTER TABLE ONLY public.littoral_cells ALTER COLUMN id SET DEFAULT nextval('public.littoral_cells_id_seq'::regclass);
-
-
---
--- Name: strategy_placements id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.strategy_placements ALTER COLUMN id SET DEFAULT nextval('public.strategy_placements_id_seq'::regclass);
 
 
 --
@@ -544,14 +497,6 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
--- Name: strategy_placements strategy_placements_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.strategy_placements
-    ADD CONSTRAINT strategy_placements_pkey PRIMARY KEY (id);
-
-
---
 -- Name: adaptation_benefits_name_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -591,13 +536,6 @@ CREATE UNIQUE INDEX impact_scales_name_index ON public.impact_scales USING btree
 --
 
 CREATE UNIQUE INDEX littoral_cells_name_index ON public.littoral_cells USING btree (name);
-
-
---
--- Name: strategy_placements_name_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX strategy_placements_name_index ON public.strategy_placements USING btree (name);
 
 
 --
@@ -665,22 +603,6 @@ ALTER TABLE ONLY public.strategies_hazards
 
 
 --
--- Name: strategies_placements strategies_placements_placement_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.strategies_placements
-    ADD CONSTRAINT strategies_placements_placement_id_fkey FOREIGN KEY (placement_id) REFERENCES public.strategy_placements(id);
-
-
---
--- Name: strategies_placements strategies_placements_strategy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.strategies_placements
-    ADD CONSTRAINT strategies_placements_strategy_id_fkey FOREIGN KEY (strategy_id) REFERENCES public.adaptation_strategies(id);
-
-
---
 -- Name: strategies_scales strategies_scales_scale_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -700,5 +622,5 @@ ALTER TABLE ONLY public.strategies_scales
 -- PostgreSQL database dump complete
 --
 
-INSERT INTO public."schema_migrations" (version) VALUES (20180627200200), (20180627200743), (20180627201108), (20180627203452), (20180627211906), (20180627212047), (20180627212147), (20180703202705), (20180703204221), (20180703204303), (20180703205219), (20180705210332), (20180718180304), (20180726173204), (20180727193446), (20180727194146), (20180807203920), (20180807203940), (20180807203956), (20180807204011), (20180807204026), (20180807204040), (20180807204054), (20180807204115), (20180807204132), (20180807204145), (20180808140524), (20180808140539), (20180820140003), (20180820140128), (20180823192847), (20180823192901), (20180823192913), (20180919153922), (20180919154827), (20180920142818), (20180920145129), (20180920213425), (20180921142315), (20180921143254), (20180926153705);
+INSERT INTO public."schema_migrations" (version) VALUES (20180627200200), (20180627200743), (20180627201108), (20180627203452), (20180627211906), (20180627212047), (20180627212147), (20180703202705), (20180703204221), (20180703204303), (20180703205219), (20180705210332), (20180718180304), (20180726173204), (20180727193446), (20180727194146), (20180807203920), (20180807203940), (20180807203956), (20180807204011), (20180807204026), (20180807204040), (20180807204054), (20180807204115), (20180807204132), (20180807204145), (20180808140524), (20180808140539), (20180820140003), (20180820140128), (20180823192847), (20180823192901), (20180823192913), (20180919153922), (20180919154827), (20180920142818), (20180920145129), (20180920213425), (20180921142315), (20180921143254), (20180926153705), (20181021224755), (20181021230621), (20181021230849);
 
