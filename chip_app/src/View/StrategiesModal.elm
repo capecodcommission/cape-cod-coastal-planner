@@ -193,7 +193,7 @@ strategyView zoneOfImpact strategies ((Scalar.Id id) as strategyId) =
                             , Attr.id <| getStrategyHtmlId strategyId
                             ] <| paragraph NoStyle [] 
                                 [ el NoStyle [ width fill ] <| Element.text strategy.name
-                                , el NoStyle [ alignRight ] <| Element.text "(Not Applicable)"
+                                , el NoStyle [ alignRight ] <| Element.text "(n/a for selection)"
                                 ]
             )
 
