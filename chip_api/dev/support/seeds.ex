@@ -19,6 +19,38 @@ defmodule ChipApi.Seeds do
 
         regional = %Adaptation.Scale{name: "Regional", impact: 4}
         |> Repo.insert!
+        
+        #
+        # COST RANGES
+        #
+        
+        low = %Adaptation.CostRange{name: "Low (<$200)", cost: 1}
+        |> Repo.insert!
+
+        medium = %Adaptation.CostRange{name: "Medium ($201-$500)", cost: 2}
+        |> Repo.insert!
+
+        high = %Adaptation.CostRange{name: "High ($501-$1,000)", cost: 3}
+        |> Repo.insert!
+
+        very_high = %Adaptation.CostRange{name: "Very High (>$1,001)", cost: 4}
+        |> Repo.insert!
+                
+        #
+        # LIFE SPAN RANGES
+        #
+        
+        short = %Adaptation.LifeSpanRange{name: "Short", life_span: 1}
+        |> Repo.insert!
+
+        medium = %Adaptation.LifeSpanRange{name: "Medium", life_span: 2}
+        |> Repo.insert!
+
+        long = %Adaptation.LifeSpanRange{name: "Long", life_span: 3}
+        |> Repo.insert!
+
+        permanent = %Adaptation.LifeSpanRange{name: "Permanent", life_span: 4}
+        |> Repo.insert!
 
         #
         # HAZARD TYPES

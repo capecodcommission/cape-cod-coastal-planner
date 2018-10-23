@@ -50,7 +50,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.impact_scales/3
         end
 
-        @desc "The list of cost categories"
+        @desc "The list of cost range categories"
         field :impact_costs, non_null(list_of(non_null(:impact_cost))) do
             arg :order, type: :sort_order, default_value: :asc
             resolve &Resolvers.Strategies.impact_costs/3
@@ -271,7 +271,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
         @desc "The adaptation strategies that are associated with the cost category"
         field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
-            resolve &Resolvers.Strategies.strategies_for_cost/3
+            resolve &Resolvers.Strategies.strategies_for_cost_range/3
         end
     end
 
@@ -289,7 +289,8 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
 
         @desc "The adaptation strategies that are associated with the life span category"
         field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
-            resolve &Resolvers.Strategies.strategies_for_life_span/3
+            resolve &Resolvers.Strategies.strategies_for_life_span_range/3
+            ###HERE###
         end
     end
 

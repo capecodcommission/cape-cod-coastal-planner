@@ -1,6 +1,6 @@
 defmodule ChipApi.Fakes do
     alias ChipApi.Repo
-    alias ChipApi.Adaptation.{Strategy, Category, Hazard, Scale, Placement, Benefit, Advantage, Disadvantage}
+    alias ChipApi.Adaptation.{Strategy, Category, Hazard, Scale, Placement, Benefit, Advantage, Disadvantage, CostRange, LifeSpanRange}
     alias ChipApi.Geospatial.LittoralCell
     alias Decimal, as: D
 
@@ -11,6 +11,17 @@ defmodule ChipApi.Fakes do
     @scale1 %Scale{name: "scale1", impact: 1, display_order: 1}
     @scale2 %Scale{name: "scale2", impact: 2}
     @scale3 %Scale{name: "scale3", impact: 3, display_order: 2}
+    @costrange1 %CostRange{name: "costrange1", cost: 1, display_order: 1}
+    @costrange2 %CostRange{name: "costrange2", cost: 2}
+    @costrange3 %CostRange{name: "costrange3", cost: 3, display_order: 2}
+    @costrange4 %CostRange{name: "costrange4", cost: 3, display_order: 3}
+    @lifespanrange1 %LifeSpanRange{name: "lifespanrange1", life_span: 1, display_order: 1}
+    @lifespanrange2 %LifeSpanRange{name: "lifespanrange2", life_span: 2}
+    @lifespanrange3 %LifeSpanRange{name: "lifespanrange3", life_span: 3, display_order: 2}
+    @lifespanrange4 %LifeSpanRange{name: "lifespanrange4", life_span: 4, display_order: 3}
+    @costrange4 %CostRange{name: "costrange4", cost: 3, display_order: 2}
+    @place1 %Placement{name: "place1"}
+    @place2 %Placement{name: "place2"}
     @benefit1 %Benefit{name: "benefit1", display_order: 0}
     @benefit2 %Benefit{name: "benefit2", display_order: 1}
     @advantage1 %Advantage{name: "advantage1", display_order: 0}
@@ -126,6 +137,54 @@ defmodule ChipApi.Fakes do
             scale1: scale1,
             scale2: scale2,
             scale3: scale3,
+            strat1: strat1,
+            strat2: strat2
+        }}
+    end
+    
+    def run_cost_range do
+        costrange1 = @costrange1 |> Repo.insert!
+        costrange2 = @costrange2 |> Repo.insert!
+        costrange3 = @costrange3 |> Repo.insert!
+        costrange4 = @costrange4 |> Repo.insert!
+
+        strat1 = @strat1
+        |> Map.merge(%{cost_ranges: [costrange1, costrange2, costrange3, costrange4]})
+        |> Repo.insert!
+
+        strat2 = @strat2
+        |> Map.merge(%{cost_ranges: [costrange1, costrange2, costrange3, costrange4]})
+        |> Repo.insert!
+
+        {:ok, data: %{
+            costrange1: costrange1,
+            costrange2: costrange2,
+            costrange3: costrange3,
+            costrange4: costrange4,
+            strat1: strat1,
+            strat2: strat2
+        }}
+    end
+    
+    def run_life_span_range do
+        lifespanrange1 = @lifespanrange1 |> Repo.insert!
+        lifespanrange2 = @lifespanrange2 |> Repo.insert!
+        lifespanrange3 = @lifespanrange3 |> Repo.insert!
+        lifespanrange4 = @lifespanrange4 |> Repo.insert!
+
+        strat1 = @strat1
+        |> Map.merge(%{life_span_ranges: [lifespanrange1, lifespanrange2, lifespanrange3, lifespanrange4]})
+        |> Repo.insert!
+
+        strat2 = @strat2
+        |> Map.merge(%{life_span_ranges: [lifespanrange1, lifespanrange2, lifespanrange3, lifespanrange4]})
+        |> Repo.insert!
+
+        {:ok, data: %{
+            lifespanrange1: lifespanrange1,
+            lifespanrange2: lifespanrange2,
+            lifespanrange3: lifespanrange3,
+            lifespanrange4: lifespanrange4,
             strat1: strat1,
             strat2: strat2
         }}

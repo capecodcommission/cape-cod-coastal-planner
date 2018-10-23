@@ -108,12 +108,12 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_strategies_for_scale(scale)}
     end
 
-    def strategies_for_cost(cost, _args, _) do
-        {:ok, Strategies.list_strategies_for_cost_range(cost)}
+    def strategies_for_cost_range(cost_range, _args, _) do
+        {:ok, Strategies.list_strategies_for_cost_range(cost_range)}
     end
 
-    def strategies_for_life_span(life_span, _args, _) do
-        {:ok, Strategies.list_strategies_for_life_span_range(life_span)}
+    def strategies_for_life_span_range(life_span_range, _args, _) do
+        {:ok, Strategies.list_strategies_for_life_span_range(life_span_range)}
     end
 
     def strategies_for_placement(placement, _args, _) do

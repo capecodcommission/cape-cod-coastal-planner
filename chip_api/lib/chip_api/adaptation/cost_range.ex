@@ -19,7 +19,7 @@ defmodule ChipApi.Adaptation.CostRange do
   @doc false
   def changeset(cost, attrs) do
     cost
-    |> cast(attrs, [:name, :name_linear_foot, :description, :cost])
+    |> cast(attrs, [:name, :description, :cost])
     |> validate_required([:name, :cost])
     |> unique_constraint(:name)
   end
