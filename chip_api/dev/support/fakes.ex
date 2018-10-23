@@ -14,7 +14,7 @@ defmodule ChipApi.Fakes do
     @costrange1 %CostRange{name: "costrange1", cost: 1, display_order: 1}
     @costrange2 %CostRange{name: "costrange2", cost: 2}
     @costrange3 %CostRange{name: "costrange3", cost: 3, display_order: 2}
-    @costrange4 %CostRange{name: "costrange4", cost: 3, display_order: 3}
+    @costrange4 %CostRange{name: "costrange4", cost: 4, display_order: 3}
     @lifespanrange1 %LifeSpanRange{name: "lifespanrange1", life_span: 1, display_order: 1}
     @lifespanrange2 %LifeSpanRange{name: "lifespanrange2", life_span: 2}
     @lifespanrange3 %LifeSpanRange{name: "lifespanrange3", life_span: 3, display_order: 2}
