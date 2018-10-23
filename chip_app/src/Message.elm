@@ -6,9 +6,11 @@ import Animation
 import Window
 import Types exposing (..)
 import AdaptationStrategy as AS
+import AdaptationHexes as AH
 import ShorelineLocation as SL
 import Json.Decode as D
 import Http
+import RemoteData as Remote exposing (WebData)
 import Keyboard.Event exposing (KeyboardEvent)
 import ChipApi.Scalar as Scalar
 
@@ -26,7 +28,7 @@ type Msg
     | LoadLittoralCellsResponse (Result Http.Error D.Value)
     | MapSelectLittoralCell String
     | LoadVulnerabilityRibbonResponse (Result Http.Error D.Value)
-    | LoadZoneOfImpactHexesResponse (Result Http.Error D.Value)
+    | LoadZoneOfImpactHexesResponse (WebData AH.AdaptationHexes)
     | UpdateZoneOfImpact ZoneOfImpact
     | CancelZoneOfImpactSelection    
     | PickStrategy

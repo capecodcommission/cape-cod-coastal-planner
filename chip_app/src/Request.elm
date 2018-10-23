@@ -22,7 +22,8 @@ import AdaptationStrategy as AS
         ( queryAdaptationInfo
         , queryAdaptationStrategyDetailsById 
         )
-
+import AdaptationHexes as AH
+    exposing ( AdaptationHexes, adaptationHexesDecoder )
 
 --
 -- ADAPTATION INFO
@@ -194,23 +195,24 @@ sendGetHexesRequest env zoneOfImpact =
     zoneOfImpact
         |> Maybe.andThen .geometry
         |> Maybe.map (getHexesForZoneOfImpact env)
-        |> Maybe.map (Http.send LoadZoneOfImpactHexesResponse)
+        |> Maybe.map Remote.sendRequest
+        |> Maybe.map (Cmd.map LoadZoneOfImpactHexesResponse)
         |> Maybe.withDefault Cmd.none
 
 
-getHexesForZoneOfImpact : Env -> String -> Http.Request D.Value
+getHexesForZoneOfImpact : Env -> String -> Http.Request AdaptationHexes
 getHexesForZoneOfImpact env geometry =
     let
         body =
             Http.multipartBody
                 [ Http.stringPart "f" "json"
                 , Http.stringPart "returnGeometry" "false"
+                , Http.stringPart "returnDistinctValues" "true"
                 , Http.stringPart "spatialRel" "esriSpatialRelIntersects"
-                , Http.stringPart "geometryType" "esriGeometryEnvelope" 
+                , Http.stringPart "geometryType" "esriGeometryPolygon" 
                 , Http.stringPart "outFields" "*"
                 , Http.stringPart "inSR" "3857"
-                , Http.stringPart "outSR" "3857"
-                , Http.stringPart "geometry" (""" " ++ geometry ++ " """)
+                , Http.stringPart "geometry" geometry
                 ]
     in
         Http.request
@@ -218,7 +220,7 @@ getHexesForZoneOfImpact env geometry =
             , headers = [ Http.header "Accept" "application/json, text/javascript, */*; q=0.01" ]
             , url = env.agsHexUrl
             , body = body
-            , expect = Http.expectJson D.value
+            , expect = Http.expectJson adaptationHexesDecoder
             , timeout = Nothing
             , withCredentials = True
             }

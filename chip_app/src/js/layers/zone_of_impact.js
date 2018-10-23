@@ -7,7 +7,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
-import { union } from "@turf/turf";
+import { union, toWgs84 } from "@turf/turf";
 
 
 /**
@@ -63,13 +63,14 @@ function _onUpdate(evt, layer) {
     layer.getSource().addFeature(zoneOfImpact);
 
     let esrijson = esrijsonformat.writeFeatureObject(zoneOfImpact);
+    let stripped = { rings: esrijson.geometry.rings };
 
     let num_selected = evt.target.get("num_selected") || 0;
     evt.target.getMap().dispatchEvent({
         "type": "olSub",
         "sub": "update_impact_zone",
         "data" : {
-            "geometry": JSON.stringify(esrijson),
+            "geometry": JSON.stringify(stripped),
             "num_selected": num_selected,
             "shape_length": evt.length,
             "placements": evt.placements

@@ -21,6 +21,7 @@ import ZipperHelpers as ZipHelp
 import Keyboard.Key exposing (Key(Up, Down, Left, Right, Enter, Escape))
 import Types exposing (..)
 import AdaptationStrategy as AS exposing (..)
+import AdaptationHexes as AH
 import ShorelineLocation as SL exposing (..)
 import Message exposing (..)
 import Request exposing (..)
@@ -57,8 +58,8 @@ type alias Model =
     , shorelineLocationsDropdown : Dropdown ShorelineExtent
     , baselineInformation : BaselineInformation
     , baselineModal : GqlData (Maybe BaselineInfo)
-    , vulnerabilityRibbon : WebData D.Value
     , zoneOfImpact : Maybe ZoneOfImpact
+    , adaptationHexes : WebData AH.AdaptationHexes
     , rightSidebarOpenness : Openness
     , rightSidebarFx : Animation.State
     , rightSidebarToggleFx : Animation.State
@@ -92,10 +93,10 @@ initialModel flags =
         Dict.empty
         -- Baseline Modal
         NotAsked
-        -- Vulernability Ribbon segments
-        NotAsked
-        -- Zone of Impact data        
+        -- Zone of Impact data
         Nothing
+        -- Adapation Hex data
+        NotAsked
         -- right sidebar
         Closed
         (Animation.style <| .closed <| Animations.rightSidebarStates)
@@ -285,8 +286,8 @@ updateModel msg model =
             )
 
         LoadZoneOfImpactHexesResponse response ->
-            ( model
-            , olCmd <| encodeOpenLayersCmd (RenderLocationHexes response)
+            ( { model | adaptationHexes = response }
+            , Cmd.none
             )
 
         UpdateZoneOfImpact zoi ->
@@ -397,7 +398,7 @@ updateModel msg model =
                             ( { model | adaptationInfo = info }, cmd )
 
                 Enter ->
-                    ( model, Cmd.none )
+                    ( model, sendGetHexesRequest model.env model.zoneOfImpact )
 
                 Escape ->
                     ( model
