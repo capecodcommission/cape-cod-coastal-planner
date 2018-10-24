@@ -19,7 +19,6 @@ defmodule ChipApi.Fakes do
     @lifespanrange2 %LifeSpanRange{name: "lifespanrange2", life_span: 2}
     @lifespanrange3 %LifeSpanRange{name: "lifespanrange3", life_span: 3, display_order: 2}
     @lifespanrange4 %LifeSpanRange{name: "lifespanrange4", life_span: 4, display_order: 3}
-    @costrange4 %CostRange{name: "costrange4", cost: 3, display_order: 2}
     @place1 %Placement{name: "place1"}
     @place2 %Placement{name: "place2"}
     @benefit1 %Benefit{name: "benefit1", display_order: 0}
@@ -227,6 +226,16 @@ defmodule ChipApi.Fakes do
         haz2 = @haz2 |> Repo.insert!
         scale1 = @scale1 |> Repo.insert!
         scale2 = @scale2 |> Repo.insert!
+        costrange1 = @costrange1 |> Repo.insert!
+        costrange2 = @costrange2 |> Repo.insert!
+        costrange3 = @costrange3 |> Repo.insert!
+        costrange4 = @costrange4 |> Repo.insert!
+        lifespanrange1 = @lifespanrange1 |> Repo.insert!
+        lifespanrange2 = @lifespanrange2 |> Repo.insert!
+        lifespanrange3 = @lifespanrange3 |> Repo.insert!
+        lifespanrange4 = @lifespanrange4 |> Repo.insert!
+        place1 = @place1 |> Repo.insert!
+        place2 = @place2 |> Repo.insert!
         benefit1 = @benefit1 |> Repo.insert!
         benefit2 = @benefit2 |> Repo.insert!
         advantage1 = @advantage1 |> Repo.insert!
@@ -265,6 +274,16 @@ defmodule ChipApi.Fakes do
             haz2: haz2,
             scale1: scale1,
             scale2: scale2,
+            costrange1: costrange1,
+            costrange2: costrange2,
+            costrange3: costrange3,
+            costrange4: costrange4,
+            lifespanrange1: lifespanrange1,
+            lifespanrange2: lifespanrange2,
+            lifespanrange3: lifespanrange3,
+            lifespanrange4: lifespanrange4,
+            place1: place1,
+            place2: place2,
             benefit1: benefit1,
             benefit2: benefit2,
             advantage1: advantage1,

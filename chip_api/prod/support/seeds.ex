@@ -27,7 +27,7 @@ defmodule ChipApi.Seeds do
         low = %Adaptation.CostRange{name: "Low (<$200)", cost: 1}
         |> Repo.insert!
 
-        medium = %Adaptation.CostRange{name: "Medium ($201-$500)", cost: 2}
+        medium_cost = %Adaptation.CostRange{name: "Medium ($201-$500)", cost: 2}
         |> Repo.insert!
 
         high = %Adaptation.CostRange{name: "High ($501-$1,000)", cost: 3}
@@ -43,7 +43,7 @@ defmodule ChipApi.Seeds do
         short = %Adaptation.LifeSpanRange{name: "Short", life_span: 1}
         |> Repo.insert!
 
-        medium = %Adaptation.LifeSpanRange{name: "Medium", life_span: 2}
+        medium_life_span = %Adaptation.LifeSpanRange{name: "Medium", life_span: 2}
         |> Repo.insert!
 
         long = %Adaptation.LifeSpanRange{name: "Long", life_span: 3}
@@ -151,8 +151,8 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [ erosion, storm_surge, sea_level_rise ],
             impact_scales: [site, community, neighborhood, regional],
             strategy_placement: anywhere,
-            impact_costs: [low, medium, high, very_high],
-            impact_life_spans: [short, medium, long, permanent],
+            impact_costs: [low, medium_cost, high, very_high],
+            impact_life_spans: [short, medium_life_span, long, permanent],
             strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
             adaptation_benefits: [habitat, aesthetics, recreation_tourism],
             adaptation_advantages: [
@@ -361,7 +361,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood],
-            impact_costs: [medium],
+            impact_costs: [medium_cost],
             impact_life_spans: [long],
             strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
             is_active: false
@@ -420,7 +420,7 @@ defmodule ChipApi.Seeds do
             impact_scales: [site],
             strategy_placement: anywhere_but_salt_marsh,
             impact_costs: [low],
-            impact_life_spans: [medium],
+            impact_life_spans: [medium_life_span],
             strategy_placements: [developed, undeveloped, coastal_dune],
             adaptation_benefits: [habitat, aesthetics, flood_management],
             currently_permittable: "Various local and state permits may be required.",
@@ -572,7 +572,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, sea_level_rise],
             impact_scales: [site, neighborhood],
             strategy_placement: anywhere_but_salt_marsh,
-            impact_costs: [medium],
+            impact_costs: [medium_cost],
             impact_life_spans: [short],
             strategy_placements: [developed, undeveloped, coastal_dune],
             adaptation_benefits: [habitat, aesthetics, flood_management, recreation_tourism],
