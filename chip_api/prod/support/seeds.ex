@@ -21,6 +21,38 @@ defmodule ChipApi.Seeds do
         |> Repo.insert!
 
         #
+        # COST RANGES
+        #
+        
+        low = %Adaptation.CostRange{name: "Low (<$200)", cost: 1}
+        |> Repo.insert!
+
+        medium = %Adaptation.CostRange{name: "Medium ($201-$500)", cost: 2}
+        |> Repo.insert!
+
+        high = %Adaptation.CostRange{name: "High ($501-$1,000)", cost: 3}
+        |> Repo.insert!
+
+        very_high = %Adaptation.CostRange{name: "Very High (>$1,001)", cost: 4}
+        |> Repo.insert!
+                
+        #
+        # LIFE SPAN RANGES
+        #
+        
+        short = %Adaptation.LifeSpanRange{name: "Short", life_span: 1}
+        |> Repo.insert!
+
+        medium = %Adaptation.LifeSpanRange{name: "Medium", life_span: 2}
+        |> Repo.insert!
+
+        long = %Adaptation.LifeSpanRange{name: "Long", life_span: 3}
+        |> Repo.insert!
+
+        permanent = %Adaptation.LifeSpanRange{name: "Permanent", life_span: 4}
+        |> Repo.insert!
+
+        #
         # HAZARD TYPES
         #
 
@@ -110,6 +142,8 @@ defmodule ChipApi.Seeds do
         # ADAPTATION STRATEGIES
         #
 
+        # TODO UPDATE SCALES FOR Undevelopment/Managed Relocation, Open Space Protection, Salt March Restoration, Revetment/ Sea Wall, Dune Creation, Bank Stabilization, Living Shoreline, Beach Nourishment
+
         _no_action = %Adaptation.Strategy{
             name: "No Action",
             description: "Take no action to address changes in the coast. Effects of erosion, SLR, and flooding will continue or intensify. Depending on conditions, coastal resources may not migrate naturally where steep topography or preexisting coastal erosion control structures are present. Structures or facilities may be threatened or undermined.",
@@ -117,6 +151,9 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [ erosion, storm_surge, sea_level_rise ],
             impact_scales: [site, community, neighborhood, regional],
             strategy_placement: anywhere,
+            impact_costs: [low, medium, high, very_high],
+            impact_life_spans: [short, medium, long, permanent],
+            strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
             adaptation_benefits: [habitat, aesthetics, recreation_tourism],
             adaptation_advantages: [
                 %Adaptation.Advantage{name: "Allows natural erosion and sediment processes to occur.", display_order: 0},
@@ -140,6 +177,9 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site],   
             strategy_placement: anywhere,
+            impact_costs: [high],
+            impact_life_spans: [permanent],
+            strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
             is_active: false
         }
         |> Repo.insert!
@@ -150,6 +190,9 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood, community, regional],
+            impact_costs: [high],
+            impact_life_spans: [permanent],
+            strategy_placements: [],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Various local and state permits may be required.",
             adaptation_advantages: [
@@ -166,12 +209,16 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
+         # NOT A CURRENT STRATEGY
         _transfer_of_development = %Adaptation.Strategy{
             name: "Transfer of Development Credit/Transferable Development Rights",
             description: "Land use mechanism that encourages the permanent removal of development rights in defined “sending” districts, and allows those rights to be transferred to defined “receiving” districts.",
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [community],
+            impact_costs: [],
+            impact_life_spans: [],
+            strategy_placements: [],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Local bylaws allowing for Transfer of Development Rights must be in place.",
             adaptation_advantages: [
@@ -188,12 +235,16 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
+        # NOT A CURRENT STRATEGY
         _tidal_wetland_floodplain = %Adaptation.Strategy{
             name: "Tidal Wetland and Floodplain Restoration or Creation",
             description: "Protecting, restoring, and creating coastal habitats within the floodplain as a buffer to storm surges and sea level rise to provide natural flood protection.",
             adaptation_categories: [protect, accommodate],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood],
+            impact_costs: [],
+            impact_life_spans: [],
+            strategy_placements: [],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
             adaptation_advantages: [
@@ -212,12 +263,16 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
+        # NOT A CURRENT STRATEGY
         _rolling_conservation_easement = %Adaptation.Strategy{
             name: "Rolling Conservation Easements",
             description: "Private property owners sell or otherwise transfer rights in these portions of their land abutting an eroding coastline.  Rolling easements allow for limited development of upland areas of the property, and restrict development and/or the construction of erosion control structures along the shoreline.",
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [neighborhood, community],
+            impact_costs: [],
+            impact_life_spans: [],
+            strategy_placements: [],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management],
             currently_permittable: "Local Conservation Commission approval; Conservation easements must be approved by the municipality involved.",
             adaptation_advantages: [
@@ -234,12 +289,16 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
+         # NOT A CURRENT STRATEGY
         _groin = %Adaptation.Strategy{
             name: "Groin",
             description: "A hard structure projecting perpendicular from the shoreline. Designed to intercept water flow and sand moving parallel to the shoreline to prevent beach erosion, retain beach sand, and break waves.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion],
             impact_scales: [site, neighborhood],
+            impact_costs: [],
+            impact_life_spans: [],
+            strategy_placements: [],
             adaptation_benefits: [habitat, recreation_tourism],
             currently_permittable: "Various local, state, and federal permits required.  New groins are infrequently permitted due to impacts.",
             adaptation_advantages: [
@@ -257,12 +316,16 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
+         # NOT A CURRENT STRATEGY
         _sand_bypass = %Adaptation.Strategy{
             name: "Sand Bypass System",
             description: "Where a jetty or groin has interrupted the flow of sediment along the beach, sand may be moved hydraulically or mechanically from the accreting updrift side of an inlet to the eroding down-drift side.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion],
             impact_scales: [neighborhood],
+            impact_costs: [],
+            impact_life_spans: [],
+            strategy_placements: [],
             adaptation_benefits: [habitat, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
             adaptation_advantages: [
@@ -285,6 +348,9 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood, community, regional],
             strategy_placement: undeveloped_only,
+            impact_costs: [high],
+            impact_life_spans: [permanent],
+            strategy_placements: [undeveloped],
             is_active: false
         }
         |> Repo.insert!
@@ -295,6 +361,9 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood],
+            impact_costs: [medium],
+            impact_life_spans: [long],
+            strategy_placements: [developed, undeveloped, coastal_dune, salt_marsh],
             is_active: false
         }
         |> Repo.insert!
@@ -306,6 +375,9 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placement: coastal_bank_only,
+            impact_costs: [very_high],
+            impact_life_spans: [long],
+            strategy_placements: [coastal_dune],
             adaptation_benefits: [habitat, flood_management],
             currently_permittable: "Various local, state, and federal permits required.",
             adaptation_advantages: [
@@ -333,6 +405,9 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion],
             impact_scales: [site, neighborhood],
             strategy_placement: coastal_bank_only,
+            impact_costs: [very_high],
+            impact_life_spans: [long],
+            strategy_placements: [coastal_dune],
             is_active: false
         }
         |> Repo.insert!
@@ -344,6 +419,9 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site],
             strategy_placement: anywhere_but_salt_marsh,
+            impact_costs: [low],
+            impact_life_spans: [medium],
+            strategy_placements: [developed, undeveloped, coastal_dune],
             adaptation_benefits: [habitat, aesthetics, flood_management],
             currently_permittable: "Various local and state permits may be required.",
             adaptation_advantages: [
@@ -380,6 +458,9 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placement: coastal_bank_only,
+            impact_costs: [high],
+            impact_life_spans: [short],
+            strategy_placements: [coastal_dune],
             adaptation_benefits: [habitat, carbon_storage, flood_management],
             currently_permittable: "Local and state permits required, potentially federal permits depending on location.",
             adaptation_advantages: [
@@ -396,6 +477,7 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
+        # NOT A CURRENT STRATEGY
         _bank_stabilization_coir_envelopes = %Adaptation.Strategy{
             name: "Bank Stabilization: Coir Envelopes",
             description: "Envelopes are constructed of coir (coconut fiber) fabric and are filled with local sand. The envelopes are placed in terraces along the beach, are typically covered with sand, and may also be planted with native vegetation to hold sand together and absorb water.",
@@ -403,10 +485,14 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placement: coastal_bank_only,
+            impact_costs: [],
+            impact_life_spans: [],
+            strategy_placements: [coastal_dune],
             is_active: false
         }
         |> Repo.insert!
 
+        # NOT A CURRENT STRATEGY
         _living_shoreline_vegetation = %Adaptation.Strategy{
             name: "Living Shoreline: Vegetation Only",
             description: "Shoreline stabilization techniques along estuarine coasts, bays, sheltered coastlines, and tributaries. A living shoreline has a footprint that is made up mostly of native material. It incorporates vegetation or other living, natural \"soft\" elements alone or in combination with some other type of harder shoreline structures (e.g. oyster reefs or rock sills) for added stability. Using vegetation alone is one approach. Roots hold soil in place to reduce erosion. Provides a buffer to upload areas and breaks small waves.",
@@ -414,6 +500,9 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placement: anywhere_but_salt_marsh,
+            impact_costs: [],
+            impact_life_spans: [],
+            strategy_placements: [developed, undeveloped, coastal_dune],
             is_active: false
         }
         |> Repo.insert!
@@ -441,6 +530,9 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placement: anywhere_but_salt_marsh,
+            impact_costs: [high],
+            impact_life_spans: [long],
+            strategy_placements: [developed, undeveloped, coastal_dune],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
             adaptation_advantages: [
@@ -457,6 +549,7 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
+        # NOT A CURRENT STRATEGY
         _living_shoreline_breakwater_oyster = %Adaptation.Strategy{
             name: "Living Shoreline: Living Breakwater/Oyster Reefs",
             description: "Shoreline stabilization techniques along estuarine coasts, bays, sheltered coastlines, and tributaries. A living shoreline has a footprint that is made
@@ -465,6 +558,9 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placement: anywhere_but_salt_marsh,
+            impact_costs: [],
+            impact_life_spans: [],
+            strategy_placements: [developed, undeveloped, coastal_dune],
             is_active: false
         }
         |> Repo.insert!
@@ -476,6 +572,9 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, sea_level_rise],
             impact_scales: [site, neighborhood],
             strategy_placement: anywhere_but_salt_marsh,
+            impact_costs: [medium],
+            impact_life_spans: [short],
+            strategy_placements: [developed, undeveloped, coastal_dune],
             adaptation_benefits: [habitat, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
             adaptation_advantages: [
