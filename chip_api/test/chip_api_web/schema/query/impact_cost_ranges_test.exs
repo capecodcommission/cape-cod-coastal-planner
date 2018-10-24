@@ -9,16 +9,16 @@ defmodule ChipApiWeb.Schema.Query.ImpactCostRangesTest do
 
     @query """
     {
-        impactCostRanges {
+        impactCosts {
             name
         }
     }
     """
-    test "impactCostRanges field returns cost ranges", %{data: data} do
+    test "impactCosts field returns cost ranges", %{data: data} do
         response = get build_conn(), "/api", query: @query
         assert json_response(response, 200) == %{
             "data" => %{
-                "impactCostRanges" => [
+                "impactCosts" => [
                     %{"name" => data.costrange1.name},
                     %{"name" => data.costrange3.name},
                     %{"name" => data.costrange4.name},
@@ -28,11 +28,11 @@ defmodule ChipApiWeb.Schema.Query.ImpactCostRangesTest do
         }
     end
 
-    describe "sorting impactCostRanges by order (when at least one display_order is null)" do
+    describe "sorting impactCosts by order (when at least one display_order is null)" do
         
         @query """
         {
-            impactCostRanges(order:ASC) {
+            impactCosts(order:ASC) {
                 name
             }
         }
@@ -41,7 +41,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactCostRangesTest do
             response = get build_conn(), "/api", query: @query
             assert json_response(response, 200) == %{
                 "data" => %{
-                    "impactCostRanges" => [
+                    "impactCosts" => [
                         %{"name" => data.costrange1.name},
                         %{"name" => data.costrange3.name},
                         %{"name" => data.costrange4.name},
@@ -53,7 +53,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactCostRangesTest do
 
         @query """
         {
-            impactCostRanges(order:DESC) {
+            impactCosts(order:DESC) {
                 name
             }
         }
@@ -62,7 +62,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactCostRangesTest do
             response = get build_conn(), "/api", query: @query
             assert json_response(response, 200) == %{
                 "data" => %{
-                    "impactCostRanges" => [
+                    "impactCosts" => [
                         %{"name" => data.costrange2.name},
                         %{"name" => data.costrange4.name},
                         %{"name" => data.costrange3.name},
@@ -74,7 +74,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactCostRangesTest do
 
         @query """
         {
-            impactCostRanges(order:1) {
+            impactCosts(order:1) {
                 name
             }
         }
@@ -89,7 +89,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactCostRangesTest do
 
         @query """
         query($term:SortOrder) {
-            impactCostRanges(order:$term) {
+            impactCosts(order:$term) {
                 name
             }
         }
@@ -99,7 +99,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactCostRangesTest do
             response = get build_conn(), "/api", query: @query, variables: @variables
             assert json_response(response, 200) == %{
                 "data" => %{
-                    "impactCostRanges" => [
+                    "impactCosts" => [
                         %{"name" => data.costrange1.name},
                         %{"name" => data.costrange3.name},
                         %{"name" => data.costrange4.name},
@@ -111,7 +111,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactCostRangesTest do
 
         @query """
         query($term:SortOrder) {
-            impactCostRanges(order:$term) {
+            impactCosts(order:$term) {
                 name
             }
         }
@@ -121,7 +121,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactCostRangesTest do
             response = get build_conn(), "/api", query: @query, variables: @variables
             assert json_response(response, 200) == %{
                 "data" => %{
-                    "impactCostRanges" => [
+                    "impactCosts" => [
                         %{"name" => data.costrange2.name},
                         %{"name" => data.costrange4.name},
                         %{"name" => data.costrange3.name},
@@ -133,7 +133,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactCostRangesTest do
 
         @query """
         query($term:SortOrder) {
-            impactCostRanges(order:$term) {
+            impactCosts(order:$term) {
                 name
             }
         }

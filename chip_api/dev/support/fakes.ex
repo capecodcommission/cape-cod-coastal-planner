@@ -141,7 +141,7 @@ defmodule ChipApi.Fakes do
         }}
     end
     
-    def run_cost_range do
+    def run_cost_ranges do
         costrange1 = @costrange1 |> Repo.insert!
         costrange2 = @costrange2 |> Repo.insert!
         costrange3 = @costrange3 |> Repo.insert!
@@ -165,7 +165,7 @@ defmodule ChipApi.Fakes do
         }}
     end
     
-    def run_life_span_range do
+    def run_life_span_ranges do
         lifespanrange1 = @lifespanrange1 |> Repo.insert!
         lifespanrange2 = @lifespanrange2 |> Repo.insert!
         lifespanrange3 = @lifespanrange3 |> Repo.insert!

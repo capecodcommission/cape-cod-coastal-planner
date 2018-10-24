@@ -9,16 +9,16 @@ defmodule ChipApiWeb.Schema.Query.ImpactLifeSpanRangesTest do
 
     @query """
     {
-        impactLifeSpanRanges {
+        impactLifeSpans {
             name
         }
     }
     """
-    test "impactLifeSpanRanges field returns life span ranges", %{data: data} do
+    test "impactLifeSpans field returns life span ranges", %{data: data} do
         response = get build_conn(), "/api", query: @query
         assert json_response(response, 200) == %{
             "data" => %{
-                "impactLifeSpanRanges" => [
+                "impactLifeSpans" => [
                     %{"name" => data.lifespanrange1.name},
                     %{"name" => data.lifespanrange3.name},
                     %{"name" => data.lifespanrange4.name},
@@ -28,11 +28,11 @@ defmodule ChipApiWeb.Schema.Query.ImpactLifeSpanRangesTest do
         }
     end
 
-    describe "sorting impactLifeSpanRanges by order (when at least one display_order is null)" do
+    describe "sorting impactLifeSpans by order (when at least one display_order is null)" do
         
         @query """
         {
-            impactLifeSpanRanges(order:ASC) {
+            impactLifeSpans(order:ASC) {
                 name
             }
         }
@@ -41,7 +41,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactLifeSpanRangesTest do
             response = get build_conn(), "/api", query: @query
             assert json_response(response, 200) == %{
                 "data" => %{
-                    "impactLifeSpanRanges" => [
+                    "impactLifeSpans" => [
                         %{"name" => data.lifespanrange1.name},
                         %{"name" => data.lifespanrange3.name},
                         %{"name" => data.lifespanrange4.name},
@@ -53,7 +53,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactLifeSpanRangesTest do
 
         @query """
         {
-            impactLifeSpanRanges(order:DESC) {
+            impactLifeSpans(order:DESC) {
                 name
             }
         }
@@ -62,7 +62,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactLifeSpanRangesTest do
             response = get build_conn(), "/api", query: @query
             assert json_response(response, 200) == %{
                 "data" => %{
-                    "impactLifeSpanRanges" => [
+                    "impactLifeSpans" => [
                         %{"name" => data.lifespanrange2.name},
                         %{"name" => data.lifespanrange4.name},
                         %{"name" => data.lifespanrange3.name},
@@ -74,7 +74,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactLifeSpanRangesTest do
 
         @query """
         {
-            impactLifeSpanRanges(order:1) {
+            impactLifeSpans(order:1) {
                 name
             }
         }
@@ -89,7 +89,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactLifeSpanRangesTest do
 
         @query """
         query($term:SortOrder) {
-            impactLifeSpanRanges(order:$term) {
+            impactLifeSpans(order:$term) {
                 name
             }
         }
@@ -99,7 +99,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactLifeSpanRangesTest do
             response = get build_conn(), "/api", query: @query, variables: @variables
             assert json_response(response, 200) == %{
                 "data" => %{
-                    "impactLifeSpanRanges" => [
+                    "impactLifeSpans" => [
                         %{"name" => data.lifespanrange1.name},
                         %{"name" => data.lifespanrange3.name},
                         %{"name" => data.lifespanrange4.name},
@@ -111,7 +111,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactLifeSpanRangesTest do
 
         @query """
         query($term:SortOrder) {
-            impactLifeSpanRanges(order:$term) {
+            impactLifeSpans(order:$term) {
                 name
             }
         }
@@ -121,7 +121,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactLifeSpanRangesTest do
             response = get build_conn(), "/api", query: @query, variables: @variables
             assert json_response(response, 200) == %{
                 "data" => %{
-                    "impactLifeSpanRanges" => [
+                    "impactLifeSpans" => [
                         %{"name" => data.lifespanrange2.name},
                         %{"name" => data.lifespanrange4.name},
                         %{"name" => data.lifespanrange3.name},
@@ -133,7 +133,7 @@ defmodule ChipApiWeb.Schema.Query.ImpactLifeSpanRangesTest do
 
         @query """
         query($term:SortOrder) {
-            impactLifeSpanRanges(order:$term) {
+            impactLifeSpans(order:$term) {
                 name
             }
         }
