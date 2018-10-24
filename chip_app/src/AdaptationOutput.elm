@@ -1,11 +1,20 @@
 module AdaptationOutput exposing (..)
 
-
+import Graphqelm.Http as GHttp
 import AdaptationStrategy exposing (..)
 import AdaptationHexes exposing (..)
 
 
-type alias AdaptationOutput =
+type AdaptationOutput 
+    = NotCalculated
+    | CalculatingOutput
+    | OnlyNoAction OutputDetails
+    | WithStrategy OutputDetails OutputDetails
+    | NetworkError (GHttp.Error AdaptationHexes)
+    | CalculationError (List String) (Maybe OutputDetails)
+
+
+type alias OutputDetails =
     { strategy : Strategy
     , hazard : String
     , location : String

@@ -112,7 +112,7 @@ sidebarView config adaptationInfo zoneOfImpact =
                     , title "Apply strategy"
                     , onClick <| ApplyStrategy Nothing
                     , on "keydown" <| D.map ApplyStrategy <| D.map Just decodeKeyboardEvent
-                    ] <| Element.text "APPLY STRATEGY"         
+                    ] <| Element.text "APPLY STRATEGY"
             )
         ]
 
@@ -215,6 +215,32 @@ selectedStrategyView strategies ((Scalar.Id id) as strategyId) =
             )
 
 
+-- applyStrategyButton : AdaptationInfo -> Element MainStyles Variations Msg
+-- applyStrategyButton info =
+--     case currentStrategyDetails info of
+--         Success (Just details) ->
+
+
+--         Success Nothing ->
+
+
+--         Failure err ->
+
+
+--         Loading ->
+
+
+--         NotAsked ->    
+        
+    
+    
+--     button ActionButton
+--         [ width (px 274)
+--         , height (px 42)
+--         , title "Apply strategy"
+--         , onClick <| ApplyStrategy Nothing
+--         , on "keydown" <| D.map ApplyStrategy <| D.map Just decodeKeyboardEvent
+--         ] <| Element.text "APPLY STRATEGY"
 
     
 

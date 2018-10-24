@@ -23,6 +23,7 @@ import Types exposing (..)
 import AdaptationStrategy as AS exposing (..)
 import AdaptationHexes as AH
 import ShorelineLocation as SL exposing (..)
+import AdaptationMath as Maths
 import Message exposing (..)
 import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)

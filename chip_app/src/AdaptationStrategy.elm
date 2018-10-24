@@ -202,6 +202,14 @@ strategyDetailsHasCategory category { categories } =
     categoryIdsHasCategory category categories
 
 
+currentStrategyDetails : AdaptationInfo -> GqlData (Maybe StrategyDetails)
+currentStrategyDetails info =
+    info
+        |> currentStrategy
+        |> Maybe.map .details
+        |> Maybe.withDefault NotAsked
+
+
 type alias CategoryId =
     Scalar.Id
 
