@@ -28,22 +28,29 @@ fromList list =
 
 current : CoastalHazards -> Maybe CoastalHazard
 current hazards =
-    hazards |> Maybe.map Zipper.current
+    hazards |> ZipHelp.tryCurrent
 
 
 currentHazardName : CoastalHazards -> Maybe String
 currentHazardName hazards =
     hazards
-        |> Maybe.map Zipper.current
+        |> ZipHelp.tryCurrent
         |> Maybe.map .name
+
+
+currentStrategyIds : CoastalHazards -> StrategyIds
+currentStrategyIds hazards =
+    hazards
+        |> ZipHelp.tryCurrent
+        |> Maybe.andThen .strategyIds
 
 
 currentStrategyId : CoastalHazards -> Maybe Scalar.Id
 currentStrategyId hazards =
     hazards
-        |> Maybe.map Zipper.current
+        |> ZipHelp.tryCurrent
         |> Maybe.andThen .strategyIds
-        |> Maybe.map Zipper.current
+        |> ZipHelp.tryCurrent
 
 
 updateStrategyIds : (StrategyIds -> StrategyIds) -> CoastalHazards -> CoastalHazards
@@ -53,4 +60,3 @@ updateStrategyIds updateFn hazards =
             (\hazard ->
                 { hazard | strategyIds = updateFn hazard.strategyIds }
             )
-

@@ -20,7 +20,9 @@ import List.Zipper as Zipper
 import ZipperHelpers as ZipHelp
 import Keyboard.Key exposing (Key(Up, Down, Left, Right, Enter, Escape))
 import Types exposing (..)
-import AdaptationStrategy as AS exposing (..)
+import AdaptationStrategy.AdaptationInfo as Info exposing (AdaptationInfo)
+import AdaptationStrategy.CoastalHazards as Hazards exposing (CoastalHazards, CoastalHazard)
+import AdaptationStrategy.Strategies as Strategies exposing (Strategies, Strategy)
 import AdaptationHexes as AH
 import ShorelineLocation as SL exposing (..)
 import AdaptationMath as Maths
@@ -53,7 +55,7 @@ type alias Model =
     , closePath : String
     , trianglePath : String
     , zoiPath : String
-    , adaptationInfo : GqlData AS.AdaptationInfo
+    , adaptationInfo : GqlData AdaptationInfo
     , strategiesModalOpenness : Openness
     , shorelineLocations : GqlData ShorelineExtents
     , shorelineLocationsDropdown : Dropdown ShorelineExtent
@@ -366,7 +368,7 @@ updateModel msg model =
         SelectStrategy id ->
             model.adaptationInfo
                 |> updateHazardsWith
-                    (updateHazardStrategies 
+                    (Hazards.updateStrategyIds 
                         (ZipHelp.tryFindFirst <| ZipHelp.matches id)
                     )
                 |> \(info, cmd) ->
@@ -416,13 +418,13 @@ updateModel msg model =
                 |> Remote.update
                     (\info ->
                         info.strategies
-                            |> updateStrategyDetails id response
+                            |> Strategies.updateStrategyDetails id response
                             |> \newStrategies -> ( { info | strategies = newStrategies }, Cmd.none )
                     )
                 |> \(info, cmd) -> 
                     ( { model | adaptationInfo = info }, cmd )
 
-        ApplyStrategy maybeEvt ->
+        ApplyStrategy appliedStrategy maybeEvt ->
             maybeEvt
                 |> Maybe.map
                     (\{ keyCode } ->
@@ -481,7 +483,7 @@ selectLocationByName name locations =
 
 
 updateHazardsWith : 
-    (Maybe CoastalHazardZipper -> Maybe CoastalHazardZipper) 
+    (CoastalHazards -> CoastalHazards) 
     -> GqlData AdaptationInfo 
     -> ( GqlData AdaptationInfo, Cmd Msg )
 updateHazardsWith zipMapFn info =
@@ -497,43 +499,43 @@ updateHazardsWith zipMapFn info =
         info
 
 
-selectNextStrategy : Model -> Maybe CoastalHazardZipper -> Maybe CoastalHazardZipper
+selectNextStrategy : Model -> CoastalHazards -> CoastalHazards
 selectNextStrategy { adaptationInfo, zoneOfImpact } =
     adaptationInfo
-        |> canStrategyFromInfoBePlacedInZoneOfImpact zoneOfImpact
+        |> Info.isStrategyApplicableToZoneOfImpact zoneOfImpact
         |> ZipHelp.tryNextUntil
-        |> updateHazardStrategies
+        |> Hazards.updateStrategyIds
 
 
-selectPreviousStrategy : Model -> Maybe CoastalHazardZipper -> Maybe CoastalHazardZipper
+selectPreviousStrategy : Model -> CoastalHazards -> CoastalHazards
 selectPreviousStrategy { adaptationInfo, zoneOfImpact } =
     adaptationInfo
-        |> canStrategyFromInfoBePlacedInZoneOfImpact zoneOfImpact
+        |> Info.isStrategyApplicableToZoneOfImpact zoneOfImpact
         |> ZipHelp.tryPreviousUntil
-        |> updateHazardStrategies
+        |> Hazards.updateStrategyIds
 
 
 
 changeStrategyCmds : AdaptationInfo -> Cmd Msg
 changeStrategyCmds info =
    Cmd.batch
-    [ focusStrategyCmd info.hazards
+    [ focusStrategyCmd info
     , fetchStrategyDetailsCmd info
     ]
 
 
-focusStrategyCmd : Maybe CoastalHazardZipper -> Cmd Msg
-focusStrategyCmd hazards =
-    hazards
-        |> AS.getSelectedStrategyHtmlId
+focusStrategyCmd : AdaptationInfo -> Cmd Msg
+focusStrategyCmd info =
+    info
+        |> Info.getSelectedStrategyHtmlId
         |> Maybe.map focus
         |> Maybe.withDefault Cmd.none
 
     
 fetchStrategyDetailsCmd : AdaptationInfo -> Cmd Msg
 fetchStrategyDetailsCmd info =
-    info
-        |> AS.currentStrategy
+    Just info
+        |> Info.currentStrategy
         |> Maybe.map 
             (\s ->  
                 s.details 

@@ -1,13 +1,17 @@
 module AdaptationStrategy.AdaptationInfo exposing (..)
 
 
+import Dict
+import List.Zipper as Zipper exposing (Zipper)
 import Maybe.Extra as MEx
 import RemoteData as Remote
 import AdaptationStrategy.StrategyDetails as Details exposing (..)
 import AdaptationStrategy.Categories as Categories exposing (..)
 import AdaptationStrategy.CoastalHazards as Hazards exposing (..)
 import AdaptationStrategy.Strategies as Strategies exposing (..)
-import Types exposing (GqlData, ZoneOfImpact)
+import ZipperHelpers as ZipHelp
+import Types exposing (GqlData, ZoneOfImpact, getId)
+import ChipApi.Scalar as Scalar
 
 
 
@@ -19,68 +23,71 @@ type alias AdaptationInfo =
     }
 
 
-currentHazard : GqlData AdaptationInfo -> Maybe CoastalHazard
-currentHazard data =
-    data
-        |> Remote.toMaybe
+currentHazard : Maybe AdaptationInfo -> Maybe CoastalHazard
+currentHazard info =
+    info
         |> Maybe.andThen .hazards
         |> Hazards.current
 
 
-currentStrategy : GqlData AdaptationInfo -> Maybe Strategy
-currentStrategy data =
+currentStrategy : Maybe AdaptationInfo -> Maybe Strategy
+currentStrategy info =
     let
-        strategies = data |> Remote.toMaybe |> Maybe.map .strategies
+        strategies = info |> Maybe.map .strategies
     in
-    data
-        |> Remote.toMaybe
+    info
         |> Maybe.andThen .hazards
         |> Hazards.currentStrategyId
         |> Maybe.map2 (\s i -> Strategies.get i s) strategies
         |> MEx.join
 
 
--- applicableStrategies : ZoneOfImpact -> GqlData AdaptationInfo -> Maybe ApplicableStrategies
--- applicableStrategies zoneOfImpact data =
---     let
---         strategies = data |> Remote.toMaybe |> Maybe.map .strategies
---     in
---     data
---         |> Remote.toMaybe
---         |> Maybe.andThen .hazards
---         |> Maybe.map .strategyIds
---         |> Maybe.map 
+currentStrategyDetails : Maybe AdaptationInfo -> Maybe (GqlData (Maybe StrategyDetails))
+currentStrategyDetails info =
+    info
+        |> currentStrategy
+        |> Maybe.map .details
 
 
--- toApplicableStrategy : ZoneOfImpact -> Strategies -> Scalar.Id -> Maybe ApplicableStrategy
--- toApplicableStrategy zoneOfImpact strategies (Scalar.Id id) =
---     strategies
---         |> Dict.get id
---         |> Maybe.map 
---             (\strategy ->
---                 strategy
---                     |> isStrategyApplicable zoneOfImpact
---                     |> ApplicableStrategy strategy.id strategy.name
---             )
+getStrategies : GqlData AdaptationInfo -> Maybe Strategies
+getStrategies data =
+    data |> Remote.toMaybe |> Maybe.map .strategies
 
 
--- isStrategyApplicable : ZoneOfImpact -> Strategy -> Bool
--- isStrategyApplicable { placementMajorities } { placement } =
---     case placement of
---         Just "anywhere" ->
---             True
+getStrategyById : Scalar.Id -> GqlData AdaptationInfo -> Maybe Strategy
+getStrategyById id data =
+    data
+        |> getStrategies
+        |> Maybe.andThen (Strategies.get id)
 
---         Just "undeveloped_only" ->
---             placementMajorities.majorityUndeveloped
 
---         Just "coastal_bank_only" ->
---             placementMajorities.majorityCoastalBank
+availableStrategies : GqlData AdaptationInfo -> Maybe (Zipper (Maybe Strategy))
+availableStrategies data =
+    let
+        strategies = getStrategies data
+    in
+    data
+        |> Remote.toMaybe
+        |> Maybe.andThen .hazards
+        |> Hazards.currentStrategyIds
+        |> ZipHelp.tryMap 
+            (\(Scalar.Id id) ->
+                strategies 
+                    |> Maybe.map (Dict.get id)
+                    |> MEx.join
+            )
 
---         Just "anywhere_but_salt_marsh" ->
---             not placementMajorities.majoritySaltMarsh
 
---         Just _ ->
---             False
+isStrategyApplicableToZoneOfImpact : Maybe ZoneOfImpact -> GqlData AdaptationInfo -> Scalar.Id -> Bool
+isStrategyApplicableToZoneOfImpact zoneOfImpact data id =
+    data
+        |> getStrategyById id
+        |> Maybe.map2 Strategies.isApplicableToZoneOfImpact zoneOfImpact
+        |> Maybe.withDefault False
 
---         Nothing ->
---             True
+
+getSelectedStrategyHtmlId : AdaptationInfo -> Maybe String
+getSelectedStrategyHtmlId info =
+    info.hazards
+        |> Hazards.currentStrategyId
+        |> Maybe.map (\(Scalar.Id id) -> "strategy-" ++ id)

@@ -39,7 +39,7 @@ type Msg
     | SelectStrategy Scalar.Id
     | HandleStrategyKeyboardEvent KeyboardEvent
     | GotStrategyDetails Scalar.Id (GqlData (Maybe StrategyDetails))
-    | ApplyStrategy (Maybe KeyboardEvent)
+    | ApplyStrategy StrategyDetails (Maybe KeyboardEvent)
     | ToggleRightSidebar
     | Animate Animation.Msg
     | Resize Window.Size

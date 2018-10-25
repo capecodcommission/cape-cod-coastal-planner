@@ -5,7 +5,9 @@ import Dict as Dict exposing (Dict)
 import Maybe.Extra as MEx
 import Types exposing (..)
 import AdaptationStrategy.AdaptationInfo as Info exposing (AdaptationInfo)
+import AdaptationStrategy.Categories as Categories exposing (Categories, Category)
 import AdaptationStrategy.CoastalHazards as Hazards exposing (CoastalHazards, CoastalHazard)
+import AdaptationStrategy.Strategies as Strategies exposing (Strategies, Strategy)
 import Message exposing (..)
 import Element exposing (..)
 import Element.Keyed as Keyed
@@ -16,7 +18,7 @@ import Styles exposing (..)
 import View.Helpers exposing (..)
 import RemoteData as Remote exposing (RemoteData(..))
 import Keyboard.Event exposing (decodeKeyboardEvent)
-import Graphqelm.Http exposing (Error(..), mapError)
+--import Graphqelm.Http exposing (Error(..), mapError)
 import ChipApi.Scalar as Scalar
 import Json.Decode as D
 import List.Zipper as Zipper
@@ -85,35 +87,31 @@ sidebarView :
     -> Element MainStyles Variations Msg
 sidebarView { device, trianglePath } adaptationInfo zoneOfImpact =
     let
-        maybeInfo = adaptationInfo |> Remote.toMaybe
+        currentHazard =
+            adaptationInfo
+                |> Remote.toMaybe
+                |> Info.currentHazard
 
-        strategies = maybeInfo |> Maybe.map .strategies
 
-        currentHazard = Info.currentHazard adaptationInfo
-
-        strategyIds = 
-            currentHazard |> Maybe.andThen .strategies
+        currentStrategy =
+            adaptationInfo
+                |> Remote.toMaybe
+                |> Info.currentStrategy
     in
     sidebar (AddStrategies StrategiesSidebar)
         [ width (px 400)
         , height fill
         ]
         [ header (AddStrategies StrategiesSidebarHeader)
-            [ width fill, height (px 58) ] <|
+            [ height ( px sidebarHeaderHeight ) ] <| 
                 hazardPickerView device trianglePath currentHazard
         , column (AddStrategies StrategiesSidebarList)
             [ height ( px <| activeStrategiesHeight device ) ] <| 
-                strategiesView zoneOfImpact strategies strategyIds
+                strategiesView zoneOfImpact adaptationInfo
         , footer (AddStrategies StrategiesSidebarFooter)
-            [ width fill, height (px 90) ]
+            [ width fill, height (px sidebarFooterHeight) ]
             ( el NoStyle [ center, verticalCenter ] <| 
-                button ActionButton
-                    [ width (px 274)
-                    , height (px 42)
-                    , title "Apply strategy"
-                    , onClick <| ApplyStrategy Nothing
-                    , on "keydown" <| D.map ApplyStrategy <| D.map Just decodeKeyboardEvent
-                    ] <| Element.text "APPLY STRATEGY"
+                applyStrategyButton currentStrategy
             )
         ]
 
@@ -150,50 +148,76 @@ hazardPickerView device trianglePath currentHazard =
                     el NoStyle [] empty
     
 
+type alias ApplicableStrategy =
+    { id : Scalar.Id
+    , htmlId : String
+    , name : String
+    , isApplicable : Bool
+    }
 
-strategiesView : ZoneOfImpact -> Maybe Strategies -> Maybe StrategyIdZipper -> List (Element MainStyles Variations Msg)
-strategiesView zoneOfImpact maybeStrategies maybeSelections =
-    case (maybeStrategies, maybeSelections) of
-        (Just strategies, Just selections) ->
+
+toApplicableStrategy : ZoneOfImpact -> Maybe Strategy -> Maybe ApplicableStrategy
+toApplicableStrategy zoneOfImpact maybeStrategy =
+    maybeStrategy
+        |> Maybe.map
+            (\strategy ->
+                ApplicableStrategy
+                    strategy.id
+                    ("strategy-" ++ getId strategy.id)
+                    strategy.name
+                    (Strategies.isApplicableToZoneOfImpact zoneOfImpact strategy)        
+            )
+
+
+strategiesView : ZoneOfImpact -> GqlData AdaptationInfo -> List (Element MainStyles Variations Msg)
+strategiesView zoneOfImpact adaptationInfo =
+    case Info.availableStrategies adaptationInfo of
+        Just strategies ->
             let
-                before = ( Zipper.before selections |> List.map (strategyView zoneOfImpact strategies) )
+                before = 
+                    Zipper.before strategies 
+                        |> List.map (toApplicableStrategy zoneOfImpact) 
+                        |> List.map strategyView
 
-                selected = [ Zipper.current selections |> selectedStrategyView strategies ]
+                selected = 
+                    Zipper.current strategies
+                        |> toApplicableStrategy zoneOfImpact
+                        |> selectedStrategyView
+                        |> List.singleton
 
-                after = ( Zipper.after selections |> List.map (strategyView zoneOfImpact strategies) )
+                after = 
+                    Zipper.after strategies 
+                        |> List.map (toApplicableStrategy zoneOfImpact)
+                        |> List.map strategyView
             in
                 (before ++ selected ++ after)
                     |> MEx.values
             
-        (_, _) ->
+        Nothing ->
             [ el NoStyle [ center, verticalCenter ] <| 
                 Element.text "No active strategies found" 
             ]
 
 
-strategyView : ZoneOfImpact -> Strategies -> Scalar.Id -> Maybe (Element MainStyles Variations Msg)
-strategyView zoneOfImpact strategies ((Scalar.Id id) as strategyId) =
-    strategies
-        |> Dict.get id
-        |> Maybe.map 
+strategyView : Maybe ApplicableStrategy -> Maybe (Element MainStyles Variations Msg)
+strategyView maybeStrategy =
+    maybeStrategy
+        |> Maybe.map
             (\strategy ->
-                let
-                    isEnabled = AS.canStrategyBePlacedInZoneOfImpact zoneOfImpact strategy
-                in
-                case isEnabled of
+                case strategy.isApplicable of
                     True ->
                         button (AddStrategies StrategiesSidebarListBtn)
                             [ height content
                             , paddingXY 16 8
-                            , onClick <| SelectStrategy strategyId
-                            , Attr.id <| getStrategyHtmlId strategyId
+                            , onClick <| SelectStrategy strategy.id
+                            , Attr.id strategy.htmlId
                             ] <| paragraph NoStyle [] [ el NoStyle [] <| Element.text strategy.name ]
 
                     False ->
                         el (AddStrategies StrategiesSidebarListBtnDisabled)
                             [ height content
                             , paddingXY 16 8
-                            , Attr.id <| getStrategyHtmlId strategyId
+                            , Attr.id strategy.htmlId
                             ] <| paragraph NoStyle [] 
                                 [ el NoStyle [ width fill ] <| Element.text strategy.name
                                 , el NoStyle [ alignRight ] <| Element.text "(n/a for selection)"
@@ -201,49 +225,44 @@ strategyView zoneOfImpact strategies ((Scalar.Id id) as strategyId) =
             )
 
 
-selectedStrategyView : Strategies -> Scalar.Id -> Maybe (Element MainStyles Variations Msg)
-selectedStrategyView strategies ((Scalar.Id id) as strategyId) =
-    strategies
-        |> Dict.get id
+selectedStrategyView : Maybe ApplicableStrategy -> Maybe (Element MainStyles Variations Msg)
+selectedStrategyView maybeStrategy =
+    maybeStrategy
         |> Maybe.map 
             (\strategy ->
                 button (AddStrategies StrategiesSidebarListBtnSelected) 
                     [ height content
                     , paddingXY 16 8
                     , on "keydown" <| D.map HandleStrategyKeyboardEvent decodeKeyboardEvent
-                    , Attr.id <| getStrategyHtmlId strategyId
+                    , Attr.id strategy.htmlId
                     ] <| paragraph NoStyle [] [ Element.text strategy.name ]        
             )
 
 
--- applyStrategyButton : AdaptationInfo -> Element MainStyles Variations Msg
--- applyStrategyButton info =
---     case currentStrategyDetails info of
---         Success (Just details) ->
-
-
---         Success Nothing ->
-
-
---         Failure err ->
-
-
---         Loading ->
-
-
---         NotAsked ->    
-        
-    
-    
---     button ActionButton
---         [ width (px 274)
---         , height (px 42)
---         , title "Apply strategy"
---         , onClick <| ApplyStrategy Nothing
---         , on "keydown" <| D.map ApplyStrategy <| D.map Just decodeKeyboardEvent
---         ] <| Element.text "APPLY STRATEGY"
-
-    
+applyStrategyButton : Maybe Strategy ->  Element MainStyles Variations Msg
+applyStrategyButton maybeStrategy =
+    maybeStrategy
+        |> Maybe.map .details
+        |> Maybe.andThen Remote.toMaybe
+        |> MEx.join
+        |> Maybe.map
+            (\details ->
+                button ActionButton
+                    [ width (px 274)
+                    , height (px 42)
+                    , title "Apply strategy"
+                    , onClick <| ApplyStrategy details Nothing
+                    , on "keydown" <| D.map (ApplyStrategy details) <| D.map Just decodeKeyboardEvent
+                    ] <| Element.text "APPLY STRATEGY"
+            )
+        |> Maybe.withDefault
+            ( button ActionButton
+                [ width (px 274)
+                , height (px 42)
+                , title "Apply strategy"
+                , vary Disabled True
+                ] <| Element.text "APPLY STRATEGY"
+            )
 
 
 -- --
@@ -264,13 +283,14 @@ mainContentView { device, closePath } adaptationInfo =
             case adaptationInfo of
                 Success info ->
                     let 
-                        strategy = currentStrategy info
+                        currentStrategy = 
+                            Info.currentStrategy <| Just info
 
-                        name = strategy |> Maybe.map .name |> Maybe.withDefault " "
+                        name = currentStrategy |> Maybe.map .name |> Maybe.withDefault " "
                     in
                     ( name
                     , [ closeIconView closePath
-                      , categoriesView info.categories strategy
+                      , categoriesView info.categories currentStrategy
                       ]
                     )
                 
@@ -319,11 +339,19 @@ headerDetailsView device lbl viewsWithin =
 -- -- STRATEGY CATEGORIES
 -- --
 
+
 categoriesView : Categories -> Maybe Strategy -> Element MainStyles Variations Msg
 categoriesView categories maybeStrategy =
     categories
         |> Dict.values
-        |> List.map (categoryAppliesToStrategy maybeStrategy)
+        |> List.map 
+            (\category -> 
+                ( category
+                , maybeStrategy
+                    |> Maybe.map (Strategies.hasCategory category.id)
+                    |> Maybe.withDefault False
+                )
+            )
         |> List.indexedMap categoryView
         |> categoriesRowView
 

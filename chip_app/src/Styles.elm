@@ -388,11 +388,12 @@ stylesheet =
             , Font.letterSpacing 2.33
             , Color.text palette.walnut
             , Color.background palette.mySin
-            , Border.rounded 8            
+            , Border.rounded 8
+            , Transition.all
             , variation Disabled
                 [ Color.background <| darken 0.15 palette.mySin
                 , Color.text <| lighten 0.45 palette.walnut
-                , Style.hover []
+                , Transition.all
                 ]
             ]
         , Style.style CancelButton
@@ -405,10 +406,11 @@ stylesheet =
             , Color.text white
             , Color.background palette.red
             , Border.rounded 8
+            , Transition.all
             , variation Disabled
                 [ Color.background <| darken 0.15 palette.red
                 , Color.text <| lighten 0.15 palette.red
-                , Style.hover []
+                , Transition.all
                 ]
             ]
         , Style.style CloseIcon
