@@ -4,7 +4,8 @@ module View.StrategiesModal exposing (..)
 import Dict as Dict exposing (Dict)
 import Maybe.Extra as MEx
 import Types exposing (..)
-import AdaptationStrategy as AS exposing (..)
+import AdaptationStrategy.AdaptationInfo as Info exposing (AdaptationInfo)
+import AdaptationStrategy.CoastalHazards as Hazards exposing (CoastalHazards, CoastalHazard)
 import Message exposing (..)
 import Element exposing (..)
 import Element.Keyed as Keyed
@@ -82,13 +83,13 @@ sidebarView :
     -> GqlData AdaptationInfo
     -> ZoneOfImpact
     -> Element MainStyles Variations Msg
-sidebarView config adaptationInfo zoneOfImpact =
+sidebarView { device, trianglePath } adaptationInfo zoneOfImpact =
     let
         maybeInfo = adaptationInfo |> Remote.toMaybe
 
         strategies = maybeInfo |> Maybe.map .strategies
 
-        currentHazard = maybeInfo |> Maybe.andThen .hazards |> Maybe.map Zipper.current
+        currentHazard = Info.currentHazard adaptationInfo
 
         strategyIds = 
             currentHazard |> Maybe.andThen .strategies
@@ -99,9 +100,9 @@ sidebarView config adaptationInfo zoneOfImpact =
         ]
         [ header (AddStrategies StrategiesSidebarHeader)
             [ width fill, height (px 58) ] <|
-                hazardPickerView config.device config.trianglePath currentHazard
+                hazardPickerView device trianglePath currentHazard
         , column (AddStrategies StrategiesSidebarList)
-            [ height ( px <| activeStrategiesHeight config.device ) ] <| 
+            [ height ( px <| activeStrategiesHeight device ) ] <| 
                 strategiesView zoneOfImpact strategies strategyIds
         , footer (AddStrategies StrategiesSidebarFooter)
             [ width fill, height (px 90) ]

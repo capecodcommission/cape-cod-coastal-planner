@@ -5,7 +5,8 @@ import Element.Input as Input
 import Animation
 import Window
 import Types exposing (..)
-import AdaptationStrategy as AS
+import AdaptationStrategy.AdaptationInfo exposing (AdaptationInfo)
+import AdaptationStrategy.StrategyDetails exposing (StrategyDetails)
 import AdaptationHexes as AH
 import ShorelineLocation as SL
 import Json.Decode as D
@@ -18,7 +19,7 @@ import ChipApi.Scalar as Scalar
 type Msg
     = Noop
     | UrlChange Navigation.Location
-    | GotAdaptationInfo (GqlData AS.AdaptationInfo)
+    | GotAdaptationInfo (GqlData AdaptationInfo)
     | GotShorelineExtents (GqlData (GqlList SL.ShorelineExtent))
     | SelectLocationInput (Input.SelectMsg SL.ShorelineExtent)
     | GetBaselineInfo
@@ -37,7 +38,7 @@ type Msg
     | SelectNextHazard
     | SelectStrategy Scalar.Id
     | HandleStrategyKeyboardEvent KeyboardEvent
-    | GotStrategyDetails Scalar.Id (GqlData (Maybe AS.StrategyDetails))
+    | GotStrategyDetails Scalar.Id (GqlData (Maybe StrategyDetails))
     | ApplyStrategy (Maybe KeyboardEvent)
     | ToggleRightSidebar
     | Animate Animation.Msg

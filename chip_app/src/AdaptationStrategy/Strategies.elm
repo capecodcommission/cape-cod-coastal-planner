@@ -1,6 +1,7 @@
 module AdaptationStrategy.Strategies exposing (..)
 
 
+import List.Zipper as Zipper exposing (Zipper)
 import Dict exposing (Dict)
 import ChipApi.Scalar as Scalar
 import Types exposing (GqlData, getId)

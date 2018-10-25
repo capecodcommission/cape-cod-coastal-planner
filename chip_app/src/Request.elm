@@ -8,16 +8,14 @@ import Graphqelm.SelectionSet exposing (SelectionSet, with)
 import RemoteData as Remote exposing (RemoteData, fromResult, sendRequest)
 import QueryString as QS
 import Json.Decode as D
-import Json.Encode as E
 import ChipApi.Object
-import ChipApi.Object.CoastalHazard as CH
 import ChipApi.Object.ShorelineLocation as SL
 import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
 import Types exposing (..)
 import ShorelineLocation exposing (Extent, ShorelineExtent, BaselineInfo, extentToString, shorelineExtentToExtent)
 import Message exposing (..)
-import AdaptationStrategy as AS
+import AdaptationStrategy.Query
     exposing 
         ( queryAdaptationInfo
         , queryAdaptationStrategyDetailsById 

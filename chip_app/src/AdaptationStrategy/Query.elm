@@ -1,7 +1,8 @@
-module AdapationStrategy.Query exposing (..)
+module AdaptationStrategy.Query exposing (..)
 
 
 import Set
+import List.Zipper as Zipper
 import RemoteData as Remote exposing (..)
 import Graphqelm.Operation exposing (RootQuery)
 import Graphqelm.SelectionSet exposing (..)
@@ -89,9 +90,9 @@ selectStrategyDetails =
         |> with AS.description
         |> with AS.currentlyPermittable
         |> with AS.imagePath
-        |> with (AS.categories selectCategoryId)
-        |> with (AS.hazards selectCoastalHazard)
-        |> with (AS.scales selectImpactScale)
+        |> with (AS.categories <| fieldSelection AC.id)
+        |> with (AS.hazards <| fieldSelection CH.id)
+        |> with (AS.scales <| fieldSelection IS.id)
         |> with (AS.benefits selectBenefit |> Field.map Set.fromList)
         |> with (AS.advantages selectAdvantage |> Field.map Set.fromList)
         |> with (AS.disadvantages selectDisadvantage |> Field.map Set.fromList)
@@ -112,13 +113,9 @@ selectCategory =
         |> with AC.imagePathInactive
 
 
-selectCoastalHazard : SelectionSet CoastalHazard ChipApi.Object.CoastalHazard
+selectCoastalHazard : SelectionSet Scalar.Id ChipApi.Object.CoastalHazard
 selectCoastalHazard =
-    CH.selection CoastalHazard
-        |> with CH.id
-        |> with CH.name
-        |> with CH.description
-        |> hardcoded Nothing
+    fieldSelection CH.id
 
 
 selectCoastalHazardWithStrategyIds : SelectionSet CoastalHazard ChipApi.Object.CoastalHazard
@@ -130,16 +127,13 @@ selectCoastalHazardWithStrategyIds =
         |> with 
             ( fieldSelection AS.id
                 |> CH.strategies (\optionals -> { optionals | isActive = Present True })
-                |> Field.map Hazards.fromList
+                |> Field.map Zipper.fromList
             )
 
 
-selectImpactScale : SelectionSet ImpactScale ChipApi.Object.ImpactScale
+selectImpactScale : SelectionSet Scalar.Id ChipApi.Object.ImpactScale
 selectImpactScale =
-    IS.selection ImpactScale
-        |> with IS.name
-        |> with IS.impact
-        |> with IS.description
+    fieldSelection IS.id
        
 
 selectBenefit : SelectionSet Benefit ChipApi.Object.AdaptationBenefit

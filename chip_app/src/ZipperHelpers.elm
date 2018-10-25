@@ -117,6 +117,13 @@ tryMapCurrent fn items =
         |> MEx.orElse items
 
 
+tryMap : (a -> b) -> Maybe (Zipper a) -> Maybe (Zipper b)
+tryMap fn items =
+    items
+        |> Maybe.map (Zipper.map fn)
+        |> MEx.orElse Nothing
+
+
 --
 -- COMMON PREDICATES
 -- 

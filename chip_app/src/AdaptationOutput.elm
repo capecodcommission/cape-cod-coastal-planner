@@ -1,7 +1,7 @@
 module AdaptationOutput exposing (..)
 
 import Graphqelm.Http as GHttp
-import AdaptationStrategy exposing (..)
+import AdaptationStrategy.Strategies as Strategies exposing (Strategy)
 import AdaptationHexes exposing (..)
 
 

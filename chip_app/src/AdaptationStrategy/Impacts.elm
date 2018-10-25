@@ -1,4 +1,4 @@
-module AdapationStrategy.Impacts exposing (..)
+module AdaptationStrategy.Impacts exposing (..)
 
 
 type alias ImpactScale =
