@@ -9,14 +9,14 @@ import View.Helpers exposing (title)
 import Styles exposing (..)
 
 
-view : String -> String -> ZoneOfImpact -> Element MainStyles Variations Msg
-view togglePath zoiPath zoi  =
+view : String -> ZoneOfImpact -> Element MainStyles Variations Msg
+view zoiPath zoi  =
     column NoStyle
         [ height fill ]
         [ el NoStyle [ center, verticalCenter, paddingXY 0 25 ] <| 
             decorativeImage NoStyle [] { src = zoiPath }
         , textLayout (Zoi ZoiText) 
-            [ spacing 25, paddingXY 15 0, height fill ] <|
+            [ spacing 25, paddingXY 15 0, height fill ]
             [ paragraph NoStyle [] 
                 [ text "Each selection on the vulnerability ribbon consists of"
                 , el (Zoi ZoiCallout) [] <| text " five ~100 ft. segments"

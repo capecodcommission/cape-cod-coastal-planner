@@ -42,6 +42,22 @@ currentStrategy info =
         |> MEx.join
 
 
+currentStrategyWithDetails : Maybe AdaptationInfo -> Maybe Strategy
+currentStrategyWithDetails info =
+    let
+        strategy = currentStrategy info
+
+        details = 
+            strategy
+                |> Maybe.map .details
+                |> Maybe.andThen Remote.toMaybe
+                |> MEx.join
+    in
+    case MEx.isJust details of
+        True -> strategy
+        False -> Nothing
+
+
 currentStrategyDetails : Maybe AdaptationInfo -> Maybe (GqlData (Maybe StrategyDetails))
 currentStrategyDetails info =
     info

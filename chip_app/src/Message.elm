@@ -29,11 +29,11 @@ type Msg
     | LoadLittoralCellsResponse (Result Http.Error D.Value)
     | MapSelectLittoralCell String
     | LoadVulnerabilityRibbonResponse (Result Http.Error D.Value)
-    | LoadZoneOfImpactHexesResponse (WebData AH.AdaptationHexes)
+    | GotHexesResponse (WebData AH.AdaptationHexes)
     | UpdateZoneOfImpact ZoneOfImpact
     | CancelZoneOfImpactSelection    
     | PickStrategy
-    | CloseStrategyModal
+    | CancelPickStrategy
     | SelectPreviousHazard
     | SelectNextHazard
     | SelectStrategy Scalar.Id

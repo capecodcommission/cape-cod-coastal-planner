@@ -22,29 +22,29 @@ parseErrors : Graphqelm.Http.Error a -> List ( String, String )
 parseErrors error =
     case error of
         HttpError err ->
-            parseHttpError err
+            [ parseHttpError err ]
 
         GraphqlError _ errs ->
             parseGraphqlErrors errs
 
 
-parseHttpError : Http.Error -> List ( String, String )
+parseHttpError : Http.Error -> ( String, String )
 parseHttpError error =
     case error of
         Http.BadUrl msg ->
-            [ ( "BadUrl", msg ) ]
+            ( "BadUrl", msg )
 
         Http.Timeout ->
-            [ ( "Timeout", "The operation timed out" ) ]
+            ( "Timeout", "The operation timed out" )
 
         Http.NetworkError ->
-            [ ( "Network Error", "There is an error with the network" ) ]
+            ( "Network Error", "There is an error with the network" )
 
         Http.BadStatus { status } ->
-            [ ( "Bad Status", status.message ++ " (" ++ toString status.code ++ ")" ) ]
+            ( "Bad Status", status.message ++ " (" ++ toString status.code ++ ")" )
 
         Http.BadPayload msg { status } ->
-            [ ( "Bad Payload", msg ++ " (" ++ toString status.code ++ ")" ) ]
+            ( "Bad Payload", msg ++ " (" ++ toString status.code ++ ")" )
 
 
 parseGraphqlErrors : List GraphqlError -> List ( String, String )

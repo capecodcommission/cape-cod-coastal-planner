@@ -194,7 +194,7 @@ sendGetHexesRequest env zoneOfImpact =
         |> Maybe.andThen .geometry
         |> Maybe.map (getHexesForZoneOfImpact env)
         |> Maybe.map Remote.sendRequest
-        |> Maybe.map (Cmd.map LoadZoneOfImpactHexesResponse)
+        |> Maybe.map (Cmd.map GotHexesResponse)
         |> Maybe.withDefault Cmd.none
 
 

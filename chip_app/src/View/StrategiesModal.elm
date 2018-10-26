@@ -452,6 +452,6 @@ closeIconView srcPath =
         , moveDown 15
         , moveLeft 15
         , title "Close strategy selection"
-        , onClick CloseStrategyModal
+        , onClick CancelPickStrategy
         ]
         { src = srcPath, caption = "Close Modal" }

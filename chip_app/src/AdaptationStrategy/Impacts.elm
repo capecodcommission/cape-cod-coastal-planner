@@ -12,7 +12,6 @@ type alias ImpactCost =
     { name : String
     , cost : Int
     , description : Maybe String
-
     }
 
 

@@ -1,21 +1,25 @@
 module AdaptationOutput exposing (..)
 
-import Graphqelm.Http as GHttp
-import AdaptationStrategy.Strategies as Strategies exposing (Strategy)
+import Http
+import AdaptationStrategy.Impacts exposing (..)
 import AdaptationHexes exposing (..)
 
 
 type AdaptationOutput 
     = NotCalculated
     | CalculatingOutput
+    | BadInput
     | OnlyNoAction OutputDetails
     | WithStrategy OutputDetails OutputDetails
-    | NetworkError (GHttp.Error AdaptationHexes)
-    | CalculationError (List String) (Maybe OutputDetails)
+    | HexHttpError Http.Error
+    | CalculationError (List String)  
 
 
 type alias OutputDetails =
-    { strategy : Strategy
+    { name : String
+    , scales : List ImpactScale
+    , cost : ImpactCost
+    , lifespan : ImpactLifeSpan
     , hazard : String
     , location : String
     , duration : Duration
@@ -57,4 +61,13 @@ type Duration
     = FortyYears
     | OneTimeEvent
 
+
+toMaybe : AdaptationOutput -> Maybe AdaptationOutput
+toMaybe output =
+    case output of
+        NotCalculated -> 
+            Nothing
+
+        _ ->
+            Just output
 

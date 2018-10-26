@@ -23,9 +23,10 @@ import Types exposing (..)
 import AdaptationStrategy.AdaptationInfo as Info exposing (AdaptationInfo)
 import AdaptationStrategy.CoastalHazards as Hazards exposing (CoastalHazards, CoastalHazard)
 import AdaptationStrategy.Strategies as Strategies exposing (Strategies, Strategy)
+import AdaptationOutput as Output exposing (AdaptationOutput(..))
+import AdaptationMath as Maths
 import AdaptationHexes as AH
 import ShorelineLocation as SL exposing (..)
-import AdaptationMath as Maths
 import Message exposing (..)
 import Request exposing (..)
 import Routes exposing (Route(..), parseRoute)
@@ -33,6 +34,7 @@ import View.Dropdown as Dropdown exposing (Dropdown)
 import View.BaselineInfo as BaselineInfo exposing (..)
 import View.RightSidebar as RSidebar
 import View.ZoneOfImpact as ZOI
+import View.StrategyResults as Results
 import View.StrategiesModal as StrategiesModal
 import View.Helpers exposing (..)
 import Styles exposing (..)
@@ -63,6 +65,7 @@ type alias Model =
     , baselineModal : GqlData (Maybe BaselineInfo)
     , zoneOfImpact : Maybe ZoneOfImpact
     , adaptationHexes : WebData AH.AdaptationHexes
+    , calculationOutput : AdaptationOutput
     , rightSidebarOpenness : Openness
     , rightSidebarFx : Animation.State
     , rightSidebarToggleFx : Animation.State
@@ -100,6 +103,8 @@ initialModel flags =
         Nothing
         -- Adapation Hex data
         NotAsked
+        -- Calculation Output
+        NotCalculated
         -- right sidebar
         Closed
         (Animation.style <| .closed <| Animations.rightSidebarStates)
@@ -288,8 +293,11 @@ updateModel msg model =
             , olCmd <| encodeOpenLayersCmd (RenderVulnerabilityRibbon response)
             )
 
-        LoadZoneOfImpactHexesResponse response ->
-            ( { model | adaptationHexes = response }
+        GotHexesResponse response ->
+            let
+                newModel = { model | adaptationHexes = response }
+            in
+            ( { newModel | calculationOutput = runCalculations model }
             , Cmd.none
             )
 
@@ -346,10 +354,14 @@ updateModel msg model =
                     )
 
 
-        CloseStrategyModal ->
+        CancelPickStrategy ->
             ( model
                 |> expandRightSidebar
-                |> \m -> { m | strategiesModalOpenness = Closed }
+                |> \m -> 
+                    { m 
+                        | strategiesModalOpenness = Closed
+                        , calculationOutput = NotCalculated
+                    }
             , Cmd.none
             )
 
@@ -401,7 +413,7 @@ updateModel msg model =
                             ( { model | adaptationInfo = info }, cmd )
 
                 Enter ->
-                    ( model, sendGetHexesRequest model.env model.zoneOfImpact )
+                    applyStrategy model
 
                 Escape ->
                     ( model
@@ -430,7 +442,7 @@ updateModel msg model =
                     (\{ keyCode } ->
                         case keyCode of
                             Enter ->
-                                ( model, sendGetHexesRequest model.env model.zoneOfImpact )
+                                applyStrategy model
 
                             Escape ->
                                 ( model
@@ -442,7 +454,7 @@ updateModel msg model =
                             _ ->
                                 ( model, Cmd.none )
                     )
-                |> Maybe.withDefault ( model, sendGetHexesRequest model.env model.zoneOfImpact )
+                |> Maybe.withDefault (applyStrategy model)
 
         ToggleRightSidebar ->
             case model.rightSidebarOpenness of
@@ -465,6 +477,58 @@ updateModel msg model =
             ( { model | device = classifyDevice size }
             , Cmd.none
             )
+
+
+applyStrategy : Model -> ( Model, Cmd Msg )
+applyStrategy model =
+    case Remote.isSuccess model.adaptationHexes of
+        True ->
+            let
+                output = runCalculations model
+            in
+            ( model
+                |> expandRightSidebar
+                |> \m -> 
+                    { m 
+                        | strategiesModalOpenness = Closed
+                        , calculationOutput = output 
+                    }
+            , Cmd.none 
+            )
+        False ->
+            ( model
+                |> expandRightSidebar
+                |> \m -> 
+                    { m 
+                        | strategiesModalOpenness = Closed
+                        , adaptationHexes = Loading
+                        , calculationOutput = CalculatingOutput
+                    }
+            , sendGetHexesRequest model.env model.zoneOfImpact 
+            )
+
+
+runCalculations : Model -> AdaptationOutput
+runCalculations model =
+    let
+        location = 
+            Input.selected model.shorelineLocationsDropdown.menu
+
+        currentHazard = 
+            model.adaptationInfo
+                |> Remote.toMaybe
+                |> Info.currentHazard
+
+        currentStrategy =
+            model.adaptationInfo
+                |> Remote.toMaybe
+                |> Info.currentStrategyWithDetails
+    in
+    Maybe.map4 (Maths.calculate model.adaptationHexes)
+        location model.zoneOfImpact currentHazard currentStrategy
+        |> Maybe.withDefault BadInput
+
+    
 
 
 selectLocation : (ShorelineExtents -> ShorelineExtents) -> ShorelineExtents -> (ShorelineExtents, Cmd Msg)
@@ -714,9 +778,16 @@ headerView ({ device } as model) =
 
 getRightSidebarChildViews : Model -> (String, List (Element MainStyles Variations Msg))
 getRightSidebarChildViews model =
-    case model.zoneOfImpact of
+    case ( model.zoneOfImpact ) of
         Just zoi ->
-            ("ZONE OF IMPACT", [ ZOI.view model.trianglePath model.zoiPath zoi ])
+            model.calculationOutput
+                |> Output.toMaybe
+                |> Maybe.map 
+                    (\output -> ( "STRATEGY OUTPUT", [ Results.view output ] ))
+                |> Maybe.withDefault 
+                    ("ZONE OF IMPACT"
+                    , [ ZOI.view model.zoiPath zoi ]
+                    )
 
         Nothing ->
             ("", [ el NoStyle [] empty ])

@@ -37,7 +37,7 @@ view config (titleText, childViews) =
 headerView : String -> String -> Animation.State -> Element MainStyles Variations Msg
 headerView titleText togglePath fx =
     (header (Sidebar SidebarHeader) [ height (px 72), width fill ] <| 
-        h5 (Headings H5) [ center, verticalCenter ] (text "ZONE OF IMPACT")
+        h5 (Headings H5) [ center, verticalCenter ] (text titleText)
     ) |> onLeft
     [ el (Sidebar SidebarToggle) 
         [ height (px 72)
