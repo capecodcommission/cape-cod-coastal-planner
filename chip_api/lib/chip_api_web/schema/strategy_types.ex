@@ -225,6 +225,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The description of the hazard"
         field :description, :string
 
+        @desc "The duration of the hazard"
+        field :duration, :string
+
         @desc "The adaptation strategies that are associated with the hazard"
         field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
             @desc "Is currently available for planning or not"

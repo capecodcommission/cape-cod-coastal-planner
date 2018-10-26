@@ -6,8 +6,8 @@ defmodule ChipApi.Fakes do
 
     @cat1 %Category{name: "cat1"}
     @cat2 %Category{name: "cat2"}
-    @haz1 %Hazard{name: "haz1", display_order: 2}
-    @haz2 %Hazard{name: "haz2", display_order: 1}
+    @haz1 %Hazard{name: "haz1", display_order: 2, duration: "40 years"}
+    @haz2 %Hazard{name: "haz2", display_order: 1, duration: "1-time event"}
     @scale1 %Scale{name: "scale1", impact: 1, display_order: 1}
     @scale2 %Scale{name: "scale2", impact: 2}
     @scale3 %Scale{name: "scale3", impact: 3, display_order: 2}
