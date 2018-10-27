@@ -18,25 +18,60 @@ type AdaptationOutput
 type alias OutputDetails =
     { name : String
     , scales : List ImpactScale
-    , cost : ImpactCost
-    , lifespan : ImpactLifeSpan
+    , cost : Maybe ImpactCost
+    , lifespan : Maybe ImpactLifeSpan
     , hazard : String
     , location : String
-    , duration : Duration
-    , scenarioSize : Float
+    , duration : String
+    , scenarioSize : Int
+    , criticalFacilities : CriticalFacilities
     , publicBuildingValue : MonetaryResult
     , privateLandValue : MonetaryResult
     , privateBuildingValue : MonetaryResult
     , saltMarshChange : AcreageResult
+    , saltMarshValue : MonetaryResult
     , beachAreaChange : AcreageResult
-    , criticalFacilities : CriticalFacilities
+    , beachAreaValue : MonetaryResult
     , rareSpeciesHabitat : RareSpeciesHabitat
+    }
+
+
+defaultOutput : OutputDetails
+defaultOutput =
+    { name = ""
+    , scales = []
+    , cost = Nothing
+    , lifespan = Nothing
+    , hazard = ""
+    , location = ""
+    , duration = ""
+    , scenarioSize = 0
+    , criticalFacilities = FacilitiesUnchanged
+    , publicBuildingValue = ValueUnchanged
+    , privateLandValue = ValueUnchanged
+    , privateBuildingValue = ValueUnchanged
+    , saltMarshChange = AcreageUnchanged
+    , saltMarshValue = ValueUnchanged
+    , beachAreaChange = AcreageUnchanged
+    , beachAreaValue = ValueUnchanged
+    , rareSpeciesHabitat = HabitatUnchanged
     }
 
 
 type MonetaryResult
     = ValueLoss MonetaryValue
     | ValueProtected MonetaryValue
+    | ValueUnchanged
+
+
+monetaryValueToResult : MonetaryValue -> MonetaryResult
+monetaryValueToResult value =
+    if value < 0 then
+        ValueLoss value
+    else if value > 0 then
+        ValueProtected value
+    else
+        ValueUnchanged
 
 
 type AcreageResult
@@ -45,21 +80,36 @@ type AcreageResult
     | AcreageUnchanged
 
 
+acreageToAcreageResult : Acreage -> AcreageResult
+acreageToAcreageResult acreage =
+    if acreage < 0 then 
+        AcreageLost acreage
+    else if acreage > 0 then
+        AcreageGained acreage
+    else
+        AcreageUnchanged
+
+
 type CriticalFacilities
     = FacilitiesLost Int
     | FacilitiesProtected Int
     | FacilitiesUnchanged
 
 
+countToCriticalFacilities : Int -> CriticalFacilities
+countToCriticalFacilities count =
+    if count < 0 then
+        FacilitiesLost count
+    else if count > 0 then
+        FacilitiesProtected count
+    else
+        FacilitiesUnchanged
+
+
 type RareSpeciesHabitat
     = HabitatLost
     | HabitatGained
     | HabitatUnchanged
-
-
-type Duration
-    = FortyYears
-    | OneTimeEvent
 
 
 toMaybe : AdaptationOutput -> Maybe AdaptationOutput

@@ -211,21 +211,29 @@ placementMajoritiesDecoder =
         (D.field "majorityUndeveloped" D.bool)
 
 
-type alias ZoneOfImpact =
-    { geometry : Maybe String
-    , numSelected : Int
-    , shapeLength : Float
-    , placementMajorities : PlacementMajorities
+type alias BeachLengths =
+    { total : Int
+    , nationalSeashore : Int
+    , townBeach : Int
+    , otherPublic : Int
     }
 
 
-encodeZoneOfImpact : ZoneOfImpact -> E.Value
-encodeZoneOfImpact zoi =
-    E.object
-        [ ( "geometry", EEx.maybe E.string zoi.geometry )
-        , ( "numSelected", E.int zoi.numSelected )
-        , ( "shapeLength", E.float zoi.shapeLength )
-        ]
+beachLengthsDecoder : Decoder BeachLengths
+beachLengthsDecoder =
+    D.map4 BeachLengths
+        (D.field "total" D.int)
+        (D.field "nationalSeashore" D.int)
+        (D.field "townBeach" D.int)
+        (D.field "otherPublic" D.int)
+
+
+type alias ZoneOfImpact =
+    { geometry : Maybe String
+    , numSelected : Int
+    , beachLengths : BeachLengths
+    , placementMajorities : PlacementMajorities
+    }
 
 
 zoneOfImpactDecoder : Decoder ZoneOfImpact
@@ -233,7 +241,7 @@ zoneOfImpactDecoder =
     D.map4 ZoneOfImpact
         (D.maybe (D.field "geometry" D.string))
         (D.field "num_selected" D.int)
-        (D.field "shape_length" D.float)
+        (D.field "beach_lengths" beachLengthsDecoder)
         (D.field "placements" placementMajoritiesDecoder)
 
 

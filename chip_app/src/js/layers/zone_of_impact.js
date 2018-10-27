@@ -72,7 +72,7 @@ function _onUpdate(evt, layer) {
         "data" : {
             "geometry": JSON.stringify(stripped),
             "num_selected": num_selected,
-            "shape_length": evt.length,
+            "beach_lengths": evt.lengths,
             "placements": evt.placements
         }
     });

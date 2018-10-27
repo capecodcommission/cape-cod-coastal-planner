@@ -13,6 +13,7 @@ import RemoteData as Remote exposing (RemoteData(..))
 import Json.Decode as D exposing (..)
 import Dict exposing (Dict)
 import Maybe
+import Maybe.Extra as MEx
 import Dom
 import Task
 import List.Extra as LEx
@@ -522,10 +523,17 @@ runCalculations model =
         currentStrategy =
             model.adaptationInfo
                 |> Remote.toMaybe
-                |> Info.currentStrategyWithDetails
+                |> Info.currentStrategy
+
+        currentDetails =
+            model.adaptationInfo
+                |> Remote.toMaybe
+                |> Info.currentStrategyDetails
+                |> Maybe.andThen Remote.toMaybe
+                |> MEx.join
     in
-    Maybe.map4 (Maths.calculate model.adaptationHexes)
-        location model.zoneOfImpact currentHazard currentStrategy
+    Maybe.map5 (Maths.calculate model.adaptationHexes)
+        location model.zoneOfImpact currentHazard currentStrategy currentDetails
         |> Maybe.withDefault BadInput
 
     

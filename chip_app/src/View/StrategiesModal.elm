@@ -13,12 +13,10 @@ import Element exposing (..)
 import Element.Keyed as Keyed
 import Element.Attributes as Attr exposing (..)
 import Element.Events exposing (..)
-import Element.Input exposing (disabled)
 import Styles exposing (..)
 import View.Helpers exposing (..)
 import RemoteData as Remote exposing (RemoteData(..))
 import Keyboard.Event exposing (decodeKeyboardEvent)
---import Graphqelm.Http exposing (Error(..), mapError)
 import ChipApi.Scalar as Scalar
 import Json.Decode as D
 import List.Zipper as Zipper

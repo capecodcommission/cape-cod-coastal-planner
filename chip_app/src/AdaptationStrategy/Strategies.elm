@@ -36,11 +36,6 @@ get (Scalar.Id id) strategies =
     Dict.get id strategies
 
 
-getDetails : Strategy -> Strategies -> Maybe (GqlData (Maybe StrategyDetails))
-getDetails strategy strategies =
-    strategies
-        |> getDetailsById strategy.id
-
 
 getDetailsById : Scalar.Id -> Strategies -> Maybe (GqlData (Maybe StrategyDetails))
 getDetailsById id strategies =

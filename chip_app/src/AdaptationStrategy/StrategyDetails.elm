@@ -5,7 +5,6 @@ import Set exposing (Set)
 import ChipApi.Scalar as Scalar
 
 
-
 type alias StrategyDetails =
     { description : Maybe String
     , currentlyPermittable : Maybe String
