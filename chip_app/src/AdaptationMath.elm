@@ -5,12 +5,11 @@ import AdaptationStrategy.CoastalHazards exposing (CoastalHazard)
 import AdaptationStrategy.Strategies exposing (Strategy)
 import AdaptationStrategy.StrategyDetails exposing (StrategyDetails)
 import AdaptationStrategy.Impacts exposing (..)
-import AdaptationHexes exposing (AdaptationHexes, MonetaryValue)
+import AdaptationHexes as Hexes exposing (AdaptationHexes, MonetaryValue)
 import AdaptationOutput exposing (..)
 import ShorelineLocation exposing (..)
 import RemoteData as Remote exposing (WebData, RemoteData(..))
 import Types exposing (..)
-
 
 
 privateLandMultiplier : Float
@@ -19,6 +18,33 @@ privateLandMultiplier = 3360699
 
 saltMarshMultiplier : Float
 saltMarshMultiplier = 22.53
+
+
+sqMetersPerAcre : Float
+sqMetersPerAcre = 4046.86
+
+
+type alias NpvConstants = 
+    { discountRate : Float
+    , periodicRate : Float
+    , numPeriods : Int
+    , natSeashore : Float
+    , townBeach : Float
+    , otherBeach : Float
+    , unknownRate : Float -- this constant was given without description of its origin, so it's unkown!
+    }
+
+
+npvConstants : NpvConstants
+npvConstants =  
+    { discountRate = 0.7
+    , periodicRate = 0.00565 -- (1 + 0.7) ^ 1/12
+    , numPeriods = 480 -- 40 * 12
+    , natSeashore = 70.28
+    , townBeach = 238.88
+    , otherBeach = 29.68
+    , unknownRate = 1.07
+    }
 
 
 {-| Need to know the current hazard and the current strategy.
@@ -47,7 +73,6 @@ calculate hexResponse location zoneOfImpact hazard strategy details =
             let
                 noActionOutput = calculateNoAction hexes location zoneOfImpact hazard strategy details
             in
-            
             case String.toLower strategy.name of
                 "no action" ->
                     OnlyNoAction noActionOutput
@@ -78,7 +103,7 @@ calculateNoAction hexes location zoneOfImpact hazard strategy details =
         |> calculatePrivateLandValue hexes
         |> calculatePrivateBuildingValue hexes
         |> calculateSaltMarshChangeAndValue hexes
-        -- calculateBeachAreaChangeAndValue
+        |> calculateBeachValue hexes zoneOfImpact
         |> calculateRareSpeciesHabitat hexes
 
 
@@ -164,16 +189,12 @@ calculateSaltMarshChangeAndValue hexes output =
                 |> (*) -1
 
         value =
-            acreage * saltMarshMultiplier |> monetaryValueToResult
+            acreage * sqMetersPerAcre * saltMarshMultiplier |> monetaryValueToResult
     in
     { output 
         | saltMarshChange = acreageToAcreageResult acreage
         , saltMarshValue = value 
     }
-
-
--- calculateBeachAreaChangeAndValue : AdaptationHexes -> OutputDetails -> OutputDetails
--- calculateBeachAreaChangeAndValue hexes output =
 
 
 calculateRareSpeciesHabitat : AdaptationHexes -> OutputDetails -> OutputDetails
@@ -186,3 +207,39 @@ calculateRareSpeciesHabitat hexes output =
                 { output | rareSpeciesHabitat = HabitatLost }
             else
                 { output | rareSpeciesHabitat = HabitatUnchanged }
+
+
+calculateBeachValue : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> OutputDetails
+calculateBeachValue hexes zoneOfImpact output =
+    let
+        cashFlow = (annualChangeBeachValue hexes zoneOfImpact) / 12
+    in
+    List.range 1 npvConstants.numPeriods
+        |> List.foldl (netPresentValue cashFlow) 0.0
+        |> monetaryValueToResult
+        |> \result -> { output | beachValue = result }
+
+
+annualChangeBeachValue : AdaptationHexes -> ZoneOfImpact -> Float
+annualChangeBeachValue hexes zoneOfImpact =
+    let
+        meanChange = 
+            hexes
+                |> List.foldl (\hex acc -> (Hexes.erosionImpactToFloat hex.erosion) + acc)  0.0
+                |> (\result -> result / (toFloat <| List.length hexes))
+
+        annualChangeNatSeashore =
+            npvConstants.unknownRate * meanChange * npvConstants.natSeashore * (toFloat zoneOfImpact.beachLengths.nationalSeashore)
+
+        annualChangeTownBeach =
+            npvConstants.unknownRate * meanChange * npvConstants.townBeach * (toFloat zoneOfImpact.beachLengths.townBeach)
+
+        annualChangeOtherBeach =
+            npvConstants.unknownRate * meanChange * npvConstants.otherBeach * (toFloat zoneOfImpact.beachLengths.otherPublic)
+    in
+        annualChangeNatSeashore + annualChangeTownBeach + annualChangeOtherBeach
+    
+
+netPresentValue : Float -> Int -> Float -> Float
+netPresentValue cashFlow period acc =
+    cashFlow / ((1 + npvConstants.periodicRate) ^ toFloat period) + acc

@@ -298,7 +298,7 @@ updateModel msg model =
             let
                 newModel = { model | adaptationHexes = response }
             in
-            ( { newModel | calculationOutput = runCalculations model }
+            ( { newModel | calculationOutput = runCalculations newModel }
             , Cmd.none
             )
 

@@ -31,7 +31,7 @@ type alias OutputDetails =
     , saltMarshChange : AcreageResult
     , saltMarshValue : MonetaryResult
     , beachAreaChange : AcreageResult
-    , beachAreaValue : MonetaryResult
+    , beachValue : MonetaryResult
     , rareSpeciesHabitat : RareSpeciesHabitat
     }
 
@@ -53,7 +53,7 @@ defaultOutput =
     , saltMarshChange = AcreageUnchanged
     , saltMarshValue = ValueUnchanged
     , beachAreaChange = AcreageUnchanged
-    , beachAreaValue = ValueUnchanged
+    , beachValue = ValueUnchanged
     , rareSpeciesHabitat = HabitatUnchanged
     }
 

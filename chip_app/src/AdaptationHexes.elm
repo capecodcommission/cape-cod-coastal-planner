@@ -43,6 +43,19 @@ type ErosionImpact
     | Eroding ErosionWidth
 
 
+erosionImpactToFloat : ErosionImpact -> Float
+erosionImpactToFloat impact =
+    case impact of
+        NoErosion ->
+            0
+
+        Accreting val ->
+            val
+
+        Eroding val ->
+            val * -1
+
+
 {-| SeaLevelRise
 
     This type depends on the `SLR` and `SLRWidth` fields from the map service.

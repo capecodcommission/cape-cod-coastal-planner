@@ -15,39 +15,39 @@ view output =
         [ height fill, width fill ]
         ( case output of 
             CalculatingOutput ->
-                [ el NoStyle [ height fill ] empty, errorFooterView ]
+                [ el NoStyle [ height fill ] empty, footerView ]
             
             BadInput ->
                 [ errorView
                     "Missing essential calculation input."
                     [ "Please try selecting a strategy again." ]
-                , errorFooterView 
+                , footerView 
                 ]
 
             HexHttpError httpError ->
                 [ parseHttpError httpError
                     |> (\(errTitle, errMsg) -> errorView errTitle [ errMsg ])
-                , errorFooterView 
+                , footerView 
                 ]
 
             CalculationError errs ->
                 [ errorView
                     "Failed to calculate output."
                     errs
-                , errorFooterView 
+                , footerView 
                 ]
 
             OnlyNoAction noActionDetails ->
-                [ el NoStyle [] empty ]
+                [ el NoStyle [] empty, footerView ]
 
             WithStrategy noActionDetails strategyDetails ->
-                [ el NoStyle [] empty ]
+                [ el NoStyle [] empty, footerView ]
 
             _ ->
                 [ errorView
                     "Unknown error occurred."
                     [ "Please try selecting a strategy again." ]
-                , errorFooterView 
+                , footerView 
                 ]
         )
 
@@ -64,8 +64,8 @@ errorView errTitle errMsgs =
                 ]
 
 
-errorFooterView : Element MainStyles Variations Msg
-errorFooterView =
+footerView : Element MainStyles Variations Msg
+footerView =
     footer (Sidebar SidebarFooter) [ alignBottom, height (px 90) ] <|
         row NoStyle
             [ center, verticalCenter, spacingXY 20 0, width fill, height fill ]
