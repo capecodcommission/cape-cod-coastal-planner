@@ -740,7 +740,7 @@ view app =
                 column NoStyle
                     [ height (percent 100) ]
                     [ headerView model
-                    , mainContent NoStyle [ height fill, clip ] <|
+                    , mainContent MainContent [ height fill, clip ] <|
                         column NoStyle [ height fill ] <|
                             [ el NoStyle [ id "map", height fill ] empty
                                 |> within

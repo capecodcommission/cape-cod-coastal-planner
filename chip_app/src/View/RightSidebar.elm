@@ -29,7 +29,7 @@ view config (titleText, childViews) =
             ]
         )
         (sidebar (Sidebar SidebarContainer)
-            [ height fill, width (px 400) ]
+            [ height fill, width (px 550) ]
             (headerView titleText config.trianglePath config.rightSidebarToggleFx :: childViews)
         )
 

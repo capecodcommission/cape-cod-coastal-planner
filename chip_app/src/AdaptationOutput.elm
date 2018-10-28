@@ -64,6 +64,27 @@ type MonetaryResult
     | ValueUnchanged
 
 
+isValueUnchanged : MonetaryResult -> Bool
+isValueUnchanged result =
+    case result of
+        ValueUnchanged -> True
+        _ -> False
+
+
+isValueLoss : MonetaryResult -> Bool
+isValueLoss result =
+    case result of
+        ValueLoss _ -> True
+        _ -> False
+
+
+isValueProtected : MonetaryResult -> Bool
+isValueProtected result =
+    case result of
+        ValueProtected _ -> True
+        _ -> False
+
+
 monetaryValueToResult : MonetaryValue -> MonetaryResult
 monetaryValueToResult value =
     if value < 0 then

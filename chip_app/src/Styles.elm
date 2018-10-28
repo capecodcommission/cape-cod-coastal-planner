@@ -18,7 +18,8 @@ scaled =
 {-| Palette colors named using <http://chir.ag/projects/name-that-color>
 -}
 palette =
-    { chambray = rgb 54 77 127
+    { elephant = rgb 10 40 51
+    , chambray = rgb 54 77 127
     , havelockBlue = rgb 85 126 216
     , malibu = rgb 93 151 255
     , mySin = rgb 255 182 18
@@ -42,9 +43,11 @@ fontstack2 =
 
 type MainStyles
     = NoStyle
+    | MainContent
     | Header HeaderStyles
     | Baseline BaselineStyles
     | AddStrategies StrategiesStyles
+    | ShowOutput OutputStyles
     | Headings HeadingStyles
     | Sidebar SidebarStyles
     | Popup
@@ -91,6 +94,12 @@ type SidebarStyles
     | SidebarHeader
     | SidebarToggle
     | SidebarFooter
+
+
+type OutputStyles
+    = OutputHeader
+    | OutputDivider
+    | OutputSmallItalic
 
 type StrategiesStyles
     = StrategiesSidebar
@@ -147,6 +156,8 @@ choiceStateToVariation state =
 stylesheet =
     Style.styleSheet
         [ Style.style NoStyle []
+        , Style.style MainContent
+            [ Color.background palette.elephant ]
         , Style.style (Header HeaderBackground)
             [ Color.background palette.chambray
             ]
@@ -344,6 +355,18 @@ stylesheet =
             [ Font.size 22
             , Color.text palette.havelockBlue
             , Font.letterSpacing 1
+            ]
+        , Style.style (ShowOutput OutputHeader)
+            [ Color.background palette.chambray
+            ]
+        , Style.style (ShowOutput OutputDivider)
+            [ Border.right 2
+            , Border.solid
+            , Color.border white
+            ]
+        , Style.style (ShowOutput OutputSmallItalic)
+            [ Font.size 14
+            , Font.italic
             ]
         , Style.style (Headings H1) <| headingStyle 6
         , Style.style (Headings H2) <| headingStyle 5
