@@ -9,6 +9,7 @@ import Message exposing (..)
 import Types exposing (..)
 import ShorelineLocation as SL
 import Styles exposing (..)
+import View.ModalImage as ModalImage
 import View.Helpers exposing (..)
 
 
@@ -120,18 +121,7 @@ mainContentView { device } info =
             [ padding 32, spacing 32 ]
             [ column (Baseline BaselineInfoText)
                 [ width (percent 50), spacingXY 0 25 ]
-                [ (case info.imagePath of
-                    Just path ->
-                        column NoStyle
-                            []
-                            [ decorativeImage NoStyle
-                                [ width fill ]
-                                { src = path }
-                            ]
-
-                    Nothing ->
-                        Element.empty
-                  )
+                [ ModalImage.view NoStyle NoStyle info.imagePath
                 ]
             , column (Baseline BaselineInfoText)
                 [ width (percent 50), spacingXY 0 25 ]

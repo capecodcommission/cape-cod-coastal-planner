@@ -736,13 +736,13 @@ view : App -> Html Msg
 view app =
     case app of
         Loaded model ->
-            Element.viewport stylesheet <|
+            Element.viewport (stylesheet model.device) <|
                 column NoStyle
                     [ height (percent 100) ]
                     [ headerView model
                     , mainContent MainContent [ height fill, clip ] <|
                         column NoStyle [ height fill ] <|
-                            [ el NoStyle [ id "map", height fill ] empty
+                            [ el NoStyle [ id "map", height (percent 100) ] empty
                                 |> within
                                     [ getRightSidebarChildViews model
                                         |> RSidebar.view model
@@ -794,7 +794,7 @@ getRightSidebarChildViews model =
                     (\output -> ( "STRATEGY OUTPUT", [ Results.view output ] ))
                 |> Maybe.withDefault 
                     ("ZONE OF IMPACT"
-                    , [ ZOI.view model.zoiPath zoi ]
+                    , [ ZOI.view model.device model.zoiPath zoi ]
                     )
 
         Nothing ->

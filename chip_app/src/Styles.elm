@@ -9,6 +9,8 @@ import Style.Font as Font
 import Style.Transition as Transition
 import Style.Scale as Scale
 import Element.Input as Input exposing (ChoiceState)
+import Element exposing (Device)
+import View.Helpers exposing (adjustOnHeight, adjustOnWidth)
 
 
 scaled =
@@ -58,6 +60,8 @@ type MainStyles
     | CloseIcon
     | FontLeft
     | FontRight
+    | Hairline
+    | CircleBullet
 
 
 type ModalStyles
@@ -117,6 +121,13 @@ type StrategiesStyles
     | StrategiesDetailsCategories
     | StrategiesDetailsCategoryCircle
     | StrategiesDetailsMain
+    | StrategiesDetailsHeading
+    | StrategiesDetailsHazards
+    | StrategiesDetailsHazardsCircle
+    | StrategiesDetailsBenefits
+    | StrategiesDetailsDescription
+    | StrategiesDetailsTextList
+
 
 type ZoneOfImpactStyles
     = ZoiText
@@ -153,7 +164,8 @@ choiceStateToVariation state =
             InputSelectedInBox
 
 
-stylesheet =
+stylesheet : Device -> StyleSheet MainStyles Variations
+stylesheet device =
     Style.styleSheet
         [ Style.style NoStyle []
         , Style.style MainContent
@@ -342,10 +354,63 @@ stylesheet =
             ]
         , Style.style (AddStrategies StrategiesDetailsMain)
             [ Color.text white
+            , Font.typeface fontstack
+            ]
+        , Style.style (AddStrategies StrategiesDetailsHeading)
+            [ Color.text palette.havelockBlue
+            , Font.typeface fontstack
+            , Font.size (scaled 1)
+            , Font.weight 500
+            , Font.lineHeight 1.4
+            ]
+        , Style.style (AddStrategies StrategiesDetailsHazards)
+            [ Font.size 14
+            , Font.letterSpacing 1.24
+            , Font.weight 400
+            , Font.typeface fontstack
+            , Color.text white
+            , variation Disabled
+                [ Color.text <| rgba 255 255 255 0.5 ]
+            ]
+        , Style.style (AddStrategies StrategiesDetailsHazardsCircle)
+            [ Color.border white
+            , Border.all 1.2
+            , Border.solid
+            , variation Disabled
+                [ Color.border <| rgba 255 255 255 0.5 ]
+            ]
+        , Style.style (AddStrategies StrategiesDetailsBenefits)
+            [ Font.size 11
+            , Font.weight 400
+            , Font.typeface fontstack
+            , Color.text white
+            , variation Disabled
+                [ Color.text <| rgba 255 255 255 0.5 ]
+            ]
+        , Style.style (AddStrategies StrategiesDetailsDescription)
+            [ Color.text white
+            , Font.typeface fontstack
+            , Font.size 18
+            , Font.lineHeight 1.4
+            , variation Secondary
+                [ Color.text palette.havelockBlue
+                , Font.bold
+                ]
+            ]
+        , Style.style (AddStrategies StrategiesDetailsTextList)
+            [ Color.text white
+            , Font.typeface fontstack
+            , Font.size 16
+            , Font.lineHeight 1.5
+            , variation Secondary
+                [ Color.text palette.havelockBlue
+                , Font.bold
+                , Font.size 18
+                ]
             ]
         , Style.style (Zoi ZoiText)
-            [ Font.size 18
-            , Font.lineHeight 1.4
+            [ Font.size <| adjustOnHeight ( 14, 22 ) device
+            , Font.lineHeight <| adjustOnHeight ( 1.2, 2.0 ) device
             ]
         , Style.style (Zoi ZoiCallout)
             [ Color.text palette.havelockBlue
@@ -440,6 +505,11 @@ stylesheet =
             [ Style.cursor "pointer" ]
         , Style.style FontLeft [ Font.alignLeft ]
         , Style.style FontRight [ Font.alignRight ]
+        , Style.style Hairline [ Color.background palette.chambray ]
+        , Style.style CircleBullet
+            [ Color.background white
+            , Color.border white
+            ]
         ]
 
 

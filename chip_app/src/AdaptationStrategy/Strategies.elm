@@ -89,3 +89,12 @@ hasCategory id strategy =
         |> MEx.join
         |> Maybe.map (Details.hasCategory id)
         |> Maybe.withDefault False
+
+
+hasHazard : Scalar.Id -> Strategy -> Bool
+hasHazard id strategy =
+    strategy.details
+        |> Remote.toMaybe
+        |> MEx.join
+        |> Maybe.map (Details.hasHazard id)
+        |> Maybe.withDefault False

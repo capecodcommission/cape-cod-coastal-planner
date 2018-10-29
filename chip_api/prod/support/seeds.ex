@@ -101,7 +101,7 @@ defmodule ChipApi.Seeds do
         |> Repo.insert!
 
         recreation_tourism = %Adaptation.Benefit{
-            name: "Recreation/Tourism",
+            name: "Recreation / Tourism",
             display_order: 5
         }
         |> Repo.insert!

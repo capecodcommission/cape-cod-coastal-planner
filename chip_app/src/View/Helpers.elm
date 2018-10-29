@@ -6,11 +6,12 @@ import Graphqelm.Http exposing (Error(..))
 import Graphqelm.Http.GraphqlError exposing (GraphqlError)
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Styles exposing (..)
 import Message exposing (..)
 import ChipApi.Scalar as Scalar
 import FormatNumber exposing (format)
 import FormatNumber.Locales exposing (usLocale)
+
+
 
 
 renderAnimation : Animation.State -> List (Element.Attribute variation Msg) -> List (Element.Attribute variation Msg)
@@ -56,7 +57,7 @@ parseGraphqlErrors errors =
             )
 
 
-title : String -> Attribute Variations Msg
+title : String -> Attribute variations Msg
 title t =
     attribute "title" t
 

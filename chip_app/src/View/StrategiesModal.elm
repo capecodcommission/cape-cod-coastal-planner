@@ -8,18 +8,21 @@ import AdaptationStrategy.AdaptationInfo as Info exposing (AdaptationInfo)
 import AdaptationStrategy.Categories as Categories exposing (Categories, Category)
 import AdaptationStrategy.CoastalHazards as Hazards exposing (CoastalHazards, CoastalHazard)
 import AdaptationStrategy.Strategies as Strategies exposing (Strategies, Strategy)
+import AdaptationStrategy.StrategyDetails as Details exposing (..)
 import Message exposing (..)
 import Element exposing (..)
 import Element.Keyed as Keyed
 import Element.Attributes as Attr exposing (..)
 import Element.Events exposing (..)
 import Styles exposing (..)
+import View.ModalImage as ModalImage
 import View.Helpers exposing (..)
 import RemoteData as Remote exposing (RemoteData(..))
 import Keyboard.Event exposing (decodeKeyboardEvent)
 import ChipApi.Scalar as Scalar
 import Json.Decode as D
-import List.Zipper as Zipper
+import List.Zipper as Zipper exposing (Zipper)
+import String.Extra as SEx
 
 
 modalHeight : Device -> Float
@@ -30,6 +33,10 @@ modalHeight device =
 detailsHeaderHeight : Device -> Float
 detailsHeaderHeight device =
     adjustOnHeight ( 165, 225 ) device
+
+mainHeight : Device -> Float
+mainHeight device =
+    (modalHeight device) - (detailsHeaderHeight device)
 
 
 sidebarHeaderHeight : Float
@@ -62,7 +69,7 @@ view config adaptationInfo zoneOfImpact =
             , padding 90
             ] <|
             el (Modal ModalContainer)
-                [ width (px 1200)
+                [ width (px 1300)
                 , maxHeight (px <| modalHeight config.device)
                 , center
                 , verticalCenter
@@ -276,35 +283,47 @@ mainContentView :
     -> GqlData AdaptationInfo
     -> Element MainStyles Variations Msg
 mainContentView { device, closePath } adaptationInfo =
-    let
-        ( lbl, childViews ) =
-            case adaptationInfo of
-                Success info ->
-                    let 
-                        currentStrategy = 
-                            Info.currentStrategy <| Just info
+    case adaptationInfo of
+        Success info ->
+            let
+                currentStrategy = Info.currentStrategy (Just info)
 
-                        name = currentStrategy |> Maybe.map .name |> Maybe.withDefault " "
-                    in
-                    ( name
-                    , [ closeIconView closePath
-                      , categoriesView info.categories currentStrategy
-                      ]
-                    )
-                
-                Failure err ->
-                    ( "Error Loading Strategies!"
-                    , [ closeIconView closePath ]
-                    )
+                currentDetails = 
+                    Info.currentStrategyDetails (Just info)
+                        |> Maybe.andThen Remote.toMaybe
+                        |> MEx.join
 
-                _ ->
-                    ( " "
-                    , [ closeIconView closePath ]
-                    )
-    in
-    column NoStyle
-        [ height fill, width fill ]
-        [ headerDetailsView device lbl childViews ]
+                name = currentStrategy |> Maybe.map .name |> Maybe.withDefault " "
+            in
+            column NoStyle
+                [ height fill, width fill ]
+                [ headerDetailsView device name
+                    [ closeIconView closePath
+                    , categoriesView info.categories currentStrategy
+                    ]
+                , currentStrategy
+                    |> Maybe.map3
+                        (\hazards details strategy -> 
+                            mainDetailsView device info.benefits hazards strategy details
+                        )
+                        info.hazards
+                        currentDetails
+                    |> Maybe.withDefault empty
+                ]
+
+        Failure err ->
+            column NoStyle
+                [ height fill, width fill ]
+                [ headerDetailsView device "Error Loading Strategies!"
+                    [ closeIconView closePath ]
+                ]
+
+        _ ->
+            column NoStyle
+                [ height fill, width fill ]
+                [ headerDetailsView device " "
+                    [ closeIconView closePath ]
+                ]
 
            
 headerDetailsView : 
@@ -403,14 +422,7 @@ categoryLabelView lbl matched =
 
 categoryIconView : String -> String -> Bool -> ( String, Element MainStyles Variations Msg )
 categoryIconView srcPath name matched =
-    let
-        keySuffix = 
-            if matched == True then
-                "active"
-            else
-                "inactive"
-    in
-    ( "category_icon_" ++ name ++ "_" ++ keySuffix
+    ( "category_icon_" ++ name ++ "_" ++ keySuffix matched
     , image NoStyle [ center, verticalCenter, width (px 84), height (px 84) ]
         { src = srcPath, caption = name  }
     )
@@ -419,14 +431,7 @@ categoryIconView srcPath name matched =
 
 categoryMissingIconView : Int -> String -> Bool -> ( String, Element MainStyles Variations Msg )
 categoryMissingIconView index lbl matched =
-    let
-        keySuffix =
-            if matched == True then
-                "active"
-            else
-                "inactive"
-    in
-    ( "category_icon_missing_" ++ keySuffix
+    ( "category_icon_missing_" ++ keySuffix matched
     , circle 39 (AddStrategies StrategiesDetailsCategoryCircle) 
         [ center
         , verticalCenter
@@ -453,3 +458,180 @@ closeIconView srcPath =
         , onClick CancelPickStrategy
         ]
         { src = srcPath, caption = "Close Modal" }
+
+
+--
+-- MAIN DETAILS
+--
+
+mainDetailsView : 
+    Device 
+    -> Benefits 
+    -> Zipper CoastalHazard 
+    -> Strategy 
+    -> StrategyDetails
+    -> Element MainStyles Variations Msg
+mainDetailsView device benefits hazards strategy details =
+    column (AddStrategies StrategiesDetailsMain)
+        [ scrollbars, height (px <| mainHeight device) ]
+        [ row NoStyle
+            [ padding 32, spacing 32 ]
+            [ column NoStyle
+                [ width (percent 50), spacingXY 0 25 ]
+                [ ModalImage.view NoStyle NoStyle details.imagePath
+                ]
+            , column NoStyle
+                [ width (percent 50), spacingXY 0 14 ]
+                [ hairline Hairline
+                , el NoStyle [] <|
+                    column (AddStrategies StrategiesDetailsHeading) [ spacingXY 0 2 ]
+                        [ h6 NoStyle [center] <| text "ADDRESSES THE FOLLOWING"
+                        , h6 NoStyle [center] <| text "CLIMATE CHANGE HAZARDS"
+                        ]
+                , coastalHazardsView hazards details
+                , hairline Hairline
+                , el NoStyle [] <|
+                    column (AddStrategies StrategiesDetailsHeading) []
+                        [ h6 NoStyle [center] <| text "BENEFITS PROVIDED" ]
+                , benefitsProvidedView benefits details
+                , hairline Hairline
+                ]
+            ]
+        , column NoStyle
+            [ paddingXY 32 0, spacing 32 ]
+            [ paragraph (AddStrategies StrategiesDetailsDescription) []
+                [ el (AddStrategies StrategiesDetailsDescription) 
+                    [ vary Secondary True ] <| text "Description: "
+                , text <| Maybe.withDefault "n/a" details.description
+                ]
+            , hairline Hairline
+            ]
+        , row NoStyle
+            [ padding 32, spacing 32 ]
+            [ el NoStyle 
+                [ width (percent 50) ] <|
+                    basicListView "Advantages:" details.advantages
+            , el NoStyle
+                [ width (percent 50) ] <|
+                    basicListView "Disadvantages:" details.disadvantages
+            ]
+        ]
+
+
+coastalHazardsView : Zipper CoastalHazard -> StrategyDetails -> Element MainStyles Variations Msg
+coastalHazardsView hazards details = 
+    hazards
+        |> Zipper.toList
+        |> List.map 
+            (\hazard ->
+                details
+                    |> Details.hasHazard hazard.id
+                    |> coastalHazardView hazard
+            )
+        |> coastalHazardsRowView
+
+
+coastalHazardsRowView : List (String, Element MainStyles Variations Msg) -> Element MainStyles Variations Msg
+coastalHazardsRowView views =
+    el NoStyle
+        [] <|
+        Keyed.row NoStyle [ spread, width fill ] views
+
+
+coastalHazardView : CoastalHazard -> Bool -> ( String, Element MainStyles Variations Msg) 
+coastalHazardView hazard matched =
+    ("coastal_hazard_view_" ++ (toString <| getId hazard.id)
+    , Keyed.column NoStyle
+        [ width (percent (1/3 * 100))]
+        [ coastalHazardMissingIconView "?" matched
+        , coastalHazardLabelView hazard.name matched
+        ]
+    )
+
+
+coastalHazardLabelView : String -> Bool -> ( String, Element MainStyles Variations Msg )
+coastalHazardLabelView lbl matched =
+    ( "category_label_" ++ lbl
+    , el (AddStrategies StrategiesDetailsHazards)
+        [ center
+        , verticalCenter
+        , paddingTop 8
+        , vary Disabled (not matched)
+        ] <|
+            text lbl
+    )
+
+
+coastalHazardMissingIconView : String -> Bool -> ( String, Element MainStyles Variations Msg )
+coastalHazardMissingIconView lbl matched =
+    ( "coastal_hazard_icon_missing_" ++ keySuffix matched
+    , circle 22 (AddStrategies StrategiesDetailsHazardsCircle)
+        [ center
+        , verticalCenter
+        , vary Disabled (not matched) 
+        ] <| 
+            el (AddStrategies StrategiesDetailsHazards)
+                [ center
+                , verticalCenter
+                , vary Disabled (not matched)
+                ] <| 
+                    text lbl
+    )
+
+
+benefitsProvidedView : Benefits -> StrategyDetails -> Element MainStyles Variations Msg
+benefitsProvidedView benefits details =
+    benefits
+        |> List.map 
+            (\benefit ->
+                details
+                    |> Details.hasBenefit benefit
+                    |> benefitProvidedView benefit
+            )
+        |> benefitsProvidedRowView
+
+
+benefitsProvidedRowView : List (Element MainStyles Variations Msg) -> Element MainStyles Variations Msg
+benefitsProvidedRowView views =
+    el NoStyle
+        [] <|
+        row NoStyle [ spread, width fill ] views
+
+
+benefitProvidedView : Benefit -> Bool -> Element MainStyles Variations Msg
+benefitProvidedView benefit matched =
+    paragraph (AddStrategies StrategiesDetailsBenefits)
+        [ center
+        , verticalCenter
+        , vary Disabled (not matched)
+        , width (px 58)
+        ] [ text benefit ]
+
+
+basicListView : String -> List String -> Element MainStyles Variations Msg
+basicListView titleTxt listItems =
+    let
+        items =
+            List.map
+                (\item ->
+                    row NoStyle [ spacingXY 8 0 ]
+                        [ circle 3 CircleBullet [ center, moveDown 9 ] empty
+                        , paragraph (AddStrategies StrategiesDetailsTextList) []
+                            [ text item ]
+                        ]
+                )
+                listItems
+    in
+    column NoStyle [ spacingXY 0 18 ]
+        ( (h6 (AddStrategies StrategiesDetailsTextList) [ vary Secondary True ] <| text titleTxt)
+            :: items
+        )
+
+keySuffix : Bool -> String
+keySuffix matched =
+    if matched then 
+        "active" 
+    else 
+        "inactive"
+
+

@@ -5,18 +5,29 @@ import Message exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick)
-import View.Helpers exposing (title)
+import View.Helpers exposing (title, adjustOnHeight)
 import Styles exposing (..)
 
 
-view : String -> ZoneOfImpact -> Element MainStyles Variations Msg
-view zoiPath zoi  =
+
+textLayoutSpacing : Device -> Float
+textLayoutSpacing device =
+    adjustOnHeight ( 25, 40 ) device
+
+
+imageHeight : Device -> Float
+imageHeight device =
+    adjustOnHeight ( 150, 235 ) device
+
+
+view : Device -> String -> ZoneOfImpact -> Element MainStyles Variations Msg
+view device zoiPath zoi  =
     column NoStyle
-        [ height fill ]
-        [ el NoStyle [ center, verticalCenter, paddingXY 0 25 ] <| 
-            decorativeImage NoStyle [] { src = zoiPath }
+        [ height fill, verticalSpread ]
+        [ el NoStyle [ height fill, center, paddingXY 0 25 ] <| 
+            decorativeImage NoStyle [ height (px <| imageHeight device), verticalCenter] { src = zoiPath }
         , textLayout (Zoi ZoiText) 
-            [ spacing 25, paddingXY 15 0, height fill ]
+            [ height fill, verticalCenter, spacing <| textLayoutSpacing device , paddingXY 32 0 ]
             [ paragraph NoStyle [] 
                 [ text "Each selection on the vulnerability ribbon consists of"
                 , el (Zoi ZoiCallout) [] <| text " five 100 ft. segments"
@@ -33,7 +44,7 @@ view zoiPath zoi  =
                 , el (Zoi ZoiCallout) [] <| text " immediate left or right"
                 , text " of the existing selection." ]
             ]
-        , column (Zoi ZoiStat) [ height fill, verticalCenter, center, spacingXY 0 5 ] 
+        , column (Zoi ZoiStat) [ height fill, center, verticalCenter, spacingXY 0 5 ] 
             [ el NoStyle [ alignBottom ] <|
                 text ("Selections: " ++ toString zoi.numSelected ++ " of 8")
             , el NoStyle [ alignTop ] <|
@@ -41,7 +52,12 @@ view zoiPath zoi  =
             ]
         , footer (Sidebar SidebarFooter) [ alignBottom, height (px 90) ] <|
             row NoStyle
-                [ center, verticalCenter, spacingXY 20 0, width fill, height fill ]
+                [ verticalCenter
+                , spread
+                , width fill
+                , height fill
+                , paddingXY 32 0
+                ]
                 [ button ActionButton 
                     [ onClick PickStrategy 
                     , width (px 175)

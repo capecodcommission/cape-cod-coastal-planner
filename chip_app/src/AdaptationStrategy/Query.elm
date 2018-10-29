@@ -1,7 +1,6 @@
 module AdaptationStrategy.Query exposing (..)
 
 
-import Set
 import List.Zipper as Zipper
 import RemoteData as Remote exposing (..)
 import Graphqelm.Operation exposing (RootQuery)
@@ -35,9 +34,7 @@ queryAdaptationInfo : SelectionSet AdaptationInfo RootQuery
 queryAdaptationInfo =
     Query.selection AdaptationInfo
         |> with
-            (Query.adaptationBenefits identity selectBenefit
-                |> Field.map Set.fromList
-            )
+            (Query.adaptationBenefits identity selectBenefit)
         |> with 
             (Query.adaptationCategories identity selectCategory
                 |> Field.map Categories.fromList
@@ -93,9 +90,9 @@ selectStrategyDetails =
         |> with (AS.categories <| fieldSelection AC.id)
         |> with (AS.hazards <| fieldSelection CH.id)
         |> with (AS.scales <| fieldSelection IS.id)
-        |> with (AS.benefits selectBenefit |> Field.map Set.fromList)
-        |> with (AS.advantages selectAdvantage |> Field.map Set.fromList)
-        |> with (AS.disadvantages selectDisadvantage |> Field.map Set.fromList)
+        |> with (AS.benefits selectBenefit)
+        |> with (AS.advantages selectAdvantage)
+        |> with (AS.disadvantages selectDisadvantage)
 
 
 selectCategoryId : SelectionSet Scalar.Id ChipApi.Object.AdaptationCategory

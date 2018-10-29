@@ -21,6 +21,11 @@ type alias CoastalHazard =
 type alias StrategyIds = Maybe (Zipper Scalar.Id)
 
 
+toList : CoastalHazards -> List CoastalHazard
+toList hazards =
+    hazards |> Maybe.map Zipper.toList |> Maybe.withDefault []
+
+
 fromList : List CoastalHazard -> CoastalHazards
 fromList list =
     list |> Zipper.fromList

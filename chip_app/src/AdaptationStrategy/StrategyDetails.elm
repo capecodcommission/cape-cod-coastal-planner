@@ -1,7 +1,6 @@
 module AdaptationStrategy.StrategyDetails exposing (..)
 
 
-import Set exposing (Set)
 import ChipApi.Scalar as Scalar
 
 
@@ -21,19 +20,19 @@ type alias StrategyDetails =
 type alias Benefit = String
 
 
-type alias Benefits = Set Benefit
+type alias Benefits = List Benefit
 
 
 type alias Advantage = String
 
 
-type alias Advantages = Set Advantage
+type alias Advantages = List Advantage
 
 
 type alias Disadvantage = String
 
 
-type alias Disadvantages = Set Disadvantage
+type alias Disadvantages = List Disadvantage
 
 
 hasCategory : Scalar.Id -> StrategyDetails -> Bool
@@ -49,3 +48,8 @@ hasHazard id details =
 hasScale : Scalar.Id -> StrategyDetails -> Bool
 hasScale id details =
     List.member id details.scales
+
+
+hasBenefit : String -> StrategyDetails -> Bool
+hasBenefit val details =
+    List.member val details.benefits
