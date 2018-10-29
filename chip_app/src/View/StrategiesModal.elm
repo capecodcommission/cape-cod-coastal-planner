@@ -14,7 +14,11 @@ import Element exposing (..)
 import Element.Keyed as Keyed
 import Element.Attributes as Attr exposing (..)
 import Element.Events exposing (..)
+import Color
 import Styles exposing (..)
+import Graphics.Erosion exposing (erosionIcon, erosionIconConfig)
+import Graphics.SeaLevelRise exposing (seaLevelRiseIcon, seaLevelRiseIconConfig)
+import Graphics.StormSurge exposing (stormSurgeIcon, stormSurgeIconConfig)
 import View.ModalImage as ModalImage
 import View.Helpers exposing (..)
 import RemoteData as Remote exposing (RemoteData(..))
@@ -542,8 +546,54 @@ coastalHazardView : CoastalHazard -> Bool -> ( String, Element MainStyles Variat
 coastalHazardView hazard matched =
     ("coastal_hazard_view_" ++ (toString <| getId hazard.id)
     , Keyed.column NoStyle
-        [ width (percent (1/3 * 100))]
-        [ coastalHazardMissingIconView "?" matched
+        [ width (percent (1/3 * 100)), center, verticalCenter ]
+        [ case (SEx.underscored hazard.name, matched) of
+            ( "erosion", True ) ->
+                ( "erosion_icon_" ++ keySuffix matched
+                , erosionIconConfig
+                    |> erosionIcon
+                    |> html
+                )
+
+            ( "erosion", False ) ->
+                ( "erosion_icon_" ++ keySuffix matched
+                , { erosionIconConfig | color = Color.rgb 79 88 98 }
+                    |> erosionIcon 
+                    |> html
+            
+                )
+
+            ( "sea_level_rise", True ) ->
+                ( "sea_level_rise_icon_" ++ keySuffix matched
+                , seaLevelRiseIconConfig
+                    |> seaLevelRiseIcon
+                    |> html
+                )
+
+            ( "sea_level_rise", False ) ->
+                ( "sea_level_rise_icon_" ++ keySuffix matched
+                , { seaLevelRiseIconConfig | color = Color.rgb 79 88 98 }
+                    |> seaLevelRiseIcon 
+                    |> html
+                )
+
+            ( "storm_surge", True ) ->
+                ( "storm_surge_icon" ++ keySuffix matched
+                , stormSurgeIconConfig
+                    |> stormSurgeIcon
+                    |> html
+                )
+
+            ( "storm_surge", False ) ->
+                ( "storm_surge_icon" ++ keySuffix matched
+                , { stormSurgeIconConfig | color = Color.rgb 79 88 98 }
+                    |> stormSurgeIcon 
+                    |> html
+                )
+
+            ( _, _ ) ->
+                coastalHazardUnknownIconView
+                
         , coastalHazardLabelView hazard.name matched
         ]
     )
@@ -562,20 +612,20 @@ coastalHazardLabelView lbl matched =
     )
 
 
-coastalHazardMissingIconView : String -> Bool -> ( String, Element MainStyles Variations Msg )
-coastalHazardMissingIconView lbl matched =
-    ( "coastal_hazard_icon_missing_" ++ keySuffix matched
+coastalHazardUnknownIconView : ( String, Element MainStyles Variations Msg )
+coastalHazardUnknownIconView =
+    ( "unknown_hazard_icon"
     , circle 22 (AddStrategies StrategiesDetailsHazardsCircle)
         [ center
         , verticalCenter
-        , vary Disabled (not matched) 
+        , vary Disabled True 
         ] <| 
             el (AddStrategies StrategiesDetailsHazards)
                 [ center
                 , verticalCenter
-                , vary Disabled (not matched)
+                , vary Disabled True
                 ] <| 
-                    text lbl
+                    text "Unknown Hazard"
     )
 
 
