@@ -1,6 +1,6 @@
 defmodule ChipApi.Fakes do
     alias ChipApi.Repo
-    alias ChipApi.Adaptation.{Strategy, Category, Hazard, Scale, Placement, Benefit, Advantage, Disadvantage, CostRange, LifeSpanRange}
+    alias ChipApi.Adaptation.{Strategy, Category, Hazard, Scale, Benefit, Advantage, Disadvantage, CostRange, LifeSpanRange}
     alias ChipApi.Geospatial.LittoralCell
     alias Decimal, as: D
 
@@ -19,8 +19,6 @@ defmodule ChipApi.Fakes do
     @lifespanrange2 %LifeSpanRange{name: "lifespanrange2", life_span: 2}
     @lifespanrange3 %LifeSpanRange{name: "lifespanrange3", life_span: 3, display_order: 2}
     @lifespanrange4 %LifeSpanRange{name: "lifespanrange4", life_span: 4, display_order: 3}
-    @place1 %Placement{name: "place1"}
-    @place2 %Placement{name: "place2"}
     @benefit1 %Benefit{name: "benefit1", display_order: 0}
     @benefit2 %Benefit{name: "benefit2", display_order: 1}
     @advantage1 %Advantage{name: "advantage1", display_order: 0}
@@ -234,8 +232,6 @@ defmodule ChipApi.Fakes do
         lifespanrange2 = @lifespanrange2 |> Repo.insert!
         lifespanrange3 = @lifespanrange3 |> Repo.insert!
         lifespanrange4 = @lifespanrange4 |> Repo.insert!
-        place1 = @place1 |> Repo.insert!
-        place2 = @place2 |> Repo.insert!
         benefit1 = @benefit1 |> Repo.insert!
         benefit2 = @benefit2 |> Repo.insert!
         advantage1 = @advantage1 |> Repo.insert!
@@ -282,8 +278,6 @@ defmodule ChipApi.Fakes do
             lifespanrange2: lifespanrange2,
             lifespanrange3: lifespanrange3,
             lifespanrange4: lifespanrange4,
-            place1: place1,
-            place2: place2,
             benefit1: benefit1,
             benefit2: benefit2,
             advantage1: advantage1,

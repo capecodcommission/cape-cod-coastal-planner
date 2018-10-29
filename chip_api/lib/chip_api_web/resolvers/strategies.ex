@@ -51,10 +51,6 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_life_span_ranges(args)}
     end
 
-    def strategy_placements(_, args, _) do
-        {:ok, Strategies.list_placements()}
-    end
-
     def categories_for_strategy(strategy, _args, _) do
         {:ok, Strategies.list_categories_for_strategy(strategy)}
     end
@@ -79,11 +75,6 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_life_span_ranges_for_strategy(strategy)}
     end
 
-    def placements_for_strategy(strategy, _args, _) do
-        {:ok, Strategies.list_placements_for_strategy(strategy)}
-    end
-
-    # TODO Advantages
     def advantages_for_strategy(strategy, _args, _) do
         {:ok, Strategies.list_advantages_for_strategy(strategy)}
     end
@@ -114,10 +105,6 @@ defmodule ChipApiWeb.Resolvers.Strategies do
 
     def strategies_for_life_span_range(life_span_range, _args, _) do
         {:ok, Strategies.list_strategies_for_life_span_range(life_span_range)}
-    end
-
-    def strategies_for_placement(placement, _args, _) do
-        {:ok, Strategies.list_strategies_for_placement(placement)}
     end
 
     @public_strategies_path "/images/strategies/"

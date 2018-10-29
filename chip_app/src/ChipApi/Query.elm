@@ -132,6 +132,44 @@ coastalHazards fillInOptionals object =
     Object.selectionField "coastalHazards" optionalArgs object (identity >> Decode.list)
 
 
+type alias ImpactCostsOptionalArguments =
+    { order : OptionalArgument ChipApi.Enum.SortOrder.SortOrder }
+
+
+{-| The list of cost range categories
+-}
+impactCosts : (ImpactCostsOptionalArguments -> ImpactCostsOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.ImpactCost -> Field (List decodesTo) RootQuery
+impactCosts fillInOptionals object =
+    let
+        filledInOptionals =
+            fillInOptionals { order = Absent }
+
+        optionalArgs =
+            [ Argument.optional "order" filledInOptionals.order (Encode.enum ChipApi.Enum.SortOrder.toString) ]
+                |> List.filterMap identity
+    in
+    Object.selectionField "impactCosts" optionalArgs object (identity >> Decode.list)
+
+
+type alias ImpactLifeSpansOptionalArguments =
+    { order : OptionalArgument ChipApi.Enum.SortOrder.SortOrder }
+
+
+{-| The list of life span categories
+-}
+impactLifeSpans : (ImpactLifeSpansOptionalArguments -> ImpactLifeSpansOptionalArguments) -> SelectionSet decodesTo ChipApi.Object.ImpactLifeSpan -> Field (List decodesTo) RootQuery
+impactLifeSpans fillInOptionals object =
+    let
+        filledInOptionals =
+            fillInOptionals { order = Absent }
+
+        optionalArgs =
+            [ Argument.optional "order" filledInOptionals.order (Encode.enum ChipApi.Enum.SortOrder.toString) ]
+                |> List.filterMap identity
+    in
+    Object.selectionField "impactLifeSpans" optionalArgs object (identity >> Decode.list)
+
+
 type alias ImpactScalesOptionalArguments =
     { order : OptionalArgument ChipApi.Enum.SortOrder.SortOrder }
 

@@ -62,10 +62,6 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.impact_life_spans/3
         end
 
-        @desc "The list of valid placements for strategies"
-        field :placements, non_null(list_of(non_null(:strategy_placement))) do
-            resolve &Resolvers.Strategies.strategy_placements/3
-        end
     end
 
     @desc "Filtering options for adaptation strategies"
@@ -140,11 +136,6 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The ordinal life span category of the strategy"
         field :life_spans, non_null(list_of(non_null(:impact_life_span))) do
             resolve &Resolvers.Strategies.life_spans_for_strategy/3
-        end
-
-        @desc "The list of valid placements the strategies can be used in"
-        field :placements, non_null(list_of(non_null(:strategy_placement))) do
-            resolve &Resolvers.Strategies.placements_for_strategy/3
         end
 
         @desc "The server path to an image of the adaptation strategy"
@@ -293,19 +284,6 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The adaptation strategies that are associated with the life span category"
         field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
             resolve &Resolvers.Strategies.strategies_for_life_span_range/3
-            ###HERE###
-        end
-    end
-
-    @desc "A land characteristic used to determine where a strategy is allowed to be placed"
-    object :strategy_placement do
-        
-        @desc "The name of the placement"
-        field :name, non_null(:string)
-
-        @desc "The adaptation strategies that are associated with the placement"
-        field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
-            resolve &Resolvers.Strategies.strategies_for_placement/3
         end
     end
 end

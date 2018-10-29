@@ -449,16 +449,6 @@ CREATE TABLE public.strategies_life_spans (
 
 
 --
--- Name: strategies_placements; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.strategies_placements (
-    strategy_id bigint NOT NULL,
-    placement_id bigint NOT NULL
-);
-
-
---
 -- Name: strategies_scales; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -776,22 +766,6 @@ ALTER TABLE ONLY public.strategies_life_spans
 
 ALTER TABLE ONLY public.strategies_life_spans
     ADD CONSTRAINT strategies_life_spans_strategy_id_fkey FOREIGN KEY (strategy_id) REFERENCES public.adaptation_strategies(id);
-
-
---
--- Name: strategies_placements strategies_placements_placement_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.strategies_placements
-    ADD CONSTRAINT strategies_placements_placement_id_fkey FOREIGN KEY (placement_id) REFERENCES public.strategy_placements(id);
-
-
---
--- Name: strategies_placements strategies_placements_strategy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.strategies_placements
-    ADD CONSTRAINT strategies_placements_strategy_id_fkey FOREIGN KEY (strategy_id) REFERENCES public.adaptation_strategies(id);
 
 
 --
