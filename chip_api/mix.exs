@@ -5,7 +5,8 @@ defmodule ChipApi.Mixfile do
     [
       app: :chip_api,
       version: "0.0.1",
-      elixir: "~> 1.6.5",
+      # elixir: "~> 1.6.5",
+      elixir: "~> 1.6.6",
       elixirc_paths: elixirc_paths(Mix.env),
       compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,

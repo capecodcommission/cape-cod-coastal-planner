@@ -50,6 +50,18 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
             resolve &Resolvers.Strategies.impact_scales/3
         end
 
+        @desc "The list of cost range categories"
+        field :impact_costs, non_null(list_of(non_null(:impact_cost))) do
+            arg :order, type: :sort_order, default_value: :asc
+            resolve &Resolvers.Strategies.impact_costs/3
+        end
+
+        @desc "The list of life span categories"
+        field :impact_life_spans, non_null(list_of(non_null(:impact_life_span))) do
+            arg :order, type: :sort_order, default_value: :asc
+            resolve &Resolvers.Strategies.impact_life_spans/3
+        end
+
     end
 
     @desc "Filtering options for adaptation strategies"
@@ -114,6 +126,16 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The geographic scales of impact the strategy can target"
         field :scales, non_null(list_of(non_null(:impact_scale))) do
             resolve &Resolvers.Strategies.scales_for_strategy/3
+        end
+
+        @desc "The ordinal cost category as it pertains to cost per length of the strategy"
+        field :costs, non_null(list_of(non_null(:impact_cost))) do
+            resolve &Resolvers.Strategies.costs_for_strategy/3
+        end
+
+        @desc "The ordinal life span category of the strategy"
+        field :life_spans, non_null(list_of(non_null(:impact_life_span))) do
+            resolve &Resolvers.Strategies.life_spans_for_strategy/3
         end
 
         @desc "The server path to an image of the adaptation strategy"
@@ -194,6 +216,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The description of the hazard"
         field :description, :string
 
+        @desc "The duration of the hazard"
+        field :duration, :string
+
         @desc "The adaptation strategies that are associated with the hazard"
         field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
             @desc "Is currently available for planning or not"
@@ -220,6 +245,45 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The adaptation strategies that are associated with the scale of impact"
         field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
             resolve &Resolvers.Strategies.strategies_for_scale/3
+        end
+    end
+
+    @desc "An ordinal cost category as it pertains to cost per length"
+    object :impact_cost do
+
+        @desc "The name of the cost category described qualitatively"        
+        field :name, non_null(:string)
+
+        @desc "The name of the cost category described quantitatively"
+        field :name_linear_foot, :string
+
+        @desc "The description of the cost category"
+        field :description, :string
+
+        @desc "The cost is an integer representing the relative scale of cost category. A larger number means a larger cost"
+        field :cost, non_null(:integer)
+
+        @desc "The adaptation strategies that are associated with the cost category"
+        field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
+            resolve &Resolvers.Strategies.strategies_for_cost_range/3
+        end
+    end
+
+    @desc "An ordinal life span category"
+    object :impact_life_span do
+
+        @desc "The name of the life span category described qualitatively"        
+        field :name, non_null(:string)
+
+        @desc "The description of the life span category"
+        field :description, :string
+
+        @desc "The life span is an integer representing the relative scale of life span category. A larger number means a longer life span"
+        field :life_span, non_null(:integer)
+
+        @desc "The adaptation strategies that are associated with the life span category"
+        field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do
+            resolve &Resolvers.Strategies.strategies_for_life_span_range/3
         end
     end
 end

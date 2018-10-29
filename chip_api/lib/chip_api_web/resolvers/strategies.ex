@@ -43,6 +43,14 @@ defmodule ChipApiWeb.Resolvers.Strategies do
         {:ok, Strategies.list_scales(args)}
     end
 
+    def impact_costs(_, args, _) do
+        {:ok, Strategies.list_cost_ranges(args)}
+    end
+
+    def impact_life_spans(_, args, _) do
+        {:ok, Strategies.list_life_span_ranges(args)}
+    end
+
     def categories_for_strategy(strategy, _args, _) do
         {:ok, Strategies.list_categories_for_strategy(strategy)}
     end
@@ -57,6 +65,14 @@ defmodule ChipApiWeb.Resolvers.Strategies do
 
     def scales_for_strategy(strategy, _args, _) do
         {:ok, Strategies.list_scales_for_strategy(strategy)}
+    end
+
+    def costs_for_strategy(strategy, _args, _) do
+        {:ok, Strategies.list_cost_ranges_for_strategy(strategy)}
+    end
+
+    def life_spans_for_strategy(strategy, _args, _) do
+        {:ok, Strategies.list_life_span_ranges_for_strategy(strategy)}
     end
 
     def advantages_for_strategy(strategy, _args, _) do
@@ -81,6 +97,14 @@ defmodule ChipApiWeb.Resolvers.Strategies do
 
     def strategies_for_scale(scale, _args, _) do
         {:ok, Strategies.list_strategies_for_scale(scale)}
+    end
+
+    def strategies_for_cost_range(cost_range, _args, _) do
+        {:ok, Strategies.list_strategies_for_cost_range(cost_range)}
+    end
+
+    def strategies_for_life_span_range(life_span_range, _args, _) do
+        {:ok, Strategies.list_strategies_for_life_span_range(life_span_range)}
     end
 
     @public_strategies_path "/images/strategies/"

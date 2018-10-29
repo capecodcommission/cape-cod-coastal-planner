@@ -460,6 +460,300 @@ defmodule ChipApi.Adaptation.Strategies do
 
    
     #
+    # LIFE SPAN RANGES
+    #
+
+    alias ChipApi.Adaptation.LifeSpanRange
+
+
+    @doc """
+    Returns the list of life span ranges. When ordering by display_order,
+    nulls are returned first.
+
+    ## Examples
+
+        iex> list_life_span_ranges(%{order: :desc})
+        [%LifeSpanRange{}, ...]
+
+        iex> list_life_span_ranges()
+        [%LifeSpanRange{}, ...]
+
+    """
+    def list_life_span_ranges(args) do
+        args
+        |> Enum.reduce(LifeSpanRange, fn
+            {:order, order}, query ->
+                query |> order_by([{^order, :display_order}, {^order, :id}])
+        end)
+        |> Repo.all
+    end
+    def list_life_spans_ranges do
+        Repo.all(LifeSpanRange)
+    end
+
+    @doc """
+    Returns the list of adaptation strategies associated with 
+    the given impact life span range.
+
+    ## Examples
+
+        iex> list_strategies_for_life_span_range(life_span_range)
+        [%Strategy{}, ...]
+
+    """
+    def list_strategies_for_life_span_range(%LifeSpanRange{} = life_span_range) do
+        query = Ecto.assoc(life_span_range, :adaptation_strategies)
+        Repo.all(query)
+    end
+
+    @doc """
+    Gets a single Life Span Range by id. 
+    
+    Raises `Ecto.NoResultsError` if the Life Span Range does not exist.
+
+    ## Examples
+
+        iex> get_life_span_range!(1)
+        %LifeSpanRange{}
+
+        iex> get_life_span_range!(100)
+        ** (Ecto.NoResultsError)
+
+    """
+    def get_life_span_range!(id), do: Repo.get!(LifeSpanRange, id)
+
+    @doc """
+    Gets a single Life Span Range by id. 
+    
+    Returns `nil` if the Life Span Range does not exist.
+
+    ## Examples
+
+        iex> get_life_span_range(1)
+        %LifeSpanRange{}
+
+        iex> get_life_span_range(100)
+        nil
+
+    """
+    def get_life_span_range(id), do: Repo.get(LifeSpanRange, id)
+
+    @doc """
+    Creates a Life Span Range.
+
+    ## Examples
+
+        iex> create_life_span_range(%{field: value})
+        {:ok, %LifeSpanRange{}}
+
+        iex> create_life_span_range(%{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def create_life_span_range(attrs \\ %{}) do
+        %LifeSpanRange{}
+        |> LifeSpanRange.changeset(attrs)
+        |> Repo.insert()
+    end
+
+    @doc """
+    Updates a Life Span Range.
+
+    ## Examples
+
+        iex> update_life_span_range(life_span_range, %{field: new_value})
+        {:ok, %LifeSpanRange{}}
+
+        iex> update_life_span_range(life_span_range, %{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """    
+    def update_life_span_range(%LifeSpanRange{} = life_span_range, attrs) do
+        life_span_range
+        |> LifeSpanRange.changeset(attrs)
+        |> Repo.update()
+    end
+
+    @doc """
+    Deletes a Life Span Range.
+
+    ## Examples
+
+        iex> delete_life_span_range(life_span_range)
+        {:ok, %LifeSpanRange{}}
+
+        iex> delete_life_span_range(life_span_range)
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def delete_life_span_range(%LifeSpanRange{} = life_span_range) do
+        Repo.delete(life_span_range)
+    end
+
+    @doc """
+    Returns an `%Ecto.Changeset{}` for tracking Life Span Range changes.
+
+    ## Examples
+
+        iex> change_life_span_range(life_span_range, %{field: new_value})
+        %Ecto.Changeset{data: %LifeSpanRange{}, changes: %{field: new_value}, ...}
+
+        iex> change_life_span_range(life_span_range, %{field: bad_value})
+        %Ecto.Changeset{data: %LifeSpanRange{}, changes: %{}, errors: [...]}
+
+    """
+    def change_life_span_range(%LifeSpanRange{} = life_span_range, attrs) do
+        Scale.changeset(life_span_range, attrs)
+    end
+
+    #
+    #  COST RANGES
+    #
+
+    alias ChipApi.Adaptation.CostRange
+
+
+    @doc """
+    Returns the list of cost ranges. When ordering by display_order,
+    nulls are returned first.
+
+    ## Examples
+
+        iex> list_cost_ranges(%{order: :desc})
+        [%CostRanges{}, ...]
+
+        iex> list_cost_ranges()
+        [%CostRanges{}, ...]
+
+    """
+    def list_cost_ranges(args) do
+        args
+        |> Enum.reduce(CostRange, fn
+            {:order, order}, query ->
+                query |> order_by([{^order, :display_order}, {^order, :id}])
+        end)
+        |> Repo.all
+    end
+    def list_cost_ranges do
+        Repo.all(CostRange)
+    end
+
+    @doc """
+    Returns the list of adaptation strategies associated with 
+    the given cost range.
+
+    ## Examples
+
+        iex> list_strategies_for_cost_range(cost_range)
+        [%Strategy{}, ...]
+
+    """
+    def list_strategies_for_cost_range(%CostRange{} = cost_range) do
+        query = Ecto.assoc(cost_range, :adaptation_strategies)
+        Repo.all(query)
+    end
+
+    @doc """
+    Gets a single Cost Range by id. 
+    
+    Raises `Ecto.NoResultsError` if the Cost Range does not exist.
+
+    ## Examples
+
+        iex> get_cost_range!(1)
+        %CostRange{}
+
+        iex> get_cost_range!(100)
+        ** (Ecto.NoResultsError)
+
+    """
+    def get_cost_range!(id), do: Repo.get!(CostRange, id)
+
+    @doc """
+    Gets a single Cost Range by id. 
+    
+    Returns `nil` if the Cost Range does not exist.
+
+    ## Examples
+
+        iex> get_cost_range(1)
+        %CostRange{}
+
+        iex> get_cost_range(100)
+        nil
+
+    """
+    def get_cost_range(id), do: Repo.get(CostRange, id)
+
+    @doc """
+    Creates a Cost Range.
+
+    ## Examples
+
+        iex> create_cost_range(%{field: value})
+        {:ok, %CostRange{}}
+
+        iex> create_cost_range(%{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def create_cost_range(attrs \\ %{}) do
+        %CostRange{}
+        |> CostRange.changeset(attrs)
+        |> Repo.insert()
+    end
+
+    @doc """
+    Updates a Cost Range.
+
+    ## Examples
+
+        iex> update_cost_range(cost, %{field: new_value})
+        {:ok, %CostRange{}}
+
+        iex> update_cost_range(cost_range, %{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+    """    
+    def update_cost_range(%CostRange{} = cost_range, attrs) do
+        cost_range
+        |> CostRange.changeset(attrs)
+        |> Repo.update()
+    end
+
+    @doc """
+    Deletes a Cost Range.
+
+    ## Examples
+
+        iex> delete_cost_range(cost_range)
+        {:ok, %CostRange{}}
+
+        iex> delete_cost_range(cost_range)
+        {:error, %Ecto.Changeset{}}
+
+    """
+    def delete_cost_range(%CostRange{} = cost_range) do
+        Repo.delete(cost_range)
+    end
+
+    @doc """
+    Returns an `%Ecto.Changeset{}` for tracking Cost Range changes.
+
+    ## Examples
+
+        iex> change_cost_range(cost_range, %{field: new_value})
+        %Ecto.Changeset{data: %CostRange{}, changes: %{field: new_value}, ...}
+
+        iex> change_cost_range(cost_range, %{field: bad_value})
+        %Ecto.Changeset{data: %CostRange{}, changes: %{}, errors: [...]}
+
+    """
+    def change_cost_range(%CostRange{} = cost_range, attrs) do
+        CostRange.changeset(cost_range, attrs)
+    end
+
+    #
     # ADAPTATION BENEFITS
     #
     
@@ -708,6 +1002,34 @@ defmodule ChipApi.Adaptation.Strategies do
     """
     def list_scales_for_strategy(%Strategy{} = strategy) do
         query = Ecto.assoc(strategy, :impact_scales)
+        Repo.all(query)
+    end
+
+    @doc """
+    Returns the list of cost ranges associated with the given strategy.
+
+    ## Examples
+
+        iex> list_cost_ranges_for_strategy(strategy)
+        [%CostRanges{}, ...]
+
+    """
+    def list_cost_ranges_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :cost_ranges)
+        Repo.all(query)
+    end
+
+    @doc """
+    Returns the list of life span ranges associated with the given strategy.
+
+    ## Examples
+
+        iex> list_life_span_ranges_for_strategy(strategy)
+        [%LifeSpanRanges{}, ...]
+
+    """
+    def list_life_span_ranges_for_strategy(%Strategy{} = strategy) do
+        query = Ecto.assoc(strategy, :life_span_ranges)
         Repo.all(query)
     end
 

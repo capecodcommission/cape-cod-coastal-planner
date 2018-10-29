@@ -46,6 +46,13 @@ categories object =
     Object.selectionField "categories" [] object (identity >> Decode.list)
 
 
+{-| The ordinal cost category as it pertains to cost per length of the strategy
+-}
+costs : SelectionSet decodesTo ChipApi.Object.ImpactCost -> Field (List decodesTo) ChipApi.Object.AdaptationStrategy
+costs object =
+    Object.selectionField "costs" [] object (identity >> Decode.list)
+
+
 {-| The currently permittable status of the strategy
 -}
 currentlyPermittable : Field (Maybe String) ChipApi.Object.AdaptationStrategy
@@ -93,6 +100,13 @@ imagePath =
 isActive : Field Bool ChipApi.Object.AdaptationStrategy
 isActive =
     Object.fieldDecoder "isActive" [] Decode.bool
+
+
+{-| The ordinal life span category of the strategy
+-}
+lifeSpans : SelectionSet decodesTo ChipApi.Object.ImpactLifeSpan -> Field (List decodesTo) ChipApi.Object.AdaptationStrategy
+lifeSpans object =
+    Object.selectionField "lifeSpans" [] object (identity >> Decode.list)
 
 
 {-| The name of the strategy

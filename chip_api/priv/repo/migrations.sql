@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.3
--- Dumped by pg_dump version 10.3
+-- Dumped from database version 10.5
+-- Dumped by pg_dump version 10.5
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -210,7 +210,8 @@ CREATE TABLE public.coastal_hazards (
     description text,
     inserted_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    display_order integer
+    display_order integer,
+    duration character varying(255)
 );
 
 
@@ -231,6 +232,75 @@ CREATE SEQUENCE public.coastal_hazards_id_seq
 --
 
 ALTER SEQUENCE public.coastal_hazards_id_seq OWNED BY public.coastal_hazards.id;
+
+
+--
+-- Name: impact_costs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.impact_costs (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    name_linear_foot character varying(255),
+    description text,
+    cost integer NOT NULL,
+    inserted_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    display_order integer
+);
+
+
+--
+-- Name: impact_costs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.impact_costs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: impact_costs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.impact_costs_id_seq OWNED BY public.impact_costs.id;
+
+
+--
+-- Name: impact_life_spans; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.impact_life_spans (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    description text,
+    life_span integer NOT NULL,
+    inserted_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    display_order integer
+);
+
+
+--
+-- Name: impact_life_spans_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.impact_life_spans_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: impact_life_spans_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.impact_life_spans_id_seq OWNED BY public.impact_life_spans.id;
 
 
 --
@@ -349,12 +419,32 @@ CREATE TABLE public.strategies_categories (
 
 
 --
+-- Name: strategies_costs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.strategies_costs (
+    strategy_id bigint NOT NULL,
+    cost_range_id bigint NOT NULL
+);
+
+
+--
 -- Name: strategies_hazards; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.strategies_hazards (
     strategy_id bigint NOT NULL,
     hazard_id bigint NOT NULL
+);
+
+
+--
+-- Name: strategies_life_spans; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.strategies_life_spans (
+    strategy_id bigint NOT NULL,
+    life_span_range_id bigint NOT NULL
 );
 
 
@@ -408,6 +498,20 @@ ALTER TABLE ONLY public.adaptation_strategies ALTER COLUMN id SET DEFAULT nextva
 --
 
 ALTER TABLE ONLY public.coastal_hazards ALTER COLUMN id SET DEFAULT nextval('public.coastal_hazards_id_seq'::regclass);
+
+
+--
+-- Name: impact_costs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.impact_costs ALTER COLUMN id SET DEFAULT nextval('public.impact_costs_id_seq'::regclass);
+
+
+--
+-- Name: impact_life_spans id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.impact_life_spans ALTER COLUMN id SET DEFAULT nextval('public.impact_life_spans_id_seq'::regclass);
 
 
 --
@@ -473,6 +577,22 @@ ALTER TABLE ONLY public.coastal_hazards
 
 
 --
+-- Name: impact_costs impact_costs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.impact_costs
+    ADD CONSTRAINT impact_costs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: impact_life_spans impact_life_spans_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.impact_life_spans
+    ADD CONSTRAINT impact_life_spans_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: impact_scales impact_scales_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -522,6 +642,20 @@ CREATE UNIQUE INDEX adaptation_strategies_name_index ON public.adaptation_strate
 --
 
 CREATE UNIQUE INDEX coastal_hazards_name_index ON public.coastal_hazards USING btree (name);
+
+
+--
+-- Name: impact_costs_name_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX impact_costs_name_index ON public.impact_costs USING btree (name);
+
+
+--
+-- Name: impact_life_spans_name_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX impact_life_spans_name_index ON public.impact_life_spans USING btree (name);
 
 
 --
@@ -587,6 +721,22 @@ ALTER TABLE ONLY public.strategies_categories
 
 
 --
+-- Name: strategies_costs strategies_costs_cost_range_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.strategies_costs
+    ADD CONSTRAINT strategies_costs_cost_range_id_fkey FOREIGN KEY (cost_range_id) REFERENCES public.impact_costs(id);
+
+
+--
+-- Name: strategies_costs strategies_costs_strategy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.strategies_costs
+    ADD CONSTRAINT strategies_costs_strategy_id_fkey FOREIGN KEY (strategy_id) REFERENCES public.adaptation_strategies(id);
+
+
+--
 -- Name: strategies_hazards strategies_hazards_hazard_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -600,6 +750,22 @@ ALTER TABLE ONLY public.strategies_hazards
 
 ALTER TABLE ONLY public.strategies_hazards
     ADD CONSTRAINT strategies_hazards_strategy_id_fkey FOREIGN KEY (strategy_id) REFERENCES public.adaptation_strategies(id);
+
+
+--
+-- Name: strategies_life_spans strategies_life_spans_life_span_range_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.strategies_life_spans
+    ADD CONSTRAINT strategies_life_spans_life_span_range_id_fkey FOREIGN KEY (life_span_range_id) REFERENCES public.impact_life_spans(id);
+
+
+--
+-- Name: strategies_life_spans strategies_life_spans_strategy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.strategies_life_spans
+    ADD CONSTRAINT strategies_life_spans_strategy_id_fkey FOREIGN KEY (strategy_id) REFERENCES public.adaptation_strategies(id);
 
 
 --
@@ -622,5 +788,5 @@ ALTER TABLE ONLY public.strategies_scales
 -- PostgreSQL database dump complete
 --
 
-INSERT INTO public."schema_migrations" (version) VALUES (20180627200200), (20180627200743), (20180627201108), (20180627203452), (20180627211906), (20180627212047), (20180627212147), (20180703202705), (20180703204221), (20180703204303), (20180703205219), (20180705210332), (20180718180304), (20180726173204), (20180727193446), (20180727194146), (20180807203920), (20180807203940), (20180807203956), (20180807204011), (20180807204026), (20180807204040), (20180807204054), (20180807204115), (20180807204132), (20180807204145), (20180808140524), (20180808140539), (20180820140003), (20180820140128), (20180823192847), (20180823192901), (20180823192913), (20180919153922), (20180919154827), (20180920142818), (20180920145129), (20180920213425), (20180921142315), (20180921143254), (20180926153705), (20181021224755), (20181021230621), (20181021230849);
+INSERT INTO public."schema_migrations" (version) VALUES (20180627200200), (20180627200743), (20180627201108), (20180627203452), (20180627211906), (20180627212047), (20180627212147), (20180703202705), (20180703204221), (20180703204303), (20180703205219), (20180705210332), (20180718180304), (20180726173204), (20180727193446), (20180727194146), (20180807203920), (20180807203940), (20180807203956), (20180807204011), (20180807204026), (20180807204040), (20180807204054), (20180807204115), (20180807204132), (20180807204145), (20180808140524), (20180808140539), (20180820140003), (20180820140128), (20180823192847), (20180823192901), (20180823192913), (20180919153922), (20180919154827), (20180920142818), (20180920145129), (20180920213425), (20180921142315), (20180921143254), (20180926153705), (20181018144049), (20181018144150), (20181022155130), (20181022200330), (20181024174434), (20181024174453), (20181026142619);
 

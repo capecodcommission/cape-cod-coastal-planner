@@ -29,6 +29,14 @@ type CoastalHazard
     = CoastalHazard
 
 
+type ImpactCost
+    = ImpactCost
+
+
+type ImpactLifeSpan
+    = ImpactLifeSpan
+
+
 type ImpactScale
     = ImpactScale
 

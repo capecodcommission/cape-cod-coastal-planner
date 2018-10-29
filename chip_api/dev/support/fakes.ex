@@ -1,16 +1,24 @@
 defmodule ChipApi.Fakes do
     alias ChipApi.Repo
-    alias ChipApi.Adaptation.{Strategy, Category, Hazard, Scale, Placement, Benefit, Advantage, Disadvantage}
+    alias ChipApi.Adaptation.{Strategy, Category, Hazard, Scale, Benefit, Advantage, Disadvantage, CostRange, LifeSpanRange}
     alias ChipApi.Geospatial.LittoralCell
     alias Decimal, as: D
 
     @cat1 %Category{name: "cat1"}
     @cat2 %Category{name: "cat2"}
-    @haz1 %Hazard{name: "haz1", display_order: 2}
-    @haz2 %Hazard{name: "haz2", display_order: 1}
+    @haz1 %Hazard{name: "haz1", display_order: 2, duration: "40 years"}
+    @haz2 %Hazard{name: "haz2", display_order: 1, duration: "1-time event"}
     @scale1 %Scale{name: "scale1", impact: 1, display_order: 1}
     @scale2 %Scale{name: "scale2", impact: 2}
     @scale3 %Scale{name: "scale3", impact: 3, display_order: 2}
+    @costrange1 %CostRange{name: "costrange1", cost: 1, display_order: 1}
+    @costrange2 %CostRange{name: "costrange2", cost: 2}
+    @costrange3 %CostRange{name: "costrange3", cost: 3, display_order: 2}
+    @costrange4 %CostRange{name: "costrange4", cost: 4, display_order: 3}
+    @lifespanrange1 %LifeSpanRange{name: "lifespanrange1", life_span: 1, display_order: 1}
+    @lifespanrange2 %LifeSpanRange{name: "lifespanrange2", life_span: 2}
+    @lifespanrange3 %LifeSpanRange{name: "lifespanrange3", life_span: 3, display_order: 2}
+    @lifespanrange4 %LifeSpanRange{name: "lifespanrange4", life_span: 4, display_order: 3}
     @benefit1 %Benefit{name: "benefit1", display_order: 0}
     @benefit2 %Benefit{name: "benefit2", display_order: 1}
     @advantage1 %Advantage{name: "advantage1", display_order: 0}
@@ -130,6 +138,54 @@ defmodule ChipApi.Fakes do
             strat2: strat2
         }}
     end
+    
+    def run_cost_ranges do
+        costrange1 = @costrange1 |> Repo.insert!
+        costrange2 = @costrange2 |> Repo.insert!
+        costrange3 = @costrange3 |> Repo.insert!
+        costrange4 = @costrange4 |> Repo.insert!
+
+        strat1 = @strat1
+        |> Map.merge(%{cost_ranges: [costrange1, costrange2, costrange3, costrange4]})
+        |> Repo.insert!
+
+        strat2 = @strat2
+        |> Map.merge(%{cost_ranges: [costrange1, costrange2, costrange3, costrange4]})
+        |> Repo.insert!
+
+        {:ok, data: %{
+            costrange1: costrange1,
+            costrange2: costrange2,
+            costrange3: costrange3,
+            costrange4: costrange4,
+            strat1: strat1,
+            strat2: strat2
+        }}
+    end
+    
+    def run_life_span_ranges do
+        lifespanrange1 = @lifespanrange1 |> Repo.insert!
+        lifespanrange2 = @lifespanrange2 |> Repo.insert!
+        lifespanrange3 = @lifespanrange3 |> Repo.insert!
+        lifespanrange4 = @lifespanrange4 |> Repo.insert!
+
+        strat1 = @strat1
+        |> Map.merge(%{life_span_ranges: [lifespanrange1, lifespanrange2, lifespanrange3, lifespanrange4]})
+        |> Repo.insert!
+
+        strat2 = @strat2
+        |> Map.merge(%{life_span_ranges: [lifespanrange1, lifespanrange2, lifespanrange3, lifespanrange4]})
+        |> Repo.insert!
+
+        {:ok, data: %{
+            lifespanrange1: lifespanrange1,
+            lifespanrange2: lifespanrange2,
+            lifespanrange3: lifespanrange3,
+            lifespanrange4: lifespanrange4,
+            strat1: strat1,
+            strat2: strat2
+        }}
+    end
 
     def run_benefits do
         benefit1 = @benefit1 |> Repo.insert!
@@ -168,6 +224,14 @@ defmodule ChipApi.Fakes do
         haz2 = @haz2 |> Repo.insert!
         scale1 = @scale1 |> Repo.insert!
         scale2 = @scale2 |> Repo.insert!
+        costrange1 = @costrange1 |> Repo.insert!
+        costrange2 = @costrange2 |> Repo.insert!
+        costrange3 = @costrange3 |> Repo.insert!
+        costrange4 = @costrange4 |> Repo.insert!
+        lifespanrange1 = @lifespanrange1 |> Repo.insert!
+        lifespanrange2 = @lifespanrange2 |> Repo.insert!
+        lifespanrange3 = @lifespanrange3 |> Repo.insert!
+        lifespanrange4 = @lifespanrange4 |> Repo.insert!
         benefit1 = @benefit1 |> Repo.insert!
         benefit2 = @benefit2 |> Repo.insert!
         advantage1 = @advantage1 |> Repo.insert!
@@ -206,6 +270,14 @@ defmodule ChipApi.Fakes do
             haz2: haz2,
             scale1: scale1,
             scale2: scale2,
+            costrange1: costrange1,
+            costrange2: costrange2,
+            costrange3: costrange3,
+            costrange4: costrange4,
+            lifespanrange1: lifespanrange1,
+            lifespanrange2: lifespanrange2,
+            lifespanrange3: lifespanrange3,
+            lifespanrange4: lifespanrange4,
             benefit1: benefit1,
             benefit2: benefit2,
             advantage1: advantage1,

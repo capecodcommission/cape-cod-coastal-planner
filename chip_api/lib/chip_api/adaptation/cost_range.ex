@@ -1,25 +1,26 @@
-defmodule ChipApi.Adaptation.Hazard do
+defmodule ChipApi.Adaptation.CostRange do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "coastal_hazards" do
+  schema "impact_costs" do
     field :description, :string
+    field :cost, :integer
     field :name, :string
+    field :name_linear_foot, :string
     field :display_order, :integer
-    field :duration, :string
 
     many_to_many :adaptation_strategies, ChipApi.Adaptation.Strategy,
-      join_through: "strategies_hazards",
+      join_through: "strategies_costs",
       on_delete: :delete_all
 
     timestamps()
   end
-
+  
   @doc false
-  def changeset(hazard, attrs) do
-    hazard
-    |> cast(attrs, [:name, :description, :display_order, :duration])
-    |> validate_required([:name])
+  def changeset(cost, attrs) do
+    cost
+    |> cast(attrs, [:name, :description, :cost])
+    |> validate_required([:name, :cost])
     |> unique_constraint(:name)
   end
 end
