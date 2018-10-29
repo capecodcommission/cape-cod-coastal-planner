@@ -219,7 +219,7 @@ footerView : Element MainStyles Variations Msg
 footerView =
     footer (Sidebar SidebarFooter) [ alignBottom, height (px 90) ] <|
         row NoStyle
-            [ center, verticalCenter, spacingXY 20 0, width fill, height fill ]
+            [ spread, verticalCenter, width fill, height fill, paddingXY 32 0 ]
             [ button ActionButton
                 [ onClick PickStrategy
                 , width (px 175)
