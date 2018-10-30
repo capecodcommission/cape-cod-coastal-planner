@@ -9,47 +9,43 @@ import Styles exposing (..)
 import AdaptationOutput exposing (..)
 
 
-view : AdaptationOutput -> Element MainStyles Variations Msg
-view output =
+view : Result OutputError AdaptationOutput -> Element MainStyles Variations Msg
+view result =
     column NoStyle
         [ height fill, width fill ]
-        ( case output of 
-            CalculatingOutput ->
+        ( case result of
+            Ok NotCalculated ->
                 [ el NoStyle [ height fill ] empty, footerView ]
-            
-            BadInput ->
-                [ errorView
-                    "Missing essential calculation input."
-                    [ "Please try selecting a strategy again." ]
+
+            Ok CalculatingOutput ->
+                [ el NoStyle [ height fill ] empty, footerView ]
+
+            Ok (OnlyNoAction output) ->
+                [ resultsHeader output
+                , resultsMainContent output
                 , footerView 
                 ]
 
-            HexHttpError httpError ->
+            Ok (WithStrategy noActionOutput strategyOutput) ->
+                [ el NoStyle [] empty, footerView ]
+
+            Err (BadInput err) ->
+                [ errorView
+                    "Bad Input"
+                    [ err ]
+                , footerView 
+                ]
+
+            Err (HexHttpError httpError) ->
                 [ parseHttpError httpError
                     |> (\(errTitle, errMsg) -> errorView errTitle [ errMsg ])
                 , footerView 
                 ]
 
-            CalculationError errs ->
+            Err (CalculationError errs) ->
                 [ errorView
                     "Failed to calculate output."
                     errs
-                , footerView 
-                ]
-
-            OnlyNoAction noActionDetails ->
-                [ resultsHeader noActionDetails
-                , resultsMainContent noActionDetails
-                , footerView 
-                ]
-
-            WithStrategy noActionDetails strategyDetails ->
-                [ el NoStyle [] empty, footerView ]
-
-            _ ->
-                [ errorView
-                    "Unknown error occurred."
-                    [ "Please try selecting a strategy again." ]
                 , footerView 
                 ]
         )

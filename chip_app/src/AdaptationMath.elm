@@ -24,26 +24,28 @@ sqMetersPerAcre : Float
 sqMetersPerAcre = 4046.86
 
 
+metersPerFoot : Float
+metersPerFoot = 0.3048
+
+
 type alias NpvConstants = 
     { discountRate : Float
-    , periodicRate : Float
     , numPeriods : Int
     , natSeashore : Float
     , townBeach : Float
     , otherBeach : Float
-    , unknownRate : Float -- this constant was given without description of its origin, so it's unkown!
+    , beachValue : Float
     }
 
 
 npvConstants : NpvConstants
 npvConstants =  
-    { discountRate = 0.7
-    , periodicRate = 0.00565 -- (1 + 0.7) ^ 1/12
-    , numPeriods = 480 -- 40 * 12
+    { discountRate = 0.07
+    , numPeriods = 40
     , natSeashore = 70.28
     , townBeach = 238.88
     , otherBeach = 29.68
-    , unknownRate = 1.07
+    , beachValue = 1.27
     }
 
 
@@ -57,130 +59,225 @@ calculate :
     -> CoastalHazard
     -> Strategy
     -> StrategyDetails
-    -> AdaptationOutput
+    -> Result OutputError AdaptationOutput
 calculate hexResponse location zoneOfImpact hazard strategy details =
     case hexResponse of
         NotAsked -> 
-            NotCalculated
+            Ok NotCalculated
 
         Loading -> 
-            CalculatingOutput
+            Ok CalculatingOutput
 
         Failure err ->
-            HexHttpError err
+            Err <| HexHttpError err
 
         Success hexes ->
             let
-                noActionOutput = calculateNoAction hexes location zoneOfImpact hazard strategy details
-            in
-            case String.toLower strategy.name of
-                "no action" ->
-                    OnlyNoAction noActionOutput
+                basicOutput = 
+                    defaultOutput
+                        |> applyBasicInfo hexes location zoneOfImpact hazard strategy details
 
-                _ ->
-                    WithStrategy noActionOutput noActionOutput
+                noActionOutput = 
+                    basicOutput
+                        |> Result.andThen (calculateNoAction hexes zoneOfImpact hazard)
+            in
+            noActionOutput
+                |> Result.andThen
+                    (\output ->
+                        case String.toLower strategy.name of
+                            "no action" ->
+                                Ok <| OnlyNoAction output
+
+                            name ->
+                                -- let
+                                --     strategyOutput = calculateStrategy hexes location zoneOfImpact hazard strategy details
+                                -- in
+                                Ok <| WithStrategy output output        
+                    )
+
+            
+
+
+applyBasicInfo : 
+    AdaptationHexes
+    -> ShorelineExtent 
+    -> ZoneOfImpact 
+    -> CoastalHazard 
+    -> Strategy 
+    -> StrategyDetails 
+    -> OutputDetails 
+    -> Result OutputError OutputDetails
+applyBasicInfo hexes location zoneOfImpact hazard strategy details output =
+    output
+        |> applyName strategy
+        |> Result.andThen (applyScales details)
+        |> Result.andThen (applyCost details)
+        |> Result.andThen (applyLifespan details)
+        |> Result.andThen (applyHazard hazard)
+        |> Result.andThen (applyLocation location)
+        |> Result.andThen (applyDuration hazard)
+        |> Result.andThen (applyScenarioSize zoneOfImpact)
+
+
 
 calculateNoAction : 
     AdaptationHexes 
-    -> ShorelineExtent 
     -> ZoneOfImpact 
     -> CoastalHazard
-    -> Strategy
-    -> StrategyDetails
     -> OutputDetails
-calculateNoAction hexes location zoneOfImpact hazard strategy details =
-    defaultOutput
-        |> applyName strategy
-        |> applyScales details
-        |> applyCost details
-        |> applyLifespan details
-        |> applyHazard hazard
-        |> applyLocation location
-        |> applyDuration hazard
-        |> applyScenarioSize zoneOfImpact
-        |> countCriticalFacilities hexes
-        |> calculatePublicBuildingValue hexes
-        |> calculatePrivateLandValue hexes
-        |> calculatePrivateBuildingValue hexes
-        |> calculateSaltMarshChangeAndValue hexes
-        |> calculateBeachValue hexes zoneOfImpact
-        |> calculateRareSpeciesHabitat hexes
+    -> Result OutputError OutputDetails
+calculateNoAction hexes zoneOfImpact hazard output =
+    case String.toLower hazard.name of
+        "erosion" ->
+            output
+                |> countCriticalFacilities hexes
+                |> Result.andThen (calculatePublicBuildingValue hexes)
+                |> Result.andThen (calculatePrivateLandValue hexes)
+                |> Result.andThen (calculatePrivateBuildingValue hexes)
+                |> Result.andThen (calculateSaltMarshChangeAndValue hexes)
+                --|> Result.andThen (calculateBeachValue hexes zoneOfImpact)
+                |> Result.andThen (calculateRareSpeciesHabitat hexes)
+
+        "sea level rise" ->
+            output
+                |> countCriticalFacilities hexes
+                |> Result.andThen (calculatePublicBuildingValue hexes)
+                |> Result.andThen (calculatePrivateLandValue hexes)
+                |> Result.andThen (calculatePrivateBuildingValue hexes)
+                |> Result.andThen (calculateSaltMarshChangeAndValue hexes)
+                |> Result.andThen (calculateRareSpeciesHabitat hexes)
+
+        "storm surge" ->
+            output
+                |> flagCriticalFacilitiesPresence hexes
+
+        badHazard ->
+            Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: " ++ badHazard)
+    
 
 
-applyName : Strategy -> OutputDetails -> OutputDetails
+
+
+{-| Apply the selected Strategy name to the output results
+-}
+applyName : Strategy -> OutputDetails -> Result OutputError OutputDetails
 applyName { name } output =
-    { output | name = name }
+    Ok { output | name = name }
 
 
-applyScales : StrategyDetails -> OutputDetails -> OutputDetails
+{-| Apply the range of scales of impact to the output results
+    
+    Site -> Neighborhood -> Community -> Region
+-}
+applyScales : StrategyDetails -> OutputDetails -> Result OutputError OutputDetails
 applyScales details output =
-    { output | scales = [] }
+    Ok { output | scales = [] }
 
 
-applyCost : StrategyDetails -> OutputDetails -> OutputDetails
+{-| Apply the relative cost of strategy implementation
+-}
+applyCost : StrategyDetails -> OutputDetails -> Result OutputError OutputDetails
 applyCost details output =
-    { output | cost = Nothing }
+    Ok { output | cost = Nothing }
 
 
-applyLifespan : StrategyDetails -> OutputDetails -> OutputDetails
+{-| Apply the expected lifespan of a strategy implementation
+-}
+applyLifespan : StrategyDetails -> OutputDetails -> Result OutputError OutputDetails
 applyLifespan details output =
-    { output | lifespan = Nothing }
+    Ok { output | lifespan = Nothing }
 
 
-applyHazard : CoastalHazard -> OutputDetails -> OutputDetails
+{-| Apply the coastal hazard that the scenario addresses
+
+    Erosion - Storm Surge - Sea Level Rise
+-}
+applyHazard : CoastalHazard -> OutputDetails -> Result OutputError OutputDetails
 applyHazard hazard output =
-    { output | hazard = hazard.name }
+    Ok { output | hazard = hazard.name }
 
 
-applyLocation : ShorelineExtent -> OutputDetails -> OutputDetails
+{-| Apply the shoreline location that the plan is being assessed in
+-}
+applyLocation : ShorelineExtent -> OutputDetails -> Result OutputError OutputDetails
 applyLocation location output =
-    { output | location = location.name }
+    Ok { output | location = location.name }
 
+{-| Apply the expected duration of a scenario
 
-applyDuration : CoastalHazard -> OutputDetails -> OutputDetails
+    40 years or 1-time event
+-}
+applyDuration : CoastalHazard -> OutputDetails -> Result OutputError OutputDetails
 applyDuration hazard output =
-    { output | duration = "TBD" }
+    Ok { output | duration = "TBD" }
 
 
-applyScenarioSize : ZoneOfImpact -> OutputDetails -> OutputDetails
+{-| Apply the scenario size. IE: the length of coast line selected
+
+    Measured in feet
+-}
+applyScenarioSize : ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
 applyScenarioSize zoneOfImpact output =
-    { output | scenarioSize = zoneOfImpact.beachLengths.total }
+    Ok { output | scenarioSize = zoneOfImpact.beachLengths.total }
 
 
-countCriticalFacilities : AdaptationHexes -> OutputDetails -> OutputDetails
+{-| Count the number of critical facilites being impacted
+-}
+countCriticalFacilities : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
 countCriticalFacilities hexes output =
     hexes
         |> List.foldl (\hex acc -> acc - hex.numCriticalFacilities ) 0
         |> countToCriticalFacilities
         |> \result -> { output | criticalFacilities = result }
+        |> Ok
 
 
-calculatePublicBuildingValue : AdaptationHexes -> OutputDetails -> OutputDetails
+flagCriticalFacilitiesPresence : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
+flagCriticalFacilitiesPresence hexes output =
+    hexes
+        |> List.any (\hex -> hex.numCriticalFacilities > 0)
+        |> boolToCriticalFacilities
+        |> \result -> { output | criticalFacilities = result }
+        |> Ok
+
+
+{-| Calculate the change in public building value
+-}
+calculatePublicBuildingValue : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
 calculatePublicBuildingValue hexes output =
     hexes
         |> List.foldl (\hex acc -> hex.privateBldgValue + acc ) 0
         |> monetaryValueToResult
         |> \result -> { output | privateBuildingValue = result }
+        |> Ok
 
 
-calculatePrivateLandValue : AdaptationHexes -> OutputDetails -> OutputDetails
+{-| Calculate the change in private land value
+-}
+calculatePrivateLandValue : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
 calculatePrivateLandValue hexes output =
     hexes
         |> List.foldl (\hex acc -> hex.shorelinePrivateAcres + acc ) 0
         |> (\acreage -> acreage * privateLandMultiplier * -1)
         |> monetaryValueToResult
         |> \result -> { output | privateLandValue = result }
+        |> Ok
 
 
-calculatePrivateBuildingValue : AdaptationHexes -> OutputDetails -> OutputDetails
+{-| Calculate the change in private building value
+-}
+calculatePrivateBuildingValue : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
 calculatePrivateBuildingValue hexes output =
     hexes
         |> List.foldl (\hex acc -> acc - hex.privateBldgValue) 0
         |> monetaryValueToResult
         |> \result -> { output | privateBuildingValue = result }
+        |> Ok
 
 
-calculateSaltMarshChangeAndValue : AdaptationHexes -> OutputDetails -> OutputDetails
+{-| Calculate the change in both acreage and value for salt marsh area
+-}
+calculateSaltMarshChangeAndValue : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
 calculateSaltMarshChangeAndValue hexes output =
     let
         acreage = 
@@ -194,30 +291,39 @@ calculateSaltMarshChangeAndValue hexes output =
     { output 
         | saltMarshChange = acreageToAcreageResult acreage
         , saltMarshValue = value 
-    }
+    } |> Ok
 
 
-calculateRareSpeciesHabitat : AdaptationHexes -> OutputDetails -> OutputDetails
+{-| Calculate whether there is an impact to rare species habitat
+-}
+calculateRareSpeciesHabitat : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
 calculateRareSpeciesHabitat hexes output =
     hexes
         |> List.map .rareSpecies
         |> List.member True
-        |> \result -> 
-            if result then
+        |> (\result -> 
+            if result == True then
                 { output | rareSpeciesHabitat = HabitatLost }
             else
                 { output | rareSpeciesHabitat = HabitatUnchanged }
+            )
+        |> Ok
 
 
-calculateBeachValue : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> OutputDetails
+{-| Calculate the net present value (NPV) for selected shoreline
+
+    Beach types include National Seashore, Town Beach, and Other Public Beach
+-}
+calculateBeachValue : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
 calculateBeachValue hexes zoneOfImpact output =
     let
-        cashFlow = (annualChangeBeachValue hexes zoneOfImpact) / 12
+        cashFlow = annualChangeBeachValue hexes zoneOfImpact
     in
     List.range 1 npvConstants.numPeriods
         |> List.foldl (netPresentValue cashFlow) 0.0
         |> monetaryValueToResult
         |> \result -> { output | beachValue = result }
+        |> Ok
 
 
 annualChangeBeachValue : AdaptationHexes -> ZoneOfImpact -> Float
@@ -229,17 +335,17 @@ annualChangeBeachValue hexes zoneOfImpact =
                 |> (\result -> result / (toFloat <| List.length hexes))
 
         annualChangeNatSeashore =
-            npvConstants.unknownRate * meanChange * npvConstants.natSeashore * (toFloat zoneOfImpact.beachLengths.nationalSeashore)
+            npvConstants.beachValue * meanChange * npvConstants.natSeashore * (metersPerFoot * toFloat zoneOfImpact.beachLengths.nationalSeashore)
 
         annualChangeTownBeach =
-            npvConstants.unknownRate * meanChange * npvConstants.townBeach * (toFloat zoneOfImpact.beachLengths.townBeach)
+            npvConstants.beachValue * meanChange * npvConstants.townBeach * (metersPerFoot * toFloat zoneOfImpact.beachLengths.townBeach)
 
         annualChangeOtherBeach =
-            npvConstants.unknownRate * meanChange * npvConstants.otherBeach * (toFloat zoneOfImpact.beachLengths.otherPublic)
+            npvConstants.beachValue * meanChange * npvConstants.otherBeach * (metersPerFoot * toFloat zoneOfImpact.beachLengths.otherPublic)
     in
         annualChangeNatSeashore + annualChangeTownBeach + annualChangeOtherBeach
     
 
 netPresentValue : Float -> Int -> Float -> Float
 netPresentValue cashFlow period acc =
-    cashFlow / ((1 + npvConstants.periodicRate) ^ toFloat period) + acc
+    cashFlow / ((1 + npvConstants.discountRate) ^ toFloat period) + acc

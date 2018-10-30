@@ -8,11 +8,14 @@ import AdaptationHexes exposing (..)
 type AdaptationOutput 
     = NotCalculated
     | CalculatingOutput
-    | BadInput
     | OnlyNoAction OutputDetails
     | WithStrategy OutputDetails OutputDetails
+
+
+type OutputError
+    = BadInput String
     | HexHttpError Http.Error
-    | CalculationError (List String)  
+    | CalculationError (List String)
 
 
 type alias OutputDetails =
@@ -115,6 +118,7 @@ type CriticalFacilities
     = FacilitiesLost Int
     | FacilitiesProtected Int
     | FacilitiesUnchanged
+    | FacilitiesPresent
 
 
 countToCriticalFacilities : Int -> CriticalFacilities
@@ -127,18 +131,15 @@ countToCriticalFacilities count =
         FacilitiesUnchanged
 
 
+boolToCriticalFacilities : Bool -> CriticalFacilities
+boolToCriticalFacilities presence =
+    if presence then
+        FacilitiesPresent
+    else
+        FacilitiesUnchanged
+
+
 type RareSpeciesHabitat
     = HabitatLost
     | HabitatGained
     | HabitatUnchanged
-
-
-toMaybe : AdaptationOutput -> Maybe AdaptationOutput
-toMaybe output =
-    case output of
-        NotCalculated -> 
-            Nothing
-
-        _ ->
-            Just output
-

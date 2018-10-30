@@ -24,7 +24,7 @@ import Types exposing (..)
 import AdaptationStrategy.AdaptationInfo as Info exposing (AdaptationInfo)
 import AdaptationStrategy.CoastalHazards as Hazards exposing (CoastalHazards, CoastalHazard)
 import AdaptationStrategy.Strategies as Strategies exposing (Strategies, Strategy)
-import AdaptationOutput as Output exposing (AdaptationOutput(..))
+import AdaptationOutput as Output exposing (AdaptationOutput(..), OutputError(..))
 import AdaptationMath as Maths
 import AdaptationHexes as AH
 import ShorelineLocation as SL exposing (..)
@@ -66,7 +66,7 @@ type alias Model =
     , baselineModal : GqlData (Maybe BaselineInfo)
     , zoneOfImpact : Maybe ZoneOfImpact
     , adaptationHexes : WebData AH.AdaptationHexes
-    , calculationOutput : AdaptationOutput
+    , calculationOutput : Maybe (Result OutputError AdaptationOutput)
     , rightSidebarOpenness : Openness
     , rightSidebarFx : Animation.State
     , rightSidebarToggleFx : Animation.State
@@ -105,7 +105,7 @@ initialModel flags =
         -- Adapation Hex data
         NotAsked
         -- Calculation Output
-        NotCalculated
+        Nothing
         -- right sidebar
         Closed
         (Animation.style <| .closed <| Animations.rightSidebarStates)
@@ -298,7 +298,7 @@ updateModel msg model =
             let
                 newModel = { model | adaptationHexes = response }
             in
-            ( { newModel | calculationOutput = runCalculations newModel }
+            ( { newModel | calculationOutput = Just <| runCalculations newModel }
             , Cmd.none
             )
 
@@ -361,7 +361,7 @@ updateModel msg model =
                 |> \m -> 
                     { m 
                         | strategiesModalOpenness = Closed
-                        , calculationOutput = NotCalculated
+                        , calculationOutput = Nothing
                     }
             , Cmd.none
             )
@@ -492,7 +492,7 @@ applyStrategy model =
                 |> \m -> 
                     { m 
                         | strategiesModalOpenness = Closed
-                        , calculationOutput = output 
+                        , calculationOutput = Just output 
                     }
             , Cmd.none 
             )
@@ -503,13 +503,13 @@ applyStrategy model =
                     { m 
                         | strategiesModalOpenness = Closed
                         , adaptationHexes = Loading
-                        , calculationOutput = CalculatingOutput
+                        , calculationOutput = Just <| Ok CalculatingOutput
                     }
             , sendGetHexesRequest model.env model.zoneOfImpact 
             )
 
 
-runCalculations : Model -> AdaptationOutput
+runCalculations : Model -> Result OutputError AdaptationOutput
 runCalculations model =
     let
         location = 
@@ -534,7 +534,7 @@ runCalculations model =
     in
     Maybe.map5 (Maths.calculate model.adaptationHexes)
         location model.zoneOfImpact currentHazard currentStrategy currentDetails
-        |> Maybe.withDefault BadInput
+        |> Maybe.withDefault (Err <| BadInput "Cannot calculate output with missing input data.")
 
     
 
@@ -786,10 +786,9 @@ headerView ({ device } as model) =
 
 getRightSidebarChildViews : Model -> (String, List (Element MainStyles Variations Msg))
 getRightSidebarChildViews model =
-    case ( model.zoneOfImpact ) of
+    case model.zoneOfImpact of
         Just zoi ->
             model.calculationOutput
-                |> Output.toMaybe
                 |> Maybe.map 
                     (\output -> ( "STRATEGY OUTPUT", [ Results.view output ] ))
                 |> Maybe.withDefault 
