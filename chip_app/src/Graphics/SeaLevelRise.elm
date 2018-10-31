@@ -9,6 +9,7 @@ import TypedSvg.Attributes as Attr exposing (xlinkHref, d, fill, transform, fill
 import TypedSvg.Attributes.InPx exposing (height, strokeWidth, width, x, y)
 import TypedSvg.Types exposing (Fill(..), FillRule(..), Transform(..))
 
+
 type alias SeaLevelRiseIconConfig =
     { color : Color
     , width : Float

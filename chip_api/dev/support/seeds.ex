@@ -163,7 +163,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Dune, beach, or saltmarsh that may be present may be lost if there are structures or topography present that prevent migration with erosion and SLR.", display_order: 2},
                 %Adaptation.Disadvantage{name: "Cost to maintain existing infrastructure that may be threatened by hazards.", display_order: 2}
             ],
-            is_active: true
+            is_active: true,
+            beach_width_impact_m: nil
         }
         |> Repo.insert!
         
@@ -176,7 +177,8 @@ defmodule ChipApi.Seeds do
             strategy_placement: anywhere,
             impact_costs: [high],
             impact_life_spans: [permanent],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: 30.48
         }
         |> Repo.insert!
 
@@ -200,7 +202,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Acquisition of land for new development.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Loss of coastal property values.", display_order: 2}
             ],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: nil
         }
         |> Repo.insert!
 
@@ -225,7 +228,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "May encourage the development of previously undeveloped inland lands.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Limits development along coastline where higher returns on investment are possible.", display_order: 2}
             ],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: nil
         }
         |> Repo.insert!
 
@@ -252,7 +256,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Loss of upland as the marsh expands with restored tidal flow. At minimum, short term loss of plants at site immediately after tidal restoration.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Potential impacts on coastal public access to water. Potentially higher cost than hard engineering structures.", display_order: 2}
             ],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: nil
         }
         |> Repo.insert!
 
@@ -277,7 +282,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Perpetual conservation of the land may cause issues regarding development scenarios in the future.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Limits ability of property owner to make changes on land.", display_order: 2}
             ],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: nil
         }
         |> Repo.insert!
 
@@ -303,7 +309,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "No high water protection.", display_order: 2},
                 %Adaptation.Disadvantage{name: "Reduces sediment and nutrient input into estuary.", display_order: 3}
             ],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: nil
         }
         |> Repo.insert!
 
@@ -327,7 +334,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Impacts to existing habitat resources associated with beach nourishment.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Long term annual costs to construct and maintain system.", display_order: 2}
             ],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: nil
         }
         |> Repo.insert!
 
@@ -340,7 +348,8 @@ defmodule ChipApi.Seeds do
             strategy_placement: undeveloped_only,
             impact_costs: [high],
             impact_life_spans: [permanent],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: nil
         }
         |> Repo.insert!
 
@@ -352,7 +361,8 @@ defmodule ChipApi.Seeds do
             impact_scales: [site, neighborhood],
             impact_costs: [medium_cost],
             impact_life_spans: [long],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: 9.144
         }
         |> Repo.insert!
 
@@ -381,7 +391,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Reduces longshore sediment transport.", display_order: 4},
                 %Adaptation.Disadvantage{name: "Can eliminate dry beach over time if beach nourishment is not required.", display_order: 5}
             ],
-            is_active: true
+            is_active: true,
+            beach_width_impact_m: 3.048
         }
         |> Repo.insert!
 
@@ -394,7 +405,8 @@ defmodule ChipApi.Seeds do
             strategy_placement: coastal_bank_only,
             impact_costs: [very_high],
             impact_life_spans: [long],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: 3.048
         }
         |> Repo.insert!
 
@@ -416,7 +428,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Can result in changes in habitat type.", display_order: 0},
                 %Adaptation.Disadvantage{name: "May have limited recreational value due to limited access.", display_order: 1}
             ],
-            is_active: true
+            is_active: true,
+            beach_width_impact_m: 9.144
         }
         |> Repo.insert!
 
@@ -457,7 +470,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Potential end scour within 10-feet of the terminus of a fiber roll array should be managed on subject property.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Reduces available sediment source for down-drift beaches.", display_order: 2}
             ],
-            is_active: true
+            is_active: true,
+            beach_width_impact_m: 3.048
         }
         |> Repo.insert!
 
@@ -471,7 +485,8 @@ defmodule ChipApi.Seeds do
             strategy_placement: coastal_bank_only,
             impact_costs: [],
             impact_life_spans: [],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: 3.048
         }
         |> Repo.insert!
 
@@ -485,7 +500,8 @@ defmodule ChipApi.Seeds do
             strategy_placement: anywhere_but_salt_marsh,
             impact_costs: [],
             impact_life_spans: [],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: 9.144
         }
         |> Repo.insert!
 
@@ -526,7 +542,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Often includes installation of structural elements, which may have negative impacts on sediment supply, boating, recreation, etc. May reduce the commercial/recreational viability of the beach.", display_order: 1},
                 %Adaptation.Disadvantage{name: "May be more difficult to permit than more conventional strategies.", display_order: 2}
             ],
-            is_active: true
+            is_active: true,
+            beach_width_impact_m: 9.144
         }
         |> Repo.insert!
 
@@ -541,7 +558,8 @@ defmodule ChipApi.Seeds do
             strategy_placement: anywhere_but_salt_marsh,
             impact_costs: [],
             impact_life_spans: [],
-            is_active: false
+            is_active: false,
+            beach_width_impact_m: 9.144
         }
         |> Repo.insert!
 
@@ -569,7 +587,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Expensive (several million dollars depending on the scale).", display_order: 3},
                 %Adaptation.Disadvantage{name: "Sediment sources, whether from inland mining, nearshore dredging, or offshore mining, may have adverse environmental effects.", display_order: 4}
             ],
-            is_active: true
+            is_active: true,
+            beach_width_impact_m: 9.144
         }
         |> Repo.insert!
 

@@ -68,6 +68,14 @@ type SeaLevelRise
     | VulnSeaRise InundationWidth
 
 
+seaLevelRiseToFloat : SeaLevelRise -> Float
+seaLevelRiseToFloat slr =
+    case slr of
+        NoSeaRise -> 0
+
+        VulnSeaRise width -> width
+
+
 {-| StormSurge
     
     This type depends on the `StormSurge` and `StormSurgeAcres` fields from the

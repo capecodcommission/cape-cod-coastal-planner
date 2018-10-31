@@ -106,8 +106,26 @@ resultsMainContent output =
                             ]
             ]
         , column NoStyle [paddingXY 20 0]
-            [ h6 (Headings H6) [] <| text "Beach"
-            , el NoStyle [] <| text "How to calculate change in acreage?"
+            [ h6 (Headings H6) [] <| text "Beach Width"
+            , case output.beachAreaChange of
+                AcreageUnchanged ->
+                    el NoStyle [] <|
+                        paragraph NoStyle [] 
+                            [ text "Acreage unchanged" ]
+
+                AcreageLost lost ->
+                    el NoStyle [] <|
+                        paragraph NoStyle []
+                            [ text "Acreage lost: "
+                            , text <| toString <| abs lost
+                            ]
+
+                AcreageGained gained ->
+                    el NoStyle [] <|
+                        paragraph NoStyle []
+                            [ text "Acreage gained: "
+                            , text <| toString gained
+                            ]
             ]
         ]
 

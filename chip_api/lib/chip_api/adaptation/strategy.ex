@@ -10,6 +10,7 @@ defmodule ChipApi.Adaptation.Strategy do
     field :is_active, :boolean, default: false
     field :currently_permittable, :string
     field :strategy_placement, :string
+    field :beach_width_impact_m, :float
 
     many_to_many :adaptation_categories, ChipApi.Adaptation.Category,
       join_through: "strategies_categories",

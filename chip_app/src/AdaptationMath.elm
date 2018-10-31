@@ -5,7 +5,7 @@ import AdaptationStrategy.CoastalHazards exposing (CoastalHazard)
 import AdaptationStrategy.Strategies exposing (Strategy)
 import AdaptationStrategy.StrategyDetails exposing (StrategyDetails)
 import AdaptationStrategy.Impacts exposing (..)
-import AdaptationHexes as Hexes exposing (AdaptationHexes, MonetaryValue)
+import AdaptationHexes as Hexes exposing (AdaptationHexes, SeaLevelRise(..), ErosionImpact(..), MonetaryValue)
 import AdaptationOutput exposing (..)
 import ShorelineLocation exposing (..)
 import RemoteData as Remote exposing (WebData, RemoteData(..))
@@ -112,7 +112,7 @@ calculateNoAction hexes zoneOfImpact hazard output =
                 |> Result.andThen (calculatePrivateLandValue hexes)
                 |> Result.andThen (calculatePrivateBuildingValue Nothing hexes)
                 |> Result.andThen (calculateSaltMarshChange hexes)
-                --|> Result.andThen (calculateBeachWidthChange hexes zoneOfImpact)
+                |> Result.andThen (calculateBeachWidthChangeForErosion hexes zoneOfImpact)
                 |> Result.andThen (calculateRareSpeciesHabitat hexes)
 
         "sea level rise" ->
@@ -122,6 +122,7 @@ calculateNoAction hexes zoneOfImpact hazard output =
                 |> Result.andThen (calculatePrivateLandValue hexes)
                 |> Result.andThen (calculatePrivateBuildingValue Nothing hexes)
                 |> Result.andThen (calculateSaltMarshChange hexes)
+                |> Result.andThen (calculateBeachWidthChangeForSeaLevelRise hexes zoneOfImpact)
                 |> Result.andThen (calculateRareSpeciesHabitat hexes)
 
         "storm surge" ->
@@ -274,11 +275,30 @@ calculateSaltMarshChange hexes output =
         |> Ok
 
 
--- calculateBeachWidthChangeForErosion : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
--- calculateBeachWidthChangeForErosion hexes zoneOfImpact output =
---     hexes
---         |> List.foldl (\hex acc -> (Hexes.erosionImpactToFloat hex.erosion) + acc)  0.0
---         |> (\result -> result / (toFloat <| List.length hexes))
+calculateBeachWidthChangeForErosion : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
+calculateBeachWidthChangeForErosion hexes zoneOfImpact output =
+    let
+        hexesWithErosion = hexes |> List.filter (\hex -> hex.erosion /= NoErosion)
+    in
+    hexesWithErosion
+        |> List.foldl (\hex acc -> (Hexes.erosionImpactToFloat hex.erosion) + acc)  0.0
+        |> (\result -> result / (toFloat <| List.length hexesWithErosion) * (toFloat zoneOfImpact.beachLengths.total))
+        |> acreageToAcreageResult
+        |> \result -> { output | beachAreaChange = result }
+        |> Ok
+
+
+calculateBeachWidthChangeForSeaLevelRise : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
+calculateBeachWidthChangeForSeaLevelRise hexes zoneOfImpact output =
+    let
+        hexesWithSLR = hexes |> List.filter (\hex -> hex.seaLevelRise /= NoSeaRise)
+    in
+    hexesWithSLR
+        |> List.foldl (\hex acc -> (Hexes.seaLevelRiseToFloat hex.seaLevelRise) + acc)  0.0
+        |> (\result -> result / (toFloat <| List.length hexesWithSLR) * (toFloat zoneOfImpact.beachLengths.total) * -1)
+        |> acreageToAcreageResult
+        |> \result -> { output | beachAreaChange = result }
+        |> Ok
 
 
 {-| Calculate whether there is an impact to rare species habitat

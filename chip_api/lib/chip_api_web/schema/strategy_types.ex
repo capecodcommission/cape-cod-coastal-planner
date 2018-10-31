@@ -98,6 +98,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "Description of valid placement the strategy can be used in"
         field :strategy_placement, :string
 
+        @desc "The impact in meters on beach width this strategy generally has"
+        field :beach_width_impact_m, :float
+
         @desc "The adaptation categories that are associated with the strategy"
         field :categories, non_null(list_of(non_null(:adaptation_category))) do
             resolve &Resolvers.Strategies.categories_for_strategy/3

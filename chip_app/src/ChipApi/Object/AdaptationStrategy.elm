@@ -32,6 +32,13 @@ advantages object =
     Object.selectionField "advantages" [] object (identity >> Decode.list)
 
 
+{-| The impact in meters on beach width this strategy generally has
+-}
+beachWidthImpactM : Field (Maybe Float) ChipApi.Object.AdaptationStrategy
+beachWidthImpactM =
+    Object.fieldDecoder "beachWidthImpactM" [] (Decode.float |> Decode.nullable)
+
+
 {-| The adaptation benefits that are associated with the strategy
 -}
 benefits : SelectionSet decodesTo ChipApi.Object.AdaptationBenefit -> Field (List decodesTo) ChipApi.Object.AdaptationStrategy
