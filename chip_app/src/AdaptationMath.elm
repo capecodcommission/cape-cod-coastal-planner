@@ -16,10 +16,6 @@ privateLandMultiplier : Float
 privateLandMultiplier = 3360699
 
 
-saltMarshMultiplier : Float
-saltMarshMultiplier = 22.53
-
-
 sqMetersPerAcre : Float
 sqMetersPerAcre = 4046.86
 
@@ -28,25 +24,8 @@ metersPerFoot : Float
 metersPerFoot = 0.3048
 
 
-type alias NpvConstants = 
-    { discountRate : Float
-    , numPeriods : Int
-    , natSeashore : Float
-    , townBeach : Float
-    , otherBeach : Float
-    , beachValue : Float
-    }
-
-
-npvConstants : NpvConstants
-npvConstants =  
-    { discountRate = 0.07
-    , numPeriods = 40
-    , natSeashore = 70.28
-    , townBeach = 238.88
-    , otherBeach = 29.68
-    , beachValue = 1.27
-    }
+stormSurgeBldgMultiplier : Float
+stormSurgeBldgMultiplier = 0.21
 
 
 {-| Need to know the current hazard and the current strategy.
@@ -96,8 +75,6 @@ calculate hexResponse location zoneOfImpact hazard strategy details =
                     )
 
             
-
-
 applyBasicInfo : 
     AdaptationHexes
     -> ShorelineExtent 
@@ -131,25 +108,27 @@ calculateNoAction hexes zoneOfImpact hazard output =
         "erosion" ->
             output
                 |> countCriticalFacilities hexes
-                |> Result.andThen (calculatePublicBuildingValue hexes)
+                |> Result.andThen (calculatePublicBuildingValue Nothing hexes)
                 |> Result.andThen (calculatePrivateLandValue hexes)
-                |> Result.andThen (calculatePrivateBuildingValue hexes)
-                |> Result.andThen (calculateSaltMarshChangeAndValue hexes)
-                --|> Result.andThen (calculateBeachValue hexes zoneOfImpact)
+                |> Result.andThen (calculatePrivateBuildingValue Nothing hexes)
+                |> Result.andThen (calculateSaltMarshChange hexes)
+                --|> Result.andThen (calculateBeachWidthChange hexes zoneOfImpact)
                 |> Result.andThen (calculateRareSpeciesHabitat hexes)
 
         "sea level rise" ->
             output
                 |> countCriticalFacilities hexes
-                |> Result.andThen (calculatePublicBuildingValue hexes)
+                |> Result.andThen (calculatePublicBuildingValue Nothing hexes)
                 |> Result.andThen (calculatePrivateLandValue hexes)
-                |> Result.andThen (calculatePrivateBuildingValue hexes)
-                |> Result.andThen (calculateSaltMarshChangeAndValue hexes)
+                |> Result.andThen (calculatePrivateBuildingValue Nothing hexes)
+                |> Result.andThen (calculateSaltMarshChange hexes)
                 |> Result.andThen (calculateRareSpeciesHabitat hexes)
 
         "storm surge" ->
             output
                 |> flagCriticalFacilitiesPresence hexes
+                |> Result.andThen (calculatePublicBuildingValue (Just stormSurgeBldgMultiplier) hexes)
+                |> Result.andThen (calculatePrivateBuildingValue (Just stormSurgeBldgMultiplier) hexes)
 
         badHazard ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: " ++ badHazard)
@@ -243,10 +222,14 @@ flagCriticalFacilitiesPresence hexes output =
 
 {-| Calculate the change in public building value
 -}
-calculatePublicBuildingValue : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
-calculatePublicBuildingValue hexes output =
+calculatePublicBuildingValue : Maybe Float -> AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
+calculatePublicBuildingValue maybeMultiplier hexes output =
+    let
+        multiplier = maybeMultiplier |> Maybe.withDefault 1.0
+    in
     hexes
         |> List.foldl (\hex acc -> hex.privateBldgValue + acc ) 0
+        |> (\value -> value * multiplier)
         |> monetaryValueToResult
         |> \result -> { output | privateBuildingValue = result }
         |> Ok
@@ -266,10 +249,14 @@ calculatePrivateLandValue hexes output =
 
 {-| Calculate the change in private building value
 -}
-calculatePrivateBuildingValue : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
-calculatePrivateBuildingValue hexes output =
+calculatePrivateBuildingValue : Maybe Float -> AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
+calculatePrivateBuildingValue maybeMultiplier hexes output =
+    let
+        multiplier = maybeMultiplier |> Maybe.withDefault 1
+    in
     hexes
         |> List.foldl (\hex acc -> acc - hex.privateBldgValue) 0
+        |> (\value -> value * multiplier)
         |> monetaryValueToResult
         |> \result -> { output | privateBuildingValue = result }
         |> Ok
@@ -277,21 +264,21 @@ calculatePrivateBuildingValue hexes output =
 
 {-| Calculate the change in both acreage and value for salt marsh area
 -}
-calculateSaltMarshChangeAndValue : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
-calculateSaltMarshChangeAndValue hexes output =
-    let
-        acreage = 
-            hexes 
-                |> List.foldl (\hex acc -> hex.saltMarshAcres + acc ) 0
-                |> (*) -1
+calculateSaltMarshChange : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
+calculateSaltMarshChange hexes output =
+    hexes 
+        |> List.foldl (\hex acc -> hex.saltMarshAcres + acc ) 0
+        |> (*) -1
+        |> acreageToAcreageResult
+        |> \result -> { output | saltMarshChange = result }
+        |> Ok
 
-        value =
-            acreage * sqMetersPerAcre * saltMarshMultiplier |> monetaryValueToResult
-    in
-    { output 
-        | saltMarshChange = acreageToAcreageResult acreage
-        , saltMarshValue = value 
-    } |> Ok
+
+-- calculateBeachWidthChangeForErosion : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
+-- calculateBeachWidthChangeForErosion hexes zoneOfImpact output =
+--     hexes
+--         |> List.foldl (\hex acc -> (Hexes.erosionImpactToFloat hex.erosion) + acc)  0.0
+--         |> (\result -> result / (toFloat <| List.length hexes))
 
 
 {-| Calculate whether there is an impact to rare species habitat
@@ -310,42 +297,42 @@ calculateRareSpeciesHabitat hexes output =
         |> Ok
 
 
-{-| Calculate the net present value (NPV) for selected shoreline
+-- {-| Calculate the net present value (NPV) for selected shoreline
 
-    Beach types include National Seashore, Town Beach, and Other Public Beach
--}
-calculateBeachValue : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
-calculateBeachValue hexes zoneOfImpact output =
-    let
-        cashFlow = annualChangeBeachValue hexes zoneOfImpact
-    in
-    List.range 1 npvConstants.numPeriods
-        |> List.foldl (netPresentValue cashFlow) 0.0
-        |> monetaryValueToResult
-        |> \result -> { output | beachValue = result }
-        |> Ok
+--     Beach types include National Seashore, Town Beach, and Other Public Beach
+-- -}
+-- -- calculateBeachValue : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
+-- calculateBeachValue hexes zoneOfImpact output =
+--     let
+--         cashFlow = annualChangeBeachValue hexes zoneOfImpact
+--     in
+--     List.range 1 npvConstants.numPeriods
+--         |> List.foldl (netPresentValue cashFlow) 0.0
+--         |> monetaryValueToResult
+--         |> \result -> { output | beachValue = result }
+--         |> Ok
 
 
-annualChangeBeachValue : AdaptationHexes -> ZoneOfImpact -> Float
-annualChangeBeachValue hexes zoneOfImpact =
-    let
-        meanChange = 
-            hexes
-                |> List.foldl (\hex acc -> (Hexes.erosionImpactToFloat hex.erosion) + acc)  0.0
-                |> (\result -> result / (toFloat <| List.length hexes))
+-- annualChangeBeachValue : AdaptationHexes -> ZoneOfImpact -> Float
+-- annualChangeBeachValue hexes zoneOfImpact =
+--     let
+--         meanChange = 
+--             hexes
+--                 |> List.foldl (\hex acc -> (Hexes.erosionImpactToFloat hex.erosion) + acc)  0.0
+--                 |> (\result -> result / (toFloat <| List.length hexes))
 
-        annualChangeNatSeashore =
-            npvConstants.beachValue * meanChange * npvConstants.natSeashore * (metersPerFoot * toFloat zoneOfImpact.beachLengths.nationalSeashore)
+--         annualChangeNatSeashore =
+--             npvConstants.beachValue * meanChange * npvConstants.natSeashore * (metersPerFoot * toFloat zoneOfImpact.beachLengths.nationalSeashore)
 
-        annualChangeTownBeach =
-            npvConstants.beachValue * meanChange * npvConstants.townBeach * (metersPerFoot * toFloat zoneOfImpact.beachLengths.townBeach)
+--         annualChangeTownBeach =
+--             npvConstants.beachValue * meanChange * npvConstants.townBeach * (metersPerFoot * toFloat zoneOfImpact.beachLengths.townBeach)
 
-        annualChangeOtherBeach =
-            npvConstants.beachValue * meanChange * npvConstants.otherBeach * (metersPerFoot * toFloat zoneOfImpact.beachLengths.otherPublic)
-    in
-        annualChangeNatSeashore + annualChangeTownBeach + annualChangeOtherBeach
+--         annualChangeOtherBeach =
+--             npvConstants.beachValue * meanChange * npvConstants.otherBeach * (metersPerFoot * toFloat zoneOfImpact.beachLengths.otherPublic)
+--     in
+--         annualChangeNatSeashore + annualChangeTownBeach + annualChangeOtherBeach
     
 
-netPresentValue : Float -> Int -> Float -> Float
-netPresentValue cashFlow period acc =
-    cashFlow / ((1 + npvConstants.discountRate) ^ toFloat period) + acc
+-- netPresentValue : Float -> Int -> Float -> Float
+-- netPresentValue cashFlow period acc =
+--     cashFlow / ((1 + npvConstants.discountRate) ^ toFloat period) + acc

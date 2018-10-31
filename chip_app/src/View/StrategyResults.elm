@@ -49,6 +49,7 @@ view result =
                 , footerView 
                 ]
         )
+    
 
 
 resultsHeader : OutputDetails -> Element MainStyles Variations Msg
@@ -103,48 +104,10 @@ resultsMainContent output =
                             [ text "Acreage gained: "
                             , text <| toString gained
                             ]
-            , case output.saltMarshValue of
-                ValueUnchanged ->
-                    el NoStyle [] <|
-                        paragraph NoStyle []
-                            [ text "Value unchanged" ]
-
-                ValueLoss loss ->
-                    el NoStyle [] <|
-                        paragraph NoStyle []
-                            [ text "Value lost: "
-                            , text <| toString <| abs loss
-                            ]
-
-                ValueProtected protected ->
-                    el NoStyle [] <|
-                        paragraph NoStyle []
-                            [ text "Value protected: "
-                            , text <| toString <| protected
-                            ]
             ]
         , column NoStyle [paddingXY 20 0]
             [ h6 (Headings H6) [] <| text "Beach"
             , el NoStyle [] <| text "How to calculate change in acreage?"
-            , case output.beachValue of
-                ValueUnchanged ->
-                    el NoStyle [] <|
-                        paragraph NoStyle []
-                            [ text "Value unchanged" ]
-
-                ValueLoss loss ->
-                    el NoStyle [] <|
-                        paragraph NoStyle []
-                            [ text "Value lost: "
-                            , text <| toString <| abs loss
-                            ]
-
-                ValueProtected protected ->
-                    el NoStyle [] <|
-                        paragraph NoStyle []
-                            [ text "Value protected: "
-                            , text <| toString <| protected
-                            ]
             ]
         ]
 
