@@ -27,7 +27,10 @@ view result =
                 ]
 
             Ok (WithStrategy noActionOutput strategyOutput) ->
-                [ el NoStyle [] empty, footerView ]
+                [ resultsHeader strategyOutput
+                , resultsMainContent strategyOutput
+                , footerView
+                ]
 
             Err (BadInput err) ->
                 [ errorView
@@ -50,10 +53,10 @@ view result =
                 , footerView 
                 ]
 
-            Err (CalculationError errs) ->
+            Err (CalculationError err) ->
                 [ errorView
                     "Failed to calculate output."
-                    errs
+                    [ err ]
                 , footerView 
                 ]
         )
@@ -134,6 +137,50 @@ resultsMainContent output =
                             [ text "Acreage gained: "
                             , text <| toString gained
                             ]
+            ]
+        , row NoStyle [spread, width fill]
+            [ column NoStyle []
+                [ h6 (Headings H6) [] <| text "Critical Facilities"
+                , case output.criticalFacilities of
+                    FacilitiesLost count ->
+                        el NoStyle [] <|
+                            paragraph NoStyle []
+                                [ text "Facilities lost: "
+                                , text <| toString <| abs count
+                                ]
+
+                    FacilitiesProtected count ->
+                        el NoStyle [] <|
+                            paragraph NoStyle []
+                                [ text "Facilities protected: "
+                                , text <| toString count
+                                ]
+
+                    FacilitiesRelocated count ->
+                        el NoStyle [] <|
+                            paragraph NoStyle []
+                                [ text "Facilities relocated: "
+                                , text <| toString <| abs count
+                                ]
+                    
+                    FacilitiesUnchanged _ ->
+                        el NoStyle [] <| paragraph NoStyle [] [ text "No facilities impacted" ]
+
+                    FacilitiesPresent _ ->
+                        el NoStyle [] <| paragraph NoStyle [] [ text "Facilities may be impacted" ]
+                ]
+            , column NoStyle []
+                [ h6 (Headings H6) [] <| text "Rare Species Habitat"
+                , case output.rareSpeciesHabitat of
+                    HabitatLost ->
+                        el NoStyle [] <| paragraph NoStyle [] [ text "Habitat lost" ]
+                    
+                    HabitatGained ->
+                        el NoStyle [] <| paragraph NoStyle [] [ text "Habitat gained" ]
+
+                    HabitatUnchanged ->
+                        el NoStyle [] <| paragraph NoStyle [] [ text "Habitat unaffected" ]
+                ]
             ]
         ]
 

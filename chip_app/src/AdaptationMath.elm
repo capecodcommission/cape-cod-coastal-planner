@@ -106,7 +106,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
     case String.toLower hazard.name of
         "erosion" ->
             output
-                |> countCriticalFacilities hexes
+                |> (countCriticalFacilities >> loseCriticalFacilities) hexes
                 |> Result.andThen (calculatePublicBuildingValue Nothing hexes)
                 |> Result.andThen (calculatePrivateLandValue hexes)
                 |> Result.andThen (calculatePrivateBuildingValue Nothing hexes)
@@ -116,7 +116,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
 
         "sea level rise" ->
             output
-                |> countCriticalFacilities hexes
+                |> (countCriticalFacilities >> loseCriticalFacilities) hexes
                 |> Result.andThen (calculatePublicBuildingValue Nothing hexes)
                 |> Result.andThen (calculatePrivateLandValue hexes)
                 |> Result.andThen (calculatePrivateBuildingValue Nothing hexes)
@@ -126,12 +126,12 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
 
         "storm surge" ->
             output
-                |> flagCriticalFacilitiesPresence hexes
+                |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
                 |> Result.andThen (calculatePublicBuildingValue (Just stormSurgeBldgMultiplier) hexes)
                 |> Result.andThen (calculatePrivateBuildingValue (Just stormSurgeBldgMultiplier) hexes)
 
         badHazard ->
-            Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: " ++ badHazard)
+            Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: '" ++ badHazard ++ "'")
     
 
 calculateStrategyOutput : 
@@ -143,7 +143,14 @@ calculateStrategyOutput :
     -> OutputDetails
     -> Result OutputError OutputDetails
 calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noActionOutput =
-    Err <| BadInput ""
+    case String.toLower strategy.name of
+        "revetment" ->
+            output
+                |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+
+
+        badStrategy ->
+            Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
 
 
 
@@ -211,24 +218,44 @@ applyScenarioSize zoneOfImpact output =
     Ok { output | scenarioSize = zoneOfImpact.beachLengths.total }
 
 
-{-| Count the number of critical facilites being impacted
+countCriticalFacilities : AdaptationHexes -> Int
+countCriticalFacilities hexes =
+    hexes
+        |> List.foldl (\hex acc -> hex.numCriticalFacilities + acc) 0
+
+
+{-| Count the number of critical facilites being impacted as lost
 -}
-countCriticalFacilities : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
-countCriticalFacilities hexes output =
-    hexes
-        |> List.foldl (\hex acc -> acc - hex.numCriticalFacilities ) 0
-        |> countToCriticalFacilities
-        |> \result -> { output | criticalFacilities = result }
-        |> Ok
+loseCriticalFacilities : Int -> OutputDetails -> Result OutputError OutputDetails
+loseCriticalFacilities facilities output =
+    if facilities == 0 then
+        Ok output
+    else 
+        abs facilities
+            |> FacilitiesLost
+            |> \result -> Ok { output | criticalFacilities = result }
 
 
-flagCriticalFacilitiesPresence : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
-flagCriticalFacilitiesPresence hexes output =
-    hexes
-        |> List.any (\hex -> hex.numCriticalFacilities > 0)
-        |> boolToCriticalFacilities
-        |> \result -> { output | criticalFacilities = result }
-        |> Ok
+{-| Protect critical facilities from No Action output 
+-}
+protectCriticalFacilities : Int -> OutputDetails -> Result OutputError OutputDetails
+protectCriticalFacilities facilities output =
+    if facilities == 0 then
+        Ok output
+    else
+        abs facilities
+            |> FacilitiesProtected
+            |> \result -> Ok { output | criticalFacilities = result }
+
+
+flagCriticalFacilitiesAsPresent : Int -> OutputDetails -> Result OutputError OutputDetails
+flagCriticalFacilitiesAsPresent facilities output =
+    if facilities == 0 then
+        Ok output
+    else
+        abs facilities
+            |> FacilitiesPresent
+            |> \result -> Ok { output | criticalFacilities = result }
 
 
 {-| Calculate the change in public building value

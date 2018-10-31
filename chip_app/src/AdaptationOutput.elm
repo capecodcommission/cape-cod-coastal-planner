@@ -18,7 +18,7 @@ type OutputError
     = BadInput String
     | DetailsGHttpError (GHttp.Error (Maybe StrategyDetails))
     | HexHttpError Http.Error
-    | CalculationError (List String)
+    | CalculationError String
 
 
 type alias OutputDetails =
@@ -50,7 +50,7 @@ defaultOutput =
     , location = ""
     , duration = ""
     , scenarioSize = 0
-    , criticalFacilities = FacilitiesUnchanged
+    , criticalFacilities = FacilitiesUnchanged 0
     , publicBuildingValue = ValueUnchanged
     , privateLandValue = ValueUnchanged
     , privateBuildingValue = ValueUnchanged
@@ -116,26 +116,19 @@ acreageToAcreageResult acreage =
 type CriticalFacilities
     = FacilitiesLost Int
     | FacilitiesProtected Int
-    | FacilitiesUnchanged
-    | FacilitiesPresent
+    | FacilitiesUnchanged Int
+    | FacilitiesPresent Int
+    | FacilitiesRelocated Int
 
 
-countToCriticalFacilities : Int -> CriticalFacilities
-countToCriticalFacilities count =
-    if count < 0 then
-        FacilitiesLost count
-    else if count > 0 then
-        FacilitiesProtected count
-    else
-        FacilitiesUnchanged
-
-
-boolToCriticalFacilities : Bool -> CriticalFacilities
-boolToCriticalFacilities presence =
-    if presence then
-        FacilitiesPresent
-    else
-        FacilitiesUnchanged
+getCriticalFacilityCount : OutputDetails -> Int
+getCriticalFacilityCount { criticalFacilities } =
+    case criticalFacilities of
+        FacilitiesLost count -> count
+        FacilitiesProtected count -> count
+        FacilitiesUnchanged count -> count
+        FacilitiesPresent count -> count
+        FacilitiesRelocated count -> count
 
 
 type RareSpeciesHabitat
