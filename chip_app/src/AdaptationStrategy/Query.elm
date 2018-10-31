@@ -86,6 +86,7 @@ selectStrategyDetails =
     AS.selection StrategyDetails
         |> with AS.description
         |> with AS.currentlyPermittable
+        |> with AS.beachWidthImpactM
         |> with AS.imagePath
         |> with (AS.categories <| fieldSelection AC.id)
         |> with (AS.hazards <| fieldSelection CH.id)

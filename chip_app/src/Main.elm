@@ -520,20 +520,22 @@ runCalculations model =
                 |> Remote.toMaybe
                 |> Info.currentHazard
 
-        currentStrategy =
+        noActionStrategyWithDetails = 
             model.adaptationInfo
                 |> Remote.toMaybe
-                |> Info.currentStrategy
+                |> Info.noActionStrategyWithDetails
 
-        currentDetails =
+        currentStrategyWithDetails =
             model.adaptationInfo
                 |> Remote.toMaybe
-                |> Info.currentStrategyDetails
-                |> Maybe.andThen Remote.toMaybe
-                |> MEx.join
+                |> Info.currentStrategyWithDetails
     in
     Maybe.map5 (Maths.calculate model.adaptationHexes)
-        location model.zoneOfImpact currentHazard currentStrategy currentDetails
+        location 
+        model.zoneOfImpact 
+        currentHazard 
+        noActionStrategyWithDetails 
+        currentStrategyWithDetails
         |> Maybe.withDefault (Err <| BadInput "Cannot calculate output with missing input data.")
 
     

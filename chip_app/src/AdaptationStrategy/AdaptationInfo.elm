@@ -2,6 +2,7 @@ module AdaptationStrategy.AdaptationInfo exposing (..)
 
 
 import Dict
+import Dict.Extra as DEx
 import List.Zipper as Zipper exposing (Zipper)
 import Maybe.Extra as MEx
 import RemoteData as Remote
@@ -23,6 +24,38 @@ type alias AdaptationInfo =
     }
 
 
+noActionStrategy : Maybe AdaptationInfo -> Maybe Strategy
+noActionStrategy info =
+    info
+        |> Maybe.map .strategies
+        |> Maybe.andThen
+            (DEx.find (\_ strategy -> strategy.name == "No Action" ))
+        |> Maybe.map Tuple.second
+
+
+noActionStrategyDetails : Maybe AdaptationInfo -> Maybe (GqlData (Maybe StrategyDetails))
+noActionStrategyDetails info =
+    info
+        |> noActionStrategy
+        |> Maybe.map .details
+
+
+noActionStrategyWithDetails : Maybe AdaptationInfo -> Maybe ( Strategy, StrategyDetails )
+noActionStrategyWithDetails info =
+    let
+        strategy = noActionStrategy info
+
+        strategyDetails = 
+            strategy
+                |> Maybe.map .details
+                |> Maybe.andThen Remote.toMaybe
+                |> MEx.join
+    in
+    strategyDetails
+        |> Maybe.map2 (\strat details -> (strat, details)) strategy
+
+
+
 currentHazard : Maybe AdaptationInfo -> Maybe CoastalHazard
 currentHazard info =
     info
@@ -42,20 +75,19 @@ currentStrategy info =
         |> MEx.join
 
 
-currentStrategyWithDetails : Maybe AdaptationInfo -> Maybe Strategy
+currentStrategyWithDetails : Maybe AdaptationInfo -> Maybe ( Strategy, StrategyDetails )
 currentStrategyWithDetails info =
     let
         strategy = currentStrategy info
 
-        details = 
+        strategyDetails = 
             strategy
                 |> Maybe.map .details
                 |> Maybe.andThen Remote.toMaybe
                 |> MEx.join
     in
-    case MEx.isJust details of
-        True -> strategy
-        False -> Nothing
+    strategyDetails
+        |> Maybe.map2 (\strat details -> (strat, details)) strategy
 
 
 currentStrategyDetails : Maybe AdaptationInfo -> Maybe (GqlData (Maybe StrategyDetails))

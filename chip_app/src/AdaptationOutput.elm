@@ -1,6 +1,8 @@
 module AdaptationOutput exposing (..)
 
 import Http
+import Graphqelm.Http as GHttp
+import AdaptationStrategy.StrategyDetails exposing (StrategyDetails)
 import AdaptationStrategy.Impacts exposing (..)
 import AdaptationHexes exposing (..)
 
@@ -14,6 +16,7 @@ type AdaptationOutput
 
 type OutputError
     = BadInput String
+    | DetailsGHttpError (GHttp.Error (Maybe StrategyDetails))
     | HexHttpError Http.Error
     | CalculationError (List String)
 

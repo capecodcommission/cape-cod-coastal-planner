@@ -4,7 +4,7 @@ import Message exposing (..)
 import Element exposing (..)
 import Element.Attributes as Attr exposing (..)
 import Element.Events exposing (..)
-import View.Helpers exposing (title, parseHttpError)
+import View.Helpers exposing (title, parseErrors, parseHttpError)
 import Styles exposing (..)
 import AdaptationOutput exposing (..)
 
@@ -34,6 +34,14 @@ view result =
                     "Bad Input"
                     [ err ]
                 , footerView 
+                ]
+
+            Err (DetailsGHttpError ghttpError) ->
+                [ parseErrors ghttpError
+                    |> List.head
+                    |> Maybe.withDefault ("GraphQL Error", "Could not fetch Stratgy Details from GraphQL API")
+                    |> (\(errTitle, errMsg) -> errorView errTitle [ errMsg ])
+                , footerView
                 ]
 
             Err (HexHttpError httpError) ->

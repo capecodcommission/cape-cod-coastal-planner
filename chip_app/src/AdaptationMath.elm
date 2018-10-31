@@ -36,10 +36,16 @@ calculate :
     -> ShorelineExtent 
     -> ZoneOfImpact 
     -> CoastalHazard
-    -> Strategy
-    -> StrategyDetails
+    -> ( Strategy, StrategyDetails )
+    -> ( Strategy, StrategyDetails )
     -> Result OutputError AdaptationOutput
-calculate hexResponse location zoneOfImpact hazard strategy details =
+calculate 
+    hexResponse 
+    location 
+    zoneOfImpact 
+    hazard 
+    noActionInfo 
+    ((strategy, details) as strategyInfo) =
     case hexResponse of
         NotAsked -> 
             Ok NotCalculated
@@ -52,27 +58,22 @@ calculate hexResponse location zoneOfImpact hazard strategy details =
 
         Success hexes ->
             let
-                basicOutput = 
-                    defaultOutput
-                        |> applyBasicInfo hexes location zoneOfImpact hazard strategy details
-
+                noActionOutput : Result OutputError OutputDetails
                 noActionOutput = 
-                    basicOutput
-                        |> Result.andThen (calculateNoAction hexes zoneOfImpact hazard)
+                    defaultOutput
+                        |> applyBasicInfo hexes location zoneOfImpact hazard noActionInfo
+                        |> Result.andThen (calculateNoActionOutput hexes zoneOfImpact hazard)
             in
-            noActionOutput
-                |> Result.andThen
-                    (\output ->
-                        case String.toLower strategy.name of
-                            "no action" ->
-                                Ok <| OnlyNoAction output
+            case String.toLower strategy.name of
+                "no action" ->
+                    noActionOutput
+                        |> Result.map OnlyNoAction
 
-                            name ->
-                                -- let
-                                --     strategyOutput = calculateStrategy hexes location zoneOfImpact hazard strategy details
-                                -- in
-                                Ok <| WithStrategy output output        
-                    )
+                name ->
+                    noActionOutput
+                        |> Result.andThen (calculateStrategyOutput hexes zoneOfImpact hazard strategyInfo defaultOutput)
+                        |> Result.andThen (applyBasicInfo hexes location zoneOfImpact hazard strategyInfo)
+                        |> Result.map2 WithStrategy noActionOutput
 
             
 applyBasicInfo : 
@@ -80,11 +81,10 @@ applyBasicInfo :
     -> ShorelineExtent 
     -> ZoneOfImpact 
     -> CoastalHazard 
-    -> Strategy 
-    -> StrategyDetails 
+    -> ( Strategy, StrategyDetails )
     -> OutputDetails 
     -> Result OutputError OutputDetails
-applyBasicInfo hexes location zoneOfImpact hazard strategy details output =
+applyBasicInfo hexes location zoneOfImpact hazard ( strategy, details ) output =
     output
         |> applyName strategy
         |> Result.andThen (applyScales details)
@@ -96,14 +96,13 @@ applyBasicInfo hexes location zoneOfImpact hazard strategy details output =
         |> Result.andThen (applyScenarioSize zoneOfImpact)
 
 
-
-calculateNoAction : 
+calculateNoActionOutput : 
     AdaptationHexes 
     -> ZoneOfImpact 
     -> CoastalHazard
     -> OutputDetails
     -> Result OutputError OutputDetails
-calculateNoAction hexes zoneOfImpact hazard output =
+calculateNoActionOutput hexes zoneOfImpact hazard output =
     case String.toLower hazard.name of
         "erosion" ->
             output
@@ -134,6 +133,17 @@ calculateNoAction hexes zoneOfImpact hazard output =
         badHazard ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: " ++ badHazard)
     
+
+calculateStrategyOutput : 
+    AdaptationHexes 
+    -> ZoneOfImpact 
+    -> CoastalHazard
+    -> (Strategy, StrategyDetails)
+    -> OutputDetails
+    -> OutputDetails
+    -> Result OutputError OutputDetails
+calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noActionOutput =
+    Err <| BadInput ""
 
 
 

@@ -7,6 +7,7 @@ import ChipApi.Scalar as Scalar
 type alias StrategyDetails =
     { description : Maybe String
     , currentlyPermittable : Maybe String
+    , beachWidthImpactM : Maybe Float
     , imagePath : Maybe String
     , categories : List Scalar.Id
     , hazards : List Scalar.Id
