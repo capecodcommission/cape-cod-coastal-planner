@@ -40,6 +40,33 @@ type alias OutputDetails =
     }
 
 
+type MonetaryResult
+    = ValueLoss MonetaryValue
+    | ValueProtected MonetaryValue
+    | ValueUnchanged
+
+
+type AcreageResult
+    = AcreageLost Acreage
+    | AcreageGained Acreage
+    | AcreageUnchanged
+
+
+type CriticalFacilities
+    = FacilitiesLost Int
+    | FacilitiesProtected Int
+    | FacilitiesUnchanged Int
+    | FacilitiesPresent Int
+    | FacilitiesRelocated Int
+
+
+type RareSpeciesHabitat
+    = HabitatLost
+    | HabitatGained
+    | HabitatUnchanged
+
+
+
 defaultOutput : OutputDetails
 defaultOutput =
     { name = ""
@@ -60,10 +87,24 @@ defaultOutput =
     }
 
 
-type MonetaryResult
-    = ValueLoss MonetaryValue
-    | ValueProtected MonetaryValue
-    | ValueUnchanged
+monetaryValueToResult : MonetaryValue -> MonetaryResult
+monetaryValueToResult value =
+    if value < 0 then
+        ValueLoss value
+    else if value > 0 then
+        ValueProtected value
+    else
+        ValueUnchanged
+
+
+acreageToAcreageResult : Acreage -> AcreageResult
+acreageToAcreageResult acreage =
+    if acreage < 0 then 
+        AcreageLost acreage
+    else if acreage > 0 then
+        AcreageGained acreage
+    else
+        AcreageUnchanged
 
 
 isValueUnchanged : MonetaryResult -> Bool
@@ -87,40 +128,6 @@ isValueProtected result =
         _ -> False
 
 
-monetaryValueToResult : MonetaryValue -> MonetaryResult
-monetaryValueToResult value =
-    if value < 0 then
-        ValueLoss value
-    else if value > 0 then
-        ValueProtected value
-    else
-        ValueUnchanged
-
-
-type AcreageResult
-    = AcreageLost Acreage
-    | AcreageGained Acreage
-    | AcreageUnchanged
-
-
-acreageToAcreageResult : Acreage -> AcreageResult
-acreageToAcreageResult acreage =
-    if acreage < 0 then 
-        AcreageLost acreage
-    else if acreage > 0 then
-        AcreageGained acreage
-    else
-        AcreageUnchanged
-
-
-type CriticalFacilities
-    = FacilitiesLost Int
-    | FacilitiesProtected Int
-    | FacilitiesUnchanged Int
-    | FacilitiesPresent Int
-    | FacilitiesRelocated Int
-
-
 getCriticalFacilityCount : OutputDetails -> Int
 getCriticalFacilityCount { criticalFacilities } =
     case criticalFacilities of
@@ -131,7 +138,34 @@ getCriticalFacilityCount { criticalFacilities } =
         FacilitiesRelocated count -> count
 
 
-type RareSpeciesHabitat
-    = HabitatLost
-    | HabitatGained
-    | HabitatUnchanged
+getMonetaryValue : MonetaryResult -> MonetaryValue
+getMonetaryValue result =
+    case result of
+        ValueLoss value -> 
+            if value > 0 then value * -1 else value
+        ValueProtected value -> value
+        ValueUnchanged -> 0.0
+
+
+getAcreageChange : AcreageResult -> Acreage
+getAcreageChange result =
+    case result of
+        AcreageLost value ->
+            if value > 0 then value * -1 else value 
+
+        AcreageGained value -> value
+
+        AcreageUnchanged -> 0
+
+
+adjustAcreageResult : Acreage -> AcreageResult -> Acreage
+adjustAcreageResult acreage result =
+    (getAcreageChange result) + acreage
+
+
+getRareSpeciesPresence : RareSpeciesHabitat -> Bool
+getRareSpeciesPresence habitat =
+    case habitat of
+        HabitatLost -> True
+        HabitatGained -> True
+        HabitatUnchanged -> False

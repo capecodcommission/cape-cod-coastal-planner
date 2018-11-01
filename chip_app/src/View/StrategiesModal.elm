@@ -547,7 +547,7 @@ coastalHazardView hazard matched =
     ("coastal_hazard_view_" ++ (toString <| getId hazard.id)
     , Keyed.column NoStyle
         [ width (percent (1/3 * 100)), center, verticalCenter ]
-        [ case (SEx.underscored hazard.name, matched) of
+        [ case (String.toLower hazard.name, matched) of
             ( "erosion", True ) ->
                 ( "erosion_icon_" ++ keySuffix matched
                 , erosionIconConfig
@@ -563,28 +563,28 @@ coastalHazardView hazard matched =
             
                 )
 
-            ( "sea_level_rise", True ) ->
+            ( "sea level rise", True ) ->
                 ( "sea_level_rise_icon_" ++ keySuffix matched
                 , seaLevelRiseIconConfig
                     |> seaLevelRiseIcon
                     |> html
                 )
 
-            ( "sea_level_rise", False ) ->
+            ( "sea level rise", False ) ->
                 ( "sea_level_rise_icon_" ++ keySuffix matched
                 , { seaLevelRiseIconConfig | color = Color.rgb 79 88 98 }
                     |> seaLevelRiseIcon 
                     |> html
                 )
 
-            ( "storm_surge", True ) ->
+            ( "storm surge", True ) ->
                 ( "storm_surge_icon" ++ keySuffix matched
                 , stormSurgeIconConfig
                     |> stormSurgeIcon
                     |> html
                 )
 
-            ( "storm_surge", False ) ->
+            ( "storm surge", False ) ->
                 ( "storm_surge_icon" ++ keySuffix matched
                 , { stormSurgeIconConfig | color = Color.rgb 79 88 98 }
                     |> stormSurgeIcon 

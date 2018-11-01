@@ -54,3 +54,10 @@ hasScale id details =
 hasBenefit : String -> StrategyDetails -> Bool
 hasBenefit val details =
     List.member val details.benefits
+
+
+acreageImpact : Float -> StrategyDetails -> Float
+acreageImpact length details =
+    details.beachWidthImpactM
+        |> Maybe.map (\width -> abs <| width * length)
+        |> Maybe.withDefault 0.0

@@ -3,7 +3,7 @@ module AdaptationMath exposing (..)
 
 import AdaptationStrategy.CoastalHazards exposing (CoastalHazard)
 import AdaptationStrategy.Strategies exposing (Strategy)
-import AdaptationStrategy.StrategyDetails exposing (StrategyDetails)
+import AdaptationStrategy.StrategyDetails as Details exposing (StrategyDetails)
 import AdaptationStrategy.Impacts exposing (..)
 import AdaptationHexes as Hexes exposing (..)
 import AdaptationOutput exposing (..)
@@ -177,7 +177,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                             ( (sumPrivateBldgValue
                                 >> applyMultiplier stormSurgeBldgMultiplier
                                 >> losePrivateBldgValue)
-                            hexes
+                              hexes
                             )
 
                 False ->
@@ -189,6 +189,13 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
     
 
 
+{-| Calculate Strategy Output given a default copy of output and already calculated output for NoAction.
+
+    If an output category is intended to have no impact due to the strategy or hazard, you can rely on the default value.
+
+    If an output category relies on anything previously calcultated for NoAction, then you need to set it on the
+    strategy's output, even if that means it's just copying it over from NoAction.
+-}
 calculateStrategyOutput : 
     AdaptationHexes 
     -> ZoneOfImpact 
@@ -198,13 +205,67 @@ calculateStrategyOutput :
     -> OutputDetails
     -> Result OutputError OutputDetails
 calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noActionOutput =
-    case String.toLower strategy.name of
-        "revetment" ->
-            output
-                |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+    case String.toLower hazard.name of
+        "erosion" ->
+            let
+                avgErosion = averageErosion hexes
+            in
+            case (String.toLower strategy.name, avgErosion) of
+                ( "revetment", Eroding _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> protectPrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.saltMarshChange >> copySaltMarshAcreage) noActionOutput)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen 
+                            ( (.beachAreaChange 
+                                >> adjustAcreageResult (Details.acreageImpact (toFloat zoneOfImpact.beachLengths.total) details)
+                                >> setBeachArea) 
+                              noActionOutput
+                            )
 
-        badStrategy ->
-            Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
+                ( "revetment", Accreting _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> setCriticalFacilitiesUnchanged) noActionOutput
+                        |> Result.andThen
+                            ( (.beachAreaChange 
+                                >> adjustAcreageResult (Details.acreageImpact (toFloat zoneOfImpact.beachLengths.total) details)
+                                >> setBeachArea) 
+                              noActionOutput
+                            )
+
+                ( "revetment", NoErosion ) ->
+                    output
+                        |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput
+                        |> Result.andThen
+                            (setBeachArea <| Details.acreageImpact (toFloat zoneOfImpact.beachLengths.total) details)
+
+                ( badStrategy, _ ) ->
+                    Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
+
+
+        "sea level rise" ->
+            let
+                avgSeaLevelRise = averageSeaLevelRise hexes
+            in
+            case ( String.toLower strategy.name, avgSeaLevelRise ) of
+                ( badStrategy, _ ) ->
+                    Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
+
+        "storm surge" ->
+            let
+                vulnerableToSurge = isVulnerableToStormSurge hexes
+            in
+            case ( String.toLower strategy.name, vulnerableToSurge ) of
+                ( badStrategy, _ ) ->
+                    Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
+    
+        badHazard ->
+            Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: '" ++ badHazard ++ "'")
+
+
 
 
 
@@ -301,6 +362,11 @@ protectCriticalFacilities facilities output =
             |> \result -> Ok { output | criticalFacilities = result }
 
 
+setCriticalFacilitiesUnchanged : Count -> OutputDetails -> Result OutputError OutputDetails
+setCriticalFacilitiesUnchanged facilities output =
+    Ok { output | criticalFacilities = FacilitiesUnchanged facilities }
+
+
 flagCriticalFacilitiesAsPresent : Count -> OutputDetails -> Result OutputError OutputDetails
 flagCriticalFacilitiesAsPresent facilities output =
     if facilities == 0 then
@@ -318,12 +384,34 @@ losePublicBldgValue value output =
     else
         Ok { output | publicBuildingValue = ValueLoss <| abs value }
 
+
+protectPublicBldgValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
+protectPublicBldgValue value output =
+    if value == 0 then
+        Ok { output | publicBuildingValue = ValueUnchanged }
+    else
+        Ok { output | publicBuildingValue = ValueProtected <| abs value }
+
+
+setPublicBldgValueUnchanged : OutputDetails -> Result OutputError OutputDetails
+setPublicBldgValueUnchanged output =
+    Ok { output | publicBuildingValue = ValueUnchanged }
+
+
 losePrivateLandValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
 losePrivateLandValue value output =
     if value == 0 then
         Ok { output | privateLandValue = ValueUnchanged }
     else
         Ok { output | privateLandValue = ValueLoss <| abs value }
+
+
+protectPrivateLandValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
+protectPrivateLandValue value output =
+    if value == 0 then
+        Ok { output | privateLandValue = ValueUnchanged }
+    else
+        Ok { output | privateLandValue = ValueProtected <| abs value }
 
 
 losePrivateBldgValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
@@ -334,12 +422,25 @@ losePrivateBldgValue value output =
         Ok { output | privateBuildingValue = ValueLoss <| abs value }
 
 
+protectPrivateBldgValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
+protectPrivateBldgValue value output =
+    if value == 0 then
+        Ok { output | privateBuildingValue = ValueUnchanged }
+    else
+        Ok { output | privateBuildingValue = ValueProtected <| abs value }
+
+
 loseSaltMarshAcreage : Acreage -> OutputDetails -> Result OutputError OutputDetails
 loseSaltMarshAcreage acreage output =
     if acreage == 0 then
         Ok { output | saltMarshChange = AcreageUnchanged }
     else
         Ok { output | saltMarshChange = AcreageLost <| abs acreage}
+
+
+copySaltMarshAcreage : AcreageResult -> OutputDetails -> Result OutputError OutputDetails
+copySaltMarshAcreage result output =
+    Ok { output | saltMarshChange = result }
 
 
 loseBeachArea : ZoneOfImpact -> ImpactWidth -> OutputDetails -> Result OutputError OutputDetails
@@ -360,17 +461,14 @@ gainBeachArea { beachLengths } avgWidth output =
             Ok { output | beachAreaChange = AcreageGained <| abs acreage }
 
 
-calculateBeachWidthChangeForSeaLevelRise : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
-calculateBeachWidthChangeForSeaLevelRise hexes zoneOfImpact output =
-    let
-        hexesWithSLR = hexes |> List.filter (\hex -> hex.seaLevelRise /= NoSeaRise)
-    in
-    hexesWithSLR
-        |> List.foldl (\hex acc -> (Hexes.seaLevelRiseToFloat hex.seaLevelRise) + acc)  0.0
-        |> (\result -> result / (toFloat <| List.length hexesWithSLR) * (toFloat zoneOfImpact.beachLengths.total) * -1)
-        |> acreageToAcreageResult
-        |> \result -> { output | beachAreaChange = result }
-        |> Ok
+setBeachArea : Acreage -> OutputDetails -> Result OutputError OutputDetails
+setBeachArea acreage output =
+    if acreage > 0 then
+        Ok { output | beachAreaChange = AcreageGained acreage }
+    else if acreage < 0 then
+        Ok { output | beachAreaChange = AcreageLost <| abs acreage }
+    else
+        Ok { output | beachAreaChange = AcreageUnchanged }
 
 
 gainRareSpeciesHabitat : Bool -> OutputDetails -> Result OutputError OutputDetails
@@ -387,6 +485,12 @@ loseRareSpeciesHabitat isPresent output =
         Ok { output | rareSpeciesHabitat = HabitatLost }
     else
         Ok { output | rareSpeciesHabitat = HabitatUnchanged }
+
+
+setRareSpeciesHabitatUnchanged : OutputDetails -> Result OutputError OutputDetails
+setRareSpeciesHabitatUnchanged output =
+    Ok { output | rareSpeciesHabitat = HabitatUnchanged }
+
 
 
 -- {-| Calculate the net present value (NPV) for selected shoreline

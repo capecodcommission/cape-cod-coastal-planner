@@ -1,7 +1,7 @@
 module Graphics.Erosion exposing (ErosionIconConfig, erosionIconConfig, erosionIcon)
 
 import Html exposing (Html)
-import Html.Attributes exposing (id)
+import Html.Attributes exposing (id, style)
 import Color exposing (Color)
 import Svg exposing (Svg)
 import TypedSvg exposing (rect, svg, g, mask, use, path)

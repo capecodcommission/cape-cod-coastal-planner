@@ -104,6 +104,8 @@ type OutputStyles
     = OutputHeader
     | OutputDivider
     | OutputSmallItalic
+    | OutputAddresses
+    | OutputHazard
 
 type StrategiesStyles
     = StrategiesSidebar
@@ -432,6 +434,12 @@ stylesheet device =
         , Style.style (ShowOutput OutputSmallItalic)
             [ Font.size 14
             , Font.italic
+            ]
+        , Style.style (ShowOutput OutputAddresses)
+            [ Font.size 13 ]
+        , Style.style (ShowOutput OutputHazard)
+            [ Font.size 16
+            , Font.bold
             ]
         , Style.style (Headings H1) <| headingStyle 6
         , Style.style (Headings H2) <| headingStyle 5

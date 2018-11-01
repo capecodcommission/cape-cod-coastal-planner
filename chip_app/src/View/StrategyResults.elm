@@ -4,6 +4,9 @@ import Message exposing (..)
 import Element exposing (..)
 import Element.Attributes as Attr exposing (..)
 import Element.Events exposing (..)
+import Graphics.Erosion exposing (erosionIcon, erosionIconConfig)
+import Graphics.SeaLevelRise exposing (seaLevelRiseIcon, seaLevelRiseIconConfig)
+import Graphics.StormSurge exposing (stormSurgeIcon, stormSurgeIconConfig)
 import View.Helpers exposing (title, parseErrors, parseHttpError)
 import Styles exposing (..)
 import AdaptationOutput exposing (..)
@@ -80,7 +83,7 @@ resultsHeader output =
 
 resultsMainContent : OutputDetails -> Element MainStyles Variations Msg
 resultsMainContent output =
-    column NoStyle [ height fill, spacing 20 ]
+    column NoStyle [ height fill ]
         [ scenarioGeneralInfoView output
         , column NoStyle [ paddingXY 20 0 ]
             [ h6 (Headings H6) [] <| text "SCENARIO OUTPUTS"
@@ -197,15 +200,28 @@ scenarioGeneralInfoView output =
     in
     
     row NoStyle [ height (px 125), paddingXY 25 30 ]
-        [ el (ShowOutput OutputDivider) [ width (px 180) ] <|
-            row NoStyle [ spacingXY 20 0 ]
-                [ circle 30 (AddStrategies StrategiesDetailsCategoryCircle) [ center, verticalCenter ] empty
-                , column NoStyle []
-                    [ paragraph NoStyle [] [ text "SCENARIO ADDRESSES" ]
-                    , el NoStyle [] <| text output.hazard
+        [ el (ShowOutput OutputDivider) [ width (px 180), height fill, paddingRight 10 ] <|
+            row NoStyle [height fill, spacingXY 8 0]
+                [ el NoStyle [ center, verticalCenter, height fill  ] <|
+                    ( case String.toLower output.hazard of
+                        "erosion" ->
+                            erosionIconConfig |> erosionIcon |> html 
+
+                        "sea level rise" ->
+                            seaLevelRiseIconConfig |> seaLevelRiseIcon |> html
+
+                        "storm surge" ->
+                            stormSurgeIconConfig |> stormSurgeIcon |> html
+
+                        _ ->
+                            empty
+                    )
+                , column NoStyle [ width fill, verticalCenter ]
+                    [ el NoStyle [] <| paragraph (ShowOutput OutputAddresses) [ center ] [ text "SCENARIO ADDRESSES" ]
+                    , el NoStyle [] <| paragraph (ShowOutput OutputHazard) [] [ text output.hazard ]
                     ]
                 ]
-        , column NoStyle [ paddingXY 15 0, spacingXY 0 4 ]
+        , column NoStyle [ paddingLeft 15, spacingXY 0 4 ]
             [ renderDetails "LOCATION:" output.location "area"
             , renderDetails "DURATION:" output.duration ""
             , renderDetails "SCENARIO SIZE:" (toString output.scenarioSize) "linear feet"
