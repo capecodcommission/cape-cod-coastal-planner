@@ -5,7 +5,7 @@ import AdaptationStrategy.CoastalHazards exposing (CoastalHazard)
 import AdaptationStrategy.Strategies exposing (Strategy)
 import AdaptationStrategy.StrategyDetails exposing (StrategyDetails)
 import AdaptationStrategy.Impacts exposing (..)
-import AdaptationHexes as Hexes exposing (AdaptationHexes, SeaLevelRise(..), ErosionImpact(..), MonetaryValue)
+import AdaptationHexes as Hexes exposing (..)
 import AdaptationOutput exposing (..)
 import ShorelineLocation exposing (..)
 import RemoteData as Remote exposing (WebData, RemoteData(..))
@@ -105,34 +105,89 @@ calculateNoActionOutput :
 calculateNoActionOutput hexes zoneOfImpact hazard output =
     case String.toLower hazard.name of
         "erosion" ->
-            output
-                |> (countCriticalFacilities >> loseCriticalFacilities) hexes
-                |> Result.andThen (calculatePublicBuildingValue Nothing hexes)
-                |> Result.andThen (calculatePrivateLandValue hexes)
-                |> Result.andThen (calculatePrivateBuildingValue Nothing hexes)
-                |> Result.andThen (calculateSaltMarshChange hexes)
-                |> Result.andThen (calculateBeachWidthChangeForErosion hexes zoneOfImpact)
-                |> Result.andThen (calculateRareSpeciesHabitat hexes)
+            let
+                avgErosion = averageErosion hexes
+            in
+            case avgErosion of
+                Eroding width ->
+                    output
+                        |> (countCriticalFacilities >> loseCriticalFacilities) hexes
+                        |> Result.andThen ((sumPublicBldgValue >> losePublicBldgValue) hexes)
+                        |> Result.andThen 
+                            ( (sumPrivateLandAcreage 
+                                >> applyMultiplier privateLandMultiplier
+                                >> losePrivateLandValue)
+                              hexes
+                            )
+                        |> Result.andThen ((sumPrivateBldgValue >> losePrivateBldgValue) hexes)
+                        |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) hexes)
+                        |> Result.andThen ((isRareSpeciesHabitatPresent >> loseRareSpeciesHabitat) hexes)
+                        |> Result.andThen (loseBeachArea zoneOfImpact width)
+
+                Accreting width ->
+                    output
+                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
+                        |> Result.andThen ((isRareSpeciesHabitatPresent >> gainRareSpeciesHabitat) hexes)
+                        |> Result.andThen (gainBeachArea zoneOfImpact width)
+
+
+                NoErosion -> 
+                    output
+                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
 
         "sea level rise" ->
-            output
-                |> (countCriticalFacilities >> loseCriticalFacilities) hexes
-                |> Result.andThen (calculatePublicBuildingValue Nothing hexes)
-                |> Result.andThen (calculatePrivateLandValue hexes)
-                |> Result.andThen (calculatePrivateBuildingValue Nothing hexes)
-                |> Result.andThen (calculateSaltMarshChange hexes)
-                |> Result.andThen (calculateBeachWidthChangeForSeaLevelRise hexes zoneOfImpact)
-                |> Result.andThen (calculateRareSpeciesHabitat hexes)
+            let
+                avgSeaLevelRise = averageSeaLevelRise hexes
+            in
+            case avgSeaLevelRise of
+                VulnSeaRise width ->
+                    output
+                        |> (countCriticalFacilities >> loseCriticalFacilities) hexes
+                        |> Result.andThen ((sumPublicBldgValue >> losePublicBldgValue) hexes)
+                        |> Result.andThen
+                            ( (sumPrivateLandAcreage 
+                                >> applyMultiplier privateLandMultiplier
+                                >> losePrivateLandValue)
+                            hexes
+                            )
+                        |> Result.andThen ((sumPrivateBldgValue >> losePrivateBldgValue) hexes)
+                        |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) hexes)
+                        |> Result.andThen ((isRareSpeciesHabitatPresent >> loseRareSpeciesHabitat) hexes)
+                        |> Result.andThen (loseBeachArea zoneOfImpact width)
+
+                NoSeaRise ->
+                    output
+                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
 
         "storm surge" ->
-            output
-                |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
-                |> Result.andThen (calculatePublicBuildingValue (Just stormSurgeBldgMultiplier) hexes)
-                |> Result.andThen (calculatePrivateBuildingValue (Just stormSurgeBldgMultiplier) hexes)
+            let
+                vulnerableToSurge = isVulnerableToStormSurge hexes
+            in
+            case vulnerableToSurge of
+                True ->
+                    output
+                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
+                        |> Result.andThen 
+                            ( (sumPublicBldgValue
+                                >> applyMultiplier stormSurgeBldgMultiplier
+                                >> losePublicBldgValue)
+                            hexes
+                            )
+                        |> Result.andThen
+                            ( (sumPrivateBldgValue
+                                >> applyMultiplier stormSurgeBldgMultiplier
+                                >> losePrivateBldgValue)
+                            hexes
+                            )
+
+                False ->
+                    output
+                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
 
         badHazard ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: '" ++ badHazard ++ "'")
     
+
 
 calculateStrategyOutput : 
     AdaptationHexes 
@@ -147,7 +202,6 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
         "revetment" ->
             output
                 |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
-
 
         badStrategy ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
@@ -218,15 +272,14 @@ applyScenarioSize zoneOfImpact output =
     Ok { output | scenarioSize = zoneOfImpact.beachLengths.total }
 
 
-countCriticalFacilities : AdaptationHexes -> Int
-countCriticalFacilities hexes =
-    hexes
-        |> List.foldl (\hex acc -> hex.numCriticalFacilities + acc) 0
+applyMultiplier : Float -> Float -> Float
+applyMultiplier multiplier value =
+    multiplier * value
 
 
 {-| Count the number of critical facilites being impacted as lost
 -}
-loseCriticalFacilities : Int -> OutputDetails -> Result OutputError OutputDetails
+loseCriticalFacilities : Count -> OutputDetails -> Result OutputError OutputDetails
 loseCriticalFacilities facilities output =
     if facilities == 0 then
         Ok output
@@ -238,7 +291,7 @@ loseCriticalFacilities facilities output =
 
 {-| Protect critical facilities from No Action output 
 -}
-protectCriticalFacilities : Int -> OutputDetails -> Result OutputError OutputDetails
+protectCriticalFacilities : Count -> OutputDetails -> Result OutputError OutputDetails
 protectCriticalFacilities facilities output =
     if facilities == 0 then
         Ok output
@@ -248,7 +301,7 @@ protectCriticalFacilities facilities output =
             |> \result -> Ok { output | criticalFacilities = result }
 
 
-flagCriticalFacilitiesAsPresent : Int -> OutputDetails -> Result OutputError OutputDetails
+flagCriticalFacilitiesAsPresent : Count -> OutputDetails -> Result OutputError OutputDetails
 flagCriticalFacilitiesAsPresent facilities output =
     if facilities == 0 then
         Ok output
@@ -258,71 +311,53 @@ flagCriticalFacilitiesAsPresent facilities output =
             |> \result -> Ok { output | criticalFacilities = result }
 
 
-{-| Calculate the change in public building value
--}
-calculatePublicBuildingValue : Maybe Float -> AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
-calculatePublicBuildingValue maybeMultiplier hexes output =
-    let
-        multiplier = maybeMultiplier |> Maybe.withDefault 1.0
-    in
-    hexes
-        |> List.foldl (\hex acc -> hex.privateBldgValue + acc ) 0
-        |> (\value -> value * multiplier)
-        |> monetaryValueToResult
-        |> \result -> { output | privateBuildingValue = result }
-        |> Ok
+losePublicBldgValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
+losePublicBldgValue value output =
+    if value == 0 then
+        Ok { output | publicBuildingValue = ValueUnchanged }
+    else
+        Ok { output | publicBuildingValue = ValueLoss <| abs value }
+
+losePrivateLandValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
+losePrivateLandValue value output =
+    if value == 0 then
+        Ok { output | privateLandValue = ValueUnchanged }
+    else
+        Ok { output | privateLandValue = ValueLoss <| abs value }
 
 
-{-| Calculate the change in private land value
--}
-calculatePrivateLandValue : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
-calculatePrivateLandValue hexes output =
-    hexes
-        |> List.foldl (\hex acc -> hex.shorelinePrivateAcres + acc ) 0
-        |> (\acreage -> acreage * privateLandMultiplier * -1)
-        |> monetaryValueToResult
-        |> \result -> { output | privateLandValue = result }
-        |> Ok
+losePrivateBldgValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
+losePrivateBldgValue value output =
+    if value == 0 then
+        Ok { output | privateBuildingValue = ValueUnchanged }
+    else
+        Ok { output | privateBuildingValue = ValueLoss <| abs value }
 
 
-{-| Calculate the change in private building value
--}
-calculatePrivateBuildingValue : Maybe Float -> AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
-calculatePrivateBuildingValue maybeMultiplier hexes output =
-    let
-        multiplier = maybeMultiplier |> Maybe.withDefault 1
-    in
-    hexes
-        |> List.foldl (\hex acc -> acc - hex.privateBldgValue) 0
-        |> (\value -> value * multiplier)
-        |> monetaryValueToResult
-        |> \result -> { output | privateBuildingValue = result }
-        |> Ok
+loseSaltMarshAcreage : Acreage -> OutputDetails -> Result OutputError OutputDetails
+loseSaltMarshAcreage acreage output =
+    if acreage == 0 then
+        Ok { output | saltMarshChange = AcreageUnchanged }
+    else
+        Ok { output | saltMarshChange = AcreageLost <| abs acreage}
 
 
-{-| Calculate the change in both acreage and value for salt marsh area
--}
-calculateSaltMarshChange : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
-calculateSaltMarshChange hexes output =
-    hexes 
-        |> List.foldl (\hex acc -> hex.saltMarshAcres + acc ) 0
-        |> (*) -1
-        |> acreageToAcreageResult
-        |> \result -> { output | saltMarshChange = result }
-        |> Ok
+loseBeachArea : ZoneOfImpact -> ImpactWidth -> OutputDetails -> Result OutputError OutputDetails
+loseBeachArea { beachLengths } avgWidth output =
+    case toFloat beachLengths.total * avgWidth of
+        0 ->
+            Ok { output | beachAreaChange = AcreageUnchanged }
+        acreage ->
+            Ok { output | beachAreaChange = AcreageLost <| abs acreage }
 
 
-calculateBeachWidthChangeForErosion : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
-calculateBeachWidthChangeForErosion hexes zoneOfImpact output =
-    let
-        hexesWithErosion = hexes |> List.filter (\hex -> hex.erosion /= NoErosion)
-    in
-    hexesWithErosion
-        |> List.foldl (\hex acc -> (Hexes.erosionImpactToFloat hex.erosion) + acc)  0.0
-        |> (\result -> result / (toFloat <| List.length hexesWithErosion) * (toFloat zoneOfImpact.beachLengths.total))
-        |> acreageToAcreageResult
-        |> \result -> { output | beachAreaChange = result }
-        |> Ok
+gainBeachArea : ZoneOfImpact -> ImpactWidth -> OutputDetails -> Result OutputError OutputDetails
+gainBeachArea { beachLengths } avgWidth output =
+    case toFloat beachLengths.total * avgWidth of
+        0 ->
+            Ok { output | beachAreaChange = AcreageUnchanged }
+        acreage ->
+            Ok { output | beachAreaChange = AcreageGained <| abs acreage }
 
 
 calculateBeachWidthChangeForSeaLevelRise : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
@@ -338,20 +373,20 @@ calculateBeachWidthChangeForSeaLevelRise hexes zoneOfImpact output =
         |> Ok
 
 
-{-| Calculate whether there is an impact to rare species habitat
--}
-calculateRareSpeciesHabitat : AdaptationHexes -> OutputDetails -> Result OutputError OutputDetails
-calculateRareSpeciesHabitat hexes output =
-    hexes
-        |> List.map .rareSpecies
-        |> List.member True
-        |> (\result -> 
-            if result == True then
-                { output | rareSpeciesHabitat = HabitatLost }
-            else
-                { output | rareSpeciesHabitat = HabitatUnchanged }
-            )
-        |> Ok
+gainRareSpeciesHabitat : Bool -> OutputDetails -> Result OutputError OutputDetails
+gainRareSpeciesHabitat isPresent output =
+    if isPresent then
+        Ok { output | rareSpeciesHabitat = HabitatGained }
+    else
+        Ok { output | rareSpeciesHabitat = HabitatUnchanged }
+
+
+loseRareSpeciesHabitat : Bool -> OutputDetails -> Result OutputError OutputDetails
+loseRareSpeciesHabitat isPresent output =
+    if isPresent then
+        Ok { output | rareSpeciesHabitat = HabitatLost }
+    else
+        Ok { output | rareSpeciesHabitat = HabitatUnchanged }
 
 
 -- {-| Calculate the net present value (NPV) for selected shoreline

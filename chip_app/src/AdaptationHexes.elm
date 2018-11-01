@@ -24,7 +24,7 @@ type alias AdaptationHex =
     , shorelinePrivateAcres : Acreage
     , privateBldgValue : MonetaryValue
     , publicBldgValue : MonetaryValue
-    , numCriticalFacilities : Int
+    , numCriticalFacilities : Count
     }
 
 
@@ -39,21 +39,9 @@ type alias AdaptationHex =
 -}
 type ErosionImpact
     = NoErosion
-    | Accreting ErosionWidth
-    | Eroding ErosionWidth
+    | Accreting ImpactWidth
+    | Eroding ImpactWidth
 
-
-erosionImpactToFloat : ErosionImpact -> Float
-erosionImpactToFloat impact =
-    case impact of
-        NoErosion ->
-            0
-
-        Accreting val ->
-            val
-
-        Eroding val ->
-            val * -1
 
 
 {-| SeaLevelRise
@@ -65,15 +53,7 @@ erosionImpactToFloat impact =
 -}
 type SeaLevelRise
     = NoSeaRise
-    | VulnSeaRise InundationWidth
-
-
-seaLevelRiseToFloat : SeaLevelRise -> Float
-seaLevelRiseToFloat slr =
-    case slr of
-        NoSeaRise -> 0
-
-        VulnSeaRise width -> width
+    | VulnSeaRise ImpactWidth
 
 
 {-| StormSurge
@@ -89,7 +69,7 @@ type StormSurge
     | VulnSurge Acreage
 
 
-type alias ErosionWidth = Float
+type alias ImpactWidth = Float
 
 
 type alias InundationWidth = Float
@@ -101,6 +81,137 @@ type alias Acreage = Float
 type alias MonetaryValue = Float
 
 
+type alias Count = Int
+
+
+--
+-- CALCULATIONS AND TRANSFORMS
+--
+
+
+erosionImpactToFloat : ErosionImpact -> Float
+erosionImpactToFloat impact =
+    case impact of
+        NoErosion ->
+            0
+
+        Accreting val ->
+            val
+
+        Eroding val ->
+            val * -1
+
+
+erosionImpactFromFloat : Float -> ErosionImpact
+erosionImpactFromFloat value =
+    if value > 0 then
+        Accreting value
+    else if value < 0 then
+        Eroding value
+    else
+        NoErosion
+
+
+seaLevelRiseToFloat : SeaLevelRise -> Float
+seaLevelRiseToFloat slr =
+    case slr of
+        NoSeaRise -> 0
+
+        VulnSeaRise width -> width
+
+
+seaLevelRiseFromFloat : Float -> SeaLevelRise
+seaLevelRiseFromFloat value =
+    if value == 0 then
+        NoSeaRise
+    else
+        VulnSeaRise <| abs value
+
+
+withErosion : AdaptationHexes -> AdaptationHexes
+withErosion hexes =
+    hexes |> List.filter (\hex -> hex.erosion /= NoErosion)
+
+
+withSeaLevelRise : AdaptationHexes -> AdaptationHexes
+withSeaLevelRise hexes =
+    hexes |> List.filter (\hex -> hex.seaLevelRise /= NoSeaRise)
+
+
+averageErosion : AdaptationHexes -> ErosionImpact
+averageErosion hexes =
+    let
+        hexesWithErosion = hexes |> withErosion
+    in
+    hexesWithErosion
+        |> List.foldl (\hex acc -> (erosionImpactToFloat hex.erosion) + acc) 0.0
+        |> \result ->
+            ( case List.length hexesWithErosion of
+                0 ->
+                    NoErosion
+                
+                count ->
+                    erosionImpactFromFloat (result / toFloat count)
+            )
+
+
+averageSeaLevelRise : AdaptationHexes -> SeaLevelRise
+averageSeaLevelRise hexes =
+    let
+        hexesWithSLR = hexes |> withSeaLevelRise
+    in
+    hexesWithSLR
+        |> List.foldl (\hex acc -> (seaLevelRiseToFloat hex.seaLevelRise) + acc) 0.0
+        |> \result ->
+            ( case List.length hexesWithSLR of
+                0 ->
+                    NoSeaRise
+
+                count ->
+                    seaLevelRiseFromFloat (result / toFloat count)
+            )
+
+
+countCriticalFacilities : AdaptationHexes -> Int
+countCriticalFacilities hexes =
+    hexes
+        |> List.foldl (\hex acc -> hex.numCriticalFacilities + acc) 0
+
+
+isRareSpeciesHabitatPresent : AdaptationHexes -> Bool
+isRareSpeciesHabitatPresent hexes =
+    hexes
+        |> List.any (\hex -> hex.rareSpecies == True)
+
+
+isVulnerableToStormSurge : AdaptationHexes -> Bool
+isVulnerableToStormSurge hexes =
+    hexes
+        |> List.any (\hex -> hex.stormSurge /= NoSurge)
+
+
+sumPublicBldgValue : AdaptationHexes -> Float
+sumPublicBldgValue hexes =
+    hexes
+        |> List.foldl (\hex acc -> hex.publicBldgValue + acc) 0.0
+
+
+sumPrivateLandAcreage : AdaptationHexes -> Float
+sumPrivateLandAcreage hexes =
+    hexes
+        |> List.foldl (\hex acc -> hex.shorelinePrivateAcres + acc) 0.0
+
+
+sumPrivateBldgValue : AdaptationHexes -> Float
+sumPrivateBldgValue hexes =
+    hexes
+        |> List.foldl (\hex acc -> hex.privateBldgValue + acc) 0.0
+
+
+sumSaltMarshAcreage : AdaptationHexes -> Float
+sumSaltMarshAcreage hexes =
+    hexes
+        |> List.foldl (\hex acc -> hex.saltMarshAcres + acc) 0.0
 
 --
 -- DECODERS ETC.
