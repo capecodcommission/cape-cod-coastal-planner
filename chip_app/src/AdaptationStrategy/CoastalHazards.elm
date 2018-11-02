@@ -22,6 +22,29 @@ type alias CoastalHazard =
 type alias StrategyIds = Maybe (Zipper Scalar.Id)
 
 
+type HazardType 
+    = Erosion
+    | SeaLevelRise
+    | StormSurge
+
+
+toType : CoastalHazard -> Result String HazardType
+toType hazard =
+    toTypeFromStr hazard.name
+
+
+toTypeFromStr : String -> Result String HazardType
+toTypeFromStr hazardName =
+    case String.toLower hazardName of
+        "erosion" -> Ok Erosion
+
+        "sea level rise" -> Ok SeaLevelRise
+
+        "storm surge" -> Ok StormSurge
+
+        badName -> Err badName
+
+
 toList : CoastalHazards -> List CoastalHazard
 toList hazards =
     hazards |> Maybe.map Zipper.toList |> Maybe.withDefault []

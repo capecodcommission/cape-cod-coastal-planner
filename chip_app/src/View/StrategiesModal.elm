@@ -547,15 +547,15 @@ coastalHazardView hazard matched =
     ("coastal_hazard_view_" ++ (toString <| getId hazard.id)
     , Keyed.column NoStyle
         [ width (percent (1/3 * 100)), center, verticalCenter ]
-        [ case (String.toLower hazard.name, matched) of
-            ( "erosion", True ) ->
+        [ case (Hazards.toType hazard, matched) of
+            ( Ok Hazards.Erosion, True ) ->
                 ( "erosion_icon_" ++ keySuffix matched
                 , erosionIconConfig
                     |> erosionIcon
                     |> html
                 )
 
-            ( "erosion", False ) ->
+            ( Ok Hazards.Erosion, False ) ->
                 ( "erosion_icon_" ++ keySuffix matched
                 , { erosionIconConfig | color = Color.rgb 79 88 98 }
                     |> erosionIcon 
@@ -563,35 +563,35 @@ coastalHazardView hazard matched =
             
                 )
 
-            ( "sea level rise", True ) ->
+            ( Ok Hazards.SeaLevelRise, True ) ->
                 ( "sea_level_rise_icon_" ++ keySuffix matched
                 , seaLevelRiseIconConfig
                     |> seaLevelRiseIcon
                     |> html
                 )
 
-            ( "sea level rise", False ) ->
+            ( Ok Hazards.SeaLevelRise, False ) ->
                 ( "sea_level_rise_icon_" ++ keySuffix matched
                 , { seaLevelRiseIconConfig | color = Color.rgb 79 88 98 }
                     |> seaLevelRiseIcon 
                     |> html
                 )
 
-            ( "storm surge", True ) ->
+            ( Ok Hazards.StormSurge, True ) ->
                 ( "storm_surge_icon" ++ keySuffix matched
                 , stormSurgeIconConfig
                     |> stormSurgeIcon
                     |> html
                 )
 
-            ( "storm surge", False ) ->
+            ( Ok Hazards.StormSurge, False ) ->
                 ( "storm_surge_icon" ++ keySuffix matched
                 , { stormSurgeIconConfig | color = Color.rgb 79 88 98 }
                     |> stormSurgeIcon 
                     |> html
                 )
 
-            ( _, _ ) ->
+            ( Err _, _ ) ->
                 coastalHazardUnknownIconView
                 
         , coastalHazardLabelView hazard.name matched

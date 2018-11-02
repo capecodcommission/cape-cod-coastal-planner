@@ -9,6 +9,7 @@ import Graphics.SeaLevelRise exposing (seaLevelRiseIcon, seaLevelRiseIconConfig)
 import Graphics.StormSurge exposing (stormSurgeIcon, stormSurgeIconConfig)
 import View.Helpers exposing (title, parseErrors, parseHttpError)
 import Styles exposing (..)
+import AdaptationStrategy.CoastalHazards as Hazards
 import AdaptationOutput exposing (..)
 
 
@@ -69,15 +70,15 @@ view result =
 resultsHeader : OutputDetails -> Element MainStyles Variations Msg
 resultsHeader output =
     header (ShowOutput OutputHeader) [ height (px 125) ] <|
-        column NoStyle [ paddingXY 25 15 ]
-            [ row NoStyle [ height (percent 50), width fill, spacing 15 ]
-                [ el (ShowOutput OutputDivider) [ width (px 90) ] <|
+        column NoStyle [ height fill, paddingLeft 25, paddingRight 25, paddingTop 15, paddingBottom 10 ]
+            [ row NoStyle [ height (percent 45), width fill, spacingXY 15 0 ]
+                [ el (ShowOutput OutputDivider) [ width (px 90), verticalCenter ] <|
                     paragraph NoStyle [] [ text "SELECTED STRATEGY" ]
-                , h5 (Headings H5) [] <|
+                , h5 (Headings H5) [ verticalCenter ] <|
                     el NoStyle [] <| text output.name
                 ]
-            , row NoStyle [ height (percent 50), width fill, spread, alignBottom ]
-                [ column NoStyle [center]
+            , row NoStyle [ height (percent 55), width fill, spread, alignBottom ]
+                [ column NoStyle [center ]
                     [ el (ShowOutput OutputImpact) 
                         [ paddingXY 4 2, minWidth (px 115) ] <| text output.cost.name
                     , el NoStyle [ moveDown 3 ] <| text "COST"
@@ -229,17 +230,17 @@ scenarioGeneralInfoView output =
         [ el (ShowOutput OutputDivider) [ width (px 180), height fill, paddingRight 10 ] <|
             row NoStyle [height fill, spacingXY 8 0]
                 [ el NoStyle [ center, verticalCenter, height fill  ] <|
-                    ( case String.toLower output.hazard of
-                        "erosion" ->
+                    ( case Hazards.toTypeFromStr output.hazard of
+                        Ok Hazards.Erosion ->
                             erosionIconConfig |> erosionIcon |> html 
 
-                        "sea level rise" ->
+                        Ok Hazards.SeaLevelRise ->
                             seaLevelRiseIconConfig |> seaLevelRiseIcon |> html
 
-                        "storm surge" ->
+                        Ok Hazards.StormSurge ->
                             stormSurgeIconConfig |> stormSurgeIcon |> html
 
-                        _ ->
+                        Err _ ->
                             empty
                     )
                 , column NoStyle [ width fill, verticalCenter ]
@@ -262,8 +263,8 @@ monetaryResultView lblPart1 lblPart2 result =
             column NoStyle [ spacing 5 ]
                 [ el NoStyle [ center ] <| text a 
                 , el NoStyle [ center ] <| text b
-                , h6 (Headings H6) [ center ] <| text c
-                , h6 (Headings H6) [ center ] <| text d
+                , h6 (ShowOutput OutputH6Bold) [ center ] <| text c
+                , h6 (ShowOutput OutputH6Bold) [ center ] <| text d
                 ]
     in
     case result of

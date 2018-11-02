@@ -1,7 +1,7 @@
 module AdaptationMath exposing (..)
 
 
-import AdaptationStrategy.CoastalHazards exposing (CoastalHazard)
+import AdaptationStrategy.CoastalHazards as Hazards exposing (CoastalHazard)
 import AdaptationStrategy.Strategies exposing (Strategy)
 import AdaptationStrategy.StrategyDetails as Details exposing (StrategyDetails)
 import AdaptationStrategy.Impacts exposing (..)
@@ -103,8 +103,8 @@ calculateNoActionOutput :
     -> OutputDetails
     -> Result OutputError OutputDetails
 calculateNoActionOutput hexes zoneOfImpact hazard output =
-    case String.toLower hazard.name of
-        "erosion" ->
+    case Hazards.toType hazard of
+        Ok Hazards.Erosion ->
             let
                 avgErosion = averageErosion hexes
             in
@@ -135,7 +135,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                     output
                         |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
 
-        "sea level rise" ->
+        Ok Hazards.SeaLevelRise ->
             let
                 avgSeaLevelRise = averageSeaLevelRise hexes
             in
@@ -159,7 +159,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                     output
                         |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
 
-        "storm surge" ->
+        Ok Hazards.StormSurge ->
             let
                 vulnerableToSurge = isVulnerableToStormSurge hexes
             in
@@ -184,7 +184,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                     output
                         |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
 
-        badHazard ->
+        Err badHazard ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: '" ++ badHazard ++ "'")
     
 
@@ -205,8 +205,8 @@ calculateStrategyOutput :
     -> OutputDetails
     -> Result OutputError OutputDetails
 calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noActionOutput =
-    case String.toLower hazard.name of
-        "erosion" ->
+    case Hazards.toType hazard of
+        Ok Hazards.Erosion ->
             let
                 avgErosion = averageErosion hexes
             in
@@ -246,7 +246,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                     Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
 
 
-        "sea level rise" ->
+        Ok Hazards.SeaLevelRise ->
             let
                 avgSeaLevelRise = averageSeaLevelRise hexes
             in
@@ -254,7 +254,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                 ( badStrategy, _ ) ->
                     Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
 
-        "storm surge" ->
+        Ok Hazards.StormSurge ->
             let
                 vulnerableToSurge = isVulnerableToStormSurge hexes
             in
@@ -262,7 +262,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                 ( badStrategy, _ ) ->
                     Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
     
-        badHazard ->
+        Err badHazard ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: '" ++ badHazard ++ "'")
 
 
