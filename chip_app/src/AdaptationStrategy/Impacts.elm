@@ -7,7 +7,7 @@ type alias ImpactScale =
     , description : Maybe String
     }
 
-  
+ 
 type alias ImpactCost =
     { name : String
     , cost : Int

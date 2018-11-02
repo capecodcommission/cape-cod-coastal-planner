@@ -104,8 +104,13 @@ type OutputStyles
     = OutputHeader
     | OutputDivider
     | OutputSmallItalic
+    | OutputH6Bold
+    | OutputImpact
+    | OutputMultiImpact
     | OutputAddresses
     | OutputHazard
+    | ScenarioLabel
+    | ScenarioBold
 
 type StrategiesStyles
     = StrategiesSidebar
@@ -147,6 +152,7 @@ type Variations
     | SelectMenuError
     | Secondary
     | Tertiary
+    | Quaternary
     | Disabled
 
 
@@ -431,9 +437,40 @@ stylesheet device =
             , Border.solid
             , Color.border white
             ]
+        , Style.style (ShowOutput OutputH6Bold)
+            [ Font.size <| scaled 1
+            , Font.weight 500
+            ]
         , Style.style (ShowOutput OutputSmallItalic)
             [ Font.size 14
             , Font.italic
+            ]
+        , Style.style (ShowOutput OutputImpact)
+            [ Font.size 12
+            , Font.lineHeight 1.4
+            , Font.center
+            , Border.all 1
+            , Border.solid
+            , Color.border white
+            ]
+        , Style.style (ShowOutput OutputMultiImpact)
+            [ Font.size 11
+            , Font.lineHeight 1.4
+            , Font.center
+            , Border.solid
+            , Color.border white
+            , Border.right 1
+            , Border.bottom 1
+            , variation Secondary 
+                [ Border.right 0
+                ]
+            , variation Tertiary
+                [ Border.bottom 0
+                ]
+            , variation Quaternary
+                [ Border.right 0
+                , Border.bottom 0
+                ]
             ]
         , Style.style (ShowOutput OutputAddresses)
             [ Font.size 13 ]
@@ -441,6 +478,10 @@ stylesheet device =
             [ Font.size 16
             , Font.bold
             ]
+        , Style.style (ShowOutput ScenarioLabel)
+            [ Font.size 14 ]
+        , Style.style (ShowOutput ScenarioBold)
+            [ Font.bold ]
         , Style.style (Headings H1) <| headingStyle 6
         , Style.style (Headings H2) <| headingStyle 5
         , Style.style (Headings H3) <| headingStyle 4

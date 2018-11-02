@@ -76,8 +76,35 @@ resultsHeader output =
                 , h5 (Headings H5) [] <|
                     el NoStyle [] <| text output.name
                 ]
-            , row NoStyle [ height (percent 50), width fill ]
-                [ empty ]
+            , row NoStyle [ height (percent 50), width fill, spread, alignBottom ]
+                [ column NoStyle [center]
+                    [ el (ShowOutput OutputImpact) 
+                        [ paddingXY 4 2, minWidth (px 115) ] <| text output.cost.name
+                    , el NoStyle [ moveDown 3 ] <| text "COST"
+                    ]
+                , column NoStyle [center]
+                    [ el (ShowOutput OutputImpact) 
+                        [ paddingXY 4 2, minWidth (px 115) ] <| text output.lifespan.name
+                    , el NoStyle [ moveDown 3 ] <| text "LIFESPAN"
+                    ]
+                , column NoStyle [center]
+                    [ column NoStyle []
+                        [ row NoStyle []
+                            [ el (ShowOutput OutputMultiImpact) 
+                                [ paddingRight 4 ] <| text "Site"
+                            , el (ShowOutput OutputMultiImpact) 
+                                [ paddingLeft 4, vary Secondary True ] <| text "Neighborhood"
+                            ]
+                        , row NoStyle []
+                            [ el (ShowOutput OutputMultiImpact) 
+                                [ paddingRight 4, vary Tertiary True ] <| text "Community"
+                            , el (ShowOutput OutputMultiImpact) 
+                                [ paddingLeft 4, vary Quaternary True ] <| text "Region"
+                            ]
+                        ]
+                    , el NoStyle [ moveDown 3 ] <| text "SCALE"
+                    ]
+                ]
             ]
 
 
@@ -86,7 +113,7 @@ resultsMainContent output =
     column NoStyle [ height fill ]
         [ scenarioGeneralInfoView output
         , column NoStyle [ paddingXY 20 0 ]
-            [ h6 (Headings H6) [] <| text "SCENARIO OUTPUTS"
+            [ h6 (ShowOutput OutputH6Bold) [] <| text "SCENARIO OUTPUTS"
             , paragraph (ShowOutput OutputSmallItalic) [] 
                 [ text "All outputs are relative to the user"
                 , text " taking no action within the planning area." 
@@ -193,12 +220,11 @@ scenarioGeneralInfoView output =
     let
         renderDetails a b c =
             row NoStyle [ spacingXY 8 0 ]
-                [ el NoStyle [] <| text a
-                , el NoStyle [] <| text b
-                , el NoStyle [] <| text c
+                [ el (ShowOutput ScenarioLabel) [ verticalCenter ] <| text a
+                , el (ShowOutput ScenarioBold) [ verticalCenter ] <| text b
+                , el NoStyle [ verticalCenter ] <| text c
                 ]
     in
-    
     row NoStyle [ height (px 125), paddingXY 25 30 ]
         [ el (ShowOutput OutputDivider) [ width (px 180), height fill, paddingRight 10 ] <|
             row NoStyle [height fill, spacingXY 8 0]
@@ -217,14 +243,14 @@ scenarioGeneralInfoView output =
                             empty
                     )
                 , column NoStyle [ width fill, verticalCenter ]
-                    [ el NoStyle [] <| paragraph (ShowOutput OutputAddresses) [ center ] [ text "SCENARIO ADDRESSES" ]
+                    [ el NoStyle [] <| paragraph (ShowOutput OutputAddresses) [] [ text "SCENARIO ADDRESSES" ]
                     , el NoStyle [] <| paragraph (ShowOutput OutputHazard) [] [ text output.hazard ]
                     ]
                 ]
         , column NoStyle [ paddingLeft 15, spacingXY 0 4 ]
             [ renderDetails "LOCATION:" output.location "area"
             , renderDetails "DURATION:" output.duration ""
-            , renderDetails "SCENARIO SIZE:" (toString output.scenarioSize) "linear feet"
+            , renderDetails "SCENARIO SIZE:" (toString output.scenarioSize) "linear ft."
             ]
         ]
 

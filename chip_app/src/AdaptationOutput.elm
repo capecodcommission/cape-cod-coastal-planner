@@ -24,8 +24,8 @@ type OutputError
 type alias OutputDetails =
     { name : String
     , scales : List ImpactScale
-    , cost : Maybe ImpactCost
-    , lifespan : Maybe ImpactLifeSpan
+    , cost : ImpactCost
+    , lifespan : ImpactLifeSpan
     , hazard : String
     , location : String
     , duration : String
@@ -71,8 +71,8 @@ defaultOutput : OutputDetails
 defaultOutput =
     { name = ""
     , scales = []
-    , cost = Nothing
-    , lifespan = Nothing
+    , cost = ImpactCost "N/A" -1 Nothing 
+    , lifespan = ImpactLifeSpan "N/A" -1 Nothing
     , hazard = ""
     , location = ""
     , duration = ""

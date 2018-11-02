@@ -19,7 +19,7 @@ defmodule ChipApi.Adaptation.Hazard do
   def changeset(hazard, attrs) do
     hazard
     |> cast(attrs, [:name, :description, :display_order, :duration])
-    |> validate_required([:name])
+    |> validate_required([:name, :duration])
     |> unique_constraint(:name)
   end
 end

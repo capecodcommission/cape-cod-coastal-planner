@@ -34,9 +34,9 @@ description =
 
 {-| The duration of the hazard
 -}
-duration : Field (Maybe String) ChipApi.Object.CoastalHazard
+duration : Field String ChipApi.Object.CoastalHazard
 duration =
-    Object.fieldDecoder "duration" [] (Decode.string |> Decode.nullable)
+    Object.fieldDecoder "duration" [] Decode.string
 
 
 {-| The ID of the hazard

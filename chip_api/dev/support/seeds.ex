@@ -56,13 +56,13 @@ defmodule ChipApi.Seeds do
         # HAZARD TYPES
         #
 
-        erosion = %Adaptation.Hazard{name: "Erosion"}
+        erosion = %Adaptation.Hazard{name: "Erosion", duration: "40 years"}
         |> Repo.insert!
 
-        storm_surge = %Adaptation.Hazard{name: "Storm Surge"}
+        storm_surge = %Adaptation.Hazard{name: "Storm Surge", duration: "1-time event"}
         |> Repo.insert!
 
-        sea_level_rise = %Adaptation.Hazard{name: "Sea Level Rise"}
+        sea_level_rise = %Adaptation.Hazard{name: "Sea Level Rise", duration: "40  years"}
         |> Repo.insert!
 
         #

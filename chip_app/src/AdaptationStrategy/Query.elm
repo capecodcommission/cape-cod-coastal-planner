@@ -12,6 +12,8 @@ import ChipApi.Object.AdaptationStrategy as AS
 import ChipApi.Object.AdaptationCategory as AC
 import ChipApi.Object.CoastalHazard as CH
 import ChipApi.Object.ImpactScale as IS
+import ChipApi.Object.ImpactCost as IC
+import ChipApi.Object.ImpactLifeSpan as ILS
 import ChipApi.Object.AdaptationBenefit as AB
 import ChipApi.Object.AdaptationAdvantages as AA
 import ChipApi.Object.AdaptationDisadvantages as AD
@@ -22,7 +24,7 @@ import AdaptationStrategy.Strategies as Strategies exposing (..)
 import AdaptationStrategy.Categories as Categories exposing (..)
 import AdaptationStrategy.CoastalHazards as Hazards exposing (..)
 import AdaptationStrategy.StrategyDetails as Details exposing (..)
-import AdaptationStrategy.Impacts exposing (..)
+import AdaptationStrategy.Impacts as Impacts exposing (..)
 
 
 --
@@ -45,7 +47,7 @@ queryAdaptationInfo =
             )
         |> with 
             (Query.adaptationStrategies
-                (\optionals -> 
+                (\optionals ->
                     let
                         strategyFilter =
                             Present
@@ -90,7 +92,9 @@ selectStrategyDetails =
         |> with AS.imagePath
         |> with (AS.categories <| fieldSelection AC.id)
         |> with (AS.hazards <| fieldSelection CH.id)
-        |> with (AS.scales <| fieldSelection IS.id)
+        |> with (AS.scales selectImpactScale)
+        |> with (AS.lifeSpans selectImpactLifeSpans)
+        |> with (AS.costs selectImpactCosts)
         |> with (AS.benefits selectBenefit)
         |> with (AS.advantages selectAdvantage)
         |> with (AS.disadvantages selectDisadvantage)
@@ -122,6 +126,7 @@ selectCoastalHazardWithStrategyIds =
         |> with CH.id
         |> with CH.name
         |> with CH.description
+        |> with CH.duration
         |> with 
             ( fieldSelection AS.id
                 |> CH.strategies (\optionals -> { optionals | isActive = Present True })
@@ -129,9 +134,28 @@ selectCoastalHazardWithStrategyIds =
             )
 
 
-selectImpactScale : SelectionSet Scalar.Id ChipApi.Object.ImpactScale
+selectImpactScale : SelectionSet ImpactScale ChipApi.Object.ImpactScale
 selectImpactScale =
-    fieldSelection IS.id
+    IS.selection ImpactScale
+        |> with IS.name
+        |> with IS.impact
+        |> with IS.description
+
+
+selectImpactCosts : SelectionSet ImpactCost ChipApi.Object.ImpactCost
+selectImpactCosts =
+    IC.selection ImpactCost
+        |> with IC.name
+        |> with IC.cost
+        |> with IC.description
+
+
+selectImpactLifeSpans : SelectionSet ImpactLifeSpan ChipApi.Object.ImpactLifeSpan
+selectImpactLifeSpans =
+    ILS.selection ImpactLifeSpan
+        |> with ILS.name
+        |> with ILS.lifeSpan
+        |> with ILS.description
        
 
 selectBenefit : SelectionSet Benefit ChipApi.Object.AdaptationBenefit

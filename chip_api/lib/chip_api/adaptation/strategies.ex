@@ -1015,7 +1015,7 @@ defmodule ChipApi.Adaptation.Strategies do
 
     """
     def list_cost_ranges_for_strategy(%Strategy{} = strategy) do
-        query = Ecto.assoc(strategy, :cost_ranges)
+        query = Ecto.assoc(strategy, :impact_costs)
         Repo.all(query)
     end
 
@@ -1029,7 +1029,7 @@ defmodule ChipApi.Adaptation.Strategies do
 
     """
     def list_life_span_ranges_for_strategy(%Strategy{} = strategy) do
-        query = Ecto.assoc(strategy, :life_span_ranges)
+        query = Ecto.assoc(strategy, :impact_life_spans)
         Repo.all(query)
     end
 

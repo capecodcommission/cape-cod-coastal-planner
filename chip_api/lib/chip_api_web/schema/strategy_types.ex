@@ -220,7 +220,7 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         field :description, :string
 
         @desc "The duration of the hazard"
-        field :duration, :string
+        field :duration, non_null(:string)
 
         @desc "The adaptation strategies that are associated with the hazard"
         field :strategies, non_null(list_of(non_null(:adaptation_strategy))) do

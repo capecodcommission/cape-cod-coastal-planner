@@ -290,14 +290,25 @@ applyScales details output =
 -}
 applyCost : StrategyDetails -> OutputDetails -> Result OutputError OutputDetails
 applyCost details output =
-    Ok { output | cost = Nothing }
+    case List.head details.costs of
+        Just cost ->
+            Ok { output | cost = cost }
+
+        Nothing ->
+            Ok { output | cost = ImpactCost "Err" -1 Nothing }
 
 
 {-| Apply the expected lifespan of a strategy implementation
 -}
 applyLifespan : StrategyDetails -> OutputDetails -> Result OutputError OutputDetails
 applyLifespan details output =
-    Ok { output | lifespan = Nothing }
+    case List.head details.lifeSpans of
+        Just lifespan ->
+            Ok { output | lifespan = lifespan }
+
+        Nothing ->
+            Ok { output | lifespan = ImpactLifeSpan "Err" -1 Nothing}
+    
 
 
 {-| Apply the coastal hazard that the scenario addresses
@@ -321,7 +332,7 @@ applyLocation location output =
 -}
 applyDuration : CoastalHazard -> OutputDetails -> Result OutputError OutputDetails
 applyDuration hazard output =
-    Ok { output | duration = "TBD" }
+    Ok { output | duration = hazard.duration }
 
 
 {-| Apply the scenario size. IE: the length of coast line selected

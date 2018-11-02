@@ -1,6 +1,7 @@
 module AdaptationStrategy.StrategyDetails exposing (..)
 
 
+import AdaptationStrategy.Impacts exposing (..)
 import ChipApi.Scalar as Scalar
 
 
@@ -11,7 +12,9 @@ type alias StrategyDetails =
     , imagePath : Maybe String
     , categories : List Scalar.Id
     , hazards : List Scalar.Id
-    , scales : List Scalar.Id
+    , scales : List ImpactScale
+    , lifeSpans : List ImpactLifeSpan
+    , costs : List ImpactCost
     , benefits : Benefits
     , advantages : Advantages
     , disadvantages : Disadvantages
@@ -44,11 +47,6 @@ hasCategory id details =
 hasHazard : Scalar.Id -> StrategyDetails -> Bool
 hasHazard id details =
     List.member id details.hazards
-
-
-hasScale : Scalar.Id -> StrategyDetails -> Bool
-hasScale id details =
-    List.member id details.scales
 
 
 hasBenefit : String -> StrategyDetails -> Bool

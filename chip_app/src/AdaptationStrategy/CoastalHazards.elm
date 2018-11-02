@@ -14,6 +14,7 @@ type alias CoastalHazard =
     { id : Scalar.Id
     , name : String
     , description : Maybe String
+    , duration : String
     , strategyIds : StrategyIds
     }
 
