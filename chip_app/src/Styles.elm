@@ -111,6 +111,9 @@ type OutputStyles
     | OutputHazard
     | ScenarioLabel
     | ScenarioBold
+    | OutputValue
+    | OutputValueLbl
+    | OutputValueBox
 
 type StrategiesStyles
     = StrategiesSidebar
@@ -482,6 +485,41 @@ stylesheet device =
             [ Font.size 14 ]
         , Style.style (ShowOutput ScenarioBold)
             [ Font.bold ]
+        , Style.style (ShowOutput OutputValue)
+            [ Font.size 22
+            , Font.weight 500
+            , Color.text <| rgba 255 255 255 0.5
+            , variation Secondary
+                [ Color.text palette.mySin ]
+            , variation Tertiary
+                [ Color.text palette.havelockBlue ]
+            ]
+        , Style.style (ShowOutput OutputValueLbl)
+            [ Font.size 12
+            , Font.letterSpacing 2.33
+            , Color.text <| rgba 255 255 255 0.5
+            , variation Secondary
+                [ Color.text palette.mySin ]
+            , variation Tertiary
+                [ Color.text palette.havelockBlue ]
+            ]
+        , Style.style (ShowOutput OutputValueBox)
+            [ Border.all 2
+            , Border.solid
+            , Border.rounded 8
+            , Color.border <| rgba 255 255 255 0.5
+            , Color.background <| rgba 0 0 0 0
+            , Font.weight 500
+            , variation Secondary
+                [ Color.background palette.mySin 
+                , Color.border palette.mySin
+                , Color.text <| rgba 0 0 0 0.9
+                ]
+            , variation Tertiary
+                [ Color.background palette.havelockBlue 
+                , Color.border palette.havelockBlue
+                ]
+            ]
         , Style.style (Headings H1) <| headingStyle 6
         , Style.style (Headings H2) <| headingStyle 5
         , Style.style (Headings H3) <| headingStyle 4

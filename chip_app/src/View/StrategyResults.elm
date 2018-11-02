@@ -4,6 +4,8 @@ import Message exposing (..)
 import Element exposing (..)
 import Element.Attributes as Attr exposing (..)
 import Element.Events exposing (..)
+import FormatNumber exposing (format)
+import FormatNumber.Locales exposing (Locale, usLocale)
 import Graphics.Erosion exposing (erosionIcon, erosionIconConfig)
 import Graphics.SeaLevelRise exposing (seaLevelRiseIcon, seaLevelRiseIconConfig)
 import Graphics.StormSurge exposing (stormSurgeIcon, stormSurgeIconConfig)
@@ -120,98 +122,18 @@ resultsMainContent output =
                 , text " taking no action within the planning area." 
                 ]
             ]
-        , row NoStyle [ paddingXY 40 20, spread ]
+        , row NoStyle [ paddingXY 40 20, spread, height fill ]
             [ monetaryResultView "Public Building" "Value" output.publicBuildingValue
             , monetaryResultView "Private Shoreline" "Land Value" output.privateLandValue
             , monetaryResultView "Private Shoreline" "Building Value" output.privateBuildingValue
             ]
-        , column NoStyle [paddingXY 20 0 ]
-            [ h6 (Headings H6) [] <| text "Salt Marsh"
-            , case output.saltMarshChange of
-                AcreageUnchanged ->
-                    el NoStyle [] <|
-                        paragraph NoStyle [] 
-                            [ text "Acreage unchanged" ]
-
-                AcreageLost lost ->
-                    el NoStyle [] <|
-                        paragraph NoStyle []
-                            [ text "Acreage lost: "
-                            , text <| toString <| abs lost
-                            ]
-
-                AcreageGained gained ->
-                    el NoStyle [] <|
-                        paragraph NoStyle []
-                            [ text "Acreage gained: "
-                            , text <| toString gained
-                            ]
+        , row NoStyle [ paddingXY 40 20, width fill, height fill ]
+            [ acreageResultView "Salt Marsh Change" output.saltMarshChange
+            , acreageResultView "Beach Area Change" output.beachAreaChange
             ]
-        , column NoStyle [paddingXY 20 0]
-            [ h6 (Headings H6) [] <| text "Beach Width"
-            , case output.beachAreaChange of
-                AcreageUnchanged ->
-                    el NoStyle [] <|
-                        paragraph NoStyle [] 
-                            [ text "Acreage unchanged" ]
-
-                AcreageLost lost ->
-                    el NoStyle [] <|
-                        paragraph NoStyle []
-                            [ text "Acreage lost: "
-                            , text <| toString <| abs lost
-                            ]
-
-                AcreageGained gained ->
-                    el NoStyle [] <|
-                        paragraph NoStyle []
-                            [ text "Acreage gained: "
-                            , text <| toString gained
-                            ]
-            ]
-        , row NoStyle [spread, width fill]
-            [ column NoStyle []
-                [ h6 (Headings H6) [] <| text "Critical Facilities"
-                , case output.criticalFacilities of
-                    FacilitiesLost count ->
-                        el NoStyle [] <|
-                            paragraph NoStyle []
-                                [ text "Facilities lost: "
-                                , text <| toString <| abs count
-                                ]
-
-                    FacilitiesProtected count ->
-                        el NoStyle [] <|
-                            paragraph NoStyle []
-                                [ text "Facilities protected: "
-                                , text <| toString count
-                                ]
-
-                    FacilitiesRelocated count ->
-                        el NoStyle [] <|
-                            paragraph NoStyle []
-                                [ text "Facilities relocated: "
-                                , text <| toString <| abs count
-                                ]
-                    
-                    FacilitiesUnchanged _ ->
-                        el NoStyle [] <| paragraph NoStyle [] [ text "No facilities impacted" ]
-
-                    FacilitiesPresent _ ->
-                        el NoStyle [] <| paragraph NoStyle [] [ text "Facilities may be impacted" ]
-                ]
-            , column NoStyle []
-                [ h6 (Headings H6) [] <| text "Rare Species Habitat"
-                , case output.rareSpeciesHabitat of
-                    HabitatLost ->
-                        el NoStyle [] <| paragraph NoStyle [] [ text "Habitat lost" ]
-                    
-                    HabitatGained ->
-                        el NoStyle [] <| paragraph NoStyle [] [ text "Habitat gained" ]
-
-                    HabitatUnchanged ->
-                        el NoStyle [] <| paragraph NoStyle [] [ text "Habitat unaffected" ]
-                ]
+        , row NoStyle [spread, height fill, width fill]
+            [ criticalFacilitiesView output.criticalFacilities
+            , rareSpeciesHabitatView output.rareSpeciesHabitat
             ]
         ]
 
@@ -259,23 +181,114 @@ scenarioGeneralInfoView output =
 monetaryResultView : String -> String -> MonetaryResult -> Element MainStyles Variations Msg
 monetaryResultView lblPart1 lblPart2 result =
     let
-        render a b c d =
-            column NoStyle [ spacing 5 ]
-                [ el NoStyle [ center ] <| text a 
-                , el NoStyle [ center ] <| text b
+        render a b c d e =
+            column NoStyle [ spacing 5, verticalCenter ]
+                [ el (ShowOutput OutputValue) [ center, e ] <| text a 
+                , el (ShowOutput OutputValueLbl) [ center, e ] <| text b
                 , h6 (ShowOutput OutputH6Bold) [ center ] <| text c
                 , h6 (ShowOutput OutputH6Bold) [ center ] <| text d
                 ]
     in
     case result of
         ValueUnchanged ->
-            render "--" "NO CHANGE" lblPart1 lblPart2
+            render "--" "NO CHANGE" lblPart1 lblPart2 (vary Secondary False)
 
         ValueLoss lost ->
-            render (toString <| abs lost) "LOST" lblPart1 lblPart2
+            render (abbreviateMonetaryValue lost) "LOST" lblPart1 lblPart2 (vary Secondary True)
 
         ValueProtected protected ->
-            render (toString protected) "PROTECTED" lblPart1 lblPart2
+            render (abbreviateMonetaryValue protected) "PROTECTED" lblPart1 lblPart2 (vary Tertiary True)
+
+
+acreageResultView : String -> AcreageResult -> Element MainStyles Variations Msg
+acreageResultView lbl result =
+    let
+        render a b c d =
+            column NoStyle [ spacing 5, width fill, verticalCenter ]
+                [ h6 (ShowOutput OutputH6Bold) [ center ] <| text c
+                , el (ShowOutput OutputValueLbl) [ center, d ] <| text b
+                , el (ShowOutput OutputValue) [ center, d ] <| text a
+                ]
+    in
+    case result of
+        AcreageUnchanged ->
+            render "--" "NO CHANGE" lbl (vary Secondary False)
+
+        AcreageLost loss ->
+            render (abbreviateAcreageValue loss) "ACRES LOST" lbl (vary Secondary True)
+
+        AcreageGained gain ->
+            render (abbreviateAcreageValue gain) "ACRES GAINED" lbl (vary Tertiary True)
+
+
+criticalFacilitiesView : CriticalFacilities -> Element MainStyles Variations Msg
+criticalFacilitiesView facilities =
+    let
+        render a b c =
+            column (ShowOutput OutputValueBox)
+                [ moveRight 15
+                , height (px 58)
+                , width (px 58) 
+                , center
+                , verticalCenter
+                , c
+                ]
+                [ el NoStyle [] <| text a
+                , el NoStyle [] <| text b
+                ]
+    in
+    row NoStyle [ height fill, width fill, center, verticalCenter ]
+        [ column (ShowOutput OutputDivider) [ spacing 5, paddingRight 15 ]
+            [ el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Critical"
+            , el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Facilities"
+            ]
+        , case facilities of
+            FacilitiesUnchanged _ ->
+                render "--" "" (vary Secondary False)
+
+            FacilitiesLost num ->
+                render (toString num) "LOST" (vary Secondary True)
+
+            FacilitiesProtected num ->
+                render (toString num) "PROT." (vary Tertiary True)
+
+            FacilitiesPresent num ->
+                render (toString num) "" (vary Secondary False)
+
+            FacilitiesRelocated num ->
+                render (toString num) "RELOC." (vary Tertiary True)
+        ]
+
+
+rareSpeciesHabitatView : RareSpeciesHabitat -> Element MainStyles Variations Msg
+rareSpeciesHabitatView habitat =
+    let
+        render a b =
+            column (ShowOutput OutputValueBox) 
+                [ moveRight 15
+                , height (px 58)
+                , width (px 58) 
+                , center
+                , verticalCenter
+                , b
+                ] 
+                [ el NoStyle [] <| text a ]
+    in
+    row NoStyle [ height fill, width fill, center, verticalCenter ]
+        [ column (ShowOutput OutputDivider) [ spacing 5, paddingRight 15 ]
+            [ el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Rare Species"
+            , el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Habitat"
+            ]
+        , case habitat of
+            HabitatUnchanged ->
+                render "--" (vary Secondary False)
+
+            HabitatLost ->
+                render "LOSS" (vary Secondary True)
+
+            HabitatGained ->
+                render "GAIN" (vary Tertiary True)
+        ]
 
 
 errorView : String -> List String -> Element MainStyles Variations Msg
@@ -308,4 +321,45 @@ footerView =
                 , title "Clear strategy selection"
                 ] <| text "clear"
             ]
+    
+
+abbreviateAcreageValue : Float -> String
+abbreviateAcreageValue num =
+    format usLocale num
+
+
+abbreviateMonetaryValue : Float -> String
+abbreviateMonetaryValue =
+    formatMonetaryValue monetaryAbbreviations
+
+
+monetaryAbbreviations : List String
+monetaryAbbreviations =
+    [ "", "K", "M", "B" ]
+
+
+formatMonetaryValue : List String -> Float -> String
+formatMonetaryValue abbrs num =
+    let
+        result = abs num / 1000.0
+
+        fmt abbr n = format (Locale 1 "," "." "$" abbr "$" abbr) n
+    in
+    case abbrs of
+        [] ->
+            "--"
+
+        head :: [] ->
+            if result < 1.0 then
+                fmt head num
+            else
+                fmt head result
+
+        head :: tail ->
+            if result < 1.0 then
+                fmt head num
+            else
+                formatMonetaryValue tail result
+
+
     
