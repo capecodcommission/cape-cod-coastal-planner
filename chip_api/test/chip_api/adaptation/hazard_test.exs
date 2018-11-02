@@ -50,7 +50,8 @@ defmodule ChipApi.Adaptation.HazardTest do
 
     @attrs %{
         name: "test",
-        description: "test"
+        description: "test",
+        duration: "test"
     }
     test "create_hazard with a good value creates a new hazard" do
         parent = self()
@@ -62,7 +63,7 @@ defmodule ChipApi.Adaptation.HazardTest do
         assert {:ok, hazard} = Task.await(task)
         assert @attrs ==
             Repo.get!(Hazard, hazard.id)
-            |> Map.take([:name, :description])
+            |> Map.take([:name, :description, :duration])
     end
 
     @attrs %{
@@ -74,7 +75,7 @@ defmodule ChipApi.Adaptation.HazardTest do
     end
 
     test "create_hazard with duplicate name returns error and changeset", %{data: data} do
-        assert {:error, changeset} = Strategies.create_hazard(%{name: data.haz1.name})
+        assert {:error, changeset} = Strategies.create_hazard(%{name: data.haz1.name, duration: data.haz1.duration})
         assert "has already been taken" in errors_on(changeset).name
     end
 
