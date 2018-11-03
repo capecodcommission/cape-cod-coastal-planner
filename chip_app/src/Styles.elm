@@ -103,7 +103,9 @@ type SidebarStyles
 
 
 type OutputStyles
-    = OutputHeader
+    = OutputToggleBtn
+    | OutputToggleLbl
+    | OutputHeader
     | OutputDivider
     | OutputSmallItalic
     | OutputH6Bold
@@ -433,6 +435,15 @@ stylesheet device =
             [ Font.size 22
             , Color.text palette.havelockBlue
             , Font.letterSpacing 1
+            ]
+        , Style.style (ShowOutput OutputToggleBtn)
+            [ Font.letterSpacing 2.33
+            , Color.background palette.silver
+            ]
+        , Style.style (ShowOutput OutputToggleLbl)
+            [ Font.center
+            , Font.letterSpacing 2.33
+            , Color.background palette.chambray
             ]
         , Style.style (ShowOutput OutputHeader)
             [ Color.background palette.chambray

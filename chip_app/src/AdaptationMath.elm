@@ -73,7 +73,7 @@ calculate
                     noActionOutput
                         |> Result.andThen (calculateStrategyOutput hexes zoneOfImpact hazard strategyInfo defaultOutput)
                         |> Result.andThen (applyBasicInfo hexes location zoneOfImpact hazard strategyInfo)
-                        |> Result.map2 WithStrategy noActionOutput
+                        |> Result.map2 ShowStrategy noActionOutput
 
             
 applyBasicInfo : 

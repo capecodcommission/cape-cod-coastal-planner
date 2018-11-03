@@ -33,8 +33,16 @@ view result =
                 , footerView 
                 ]
 
-            Ok (WithStrategy noActionOutput strategyOutput) ->
-                [ resultsHeader strategyOutput
+            Ok (ShowNoAction noActionOutput strategyOutput) ->
+                [ toggleToStrategy ( noActionOutput, strategyOutput )
+                , resultsHeader noActionOutput
+                , resultsMainContent noActionOutput
+                , footerView
+                ]
+
+            Ok (ShowStrategy noActionOutput strategyOutput) ->
+                [ toggleToNoAction ( noActionOutput, strategyOutput )
+                , resultsHeader strategyOutput
                 , resultsMainContent strategyOutput
                 , footerView
                 ]
@@ -68,6 +76,33 @@ view result =
                 ]
         )
     
+
+toggleToStrategy : ( OutputDetails, OutputDetails ) -> Element MainStyles Variations Msg
+toggleToStrategy (( noActionOutput, strategyOutput ) as output) =
+    row NoStyle [ height (px 35) ]
+        [ el (ShowOutput OutputToggleLbl) 
+            [ width (percent 35) ] <|
+                el NoStyle [verticalCenter, center] (text "NO ACTION")
+        , button (ShowOutput OutputToggleBtn)
+            [ onClick <| ShowStrategyOutput output 
+            , width (percent 65)
+            ] <| 
+            el NoStyle [ height fill ] (text <| String.toUpper strategyOutput.name)
+        ]
+
+
+toggleToNoAction : ( OutputDetails, OutputDetails ) -> Element MainStyles Variations Msg
+toggleToNoAction (( noActionOutput, strategyOutput ) as output) =
+    row NoStyle [ height (px 35) ]
+        [ button (ShowOutput OutputToggleBtn)
+            [ onClick <| ShowNoActionOutput output 
+            , width (percent 35)
+            ] <| 
+            el NoStyle [] (text "NO ACTION")
+        , el (ShowOutput OutputToggleLbl)
+            [ width (percent 65) ] <| 
+                el NoStyle [verticalCenter, center] (text <| String.toUpper strategyOutput.name)
+        ]
 
 
 resultsHeader : OutputDetails -> Element MainStyles Variations Msg
@@ -260,7 +295,7 @@ criticalFacilitiesView facilities =
             , el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Facilities"
             ]
         , case facilities of
-            FacilitiesUnchanged _ ->
+            FacilitiesUnchanged num ->
                 render "--" "" (vary Secondary False)
 
             FacilitiesLost num ->

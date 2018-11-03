@@ -458,6 +458,16 @@ updateModel msg model =
                     )
                 |> Maybe.withDefault (applyStrategy model)
 
+        ShowStrategyOutput ( noActionOutput, strategyOutput ) ->
+            ( { model | calculationOutput = Just ( Ok <| ShowStrategy noActionOutput strategyOutput ) }
+            , Cmd.none
+            )
+
+        ShowNoActionOutput ( noActionOutput, strategyOutput ) ->
+            ( { model | calculationOutput = Just ( Ok <| ShowNoAction noActionOutput strategyOutput ) }
+            , Cmd.none
+            )
+
         ToggleRightSidebar ->
             case model.rightSidebarOpenness of
                 Open ->

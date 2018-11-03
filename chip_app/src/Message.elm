@@ -7,6 +7,7 @@ import Window
 import Types exposing (..)
 import AdaptationStrategy.AdaptationInfo exposing (AdaptationInfo)
 import AdaptationStrategy.StrategyDetails exposing (StrategyDetails)
+import AdaptationOutput exposing (OutputDetails)
 import AdaptationHexes as AH
 import ShorelineLocation as SL
 import Json.Decode as D
@@ -40,6 +41,8 @@ type Msg
     | HandleStrategyKeyboardEvent KeyboardEvent
     | GotStrategyDetails Scalar.Id (GqlData (Maybe StrategyDetails))
     | ApplyStrategy StrategyDetails (Maybe KeyboardEvent)
+    | ShowStrategyOutput (OutputDetails, OutputDetails)
+    | ShowNoActionOutput (OutputDetails, OutputDetails)
     | ToggleRightSidebar
     | Animate Animation.Msg
     | Resize Window.Size

@@ -11,7 +11,8 @@ type AdaptationOutput
     = NotCalculated
     | CalculatingOutput
     | OnlyNoAction OutputDetails
-    | WithStrategy OutputDetails OutputDetails
+    | ShowNoAction OutputDetails OutputDetails
+    | ShowStrategy OutputDetails OutputDetails
 
 
 type OutputError
