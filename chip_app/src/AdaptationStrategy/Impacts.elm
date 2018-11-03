@@ -20,3 +20,13 @@ type alias ImpactLifeSpan =
     , lifeSpan : Int
     , description : Maybe String
     }
+
+
+hasScale : String -> List ImpactScale -> Bool
+hasScale name scales =
+    scales |> List.any (matchesName name)
+
+
+matchesName : String -> ImpactScale -> Bool
+matchesName name scale =
+    String.toLower name == String.toLower scale.name

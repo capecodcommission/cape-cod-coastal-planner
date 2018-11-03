@@ -283,7 +283,7 @@ applyName { name } output =
 -}
 applyScales : StrategyDetails -> OutputDetails -> Result OutputError OutputDetails
 applyScales details output =
-    Ok { output | scales = [] }
+    Ok { output | scales = details.scales }
 
 
 {-| Apply the relative cost of strategy implementation

@@ -12,6 +12,7 @@ import Graphics.StormSurge exposing (stormSurgeIcon, stormSurgeIconConfig)
 import View.Helpers exposing (title, parseErrors, parseHttpError)
 import Styles exposing (..)
 import AdaptationStrategy.CoastalHazards as Hazards
+import AdaptationStrategy.Impacts as Impacts
 import AdaptationOutput exposing (..)
 
 
@@ -71,9 +72,13 @@ view result =
 
 resultsHeader : OutputDetails -> Element MainStyles Variations Msg
 resultsHeader output =
+    let
+        scaleDisabled a = vary Disabled (not <| Impacts.hasScale a output.scales)
+    in
     header (ShowOutput OutputHeader) [ height (px 125) ] <|
-        column NoStyle [ height fill, paddingLeft 25, paddingRight 25, paddingTop 15, paddingBottom 10 ]
-            [ row NoStyle [ height (percent 45), width fill, spacingXY 15 0 ]
+        column NoStyle [ height fill, width fill, paddingLeft 25, paddingRight 25, paddingTop 15, paddingBottom 10 ]
+            [ row NoStyle 
+                [ height (percent 45), width fill, spacingXY 15 0 ]
                 [ el (ShowOutput OutputDivider) [ width (px 90), verticalCenter ] <|
                     paragraph NoStyle [] [ text "SELECTED STRATEGY" ]
                 , h5 (Headings H5) [ verticalCenter ] <|
@@ -82,27 +87,39 @@ resultsHeader output =
             , row NoStyle [ height (percent 55), width fill, spread, alignBottom ]
                 [ column NoStyle [center ]
                     [ el (ShowOutput OutputImpact) 
-                        [ paddingXY 4 2, minWidth (px 115) ] <| text output.cost.name
+                        [ moveUp 2, paddingXY 4 2, minWidth (px 115) ] <| text output.cost.name
                     , el NoStyle [ moveDown 3 ] <| text "COST"
                     ]
                 , column NoStyle [center]
                     [ el (ShowOutput OutputImpact) 
-                        [ paddingXY 4 2, minWidth (px 115) ] <| text output.lifespan.name
+                        [ moveUp 2, paddingXY 4 2, minWidth (px 115), vary Secondary True ] <| text output.lifespan.name
                     , el NoStyle [ moveDown 3 ] <| text "LIFESPAN"
                     ]
-                , column NoStyle [center]
+                , column NoStyle [center]                    
                     [ column NoStyle []
                         [ row NoStyle []
                             [ el (ShowOutput OutputMultiImpact) 
-                                [ paddingRight 4 ] <| text "Site"
+                                [ paddingXY 4 0 
+                                , scaleDisabled "Site"
+                                ] <| text "Site"
                             , el (ShowOutput OutputMultiImpact) 
-                                [ paddingLeft 4, vary Secondary True ] <| text "Neighborhood"
+                                [ paddingLeft 4
+                                , paddingRight 5
+                                , vary Secondary True 
+                                , scaleDisabled "Neighborhood"
+                                ] <| text "Neighborhood"
                             ]
                         , row NoStyle []
                             [ el (ShowOutput OutputMultiImpact) 
-                                [ paddingRight 4, vary Tertiary True ] <| text "Community"
+                                [ paddingXY 4 0
+                                , vary Tertiary True 
+                                , scaleDisabled "Community"
+                                ] <| text "Community"
                             , el (ShowOutput OutputMultiImpact) 
-                                [ paddingLeft 4, vary Quaternary True ] <| text "Region"
+                                [ paddingXY 4 0
+                                , vary Quaternary True
+                                , scaleDisabled "Region"
+                                ] <| text "Region"
                             ]
                         ]
                     , el NoStyle [ moveDown 3 ] <| text "SCALE"

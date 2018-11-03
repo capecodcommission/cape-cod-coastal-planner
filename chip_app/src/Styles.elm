@@ -31,6 +31,8 @@ palette =
     , jaffa = rgb 237 127 52
     , ming = rgb 59 130 132
     , mediumRedViolet = rgb 165 56 165
+    , apple = rgb 112 173 71
+    , silver = rgb 191 191 191
     }
 
 
@@ -452,16 +454,18 @@ stylesheet device =
             [ Font.size 12
             , Font.lineHeight 1.4
             , Font.center
-            , Border.all 1
-            , Border.solid
-            , Color.border white
+            , Color.background palette.jaffa
+            , variation Secondary
+                [ Color.background palette.apple ]
             ]
         , Style.style (ShowOutput OutputMultiImpact)
             [ Font.size 11
             , Font.lineHeight 1.4
             , Font.center
+            , Color.text palette.chambray
+            , Color.background <| rgb 255 255 255
             , Border.solid
-            , Color.border white
+            , Color.border palette.chambray
             , Border.right 1
             , Border.bottom 1
             , variation Secondary 
@@ -473,6 +477,9 @@ stylesheet device =
             , variation Quaternary
                 [ Border.right 0
                 , Border.bottom 0
+                ]
+            , variation Disabled
+                [ Color.background palette.silver
                 ]
             ]
         , Style.style (ShowOutput OutputAddresses)
