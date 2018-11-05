@@ -54,8 +54,18 @@ hasBenefit val details =
     List.member val details.benefits
 
 
-acreageImpact : Float -> StrategyDetails -> Float
-acreageImpact length details =
+positiveAcreageImpact : Float -> StrategyDetails -> Float
+positiveAcreageImpact length details =
     details.beachWidthImpactM
         |> Maybe.map (\width -> abs <| width * length)
+        |> Maybe.map (\sqMeters -> sqMeters * acresPerSqMeter)
         |> Maybe.withDefault 0.0
+
+
+negativeAcreageImpact : Float -> StrategyDetails -> Float
+negativeAcreageImpact length details =
+    -(positiveAcreageImpact length details)
+
+
+acresPerSqMeter : Float
+acresPerSqMeter = 0.000247105

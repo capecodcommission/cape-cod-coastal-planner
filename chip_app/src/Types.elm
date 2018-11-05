@@ -236,6 +236,13 @@ type alias ZoneOfImpact =
     }
 
 
+zoiTotalMeters : ZoneOfImpact -> Float
+zoiTotalMeters zoi =
+    zoi.beachLengths.total
+        |> toFloat
+        |> (*) metersPerFoot
+
+
 zoneOfImpactDecoder : Decoder ZoneOfImpact
 zoneOfImpactDecoder =
     D.map4 ZoneOfImpact
@@ -248,3 +255,7 @@ zoneOfImpactDecoder =
 getId : Scalar.Id -> String
 getId (Scalar.Id id) =
     id
+
+
+metersPerFoot : Float
+metersPerFoot = 0.3048

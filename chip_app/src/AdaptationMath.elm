@@ -2,7 +2,7 @@ module AdaptationMath exposing (..)
 
 
 import AdaptationStrategy.CoastalHazards as Hazards exposing (CoastalHazard)
-import AdaptationStrategy.Strategies exposing (Strategy)
+import AdaptationStrategy.Strategies as Strategies exposing (Strategy)
 import AdaptationStrategy.StrategyDetails as Details exposing (StrategyDetails)
 import AdaptationStrategy.Impacts exposing (..)
 import AdaptationHexes as Hexes exposing (..)
@@ -16,16 +16,20 @@ privateLandMultiplier : Float
 privateLandMultiplier = 3360699
 
 
-sqMetersPerAcre : Float
-sqMetersPerAcre = 4046.86
+stormSurgeBldgMultiplier : Float
+stormSurgeBldgMultiplier = 0.21
+
+
+livingShorelineSaltMarshMultiplier : Float
+livingShorelineSaltMarshMultiplier = 0.85
 
 
 metersPerFoot : Float
 metersPerFoot = 0.3048
 
 
-stormSurgeBldgMultiplier : Float
-stormSurgeBldgMultiplier = 0.21
+acresPerSqMeter : Float
+acresPerSqMeter = 0.000247105
 
 
 {-| Need to know the current hazard and the current strategy.
@@ -205,13 +209,16 @@ calculateStrategyOutput :
     -> OutputDetails
     -> Result OutputError OutputDetails
 calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noActionOutput =
+    let
+        zoiTotal = zoiTotalMeters zoneOfImpact
+    in
     case Hazards.toType hazard of
         Ok Hazards.Erosion ->
             let
                 avgErosion = averageErosion hexes
             in
-            case (String.toLower strategy.name, avgErosion) of
-                ( "revetment", Eroding _ ) ->
+            case (Strategies.toType strategy, avgErosion) of
+                ( Ok Strategies.Revetment, Eroding _ ) ->
                     output
                         |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
                         |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
@@ -221,28 +228,150 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen 
                             ( (.beachAreaChange 
-                                >> adjustAcreageResult (Details.acreageImpact (toFloat zoneOfImpact.beachLengths.total) details)
+                                >> adjustAcreageResult (Details.negativeAcreageImpact zoiTotal details)
                                 >> setBeachArea) 
                               noActionOutput
                             )
 
-                ( "revetment", Accreting _ ) ->
+                ( Ok Strategies.Revetment, Accreting _ ) ->
                     output
                         |> (getCriticalFacilityCount >> setCriticalFacilitiesUnchanged) noActionOutput
                         |> Result.andThen
                             ( (.beachAreaChange 
-                                >> adjustAcreageResult (Details.acreageImpact (toFloat zoneOfImpact.beachLengths.total) details)
+                                >> adjustAcreageResult (Details.negativeAcreageImpact zoiTotal details)
                                 >> setBeachArea) 
                               noActionOutput
                             )
 
-                ( "revetment", NoErosion ) ->
+                ( Ok Strategies.Revetment, NoErosion ) ->
                     output
                         |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput
                         |> Result.andThen
-                            (setBeachArea <| Details.acreageImpact (toFloat zoneOfImpact.beachLengths.total) details)
+                            (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
 
-                ( badStrategy, _ ) ->
+                ( Ok Strategies.DuneCreation, Eroding _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> protectPrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.saltMarshChange >> copySaltMarshAcreage) noActionOutput)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult (Details.positiveAcreageImpact zoiTotal details)
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.DuneCreation, Accreting _ ) ->
+                    output
+                        |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult (Details.positiveAcreageImpact zoiTotal details)
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.DuneCreation, NoErosion ) ->
+                    output
+                        |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput
+                        |> Result.andThen
+                            (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
+
+                ( Ok Strategies.BankStabilization, Eroding _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> protectPrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.saltMarshChange >> copySaltMarshAcreage) noActionOutput)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput)
+
+                ( Ok Strategies.BankStabilization, Accreting _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> setCriticalFacilitiesUnchanged) noActionOutput
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen ((.beachAreaChange >> copyBeachArea) noActionOutput)
+
+                ( Ok Strategies.BankStabilization, NoErosion ) ->
+                    Ok output
+
+                ( Ok Strategies.LivingShoreline, Eroding _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> protectPrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen 
+                            ( (.saltMarshChange
+                                >> adjustAcreageResult (Details.positiveAcreageImpact (zoiTotal * livingShorelineSaltMarshMultiplier) details)
+                                >> setSaltMarshAcreage)
+                              noActionOutput
+                            )
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult (Details.negativeAcreageImpact zoiTotal details) 
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.LivingShoreline, Accreting _ ) ->
+                    output
+                        |> (.saltMarshChange
+                                >> adjustAcreageResult (Details.positiveAcreageImpact (zoiTotal * livingShorelineSaltMarshMultiplier) details)
+                                >> setSaltMarshAcreage)
+                              noActionOutput
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult (Details.negativeAcreageImpact zoiTotal details) 
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.LivingShoreline, NoErosion ) ->
+                    output
+                        |> setSaltMarshAcreage (Details.positiveAcreageImpact (zoiTotal * livingShorelineSaltMarshMultiplier) details)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
+
+                ( Ok Strategies.BeachNourishment, Eroding _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> protectPrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.saltMarshChange >> copySaltMarshAcreage) noActionOutput)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult (Details.positiveAcreageImpact zoiTotal details)
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.BeachNourishment, Accreting _ ) ->
+                    output
+                        |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult (Details.positiveAcreageImpact zoiTotal details)
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.BeachNourishment, NoErosion ) ->
+                    output
+                        |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput
+                        |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
+
+                ( Ok _, _) ->
+                    Err <| BadInput "Cannot calculate output for unknown or invalid strategy type"
+
+                ( Err badStrategy, _ ) ->
                     Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
 
 
@@ -250,16 +379,22 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
             let
                 avgSeaLevelRise = averageSeaLevelRise hexes
             in
-            case ( String.toLower strategy.name, avgSeaLevelRise ) of
-                ( badStrategy, _ ) ->
+            case ( Strategies.toType strategy, avgSeaLevelRise ) of
+                ( Ok _, _ ) ->
+                    Err <| BadInput "Cannot calculate output for unknown or invalid strategy type"
+
+                ( Err badStrategy, _ ) ->
                     Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
 
         Ok Hazards.StormSurge ->
             let
                 vulnerableToSurge = isVulnerableToStormSurge hexes
             in
-            case ( String.toLower strategy.name, vulnerableToSurge ) of
-                ( badStrategy, _ ) ->
+            case ( Strategies.toType strategy, vulnerableToSurge ) of
+                ( Ok _, _ ) ->
+                    Err <| BadInput "Cannot calculate output for unknown or invalid strategy type"
+
+                ( Err badStrategy, _ ) ->
                     Err <| BadInput ("Cannot calculate output for unknown or invalid strategy type: '" ++ badStrategy ++ "'")
     
         Err badHazard ->
@@ -425,6 +560,11 @@ protectPrivateLandValue value output =
         Ok { output | privateLandValue = ValueProtected <| abs value }
 
 
+setPrivateLandValueUnchanged : OutputDetails -> Result OutputError OutputDetails
+setPrivateLandValueUnchanged output =
+    Ok { output | privateLandValue = ValueUnchanged }
+
+
 losePrivateBldgValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
 losePrivateBldgValue value output =
     if value == 0 then
@@ -441,6 +581,11 @@ protectPrivateBldgValue value output =
         Ok { output | privateBuildingValue = ValueProtected <| abs value }
 
 
+setPrivateBldgValueUnchanged : OutputDetails -> Result OutputError OutputDetails
+setPrivateBldgValueUnchanged output =
+    Ok { output | privateBuildingValue = ValueUnchanged }
+
+
 loseSaltMarshAcreage : Acreage -> OutputDetails -> Result OutputError OutputDetails
 loseSaltMarshAcreage acreage output =
     if acreage == 0 then
@@ -454,22 +599,44 @@ copySaltMarshAcreage result output =
     Ok { output | saltMarshChange = result }
 
 
+setSaltMarshAcreageUnchanged : OutputDetails -> Result OutputError OutputDetails
+setSaltMarshAcreageUnchanged output =
+    Ok { output | saltMarshChange = AcreageUnchanged }
+
+
+setSaltMarshAcreage : Acreage -> OutputDetails -> Result OutputError OutputDetails
+setSaltMarshAcreage acreage output =
+    if acreage > 0 then
+        Ok { output | saltMarshChange = AcreageGained acreage }
+    else if acreage < 0 then
+        Ok { output | saltMarshChange = AcreageLost <| abs acreage }
+    else
+        Ok { output | saltMarshChange = AcreageUnchanged }
+
+
+-- Should be rewritten to be more compositional like the other functions
 loseBeachArea : ZoneOfImpact -> ImpactWidth -> OutputDetails -> Result OutputError OutputDetails
-loseBeachArea { beachLengths } avgWidth output =
-    case toFloat beachLengths.total * avgWidth of
+loseBeachArea zoi avgWidth output =
+    case zoiTotalMeters zoi * avgWidth of
         0 ->
             Ok { output | beachAreaChange = AcreageUnchanged }
         acreage ->
-            Ok { output | beachAreaChange = AcreageLost <| abs acreage }
+            Ok { output | beachAreaChange = AcreageLost <| abs acreage * acresPerSqMeter }
 
 
+-- Should be rewritten to be more compositional like the other functions
 gainBeachArea : ZoneOfImpact -> ImpactWidth -> OutputDetails -> Result OutputError OutputDetails
-gainBeachArea { beachLengths } avgWidth output =
-    case toFloat beachLengths.total * avgWidth of
+gainBeachArea zoi avgWidth output =
+    case zoiTotalMeters zoi * avgWidth of
         0 ->
             Ok { output | beachAreaChange = AcreageUnchanged }
         acreage ->
-            Ok { output | beachAreaChange = AcreageGained <| abs acreage }
+            Ok { output | beachAreaChange = AcreageGained <| abs acreage * acresPerSqMeter }
+
+
+setBeachAreaUnchanged : OutputDetails -> Result OutputError OutputDetails
+setBeachAreaUnchanged output =
+    Ok { output | beachAreaChange = AcreageUnchanged }
 
 
 setBeachArea : Acreage -> OutputDetails -> Result OutputError OutputDetails
@@ -480,6 +647,11 @@ setBeachArea acreage output =
         Ok { output | beachAreaChange = AcreageLost <| abs acreage }
     else
         Ok { output | beachAreaChange = AcreageUnchanged }
+
+
+copyBeachArea : AcreageResult -> OutputDetails -> Result OutputError OutputDetails
+copyBeachArea result output =
+    Ok { output | beachAreaChange = result }
 
 
 gainRareSpeciesHabitat : Bool -> OutputDetails -> Result OutputError OutputDetails

@@ -24,6 +24,41 @@ type alias Strategy =
 type alias Placement = String
 
 
+type StrategyType
+    = NoAction
+    | Undevelopment
+    | Revetment
+    | DuneCreation
+    | BankStabilization
+    | LivingShoreline
+    | BeachNourishment
+
+
+toType : Strategy -> Result String StrategyType
+toType strategy =   
+    toTypeFromStr strategy.name
+
+
+toTypeFromStr : String -> Result String StrategyType
+toTypeFromStr strategyName =
+    case String.toLower strategyName of
+        "no action" -> Ok NoAction
+
+        "undevelopment" -> Ok Undevelopment
+
+        "revetment" -> Ok Revetment
+
+        "dune creation" -> Ok DuneCreation
+
+        "bank stabilization" -> Ok BankStabilization
+
+        "living shoreline" -> Ok LivingShoreline
+
+        "beach nourishment" -> Ok BeachNourishment
+
+        badName -> Err badName
+
+
 fromList : List Strategy -> Strategies
 fromList list =
     list
