@@ -243,6 +243,11 @@ zoiTotalMeters zoi =
         |> (*) metersPerFoot
 
 
+zoiAcreageImpact : Float -> ZoneOfImpact -> Float
+zoiAcreageImpact width zoi =
+    zoiTotalMeters zoi * width
+
+
 zoneOfImpactDecoder : Decoder ZoneOfImpact
 zoneOfImpactDecoder =
     D.map4 ZoneOfImpact

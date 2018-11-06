@@ -126,14 +126,13 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                         |> Result.andThen ((sumPrivateBldgValue >> losePrivateBldgValue) hexes)
                         |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) hexes)
                         |> Result.andThen ((isRareSpeciesHabitatPresent >> loseRareSpeciesHabitat) hexes)
-                        |> Result.andThen (loseBeachArea zoneOfImpact width)
+                        |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
 
                 Accreting width ->
                     output
                         |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
                         |> Result.andThen ((isRareSpeciesHabitatPresent >> gainRareSpeciesHabitat) hexes)
-                        |> Result.andThen (gainBeachArea zoneOfImpact width)
-
+                        |> Result.andThen ((zoiAcreageImpact width >> gainBeachArea) zoneOfImpact)
 
                 NoErosion -> 
                     output
@@ -157,7 +156,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                         |> Result.andThen ((sumPrivateBldgValue >> losePrivateBldgValue) hexes)
                         |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) hexes)
                         |> Result.andThen ((isRareSpeciesHabitatPresent >> loseRareSpeciesHabitat) hexes)
-                        |> Result.andThen (loseBeachArea zoneOfImpact width)
+                        |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
 
                 NoSeaRise ->
                     output
@@ -607,31 +606,27 @@ setSaltMarshAcreageUnchanged output =
 setSaltMarshAcreage : Acreage -> OutputDetails -> Result OutputError OutputDetails
 setSaltMarshAcreage acreage output =
     if acreage > 0 then
-        Ok { output | saltMarshChange = AcreageGained acreage }
+        Ok { output | saltMarshChange = AcreageGained <| abs acreage }
     else if acreage < 0 then
         Ok { output | saltMarshChange = AcreageLost <| abs acreage }
     else
         Ok { output | saltMarshChange = AcreageUnchanged }
 
 
--- Should be rewritten to be more compositional like the other functions
-loseBeachArea : ZoneOfImpact -> ImpactWidth -> OutputDetails -> Result OutputError OutputDetails
-loseBeachArea zoi avgWidth output =
-    case zoiTotalMeters zoi * avgWidth of
-        0 ->
-            Ok { output | beachAreaChange = AcreageUnchanged }
-        acreage ->
-            Ok { output | beachAreaChange = AcreageLost <| abs acreage * acresPerSqMeter }
+loseBeachArea : Acreage -> OutputDetails -> Result OutputError OutputDetails
+loseBeachArea acreage output =
+    if acreage == 0 then
+        Ok { output | beachAreaChange = AcreageUnchanged }
+    else
+        Ok { output | beachAreaChange = AcreageLost <| abs acreage }
 
 
--- Should be rewritten to be more compositional like the other functions
-gainBeachArea : ZoneOfImpact -> ImpactWidth -> OutputDetails -> Result OutputError OutputDetails
-gainBeachArea zoi avgWidth output =
-    case zoiTotalMeters zoi * avgWidth of
-        0 ->
-            Ok { output | beachAreaChange = AcreageUnchanged }
-        acreage ->
-            Ok { output | beachAreaChange = AcreageGained <| abs acreage * acresPerSqMeter }
+gainBeachArea : Acreage -> OutputDetails -> Result OutputError OutputDetails
+gainBeachArea acreage output =
+    if acreage == 0 then
+        Ok { output | beachAreaChange = AcreageUnchanged }
+    else
+        Ok { output | beachAreaChange = AcreageGained <| abs acreage }
 
 
 setBeachAreaUnchanged : OutputDetails -> Result OutputError OutputDetails
@@ -642,7 +637,7 @@ setBeachAreaUnchanged output =
 setBeachArea : Acreage -> OutputDetails -> Result OutputError OutputDetails
 setBeachArea acreage output =
     if acreage > 0 then
-        Ok { output | beachAreaChange = AcreageGained acreage }
+        Ok { output | beachAreaChange = AcreageGained <| abs acreage }
     else if acreage < 0 then
         Ok { output | beachAreaChange = AcreageLost <| abs acreage }
     else
