@@ -245,7 +245,7 @@ zoiTotalMeters zoi =
 
 zoiAcreageImpact : Float -> ZoneOfImpact -> Float
 zoiAcreageImpact width zoi =
-    zoiTotalMeters zoi * width
+    zoiTotalMeters zoi * width * acresPerSqMeter
 
 
 zoneOfImpactDecoder : Decoder ZoneOfImpact
@@ -264,3 +264,7 @@ getId (Scalar.Id id) =
 
 metersPerFoot : Float
 metersPerFoot = 0.3048
+
+
+acresPerSqMeter : Float
+acresPerSqMeter = 0.000247105
