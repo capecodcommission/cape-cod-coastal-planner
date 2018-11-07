@@ -751,7 +751,7 @@ view app =
         Loaded model ->
             Element.viewport (stylesheet model.device) <|
                 column NoStyle
-                    [ height (percent 100) ]
+                    [ height (percent 100), width fill ]
                     [ headerView model
                     , mainContent MainContent [ height fill, clip ] <|
                         column NoStyle [ height fill ] <|
@@ -781,16 +781,16 @@ view app =
 
 headerView : Model -> Element MainStyles Variations Msg
 headerView ({ device } as model) =
-    header (Header HeaderBackground) [ height (px <| adjustOnHeight ( 60, 80 ) device) ] <|
-        row NoStyle [ height fill, paddingXY 54.0 0.0, spacingXY 54.0 0.0 ] <|
+    header (Header HeaderBackground) [ width fill, height (px <| adjustOnHeight ( 60, 80 ) device) ] <|
+        row NoStyle [ height fill, width fill, paddingXY 54 0, spacingXY 54 0 ] <|
             [ column NoStyle
-                [ verticalCenter ]
+                [ verticalCenter, width fill ]
                 [ h1 (Header HeaderTitle) [] <| Element.text "Coastal Hazard Impact Planner" ]
             , column NoStyle
-                [ verticalCenter, alignRight, width fill ]
+                [ verticalCenter, width fill ]
                 [ row NoStyle
-                    [ spacingXY 16 0 ]
-                    [ Dropdown.view model.shorelineLocationsDropdown model.shorelineLocations
+                    [ width fill, spacingXY 16 0, alignRight ]
+                    [ el NoStyle [] <| Dropdown.view model.shorelineLocationsDropdown model.shorelineLocations
                     , BaselineInfo.view model
                     ]
                 ]

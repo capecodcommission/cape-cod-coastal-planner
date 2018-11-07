@@ -87,7 +87,7 @@ toggleToStrategy (( noActionOutput, strategyOutput ) as output) =
             [ onClick <| ShowStrategyOutput output 
             , width (percent 65)
             ] <| 
-            el NoStyle [ height fill ] (text <| String.toUpper strategyOutput.name)
+            el NoStyle [] (text <| String.toUpper strategyOutput.name)
         ]
 
 
@@ -132,19 +132,18 @@ resultsHeader output =
                     ]
                 , column NoStyle [center]                    
                     [ column NoStyle []
-                        [ row NoStyle []
+                        [ row NoStyle [ minWidth (px 115) ]
                             [ el (ShowOutput OutputMultiImpact) 
                                 [ paddingXY 4 0 
                                 , scaleDisabled "Site"
                                 ] <| text "Site"
                             , el (ShowOutput OutputMultiImpact) 
-                                [ paddingLeft 4
-                                , paddingRight 5
+                                [ paddingXY 4 0
                                 , vary Secondary True 
                                 , scaleDisabled "Neighborhood"
                                 ] <| text "Neighborhood"
                             ]
-                        , row NoStyle []
+                        , row NoStyle [ minWidth (px 115) ]
                             [ el (ShowOutput OutputMultiImpact) 
                                 [ paddingXY 4 0
                                 , vary Tertiary True 
@@ -286,7 +285,7 @@ criticalFacilitiesView facilities =
                 , c
                 ]
                 [ el NoStyle [] <| text a
-                , el NoStyle [] <| text b
+                , el NoStyle [] <| b
                 ]
     in
     row NoStyle [ height fill, width fill, center, verticalCenter ]
@@ -296,19 +295,19 @@ criticalFacilitiesView facilities =
             ]
         , case facilities of
             FacilitiesUnchanged num ->
-                render "--" "" (vary Secondary False)
+                render "--" empty (vary Secondary False)
 
             FacilitiesLost num ->
-                render (toString num) "LOST" (vary Secondary True)
+                render (toString num) (text "LOST") (vary Secondary True)
 
             FacilitiesProtected num ->
-                render (toString num) "PROT." (vary Tertiary True)
+                render (toString num) (text "PROT.") (vary Tertiary True)
 
             FacilitiesPresent num ->
-                render (toString num) "" (vary Secondary False)
+                render (toString num) empty (vary Secondary False)
 
             FacilitiesRelocated num ->
-                render (toString num) "RELOC." (vary Tertiary True)
+                render (toString num) (text "RELOC.") (vary Tertiary True)
         ]
 
 

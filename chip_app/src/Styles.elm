@@ -64,6 +64,7 @@ type MainStyles
     | FontRight
     | Hairline
     | CircleBullet
+    | Test
 
 
 type ModalStyles
@@ -183,6 +184,7 @@ stylesheet : Device -> StyleSheet MainStyles Variations
 stylesheet device =
     Style.styleSheet
         [ Style.style NoStyle []
+        , Style.style Test [ Color.background palette.mySin ]
         , Style.style MainContent
             [ Color.background palette.elephant ]
         , Style.style (Header HeaderBackground)

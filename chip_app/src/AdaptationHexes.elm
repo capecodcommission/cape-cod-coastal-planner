@@ -213,6 +213,7 @@ sumSaltMarshAcreage hexes =
     hexes
         |> List.foldl (\hex acc -> hex.saltMarshAcres + acc) 0.0
 
+
 --
 -- DECODERS ETC.
 --

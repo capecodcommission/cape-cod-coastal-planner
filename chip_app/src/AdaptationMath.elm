@@ -32,8 +32,10 @@ acresPerSqMeter : Float
 acresPerSqMeter = 0.000247105
 
 
-{-| Need to know the current hazard and the current strategy.
-
+{-| Calculate output for the selected Strategy. If the strategy selected is NoAction, it will only
+    calculate information for that scenario. If the strategy selected is anything else, it will
+    calculate information for both the NoAction scenario, as a baseline for comparison, and then
+    also the information for the selected strategy.
 -}
 calculate : 
     WebData AdaptationHexes 
@@ -671,11 +673,14 @@ setRareSpeciesHabitatUnchanged output =
 
 
 
--- {-| Calculate the net present value (NPV) for selected shoreline
+-- {-| WARNING! Uncommenting this code does not mean it can then just be plugged back in and have it work
+--     I'm leaving it here as a loose guide to the programmer of one way to implement the algorithm for NPV
+
+--     Calculate the net present value (NPV) for selected shoreline
 
 --     Beach types include National Seashore, Town Beach, and Other Public Beach
 -- -}
--- -- calculateBeachValue : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
+-- calculateBeachValue : AdaptationHexes -> ZoneOfImpact -> OutputDetails -> Result OutputError OutputDetails
 -- calculateBeachValue hexes zoneOfImpact output =
 --     let
 --         cashFlow = annualChangeBeachValue hexes zoneOfImpact
@@ -683,8 +688,7 @@ setRareSpeciesHabitatUnchanged output =
 --     List.range 1 npvConstants.numPeriods
 --         |> List.foldl (netPresentValue cashFlow) 0.0
 --         |> monetaryValueToResult
---         |> \result -> { output | beachValue = result }
---         |> Ok
+--         |> \result -> Ok { output | beachValue = result }
 
 
 -- annualChangeBeachValue : AdaptationHexes -> ZoneOfImpact -> Float
