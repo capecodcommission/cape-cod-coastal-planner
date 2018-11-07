@@ -48,3 +48,23 @@ export function compareFeaturesById(feature1, feature2) {
     }
     return 0;
 };
+
+
+const ribbonColors = {
+    roofTerracotta: "#A41B1E",
+    burntSienna: "#F3755C",
+    maize: "#F5C8AB"
+};
+
+export function getVulnRibbonSegmentColor(feature) {
+    if (!feature || !(typeof feature.get === 'function')) return "#3399CC";
+    
+    let ribbonScore = feature.get("RibbonScore");
+    if (ribbonScore >= 6) {
+        return ribbonColors.roofTerracotta;
+    } else if (ribbonScore <= 0) {
+        return ribbonColors.maize;
+    } else {
+        return ribbonColors.burntSienna;
+    }
+};
