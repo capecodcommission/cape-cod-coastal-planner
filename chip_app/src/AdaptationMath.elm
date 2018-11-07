@@ -321,10 +321,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
 
                 ( Ok Strategies.LivingShoreline, Accreting _ ) ->
                     output
-                        |> (.saltMarshChange
-                                >> adjustAcreageResult (Details.positiveAcreageImpact (zoiTotal * livingShorelineSaltMarshMultiplier) details)
-                                >> setSaltMarshAcreage)
-                              noActionOutput
+                        |> setSaltMarshAcreage (Details.positiveAcreageImpact (zoiTotal * livingShorelineSaltMarshMultiplier) details)
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen
                             ( (.beachAreaChange
@@ -381,6 +378,26 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                 avgSeaLevelRise = averageSeaLevelRise hexes
             in
             case ( Strategies.toType strategy, avgSeaLevelRise ) of
+                ( Ok Strategies.DuneCreation, VulnSeaRise _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> protectPrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.saltMarshChange >> copySaltMarshAcreage) noActionOutput)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult (Details.positiveAcreageImpact zoiTotal details)
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.DuneCreation, NoSeaRise ) -> 
+                    output
+                        |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput
+                        |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
+
                 ( Ok _, _ ) ->
                     Err <| BadInput "Cannot calculate output for unknown or invalid strategy type"
 
@@ -392,6 +409,43 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                 vulnerableToSurge = isVulnerableToStormSurge hexes
             in
             case ( Strategies.toType strategy, vulnerableToSurge ) of
+                ( Ok Strategies.DuneCreation, True ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> copyPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> copyPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
+
+                ( Ok Strategies.DuneCreation, False ) ->
+                    output
+                        |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput
+                        |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
+
+                ( Ok Strategies.BankStabilization, True ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> copyPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> copyPrivateBldgValue) noActionOutput)
+
+                ( Ok Strategies.BankStabilization, False ) ->
+                    Ok output
+
+                ( Ok Strategies.LivingShoreline, True ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> copyPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> copyPrivateBldgValue) noActionOutput)
+                        |> Result.andThen (setSaltMarshAcreage <| Details.positiveAcreageImpact (zoiTotal * livingShorelineSaltMarshMultiplier) details)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
+
+                ( Ok Strategies.LivingShoreline, False ) ->
+                    output
+                        |> setSaltMarshAcreage (Details.positiveAcreageImpact (zoiTotal * livingShorelineSaltMarshMultiplier) details)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
+
                 ( Ok _, _ ) ->
                     Err <| BadInput "Cannot calculate output for unknown or invalid strategy type"
 
@@ -400,10 +454,6 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
     
         Err badHazard ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: '" ++ badHazard ++ "'")
-
-
-
-
 
 
 {-| Apply the selected Strategy name to the output results
@@ -545,6 +595,11 @@ setPublicBldgValueUnchanged output =
     Ok { output | publicBuildingValue = ValueUnchanged }
 
 
+copyPublicBldgValue : MonetaryResult -> OutputDetails -> Result OutputError OutputDetails
+copyPublicBldgValue result output =
+    Ok { output | publicBuildingValue = result }
+
+
 losePrivateLandValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
 losePrivateLandValue value output =
     if value == 0 then
@@ -585,6 +640,11 @@ protectPrivateBldgValue value output =
 setPrivateBldgValueUnchanged : OutputDetails -> Result OutputError OutputDetails
 setPrivateBldgValueUnchanged output =
     Ok { output | privateBuildingValue = ValueUnchanged }
+
+
+copyPrivateBldgValue : MonetaryResult -> OutputDetails -> Result OutputError OutputDetails
+copyPrivateBldgValue result output =    
+    Ok { output | privateBuildingValue = result }
 
 
 loseSaltMarshAcreage : Acreage -> OutputDetails -> Result OutputError OutputDetails
