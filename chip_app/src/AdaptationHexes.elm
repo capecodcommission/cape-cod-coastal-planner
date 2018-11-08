@@ -214,6 +214,18 @@ sumSaltMarshAcreage hexes =
         |> List.foldl (\hex acc -> hex.saltMarshAcres + acc) 0.0
 
 
+hasRevetment : AdaptationHexes -> Bool
+hasRevetment hexes =
+    hexes
+        |> List.any (\hex -> hex.revetment == True)
+
+
+hasSaltMarshAndRevetment : AdaptationHexes -> Bool
+hasSaltMarshAndRevetment hexes =
+    hexes
+        |> List.any (\hex -> hex.saltMarshAcres > 0 && hex.revetment == True)
+
+
 --
 -- DECODERS ETC.
 --

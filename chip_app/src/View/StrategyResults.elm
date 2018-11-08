@@ -243,6 +243,12 @@ monetaryResultView lblPart1 lblPart2 result =
     case result of
         ValueUnchanged ->
             render "--" "NO CHANGE" lblPart1 lblPart2 (vary Secondary False)
+            
+        ValueNoLongerPresent ->
+            render "--" "NO LONGER PRESENT" lblPart1 lblPart2 (vary Secondary False)
+
+        ValueTransferred transfer ->
+            render (abbreviateMonetaryValue transfer) "TRANSFERRED" lblPart1 lblPart2 (vary Tertiary True)
 
         ValueLoss lost ->
             render (abbreviateMonetaryValue lost) "LOST" lblPart1 lblPart2 (vary Secondary True)

@@ -102,6 +102,8 @@ applyBasicInfo hexes location zoneOfImpact hazard ( strategy, details ) output =
         |> Result.andThen (applyScenarioSize zoneOfImpact)
 
 
+{-| Calculate output for the NoAction scenario given a default copy of the output.
+-}
 calculateNoActionOutput : 
     AdaptationHexes 
     -> ZoneOfImpact 
@@ -194,12 +196,15 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
     
 
 
-{-| Calculate Strategy Output given a default copy of output and already calculated output for NoAction.
+{-| Calculate Strategy Output given a default copy of output and already calculated 
+    output for NoAction.
 
-    If an output category is intended to have no impact due to the strategy or hazard, you can rely on the default value.
+    If an output category is intended to have no impact due to the strategy or hazard, 
+    you can rely on the default value.
 
-    If an output category relies on anything previously calcultated for NoAction, then you need to set it on the
-    strategy's output, even if that means it's just copying it over from NoAction.
+    If an output category relies on anything previously calcultated for NoAction, 
+    then you need to set it on the strategy's output, even if that means it's just 
+    copying it over from NoAction.
 -}
 calculateStrategyOutput : 
     AdaptationHexes 
@@ -219,6 +224,102 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                 avgErosion = averageErosion hexes
             in
             case (Strategies.toType strategy, avgErosion) of
+                ( Ok Strategies.Undevelopment, Eroding _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> setPublicBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> copyPrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> setPrivateBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen
+                            ( (.saltMarshChange
+                                >> adjustAcreageResult
+                                    ( if hasSaltMarshAndRevetment hexes then
+                                        Details.positiveAcreageImpact zoiTotal details
+                                      else
+                                        0
+                                    )
+                                >> setSaltMarshAcreage)
+                              noActionOutput
+                            )
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult
+                                    ( if hasRevetment hexes then 
+                                        Details.positiveAcreageImpact zoiTotal details
+                                      else
+                                        0
+                                    )
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.Undevelopment, Accreting _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> relocateCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> setPublicBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> setPrivateBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen
+                            ( setSaltMarshAcreage <|
+                                ( if hasSaltMarshAndRevetment hexes then
+                                    Details.positiveAcreageImpact zoiTotal details
+                                  else
+                                    0
+                                )
+                            )
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult
+                                    ( if hasRevetment hexes then 
+                                        Details.positiveAcreageImpact zoiTotal details
+                                      else
+                                        0
+                                    )
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.Undevelopment, NoErosion ) ->
+                    output
+                        |> (getCriticalFacilityCount >> relocateCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> setPublicBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> setPrivateBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen
+                            ( setSaltMarshAcreage <|
+                                ( if hasSaltMarshAndRevetment hexes then
+                                    Details.positiveAcreageImpact zoiTotal details
+                                  else
+                                    0
+                                )
+                            )
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen 
+                            ( setBeachArea <|
+                                ( if hasRevetment hexes then 
+                                    Details.positiveAcreageImpact zoiTotal details
+                                  else
+                                    0
+                                )
+                            )
+
+                ( Ok Strategies.OpenSpaceProtection, Eroding _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> loseCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> copyPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> transferPrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> copyPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.saltMarshChange >> copySaltMarshAcreage) noActionOutput)
+                        |> Result.andThen ((.rareSpeciesHabitat >> copyRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen ((.beachAreaChange >> copyBeachArea) noActionOutput)
+
+                ( Ok Strategies.OpenSpaceProtection, Accreting _ ) ->
+                    output
+                        |> (.beachAreaChange >> copyBeachArea) noActionOutput
+
+                ( Ok Strategies.OpenSpaceProtection, NoErosion ) ->
+                    Ok output
+
                 ( Ok Strategies.Revetment, Eroding _ ) ->
                     output
                         |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
@@ -378,6 +479,59 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                 avgSeaLevelRise = averageSeaLevelRise hexes
             in
             case ( Strategies.toType strategy, avgSeaLevelRise ) of
+                ( Ok Strategies.Undevelopment, VulnSeaRise _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> setPublicBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> copyPrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> losePrivateBldgValue) noActionOutput)
+                        |> Result.andThen
+                            ( (.saltMarshChange
+                                >> adjustAcreageResult
+                                    ( if hasSaltMarshAndRevetment hexes then
+                                        Details.positiveAcreageImpact zoiTotal details
+                                      else
+                                        0
+                                    )
+                                >> setSaltMarshAcreage)
+                              noActionOutput
+                            )
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult
+                                    ( if hasRevetment hexes then 
+                                        Details.positiveAcreageImpact zoiTotal details
+                                      else
+                                        0
+                                    )
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.Undevelopment, NoSeaRise ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> setPublicBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> setPrivateBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen
+                            ( setSaltMarshAcreage <|
+                                ( if hasSaltMarshAndRevetment hexes then
+                                    Details.positiveAcreageImpact zoiTotal details
+                                  else
+                                    0
+                                )
+                            )
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen 
+                            ( setBeachArea <|
+                                ( if hasRevetment hexes then 
+                                    Details.positiveAcreageImpact zoiTotal details
+                                  else
+                                    0
+                                )
+                            )
+
                 ( Ok Strategies.DuneCreation, VulnSeaRise _ ) ->
                     output
                         |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
@@ -409,6 +563,52 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                 vulnerableToSurge = isVulnerableToStormSurge hexes
             in
             case ( Strategies.toType strategy, vulnerableToSurge ) of
+                ( Ok Strategies.Undevelopment, True ) ->
+                    output
+                        |> (getCriticalFacilityCount >> relocateCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> setPublicBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> setPrivateBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen
+                            ( setSaltMarshAcreage <|
+                                ( if hasSaltMarshAndRevetment hexes then
+                                    Details.positiveAcreageImpact zoiTotal details
+                                  else
+                                    0
+                                )
+                            )
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen 
+                            ( setBeachArea <|
+                                ( if hasRevetment hexes then 
+                                    Details.positiveAcreageImpact zoiTotal details
+                                  else
+                                    0
+                                )
+                            )
+                
+                ( Ok Strategies.Undevelopment, False ) ->
+                    output
+                        |> (getCriticalFacilityCount >> relocateCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> setPublicBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> setPrivateBldgValueNoLongerPresent) noActionOutput)
+                        |> Result.andThen
+                            ( setSaltMarshAcreage <|
+                                ( if hasSaltMarshAndRevetment hexes then
+                                    Details.positiveAcreageImpact zoiTotal details
+                                  else
+                                    0
+                                )
+                            )
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen 
+                            ( setBeachArea <|
+                                ( if hasRevetment hexes then 
+                                    Details.positiveAcreageImpact zoiTotal details
+                                  else
+                                    0
+                                )
+                            )
+
                 ( Ok Strategies.DuneCreation, True ) ->
                     output
                         |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
@@ -454,6 +654,10 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
     
         Err badHazard ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: '" ++ badHazard ++ "'")
+
+
+
+
 
 
 {-| Apply the selected Strategy name to the output results
@@ -574,6 +778,21 @@ flagCriticalFacilitiesAsPresent facilities output =
             |> \result -> Ok { output | criticalFacilities = result }
 
 
+relocateCriticalFacilities : Count -> OutputDetails -> Result OutputError OutputDetails
+relocateCriticalFacilities facilities output =
+    if facilities == 0 then
+        Ok output
+    else
+        abs facilities
+            |> FacilitiesRelocated
+            |> \result -> Ok { output | criticalFacilities = result }
+
+
+copyPublicBldgValue : MonetaryResult -> OutputDetails -> Result OutputError OutputDetails
+copyPublicBldgValue result output =
+    Ok { output | publicBuildingValue = result }
+
+
 losePublicBldgValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
 losePublicBldgValue value output =
     if value == 0 then
@@ -595,9 +814,12 @@ setPublicBldgValueUnchanged output =
     Ok { output | publicBuildingValue = ValueUnchanged }
 
 
-copyPublicBldgValue : MonetaryResult -> OutputDetails -> Result OutputError OutputDetails
-copyPublicBldgValue result output =
-    Ok { output | publicBuildingValue = result }
+setPublicBldgValueNoLongerPresent : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
+setPublicBldgValueNoLongerPresent value output =
+    if value == 0 then
+        Ok { output | publicBuildingValue = ValueUnchanged }
+    else
+        Ok { output | publicBuildingValue = ValueNoLongerPresent }
 
 
 losePrivateLandValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
@@ -616,9 +838,35 @@ protectPrivateLandValue value output =
         Ok { output | privateLandValue = ValueProtected <| abs value }
 
 
+transferPrivateLandValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
+transferPrivateLandValue value output =
+    if value == 0 then
+        Ok { output | privateLandValue = ValueUnchanged }
+    else
+        Ok { output | privateLandValue = ValueTransferred <| abs value }
+
+
 setPrivateLandValueUnchanged : OutputDetails -> Result OutputError OutputDetails
 setPrivateLandValueUnchanged output =
     Ok { output | privateLandValue = ValueUnchanged }
+
+
+copyPrivateLandValue : MonetaryResult -> OutputDetails -> Result OutputError OutputDetails
+copyPrivateLandValue result output =
+    Ok { output | privateLandValue = result }
+
+
+setPrivateBldgValueNoLongerPresent : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
+setPrivateBldgValueNoLongerPresent value output =
+    if value == 0 then
+        Ok { output | privateBuildingValue = ValueUnchanged }
+    else
+        Ok { output | privateBuildingValue = ValueNoLongerPresent }
+
+
+copyPrivateBldgValue : MonetaryResult -> OutputDetails -> Result OutputError OutputDetails
+copyPrivateBldgValue result output =    
+    Ok { output | privateBuildingValue = result }
 
 
 losePrivateBldgValue : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
@@ -640,11 +888,6 @@ protectPrivateBldgValue value output =
 setPrivateBldgValueUnchanged : OutputDetails -> Result OutputError OutputDetails
 setPrivateBldgValueUnchanged output =
     Ok { output | privateBuildingValue = ValueUnchanged }
-
-
-copyPrivateBldgValue : MonetaryResult -> OutputDetails -> Result OutputError OutputDetails
-copyPrivateBldgValue result output =    
-    Ok { output | privateBuildingValue = result }
 
 
 loseSaltMarshAcreage : Acreage -> OutputDetails -> Result OutputError OutputDetails
@@ -730,6 +973,11 @@ loseRareSpeciesHabitat isPresent output =
 setRareSpeciesHabitatUnchanged : OutputDetails -> Result OutputError OutputDetails
 setRareSpeciesHabitatUnchanged output =
     Ok { output | rareSpeciesHabitat = HabitatUnchanged }
+
+
+copyRareSpeciesHabitat : RareSpeciesHabitat -> OutputDetails -> Result OutputError OutputDetails
+copyRareSpeciesHabitat habitat output =
+    Ok { output | rareSpeciesHabitat = habitat }
 
 
 

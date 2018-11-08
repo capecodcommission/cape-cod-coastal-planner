@@ -26,7 +26,6 @@ import Keyboard.Event exposing (decodeKeyboardEvent)
 import ChipApi.Scalar as Scalar
 import Json.Decode as D
 import List.Zipper as Zipper exposing (Zipper)
-import String.Extra as SEx
 
 
 modalHeight : Device -> Float

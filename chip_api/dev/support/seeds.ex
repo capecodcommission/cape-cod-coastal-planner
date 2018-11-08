@@ -170,7 +170,7 @@ defmodule ChipApi.Seeds do
         
         _undevelopment = %Adaptation.Strategy{
             name: "Undevelopment",
-            description: "Removing development from an existing location by land purchase, flood insurance buy-out programs, or other means.",
+            description: "Removing development from an existing location by land purchase or land donation, flood insurance buy-out programs, or other means. In the case of managed relocation, development and infrastructure are moved away from the coastline and out of harms way.",
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site],   
@@ -341,7 +341,7 @@ defmodule ChipApi.Seeds do
 
         _open_space_protection = %Adaptation.Strategy{
             name: "Open Space Protection",
-            description: "Including protection of existing wetland, drainage system, and buffer zone resources in planning will protect them from development impacts preserving them as a natural defense system.",
+            description: "Town, land trust or private entity purchasing or donating land to limit or prevent development at that site to maintain open space and preserve the natural defense system.",
             adaptation_categories: [protect, retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood, community, regional],
@@ -358,6 +358,7 @@ defmodule ChipApi.Seeds do
             description: "Protecting, restoring, and creating salt marsh as a buffer to storm surges and sea level rise to provide natural flood protection.",
             adaptation_categories: [protect],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
+            strategy_placement: anywhere,
             impact_scales: [site, neighborhood],
             impact_costs: [medium_cost],
             impact_life_spans: [long],

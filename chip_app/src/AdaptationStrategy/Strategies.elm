@@ -27,6 +27,8 @@ type alias Placement = String
 type StrategyType
     = NoAction
     | Undevelopment
+    | OpenSpaceProtection
+    | SaltMarshRestoration
     | Revetment
     | DuneCreation
     | BankStabilization
@@ -45,6 +47,10 @@ toTypeFromStr strategyName =
         "no action" -> Ok NoAction
 
         "undevelopment" -> Ok Undevelopment
+
+        "open space protection" -> Ok OpenSpaceProtection
+        
+        "salt marsh restoration" -> Ok SaltMarshRestoration
 
         "revetment" -> Ok Revetment
 

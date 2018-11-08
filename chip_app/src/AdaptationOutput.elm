@@ -44,7 +44,9 @@ type alias OutputDetails =
 type MonetaryResult
     = ValueLoss MonetaryValue
     | ValueProtected MonetaryValue
+    | ValueTransferred MonetaryValue
     | ValueUnchanged
+    | ValueNoLongerPresent
 
 
 type AcreageResult
@@ -98,37 +100,6 @@ monetaryValueToResult value =
         ValueUnchanged
 
 
-acreageToAcreageResult : Acreage -> AcreageResult
-acreageToAcreageResult acreage =
-    if acreage < 0 then 
-        AcreageLost acreage
-    else if acreage > 0 then
-        AcreageGained acreage
-    else
-        AcreageUnchanged
-
-
-isValueUnchanged : MonetaryResult -> Bool
-isValueUnchanged result =
-    case result of
-        ValueUnchanged -> True
-        _ -> False
-
-
-isValueLoss : MonetaryResult -> Bool
-isValueLoss result =
-    case result of
-        ValueLoss _ -> True
-        _ -> False
-
-
-isValueProtected : MonetaryResult -> Bool
-isValueProtected result =
-    case result of
-        ValueProtected _ -> True
-        _ -> False
-
-
 getCriticalFacilityCount : OutputDetails -> Int
 getCriticalFacilityCount { criticalFacilities } =
     case criticalFacilities of
@@ -144,8 +115,18 @@ getMonetaryValue result =
     case result of
         ValueLoss value -> 
             if value > 0 then value * -1 else value
-        ValueProtected value -> value
-        ValueUnchanged -> 0.0
+
+        ValueProtected value -> 
+            value
+
+        ValueTransferred value ->
+            value
+
+        ValueUnchanged -> 
+            0.0
+
+        ValueNoLongerPresent -> 
+            0.0
 
 
 getAcreageChange : AcreageResult -> Acreage
