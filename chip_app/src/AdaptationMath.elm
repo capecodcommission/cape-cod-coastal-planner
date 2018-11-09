@@ -93,6 +93,7 @@ applyBasicInfo :
 applyBasicInfo hexes location zoneOfImpact hazard ( strategy, details ) output =
     output
         |> applyName strategy
+        |> Result.andThen (applyDescription details)
         |> Result.andThen (applyScales details)
         |> Result.andThen (applyCost details)
         |> Result.andThen (applyLifespan details)
@@ -757,6 +758,11 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
 applyName : Strategy -> OutputDetails -> Result OutputError OutputDetails
 applyName { name } output =
     Ok { output | name = name }
+
+
+applyDescription : StrategyDetails -> OutputDetails -> Result OutputError OutputDetails
+applyDescription { description } output =
+    Ok { output | description = description }
 
 
 {-| Apply the range of scales of impact to the output results

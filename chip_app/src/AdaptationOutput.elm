@@ -24,6 +24,7 @@ type OutputError
 
 type alias OutputDetails =
     { name : String
+    , description : Maybe String
     , scales : List ImpactScale
     , cost : ImpactCost
     , lifespan : ImpactLifeSpan
@@ -73,6 +74,7 @@ type RareSpeciesHabitat
 defaultOutput : OutputDetails
 defaultOutput =
     { name = ""
+    , description = Nothing
     , scales = []
     , cost = ImpactCost "N/A" -1 Nothing 
     , lifespan = ImpactLifeSpan "N/A" -1 Nothing

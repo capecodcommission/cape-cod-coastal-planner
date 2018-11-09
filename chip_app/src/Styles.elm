@@ -33,6 +33,7 @@ palette =
     , mediumRedViolet = rgb 165 56 165
     , apple = rgb 112 173 71
     , silver = rgb 191 191 191
+    , cadetBlue = rgb 155 166 191
     }
 
 
@@ -119,6 +120,7 @@ type OutputStyles
     | OutputValue
     | OutputValueLbl
     | OutputValueBox
+    | OutputInfoIcon
 
 type StrategiesStyles
     = StrategiesSidebar
@@ -539,6 +541,17 @@ stylesheet device =
                 [ Color.background palette.havelockBlue 
                 , Color.border palette.havelockBlue
                 ]
+            ]
+        , Style.style (ShowOutput OutputInfoIcon)
+            [ Color.background palette.cadetBlue
+            , Color.text white
+            , Font.size 8
+            , Font.lineHeight 1
+            , Font.center
+            , Font.weight 500
+            , Font.italic
+            , Style.hover
+                [ Style.cursor "pointer" ]
             ]
         , Style.style (Headings H1) <| headingStyle 6
         , Style.style (Headings H2) <| headingStyle 5

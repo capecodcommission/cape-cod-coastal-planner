@@ -117,18 +117,22 @@ resultsHeader output =
                 [ el (ShowOutput OutputDivider) [ width (px 90), verticalCenter ] <|
                     paragraph NoStyle [] [ text "SELECTED STRATEGY" ]
                 , h5 (Headings H5) [ verticalCenter ] <|
-                    el NoStyle [] <| text output.name
+                    ( el NoStyle [] (text output.name)
+                        |> within [ infoIconView output.description ]
+                    )
                 ]
             , row NoStyle [ height (percent 55), width fill, spread, alignBottom ]
                 [ column NoStyle [center ]
                     [ el (ShowOutput OutputImpact) 
                         [ moveUp 2, paddingXY 4 2, minWidth (px 115) ] <| text output.cost.name
-                    , el NoStyle [ moveDown 3 ] <| text "COST"
+                    , el NoStyle [ moveDown 3 ] (text "COST")
+                        |> within [ infoIconView (Just "...") ]
                     ]
                 , column NoStyle [center]
                     [ el (ShowOutput OutputImpact) 
                         [ moveUp 2, paddingXY 4 2, minWidth (px 115), vary Secondary True ] <| text output.lifespan.name
-                    , el NoStyle [ moveDown 3 ] <| text "LIFESPAN"
+                    , el NoStyle [ moveDown 3 ] (text "LIFESPAN")
+                        |> within [ infoIconView (Just "...") ]
                     ]
                 , column NoStyle [center]                    
                     [ column NoStyle []
@@ -156,7 +160,8 @@ resultsHeader output =
                                 ] <| text "Region"
                             ]
                         ]
-                    , el NoStyle [ moveDown 3 ] <| text "SCALE"
+                    , el NoStyle [ moveDown 3 ] (text "SCALE")
+                        |> within [ infoIconView (Just "...") ]
                     ]
                 ]
             ]
@@ -192,12 +197,22 @@ resultsMainContent output =
 scenarioGeneralInfoView : OutputDetails -> Element MainStyles Variations Msg
 scenarioGeneralInfoView output =
     let
-        renderDetails a b c =
-            row NoStyle [ spacingXY 8 0 ]
-                [ el (ShowOutput ScenarioLabel) [ verticalCenter ] <| text a
-                , el (ShowOutput ScenarioBold) [ verticalCenter ] <| text b
-                , el NoStyle [ verticalCenter ] <| text c
-                ]
+        renderDetails a b c d =
+            row NoStyle [ spacingXY 8 0 ] <|
+                case c of
+                    Just cText ->
+                        [ el (ShowOutput ScenarioLabel) [ verticalCenter ] (text a)
+                        , el (ShowOutput ScenarioBold) [ verticalCenter ] (text b)
+                        , el NoStyle [ verticalCenter ] (text cText)
+                            |> within [ infoIconView d ]
+                        ]
+
+                    Nothing ->
+                        [ el (ShowOutput ScenarioLabel) [ verticalCenter ] (text a)
+                        , el (ShowOutput ScenarioBold) [ verticalCenter ] (text b)
+                            |> within [ infoIconView d ]
+                        ]
+                
     in
     row NoStyle [ height (px 125), paddingXY 25 30 ]
         [ el (ShowOutput OutputDivider) [ width (px 180), height fill, paddingRight 10 ] <|
@@ -222,9 +237,9 @@ scenarioGeneralInfoView output =
                     ]
                 ]
         , column NoStyle [ paddingLeft 15, spacingXY 0 4 ]
-            [ renderDetails "LOCATION:" output.location "area"
-            , renderDetails "DURATION:" output.duration ""
-            , renderDetails "SCENARIO SIZE:" (toString output.scenarioSize) "linear ft."
+            [ renderDetails "LOCATION:" output.location (Just "area") Nothing
+            , renderDetails "DURATION:" output.duration Nothing (Just "...")
+            , renderDetails "SCENARIO SIZE:" (toString output.scenarioSize) (Just "linear ft.") (Just "...")
             ]
         ]
 
@@ -232,50 +247,52 @@ scenarioGeneralInfoView output =
 monetaryResultView : String -> String -> MonetaryResult -> Element MainStyles Variations Msg
 monetaryResultView lblPart1 lblPart2 result =
     let
-        render a b c d e =
+        render a ( b, c ) d e f =
             column NoStyle [ spacing 5, verticalCenter ]
-                [ el (ShowOutput OutputValue) [ center, e ] <| text a 
-                , el (ShowOutput OutputValueLbl) [ center, e ] <| text b
-                , h6 (ShowOutput OutputH6Bold) [ center ] <| text c
+                [ el (ShowOutput OutputValue) [ center, f ] <| text a 
+                , el (ShowOutput OutputValueLbl) [ center, f ] (text b)
+                    |> within [ infoIconView c ]
                 , h6 (ShowOutput OutputH6Bold) [ center ] <| text d
+                , h6 (ShowOutput OutputH6Bold) [ center ] <| text e
                 ]
     in
     case result of
         ValueUnchanged ->
-            render "--" "NO CHANGE" lblPart1 lblPart2 (vary Secondary False)
+            render "--" ("NO CHANGE", Just "...") lblPart1 lblPart2 (vary Secondary False)
             
         ValueNoLongerPresent ->
-            render "--" "NO LONGER PRESENT" lblPart1 lblPart2 (vary Secondary False)
+            render "--" ("NO LONGER PRESENT", Just "...") lblPart1 lblPart2 (vary Secondary False)
 
         ValueTransferred transfer ->
-            render (abbreviateMonetaryValue transfer) "TRANSFERRED" lblPart1 lblPart2 (vary Tertiary True)
+            render (abbreviateMonetaryValue transfer) ("TRANSFERRED", Just "...") lblPart1 lblPart2 (vary Tertiary True)
 
         ValueLoss lost ->
-            render (abbreviateMonetaryValue lost) "LOST" lblPart1 lblPart2 (vary Secondary True)
+            render (abbreviateMonetaryValue lost) ("LOST", Just "...") lblPart1 lblPart2 (vary Secondary True)
 
         ValueProtected protected ->
-            render (abbreviateMonetaryValue protected) "PROTECTED" lblPart1 lblPart2 (vary Tertiary True)
+            render (abbreviateMonetaryValue protected) ("PROTECTED", Just "...") lblPart1 lblPart2 (vary Tertiary True)
 
 
 acreageResultView : String -> AcreageResult -> Element MainStyles Variations Msg
 acreageResultView lbl result =
     let
-        render a b c d =
+        render a ( b, c ) d e =
             column NoStyle [ spacing 5, width fill, verticalCenter ]
-                [ h6 (ShowOutput OutputH6Bold) [ center ] <| text c
-                , el (ShowOutput OutputValueLbl) [ center, d ] <| text b
-                , el (ShowOutput OutputValue) [ center, d ] <| text a
+                [ h6 (ShowOutput OutputH6Bold) [ center ] <| text d
+                , el (ShowOutput OutputValueLbl) [ center, e ] (text b)
+                    |> within [ infoIconView c ]
+                , el (ShowOutput OutputValue) [ center, e ] <| text a
                 ]
     in
     case result of
         AcreageUnchanged ->
-            render "--" "NO CHANGE" lbl (vary Secondary False)
+            render "--" ( "NO CHANGE", Just "..." ) lbl (vary Secondary False)
 
         AcreageLost loss ->
-            render (abbreviateAcreageValue loss) "ACRES LOST" lbl (vary Secondary True)
+            render (abbreviateAcreageValue loss) ( "ACRES LOST", Just "..." ) lbl (vary Secondary True)
 
         AcreageGained gain ->
-            render (abbreviateAcreageValue gain) "ACRES GAINED" lbl (vary Tertiary True)
+            render (abbreviateAcreageValue gain) ( "ACRES GAINED", Just "..." ) lbl (vary Tertiary True)
 
 
 criticalFacilitiesView : CriticalFacilities -> Element MainStyles Variations Msg
@@ -299,7 +316,7 @@ criticalFacilitiesView facilities =
             [ el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Critical"
             , el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Facilities"
             ]
-        , case facilities of
+        , ( case facilities of
             FacilitiesUnchanged num ->
                 render "--" empty (vary Secondary False)
 
@@ -314,6 +331,8 @@ criticalFacilitiesView facilities =
 
             FacilitiesRelocated num ->
                 render (toString num) (text "RELOC.") (vary Tertiary True)
+          )
+            |> within [ infoIconView (Just "...") ]
         ]
 
 
@@ -336,7 +355,7 @@ rareSpeciesHabitatView habitat =
             [ el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Rare Species"
             , el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Habitat"
             ]
-        , case habitat of
+        , ( case habitat of
             HabitatUnchanged ->
                 render "--" (vary Secondary False)
 
@@ -345,6 +364,8 @@ rareSpeciesHabitatView habitat =
 
             HabitatGained ->
                 render "GAIN" (vary Tertiary True)
+          )
+            |> within [ infoIconView (Just "...") ]
         ]
 
 
@@ -379,6 +400,18 @@ footerView =
                 ] <| text "clear"
             ]
     
+
+infoIconView : Maybe String -> Element MainStyles Variations Msg
+infoIconView maybeHelpText =
+    case maybeHelpText of
+        Just helpText ->
+            circle 6 (ShowOutput OutputInfoIcon) 
+                [ title helpText, alignRight, moveRight 18 ] <| 
+                    el NoStyle [verticalCenter, center] (text "i")
+
+        Nothing ->
+            empty        
+
 
 abbreviateAcreageValue : Float -> String
 abbreviateAcreageValue num =
