@@ -2,7 +2,6 @@ module Main exposing (..)
 
 import Navigation
 import Html exposing (Html)
-import Html.Lazy exposing (lazy)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Input as Input exposing (..)

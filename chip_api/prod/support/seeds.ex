@@ -170,18 +170,39 @@ defmodule ChipApi.Seeds do
         
         _undevelopment = %Adaptation.Strategy{
             name: "Undevelopment",
-            description: "Removing development from an existing location by land purchase, flood insurance buy-out programs, or other means.",
+            description: "Removing development from an existing location by land purchase or land donation, flood insurance buy-out programs, or other means. In the case of managed relocation, development and infrastructure are moved away from the coastline and out of harms way.",
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site],   
             strategy_placement: anywhere,
             impact_costs: [high],
             impact_life_spans: [permanent],
-            is_active: false,
+            adaptation_benefits: [],
+            currently_permittable: "Yes.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Land donation can provide a tax benefit to the private property owner.", display_order: 0},
+                %Adaptation.Advantage{name: "Reduces danger and potential economic effects of erosion or flooding events.", display_order: 1},
+                %Adaptation.Advantage{name: "Reduces use and maintenance costs of coastal defense structures.", display_order: 2},
+                %Adaptation.Advantage{name: "Spares existing development that is moved from the effects of erosion and flooding.", display_order: 3},
+                %Adaptation.Advantage{name: "Protects future development from risks of flooding.", display_order: 4},
+                %Adaptation.Advantage{name: "Relieves impacts of structural measures on adjacent unarmored areas.", display_order: 5},
+                %Adaptation.Advantage{name: "Allows for the maintenance or restoration of intertidal or upland habitat providing carbon storage, recreation and ecostourism and improved water quality benefits to the community.", display_order: 6},
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Fee simple acquisition of coastal properties is expensive.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Requires advance planning and technical studies to evaluate potential impacts on adjacent areas.", display_order: 1},
+                %Adaptation.Disadvantage{name: "May require large scale planning to relocate whole area impacted by erosion or flooding.", display_order: 2},
+                %Adaptation.Disadvantage{name: "Environmental and/or economic effects of losing valuable land to the sea, including loss or transfer of coastal property values and tax income for the community.", display_order: 3},
+                %Adaptation.Disadvantage{name: "Cost of relocating or removing defense structures and any existing infrastructure.", display_order: 4},
+                %Adaptation.Disadvantage{name: "Can expose neighboring infrastructure and inland communities to flooding or erosion.", display_order: 5},
+                %Adaptation.Disadvantage{name: "May create the need to build new inland coastal defense structures.", display_order: 6}
+            ],
+            is_active: true,
             beach_width_impact_m: 30.48
         }
         |> Repo.insert!
 
+        # Managed Relocation, for the time being at least, is being treated the same as Undevelopment. Leaving this here though in case that changes.
         _managed_relocation = %Adaptation.Strategy{
             name: "Managed Relocation",
             description: "Gradually moving development and infrastructure away from the coastline and areas of projected loss due to flooding and sea level rise.",
@@ -207,7 +228,6 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
-        # NOT A CURRENT STRATEGY
         _transfer_of_development = %Adaptation.Strategy{
             name: "Transfer of Development Credit/Transferable Development Rights",
             description: "Land use mechanism that encourages the permanent removal of development rights in defined “sending” districts, and allows those rights to be transferred to defined “receiving” districts.",
@@ -233,7 +253,7 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
-        # NOT A CURRENT STRATEGY
+        # This is actually the same as Salt Marsh Restoration, apparently
         _tidal_wetland_floodplain = %Adaptation.Strategy{
             name: "Tidal Wetland and Floodplain Restoration or Creation",
             description: "Protecting, restoring, and creating coastal habitats within the floodplain as a buffer to storm surges and sea level rise to provide natural flood protection.",
@@ -261,7 +281,6 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
-        # NOT A CURRENT STRATEGY
         _rolling_conservation_easement = %Adaptation.Strategy{
             name: "Rolling Conservation Easements",
             description: "Private property owners sell or otherwise transfer rights in these portions of their land abutting an eroding coastline.  Rolling easements allow for limited development of upland areas of the property, and restrict development and/or the construction of erosion control structures along the shoreline.",
@@ -287,7 +306,6 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
-        # NOT A CURRENT STRATEGY
         _groin = %Adaptation.Strategy{
             name: "Groin",
             description: "A hard structure projecting perpendicular from the shoreline. Designed to intercept water flow and sand moving parallel to the shoreline to prevent beach erosion, retain beach sand, and break waves.",
@@ -314,7 +332,6 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
-        # NOT A CURRENT STRATEGY
         _sand_bypass = %Adaptation.Strategy{
             name: "Sand Bypass System",
             description: "Where a jetty or groin has interrupted the flow of sediment along the beach, sand may be moved hydraulically or mechanically from the accreting updrift side of an inlet to the eroding down-drift side.",
@@ -341,26 +358,59 @@ defmodule ChipApi.Seeds do
 
         _open_space_protection = %Adaptation.Strategy{
             name: "Open Space Protection",
-            description: "Including protection of existing wetland, drainage system, and buffer zone resources in planning will protect them from development impacts preserving them as a natural defense system.",
+            description: "Town, land trust or private entity purchasing or donating land to limit or prevent development at that site to maintain open space and preserve the natural defense system.",
             adaptation_categories: [protect, retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site, neighborhood, community, regional],
             strategy_placement: undeveloped_only,
             impact_costs: [high],
             impact_life_spans: [permanent],
+            adaptation_benefits: [],
+            currently_permittable: "Yes.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Land donation can provide a tax benefit to the private property owner.", display_order: 0},
+                %Adaptation.Advantage{name: "Infrastructure won't need to be relocated/removed when the sea rises and threatens low-lying infrastructure located in the floodplain.", display_order: 1},
+                %Adaptation.Advantage{name: "Sellers still get to own their property when they sell their development rights.", display_order: 2},
+                %Adaptation.Advantage{name: "Reduced opportunity for damages (costs) and repetitive losses from flooding.", display_order: 3},
+                %Adaptation.Advantage{name: "Can be used to prohibit shoreline armoring on private property.", display_order: 4},
+                %Adaptation.Advantage{name: "Neighboring property can receive an increase in value due to abutting open space.", display_order: 5},
+                %Adaptation.Advantage{name: "Improves habitat, carbon storage, recreation and ecotourism, and water quality.", display_order: 6},
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Fee simple acquisition of coastal properties is expensive.", display_order: 0},
+                %Adaptation.Disadvantage{name: "The property will lose value as the \"highest and best use\" of the property (developed) is lost.", display_order: 1},
+                %Adaptation.Disadvantage{name: "Loss of tax income for town/state.", display_order: 2},
+                %Adaptation.Disadvantage{name: "Perpetual conservation of the land may cause issues regarding development scenarios in the distant future.", display_order: 3},
+                %Adaptation.Disadvantage{name: "May encourage the development of previously undeveloped inland lands, instead of encouraging more dense development in previously-developed inland lands.", display_order: 4},
+            ],
             is_active: false,
-            beach_width_impact_m: nil
+            beach_width_impact_m: 1.0
         }
         |> Repo.insert!
 
         _salt_marsh_restoration = %Adaptation.Strategy{
             name: "Salt Marsh Restoration",
             description: "Protecting, restoring, and creating salt marsh as a buffer to storm surges and sea level rise to provide natural flood protection.",
-            adaptation_categories: [protect],
+            adaptation_categories: [protect, accommodate],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
+            strategy_placement: anywhere,
             impact_scales: [site, neighborhood],
             impact_costs: [medium_cost],
             impact_life_spans: [long],
+            adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
+            currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Stabilize coastal shorelines to reduce or prevent erosion. Reduces or eliminates the need for hard engineered structures.", display_order: 0},
+                %Adaptation.Advantage{name: "Serve as buffers for coastal areas against storm and wave damage.", display_order: 1},
+                %Adaptation.Advantage{name: "Wave attenuation and/or dissipation.", display_order: 2},
+                %Adaptation.Advantage{name: "Improve water quality through filtering, storing, and breaking down pollutants.", display_order: 3},
+                %Adaptation.Advantage{name: "Reduce flooding of upland areas and nearby infrastructure by reducing duration and extent of floodwater.", display_order: 4},
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Potential for increased mosquito populations. Potential of increased “salt marsh” smell impacting neighboring properties.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Loss of upland as the marsh expands with restored tidal flow. At minimum, short term loss of plants at site immediately after tidal restoration.", display_order: 1},
+                %Adaptation.Disadvantage{name: "Potential impacts on coastal public access to water. Potentially higher cost than hard engineering structures.", display_order: 2},
+            ],
             is_active: false,
             beach_width_impact_m: 9.144
         }
@@ -475,7 +525,6 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
-        # NOT A CURRENT STRATEGY
         _bank_stabilization_coir_envelopes = %Adaptation.Strategy{
             name: "Bank Stabilization: Coir Envelopes",
             description: "Envelopes are constructed of coir (coconut fiber) fabric and are filled with local sand. The envelopes are placed in terraces along the beach, are typically covered with sand, and may also be planted with native vegetation to hold sand together and absorb water.",
@@ -490,7 +539,6 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
-        # NOT A CURRENT STRATEGY
         _living_shoreline_vegetation = %Adaptation.Strategy{
             name: "Living Shoreline: Vegetation Only",
             description: "Shoreline stabilization techniques along estuarine coasts, bays, sheltered coastlines, and tributaries. A living shoreline has a footprint that is made up mostly of native material. It incorporates vegetation or other living, natural \"soft\" elements alone or in combination with some other type of harder shoreline structures (e.g. oyster reefs or rock sills) for added stability. Using vegetation alone is one approach. Roots hold soil in place to reduce erosion. Provides a buffer to upload areas and breaks small waves.",
@@ -547,7 +595,6 @@ defmodule ChipApi.Seeds do
         }
         |> Repo.insert!
 
-        # NOT A CURRENT STRATEGY
         _living_shoreline_breakwater_oyster = %Adaptation.Strategy{
             name: "Living Shoreline: Living Breakwater/Oyster Reefs",
             description: "Shoreline stabilization techniques along estuarine coasts, bays, sheltered coastlines, and tributaries. A living shoreline has a footprint that is made

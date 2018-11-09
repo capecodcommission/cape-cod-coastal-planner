@@ -320,6 +320,43 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                 ( Ok Strategies.OpenSpaceProtection, NoErosion ) ->
                     Ok output
 
+                ( Ok Strategies.SaltMarshRestoration, Eroding _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> protectPrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen 
+                            ( (.saltMarshChange
+                                >> adjustAcreageResult (Details.positiveAcreageImpact zoiTotal details)
+                                >> setSaltMarshAcreage)
+                              noActionOutput
+                            )
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult (Details.negativeAcreageImpact zoiTotal details) 
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.SaltMarshRestoration, Accreting _ ) ->
+                    output
+                        |> (setSaltMarshAcreage <| Details.positiveAcreageImpact zoiTotal details)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult (Details.negativeAcreageImpact zoiTotal details)
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.SaltMarshRestoration, NoErosion ) ->
+                    output
+                        |> (setSaltMarshAcreage <| Details.positiveAcreageImpact zoiTotal details)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
+
                 ( Ok Strategies.Revetment, Eroding _ ) ->
                     output
                         |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
@@ -532,6 +569,38 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 )
                             )
 
+                ( Ok Strategies.OpenSpaceProtection, VulnSeaRise _ ) ->
+                    Ok noActionOutput
+
+                ( Ok Strategies.OpenSpaceProtection, NoSeaRise ) ->
+                    Ok output
+
+                ( Ok Strategies.SaltMarshRestoration, VulnSeaRise _ ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> protectPrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen
+                            ( (.saltMarshChange
+                                >> adjustAcreageResult (Details.positiveAcreageImpact zoiTotal details)
+                                >> setSaltMarshAcreage)
+                              noActionOutput
+                            )
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen
+                            ( (.beachAreaChange
+                                >> adjustAcreageResult (Details.negativeAcreageImpact zoiTotal details)
+                                >> setBeachArea)
+                              noActionOutput
+                            )
+
+                ( Ok Strategies.SaltMarshRestoration, NoSeaRise ) ->
+                    output
+                        |> (setSaltMarshAcreage <| Details.positiveAcreageImpact zoiTotal details)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
+
                 ( Ok Strategies.DuneCreation, VulnSeaRise _ ) ->
                     output
                         |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
@@ -608,6 +677,29 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                     0
                                 )
                             )
+
+                ( Ok Strategies.OpenSpaceProtection, True ) ->
+                    output
+                        |> (.publicBuildingValue >> copyPublicBldgValue) noActionOutput
+                        |> Result.andThen ((.privateBuildingValue >> copyPrivateBldgValue) noActionOutput)
+
+                ( Ok Strategies.OpenSpaceProtection, False ) ->
+                    Ok output
+
+                ( Ok Strategies.SaltMarshRestoration, True ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen (setSaltMarshAcreage <| Details.positiveAcreageImpact zoiTotal details)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
+
+                ( Ok Strategies.SaltMarshRestoration, False ) ->
+                    output
+                        |> (setSaltMarshAcreage <| Details.positiveAcreageImpact zoiTotal details)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
 
                 ( Ok Strategies.DuneCreation, True ) ->
                     output
