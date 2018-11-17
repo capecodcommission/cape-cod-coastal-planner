@@ -1,7 +1,7 @@
 "use strict";
 
-import TileLayer from "ol/layer/tile";
-import XYZ from "ol/source/xyz";
+import TileLayer from "ol/layer/Tile";
+import XYZ from "ol/source/XYZ";
 
 export function layer() {
     let source = _source();

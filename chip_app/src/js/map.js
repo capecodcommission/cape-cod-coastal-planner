@@ -1,7 +1,7 @@
 "use strict";
 
 import {fromLonLat} from "ol/proj";
-import Map from "ol/map";
+import Map from "ol/Map";
 import View from "ol/View";
 import {getRAF} from "./misc";
 import {layer as worldImagery} from "./layers/world_imagery";
