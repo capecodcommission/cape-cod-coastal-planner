@@ -383,7 +383,7 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Perpetual conservation of the land may cause issues regarding development scenarios in the distant future.", display_order: 3},
                 %Adaptation.Disadvantage{name: "May encourage the development of previously undeveloped inland lands, instead of encouraging more dense development in previously-developed inland lands.", display_order: 4},
             ],
-            is_active: false,
+            is_active: true,
             beach_width_impact_m: 1.0
         }
         |> Repo.insert!
@@ -411,7 +411,7 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Loss of upland as the marsh expands with restored tidal flow. At minimum, short term loss of plants at site immediately after tidal restoration.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Potential impacts on coastal public access to water. Potentially higher cost than hard engineering structures.", display_order: 2},
             ],
-            is_active: false,
+            is_active: true,
             beach_width_impact_m: 9.144
         }
         |> Repo.insert!
