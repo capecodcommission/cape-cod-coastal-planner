@@ -208,9 +208,7 @@ updateModel msg model =
                                     nc2 =
                                         if shouldLocationMenuChangeTriggerZoomTo msg then
                                             Cmd.batch 
-                                                [ ZoomToShorelineLocation selection
-                                                    |> encodeOpenLayersCmd
-                                                    |> olCmd
+                                                [ olCmd <| encodeOpenLayersCmd (ZoomToShorelineLocation selection)
                                                 , sendGetVulnRibbonRequest model.env selection
                                                 ]
                                         else
@@ -220,10 +218,15 @@ updateModel msg model =
                             )
                         |> Maybe.withDefault ( model.shorelineLocations, Cmd.none )
             in
-                ( { model 
-                    | shorelineLocationsDropdown = updatedLocationsDropdown 
-                    , shorelineLocations = newLocations
-                  }
+                ( model
+                    |> collapseRightSidebar
+                    |> \m ->
+                        { m
+                            | shorelineLocationsDropdown = updatedLocationsDropdown 
+                            , shorelineLocations = newLocations
+                            , zoneOfImpact = Nothing
+                            , calculationOutput = Nothing
+                        }
                 , newLocationsCmds
                 )
 
@@ -277,11 +280,16 @@ updateModel msg model =
                             model.shorelineLocationsDropdown
                                 |> (\l -> { l | menu = updatedMenu })
                     in
-                        ( { model | shorelineLocationsDropdown = updatedLocationsDropdown }
+                        ( model
+                            |> collapseRightSidebar
+                            |> \m -> 
+                                { m 
+                                    | shorelineLocationsDropdown = updatedLocationsDropdown
+                                    , zoneOfImpact = Nothing
+                                    , calculationOutput = Nothing
+                                }
                         , Cmd.batch
-                            [ ZoomToShorelineLocation selection
-                                |> encodeOpenLayersCmd
-                                |> olCmd
+                            [ olCmd <| encodeOpenLayersCmd (ZoomToShorelineLocation selection)
                             , sendGetVulnRibbonRequest model.env selection
                             ]
                         )

@@ -21,6 +21,8 @@ class MapHandler {
                     break;
 
                 case "zoom_to_shoreline_location":
+                    this.clearZoneOfImpact();
+                    this.clearVulnerabilityRibbon();
                     this.zoomToShorelineLocation(data);
                     break;
 
@@ -78,6 +80,12 @@ class MapHandler {
         this.map.dispatchEvent({
             "type": "render_vulnerability_ribbon",
             "data": data
+        });
+    }
+
+    clearVulnerabilityRibbon() {
+        this.map.dispatchEvent({
+            "type": "clear_vulnerability_ribbon"
         });
     }
 
