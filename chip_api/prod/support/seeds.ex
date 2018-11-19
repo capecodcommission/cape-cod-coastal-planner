@@ -177,7 +177,7 @@ defmodule ChipApi.Seeds do
             strategy_placement: anywhere,
             impact_costs: [high],
             impact_life_spans: [permanent],
-            adaptation_benefits: [],
+            adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Yes.",
             adaptation_advantages: [
                 %Adaptation.Advantage{name: "Land donation can provide a tax benefit to the private property owner.", display_order: 0},
@@ -365,7 +365,7 @@ defmodule ChipApi.Seeds do
             strategy_placement: undeveloped_only,
             impact_costs: [high],
             impact_life_spans: [permanent],
-            adaptation_benefits: [],
+            adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Yes.",
             adaptation_advantages: [
                 %Adaptation.Advantage{name: "Land donation can provide a tax benefit to the private property owner.", display_order: 0},
