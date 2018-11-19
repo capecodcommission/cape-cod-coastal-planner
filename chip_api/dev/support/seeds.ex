@@ -178,7 +178,7 @@ defmodule ChipApi.Seeds do
             impact_costs: [high],
             impact_life_spans: [permanent],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
-            currently_permittable: "Yes.",
+            currently_permittable: "MEPA, Chapter 91, DEP Water quality, MESA, CZM consistency review, USACE, local Conservation Commission review, others",
             adaptation_advantages: [
                 %Adaptation.Advantage{name: "Land donation can provide a tax benefit to the private property owner.", display_order: 0},
                 %Adaptation.Advantage{name: "Reduces danger and potential economic effects of erosion or flooding events.", display_order: 1},
@@ -366,7 +366,7 @@ defmodule ChipApi.Seeds do
             impact_costs: [high],
             impact_life_spans: [permanent],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
-            currently_permittable: "Yes.",
+            currently_permittable: "Typically, there are no permitting requirements.",
             adaptation_advantages: [
                 %Adaptation.Advantage{name: "Land donation can provide a tax benefit to the private property owner.", display_order: 0},
                 %Adaptation.Advantage{name: "Infrastructure won't need to be relocated/removed when the sea rises and threatens low-lying infrastructure located in the floodplain.", display_order: 1},
