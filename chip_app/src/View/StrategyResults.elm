@@ -181,7 +181,7 @@ resultsMainContent output =
         , row NoStyle [ paddingXY 40 20, spread, height fill ]
             [ monetaryResultView "Public Building" "Value" output.publicBuildingValue
             , monetaryResultView "Private Shoreline" "Land Value" output.privateLandValue
-            , monetaryResultView "Private Shoreline" "Building Value" output.privateBuildingValue
+            , monetaryResultView "Private" "Building Value" output.privateBuildingValue
             ]
         , row NoStyle [ paddingXY 40 20, width fill, height fill ]
             [ acreageResultView "Salt Marsh Change" output.saltMarshChange
