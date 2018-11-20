@@ -102,6 +102,7 @@ type SidebarStyles
     | SidebarHeader
     | SidebarToggle
     | SidebarFooter
+    | SidebarLeftToggle
 
 
 type OutputStyles
@@ -586,6 +587,12 @@ stylesheet device =
         , Style.style (Sidebar SidebarFooter)
             [ Color.background black
             , Font.typeface fontstack
+            ]
+        , Style.style (Sidebar SidebarLeftToggle)
+            [ Color.background palette.havelockBlue
+            , Border.roundTopRight 36
+            , Border.roundBottomRight 36
+            , Style.cursor "pointer"
             ]
         , Style.style ActionButton
             [ Font.typeface fontstack

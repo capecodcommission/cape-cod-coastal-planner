@@ -46,3 +46,4 @@ type Msg
     | ToggleRightSidebar
     | Animate Animation.Msg
     | Resize Window.Size
+    | ToggleLeftSidebar
