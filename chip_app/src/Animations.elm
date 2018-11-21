@@ -25,9 +25,9 @@ rightSidebarStates =
 leftSidebarStates : LeftSidebarStates
 leftSidebarStates =
     { open =
-        [ Animation.right (Animation.px 0.0) ]
+        [ Animation.left (Animation.px 0.0) ]
     , closed =
-        [ Animation.right (Animation.px -550.0) ]    
+        [ Animation.left (Animation.px -550.0) ]    
     }
 
 

@@ -496,6 +496,8 @@ updateModel msg model =
             ( { model
                 | rightSidebarFx = Animation.update animMsg model.rightSidebarFx
                 , rightSidebarToggleFx = Animation.update animMsg model.rightSidebarToggleFx
+                , leftSidebarFx = Animation.update animMsg model.leftSidebarFx
+                , leftSidebarToggleFx = Animation.update animMsg model.leftSidebarToggleFx
             }
             , Cmd.none
             )
@@ -508,10 +510,10 @@ updateModel msg model =
         ToggleLeftSidebar ->
             case model.leftSidebarOpenness of
                 Open ->
-                    ( model |> expandLeftSidebar, Cmd.none )
+                    ( model |> collapseLeftSidebar, Cmd.none )
 
                 Closed ->
-                    ( model |> collapseLeftSidebar, Cmd.none )
+                    ( model |> expandLeftSidebar, Cmd.none )
 
 
 applyStrategy : Model -> ( Model, Cmd Msg )
@@ -681,7 +683,7 @@ collapseLeftSidebar model =
                 model.leftSidebarFx
         , leftSidebarToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
                 model.leftSidebarToggleFx
     }
 
@@ -710,7 +712,7 @@ expandLeftSidebar model =
                 model.leftSidebarFx
         , leftSidebarToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
                 model.leftSidebarToggleFx
     }
 
@@ -807,10 +809,9 @@ view app =
                         column NoStyle [ height fill ] <|
                             [ el NoStyle [ id "map", height (percent 100) ] empty
                                 |> within
-                                    [ getRightSidebarChildViews model
-                                        |> RSidebar.view model,
-                                        getLeftSidebarChildViews model
-                                        |> LSidebar.view model
+                                    [ 
+                                        getRightSidebarChildViews model |> RSidebar.view model,
+                                        getLeftSidebarChildViews model |> LSidebar.view model
                                     ]
                                     
                             -- strategiesModalOpenness should probably be refactored away
@@ -901,11 +902,11 @@ subscriptions app =
 
 animations : Model -> List Animation.State
 animations model =
-    [ model.rightSidebarFx, model.rightSidebarToggleFx ]
-
-leftsidebaranimations : Model -> List Animation.State
-leftsidebaranimations model =
-    [ model.leftSidebarFx, model.leftSidebarToggleFx ]
+    [ model.rightSidebarFx
+    , model.rightSidebarToggleFx
+    , model.leftSidebarFx
+    , model.leftSidebarToggleFx 
+    ]
     
 
 
