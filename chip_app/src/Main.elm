@@ -36,6 +36,7 @@ import View.BaselineInfo as BaselineInfo exposing (..)
 import View.RightSidebar as RSidebar
 import View.LeftSidebar as LSidebar
 import View.ZoneOfImpact as ZOI
+import View.PlanningLayers as PL
 import View.StrategyResults as Results
 import View.StrategiesModal as StrategiesModal
 import View.Helpers exposing (..)
@@ -74,6 +75,9 @@ type alias Model =
     , leftSidebarOpenness : Openness
     , leftSidebarFx : Animation.State
     , leftSidebarToggleFx : Animation.State
+    , slrPath : String
+    , wetPath : String
+    , shorePath : String
     }
 
 
@@ -118,6 +122,12 @@ initialModel flags =
         Closed
         (Animation.style <| .closed <| Animations.leftSidebarStates)
         (Animation.style <| .rotateZero <| Animations.toggleStates)
+        -- slr image
+        flags.slrPath
+        -- wetlands image
+        flags.wetPath
+        -- shoreline image
+        flags.shorePath
 
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -868,18 +878,32 @@ getRightSidebarChildViews model =
 
 getLeftSidebarChildViews : Model -> (String, List (Element MainStyles Variations Msg))
 getLeftSidebarChildViews model =
-    case model.zoneOfImpact of
-        Just zoi ->
-            model.calculationOutput
-                |> Maybe.map 
-                    (\output -> ( "STRATEGY OUTPUT", [ Results.view output ] ))
-                |> Maybe.withDefault 
-                    ("PLANNING LAYERS"
-                    , [ ZOI.view model.device model.zoiPath zoi ]
-                    )
+    ("PLANNING LAYERS"
+    , [ 
+        PL.view 
+        model.device 
+        model.trianglePath
+        model.slrPath
+        model.wetPath
+        model.shorePath
+        model.zoiPath ]
+    )
+    -- case model.zoneOfImpact of
+    --     Just zoi ->
+    --         model.calculationOutput
+    --             |> Maybe.map 
+    --                 (\output -> ( "STRATEGY OUTPUT", [ Results.view output ] ))
+    --             |> Maybe.withDefault 
+    --                 ("PLANNING LAYERS"
+    --                 , [ 
+    --                     PL.view 
+    --                     model.device 
+    --                     model.trianglePath 
+    --                     zoi ]
+    --                 )
 
-        Nothing ->
-            ("", [ el NoStyle [] empty ])
+    --     Nothing ->
+    --         ("", [ el NoStyle [] empty ])
 
 
 

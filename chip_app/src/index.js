@@ -5,6 +5,9 @@ import { logError } from "./js/misc";
 import closePath from "./img/close.png";
 import trianglePath from "./img/triangle.png";
 import zoiPath from "./img/zoi.png";
+import slrPath from "./img/SeaLevelRise.png"
+import wetPath from "./img/wetlands.png"
+import shorePath from "./img/shoreline.png"
 import registerServiceWorker from './registerServiceWorker';
 
 window.chip = window.chip || {};
@@ -26,7 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
         "size": {
             width: window.innerWidth,
             height: window.innerHeight
-        }
+        },
+        "slrPath": slrPath,
+        "wetPath": wetPath,
+        "shorePath": shorePath
     });
 
     // subscribe to error reports coming from Elm

@@ -21,6 +21,9 @@ type alias Flags =
     , trianglePath : String
     , zoiPath : String
     , size : Window.Size
+    , slrPath : String
+    , wetPath : String
+    , shorePath : String
     }
 
 
@@ -33,12 +36,15 @@ decodeWindowSize =
 
 decodeFlags : Decoder Flags
 decodeFlags =
-    D.map5 Flags
+    D.map8 Flags
         (D.field "env" decodeEnv)
         (D.field "closePath" D.string)
         (D.field "trianglePath" D.string)
         (D.field "zoiPath" D.string)
         (D.field "size" decodeWindowSize)
+        (D.field "slrPath" D.string)
+        (D.field "wetPath" D.string)
+        (D.field "shorePath" D.string)
 
 
 type alias Env =
