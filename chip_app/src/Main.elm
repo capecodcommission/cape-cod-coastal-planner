@@ -313,14 +313,23 @@ updateModel msg model =
         UpdateZoneOfImpact zoi ->
             ( model
                 |> expandRightSidebar
-                |> \m -> { m | zoneOfImpact = Just zoi }
+                |> \m -> 
+                    { m 
+                        | zoneOfImpact = Just zoi 
+                        , calculationOutput = Nothing
+                    }
             , Cmd.none
             )
 
         CancelZoneOfImpactSelection ->
             ( model
                 |> collapseRightSidebar
-                |> \m -> { m | zoneOfImpact = Nothing }
+                |> \m -> 
+                    { m 
+                        | zoneOfImpact = Nothing
+                        , calculationOutput = Nothing
+                        , adaptationHexes = NotAsked
+                    }
             , olCmd <| encodeOpenLayersCmd ClearZoneOfImpact
             )
 
