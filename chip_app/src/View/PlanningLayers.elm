@@ -20,8 +20,8 @@ imageHeight device =
     adjustOnHeight ( 150, 235 ) device
 
 
-view : Device -> String -> String -> String -> String -> String -> Element MainStyles Variations Msg
-view device trianglePath slrPath wetPath shorePath zoiPath =
+view : Device -> Paths -> Element MainStyles Variations Msg
+view device paths =
   column NoStyle
   [ height fill, verticalSpread ]
   [ 
@@ -38,20 +38,20 @@ view device trianglePath slrPath wetPath shorePath zoiPath =
       [
         decorativeImage NoStyle 
           [ height (px <| imageHeight device), verticalCenter] 
-          { src = shorePath },
+          { src = paths.shorePath },
         decorativeImage NoStyle 
           [ height (px <| imageHeight device), verticalCenter] 
-          { src = slrPath }
+          { src = paths.slrPath }
       ],
     row NoStyle 
       [ verticalCenter, spread, width fill, height fill, paddingXY 32 35 ]
       [
         decorativeImage NoStyle 
           [ height (px <| imageHeight device), verticalCenter] 
-          { src = wetPath },
+          { src = paths.wetPath },
         decorativeImage NoStyle 
           [ height (px <| imageHeight device), verticalCenter] 
-          { src = zoiPath }
+          { src = paths.sloshPath }
       ]
     -- row NoStyle 
     --   [ verticalCenter, spread, width fill, height fill, paddingXY 32 100 ]

@@ -77,7 +77,7 @@ type alias Model =
     , leftSidebarToggleFx : Animation.State
     , slrPath : String
     , wetPath : String
-    , shorePath : String
+    , paths : Paths
     }
 
 
@@ -126,8 +126,8 @@ initialModel flags =
         flags.slrPath
         -- wetlands image
         flags.wetPath
-        -- shoreline image
-        flags.shorePath
+        -- paths object
+        flags.paths
 
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -882,11 +882,7 @@ getLeftSidebarChildViews model =
     , [ 
         PL.view 
         model.device 
-        model.trianglePath
-        model.slrPath
-        model.wetPath
-        model.shorePath
-        model.zoiPath ]
+        model.paths ]
     )
     -- case model.zoneOfImpact of
     --     Just zoi ->

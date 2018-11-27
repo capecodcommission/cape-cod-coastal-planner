@@ -8,6 +8,7 @@ import zoiPath from "./img/zoi.png";
 import slrPath from "./img/SeaLevelRise.png"
 import wetPath from "./img/wetlands.png"
 import shorePath from "./img/shoreline.png"
+import sloshPath from "./img/slosh.png"
 import registerServiceWorker from './registerServiceWorker';
 
 window.chip = window.chip || {};
@@ -21,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "env": {
             "agsLittoralCellUrl": process.env.ELM_APP_AGS_LITT_CELLS_URL,
             "agsVulnerabilityRibbonUrl": process.env.ELM_APP_AGS_VULN_RIBBON_URL,
-            "agsHexUrl": process.env.ELM_APP_AGS_HEX_URL
+            "agsHexUrl": process.env.ELM_APP_AGS_HEX_URL,
+            "agsCritUrl": process.env.ELM_APP_AGS_CRIT_URL
         },
         "closePath": closePath,
         "trianglePath": trianglePath,
@@ -32,7 +34,15 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "slrPath": slrPath,
         "wetPath": wetPath,
-        "shorePath": shorePath
+        "paths": {
+            "slrPath": slrPath,
+            "wetPath": wetPath,
+            "closePath": closePath,
+            "trianglePath": trianglePath,
+            "zoiPath": zoiPath,
+            "shorePath": shorePath,
+            "sloshPath": sloshPath
+        }
     });
 
     // subscribe to error reports coming from Elm
