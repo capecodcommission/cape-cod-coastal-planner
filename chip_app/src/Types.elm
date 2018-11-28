@@ -76,7 +76,7 @@ type alias Env =
     { agsLittoralCellUrl : String
     , agsVulnerabilityRibbonUrl : String
     , agsHexUrl : String
-    -- , agsCritUrl : String
+    , agsCritUrl : String
     }
 
 
@@ -86,7 +86,7 @@ decodeEnv =
         |> required "agsLittoralCellUrl" D.string
         |> required "agsVulnerabilityRibbonUrl" D.string
         |> required "agsHexUrl" D.string
-        -- |> required "agsCritUrl" D.string
+        |> required "agsCritUrl" D.string
 
 
 type Openness
