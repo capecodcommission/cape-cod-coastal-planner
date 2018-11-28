@@ -1,7 +1,7 @@
 {
   "name": "chip_app",
   "version": "0.0.1",
-  "description": "Coastal Hazard Impact Planner",
+  "description": "Cape Cod Coastal Planner",
   "main": "index.js",
   "author": "Timmons Group, Inc.",
   "license": "ISC",
