@@ -8,6 +8,7 @@ import {layer as worldImagery} from "./layers/world_imagery";
 import {layer as massImagery} from "./layers/mass_imagery";
 import {layer as littoralCells} from "./layers/littoral_cells";
 import {layer as vulnRibbon} from "./layers/vulnerability_ribbon";
+import {layer as critFac} from "./layers/critical_facilities"
 //import {layer as locHexes} from "./layers/location_hexes";
 import {
     layer as impactZone
@@ -24,11 +25,16 @@ import {
 export function init(onInit) {
     let map = new Map({
         view: _view(),
-        layers: [worldImagery(), massImagery()],
+        layers: [
+            worldImagery(), 
+            massImagery(),
+            critFac()
+        ],
         loadTilesWhileAnimating: true
     });
     map.addLayer(littoralCells(map));
     map.addLayer(vulnRibbon(map));
+    // map.addLayer(critFac(map))
     //map.addLayer(locHexes(map));
 
     // wait until next frame to attempt rendering the map
