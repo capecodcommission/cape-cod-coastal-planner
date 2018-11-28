@@ -8,6 +8,11 @@ type alias RightSidebarStates =
     , closed : List Animation.Property
     }
 
+type alias LeftSidebarStates =
+    { open : List Animation.Property
+    , closed : List Animation.Property
+    }
+
 
 rightSidebarStates : RightSidebarStates
 rightSidebarStates =
@@ -15,6 +20,14 @@ rightSidebarStates =
         [ Animation.left (Animation.px 0.0) ]
     , closed =
         [ Animation.left (Animation.px 550.0) ]    
+    }
+
+leftSidebarStates : LeftSidebarStates
+leftSidebarStates =
+    { open =
+        [ Animation.left (Animation.px 0.0) ]
+    , closed =
+        [ Animation.left (Animation.px -550.0) ]    
     }
 
 

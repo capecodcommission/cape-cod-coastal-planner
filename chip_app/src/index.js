@@ -5,6 +5,10 @@ import { logError } from "./js/misc";
 import closePath from "./img/close.png";
 import trianglePath from "./img/triangle.png";
 import zoiPath from "./img/zoi.png";
+import slrPath from "./img/SeaLevelRise.png"
+import wetPath from "./img/wetlands.png"
+import shorePath from "./img/shoreline.png"
+import sloshPath from "./img/slosh.png"
 import registerServiceWorker from './registerServiceWorker';
 
 window.chip = window.chip || {};
@@ -18,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "env": {
             "agsLittoralCellUrl": process.env.ELM_APP_AGS_LITT_CELLS_URL,
             "agsVulnerabilityRibbonUrl": process.env.ELM_APP_AGS_VULN_RIBBON_URL,
-            "agsHexUrl": process.env.ELM_APP_AGS_HEX_URL
+            "agsHexUrl": process.env.ELM_APP_AGS_HEX_URL,
+            "agsCritUrl": process.env.ELM_APP_AGS_CRIT_URL
         },
         "closePath": closePath,
         "trianglePath": trianglePath,
@@ -26,6 +31,17 @@ document.addEventListener("DOMContentLoaded", () => {
         "size": {
             width: window.innerWidth,
             height: window.innerHeight
+        },
+        "slrPath": slrPath,
+        "wetPath": wetPath,
+        "paths": {
+            "slrPath": slrPath,
+            "wetPath": wetPath,
+            "closePath": closePath,
+            "trianglePath": trianglePath,
+            "zoiPath": zoiPath,
+            "shorePath": shorePath,
+            "sloshPath": sloshPath
         }
     });
 

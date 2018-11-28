@@ -34,7 +34,9 @@ import Routes exposing (Route(..), parseRoute)
 import View.Dropdown as Dropdown exposing (Dropdown)
 import View.BaselineInfo as BaselineInfo exposing (..)
 import View.RightSidebar as RSidebar
+import View.LeftSidebar as LSidebar
 import View.ZoneOfImpact as ZOI
+import View.PlanningLayers as PL
 import View.StrategyResults as Results
 import View.StrategiesModal as StrategiesModal
 import View.Helpers exposing (..)
@@ -70,6 +72,12 @@ type alias Model =
     , rightSidebarOpenness : Openness
     , rightSidebarFx : Animation.State
     , rightSidebarToggleFx : Animation.State
+    , leftSidebarOpenness : Openness
+    , leftSidebarFx : Animation.State
+    , leftSidebarToggleFx : Animation.State
+    , slrPath : String
+    , wetPath : String
+    , paths : Paths
     }
 
 
@@ -110,6 +118,16 @@ initialModel flags =
         Closed
         (Animation.style <| .closed <| Animations.rightSidebarStates)
         (Animation.style <| .rotateNeg180 <| Animations.toggleStates)
+        -- left sidebar
+        Closed
+        (Animation.style <| .closed <| Animations.leftSidebarStates)
+        (Animation.style <| .rotateZero <| Animations.toggleStates)
+        -- slr image
+        flags.slrPath
+        -- wetlands image
+        flags.wetPath
+        -- paths object
+        flags.paths
 
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -497,6 +515,8 @@ updateModel msg model =
             ( { model
                 | rightSidebarFx = Animation.update animMsg model.rightSidebarFx
                 , rightSidebarToggleFx = Animation.update animMsg model.rightSidebarToggleFx
+                , leftSidebarFx = Animation.update animMsg model.leftSidebarFx
+                , leftSidebarToggleFx = Animation.update animMsg model.leftSidebarToggleFx
             }
             , Cmd.none
             )
@@ -505,6 +525,14 @@ updateModel msg model =
             ( { model | device = classifyDevice size }
             , Cmd.none
             )
+
+        ToggleLeftSidebar ->
+            case model.leftSidebarOpenness of
+                Open ->
+                    ( model |> collapseLeftSidebar, Cmd.none )
+
+                Closed ->
+                    ( model |> expandLeftSidebar, Cmd.none )
 
 
 applyStrategy : Model -> ( Model, Cmd Msg )
@@ -664,6 +692,20 @@ collapseRightSidebar model =
                 model.rightSidebarToggleFx
     }
 
+collapseLeftSidebar : Model -> Model
+collapseLeftSidebar model =
+    { model
+        | leftSidebarOpenness = Closed
+        , leftSidebarFx =
+            Animation.interrupt
+                [ Animation.to <| .closed <| Animations.leftSidebarStates ]
+                model.leftSidebarFx
+        , leftSidebarToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                model.leftSidebarToggleFx
+    }
+
 
 expandRightSidebar : Model -> Model
 expandRightSidebar model =
@@ -679,6 +721,19 @@ expandRightSidebar model =
                 model.rightSidebarToggleFx
     }
 
+expandLeftSidebar : Model -> Model
+expandLeftSidebar model =
+    { model
+        | leftSidebarOpenness = Open
+        , leftSidebarFx =
+            Animation.interrupt
+                [ Animation.to <| .open <| Animations.leftSidebarStates ]
+                model.leftSidebarFx
+        , leftSidebarToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
+                model.leftSidebarToggleFx
+    }
 
 getCachedBaselineInfo : Model -> Maybe BaselineInfo
 getCachedBaselineInfo { shorelineLocationsDropdown, baselineInformation } =
@@ -773,9 +828,11 @@ view app =
                         column NoStyle [ height fill ] <|
                             [ el NoStyle [ id "map", height (percent 100) ] empty
                                 |> within
-                                    [ getRightSidebarChildViews model
-                                        |> RSidebar.view model
+                                    [ 
+                                        getRightSidebarChildViews model |> RSidebar.view model,
+                                        getLeftSidebarChildViews model |> LSidebar.view model
                                     ]
+                                    
                             -- strategiesModalOpenness should probably be refactored away
                             -- ie: modal should never be open when zone of impact is Nothing (make impossible states impossible)
                             , case ( model.zoneOfImpact, model.strategiesModalOpenness ) of
@@ -828,6 +885,31 @@ getRightSidebarChildViews model =
         Nothing ->
             ("", [ el NoStyle [] empty ])
 
+getLeftSidebarChildViews : Model -> (String, List (Element MainStyles Variations Msg))
+getLeftSidebarChildViews model =
+    ("PLANNING LAYERS"
+    , [ 
+        PL.view 
+        model.device 
+        model.paths ]
+    )
+    -- case model.zoneOfImpact of
+    --     Just zoi ->
+    --         model.calculationOutput
+    --             |> Maybe.map 
+    --                 (\output -> ( "STRATEGY OUTPUT", [ Results.view output ] ))
+    --             |> Maybe.withDefault 
+    --                 ("PLANNING LAYERS"
+    --                 , [ 
+    --                     PL.view 
+    --                     model.device 
+    --                     model.trianglePath 
+    --                     zoi ]
+    --                 )
+
+    --     Nothing ->
+    --         ("", [ el NoStyle [] empty ])
+
 
 
 ---- SUBSCRIPTIONS ----
@@ -849,7 +931,12 @@ subscriptions app =
 
 animations : Model -> List Animation.State
 animations model =
-    [ model.rightSidebarFx, model.rightSidebarToggleFx ]
+    [ model.rightSidebarFx
+    , model.rightSidebarToggleFx
+    , model.leftSidebarFx
+    , model.leftSidebarToggleFx 
+    ]
+    
 
 
 

@@ -21,6 +21,20 @@ type alias Flags =
     , trianglePath : String
     , zoiPath : String
     , size : Window.Size
+    , slrPath : String
+    , wetPath : String
+    , paths : Paths
+    }
+
+type alias Paths =
+    {
+        slrPath : String
+        , wetPath : String
+        , closePath : String
+        , trianglePath : String
+        , zoiPath : String
+        , shorePath : String
+        , sloshPath : String
     }
 
 
@@ -31,20 +45,38 @@ decodeWindowSize =
         (D.field "height" D.int)
 
 
+
+
 decodeFlags : Decoder Flags
 decodeFlags =
-    D.map5 Flags
+    D.map8 Flags
         (D.field "env" decodeEnv)
         (D.field "closePath" D.string)
         (D.field "trianglePath" D.string)
         (D.field "zoiPath" D.string)
         (D.field "size" decodeWindowSize)
+        (D.field "slrPath" D.string)
+        (D.field "wetPath" D.string)
+        (D.field "paths" decodeFlags2)
+
+
+decodeFlags2 : Decoder Paths
+decodeFlags2 =
+    D.map7 Paths
+        (D.field "slrPath" D.string)
+        (D.field "wetPath" D.string)
+        (D.field "closePath" D.string)
+        (D.field "trianglePath" D.string)
+        (D.field "zoiPath" D.string)
+        (D.field "shorePath" D.string)
+        (D.field "sloshPath" D.string)
 
 
 type alias Env =
     { agsLittoralCellUrl : String
     , agsVulnerabilityRibbonUrl : String
     , agsHexUrl : String
+    -- , agsCritUrl : String
     }
 
 
@@ -54,6 +86,7 @@ decodeEnv =
         |> required "agsLittoralCellUrl" D.string
         |> required "agsVulnerabilityRibbonUrl" D.string
         |> required "agsHexUrl" D.string
+        -- |> required "agsCritUrl" D.string
 
 
 type Openness
