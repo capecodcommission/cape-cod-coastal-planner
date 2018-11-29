@@ -509,6 +509,15 @@ mainDetailsView device benefits hazards strategy details =
                 ]
             , hairline Hairline
             ]
+        , column NoStyle
+            [ padding 32, spacing 32 ]
+            [ paragraph (AddStrategies StrategiesDetailsDescription) []
+                [ el (AddStrategies StrategiesDetailsDescription) 
+                    [ vary Secondary True ] <| text "Permitability: "
+                , text <| Maybe.withDefault "n/a" details.currentlyPermittable
+                ]
+            , hairline Hairline
+            ]
         , row NoStyle
             [ padding 32, spacing 32 ]
             [ el NoStyle 
