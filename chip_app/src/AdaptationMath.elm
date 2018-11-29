@@ -704,8 +704,8 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                 ( Ok Strategies.DuneCreation, True ) ->
                     output
                         |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
-                        |> Result.andThen ((.publicBuildingValue >> copyPublicBldgValue) noActionOutput)
-                        |> Result.andThen ((.privateBuildingValue >> copyPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
 
@@ -717,8 +717,8 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                 ( Ok Strategies.BankStabilization, True ) ->
                     output
                         |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
-                        |> Result.andThen ((.publicBuildingValue >> copyPublicBldgValue) noActionOutput)
-                        |> Result.andThen ((.privateBuildingValue >> copyPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
 
                 ( Ok Strategies.BankStabilization, False ) ->
                     Ok output
@@ -726,8 +726,8 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                 ( Ok Strategies.LivingShoreline, True ) ->
                     output
                         |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
-                        |> Result.andThen ((.publicBuildingValue >> copyPublicBldgValue) noActionOutput)
-                        |> Result.andThen ((.privateBuildingValue >> copyPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
                         |> Result.andThen (setSaltMarshAcreage <| Details.positiveAcreageImpact (zoiTotal * livingShorelineSaltMarshMultiplier) details)
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
