@@ -534,6 +534,16 @@ updateModel msg model =
                 Closed ->
                     ( model |> expandLeftSidebar, Cmd.none )
 
+        ToggleCritFac ->
+            ( model
+            , sendGetCritFacRequest model.env 
+            )
+        
+        LoadCritFacResponse response ->
+            ( model
+            , olCmd <| encodeOpenLayersCmd (RenderCritFac response)
+            )
+
 
 applyStrategy : Model -> ( Model, Cmd Msg )
 applyStrategy model =

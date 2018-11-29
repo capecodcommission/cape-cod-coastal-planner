@@ -27,8 +27,8 @@ export function init(onInit) {
         view: _view(),
         layers: [
             worldImagery(), 
-            massImagery(),
-            critFac()
+            massImagery()
+            // critFac()
         ],
         loadTilesWhileAnimating: true
     });

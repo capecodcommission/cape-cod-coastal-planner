@@ -47,3 +47,5 @@ type Msg
     | Animate Animation.Msg
     | Resize Window.Size
     | ToggleLeftSidebar
+    | ToggleCritFac
+    | LoadCritFacResponse (Result Http.Error D.Value)

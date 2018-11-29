@@ -25,6 +25,7 @@ type OpenLayersCmd
     | RenderVulnerabilityRibbon (Result Http.Error D.Value)
     | ClearZoneOfImpact
     | RenderLocationHexes (Result Http.Error D.Value)
+    | RenderCritFac (Result Http.Error D.Value)
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -61,6 +62,12 @@ encodeOpenLayersCmd cmd =
         RenderLocationHexes response ->
             E.object
                 [ ( "cmd", E.string "render_location_hexes" )
+                , ( "data", encodeRawResponse response )
+                ]
+
+        RenderCritFac response ->
+            E.object
+                [ ( "cmd", E.string "render_critical_facilities" )
                 , ( "data", encodeRawResponse response )
                 ]
 
