@@ -738,6 +738,19 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> setSaltMarshAcreage (Details.positiveAcreageImpact (zoiTotal * livingShorelineSaltMarshMultiplier) details)
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
+                -- ADDING BEACH NOURISHMENT
+                ( Ok Strategies.BeachNourishment, True ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                            |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                            |> Result.andThen ((.privateBuildingValue >> copyPrivateBldgValue) noActionOutput)
+                            |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                            |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
+
+                ( Ok Strategies.BeachNourishment, False ) ->
+                    output
+                        |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput
+                        |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
 
                 ( Ok _, _ ) ->
                     Err <| BadInput "Cannot calculate output for unknown or invalid strategy type"
