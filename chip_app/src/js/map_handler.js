@@ -42,6 +42,10 @@ class MapHandler {
                     this.renderLocationHexes(data);
                     break;
 
+                case "render_critical_facilities":
+                    this.renderCriticalFacilities(data);
+                    break;
+
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
             }
@@ -98,6 +102,13 @@ class MapHandler {
     renderLocationHexes(data) {
         this.map.dispatchEvent({
             "type": "render_location_hexes",
+            "data": data
+        });
+    }
+
+    renderCriticalFacilities(data) {
+        this.map.dispatchEvent({
+            "type": "render_critical_facilities",
             "data": data
         });
     }

@@ -222,3 +222,30 @@ getHexesForZoneOfImpact env geometry =
             , timeout = Nothing
             , withCredentials = True
             }
+
+--
+-- CRITICAL FACILITIES (FEATURE SERVICE)
+--
+
+sendGetCritFacRequest : Env -> Cmd Msg
+sendGetCritFacRequest env =
+    getCritFac env 
+    |> Http.send LoadCritFacResponse
+
+getCritFac : Env -> Http.Request D.Value
+getCritFac env =
+    let
+        qs =
+            QS.empty
+                |> QS.add "f" "pjson"
+                |> QS.add "returnGeometry" "true"
+                |> QS.add "geometryType" "esriGeometryPoint"
+                |> QS.add "spatialRel" "esriSpatialRelIntersects"
+                |> QS.add "outFields" "LOC_ID"
+                |> QS.add "inSR" "26986"
+                |> QS.add "outSR" "26986"
+                -- |> QS.add "geometry" (extentToString extent)
+        getUrl =
+            env.agsCritUrl ++ QS.render qs
+    in
+        Http.get getUrl D.value
