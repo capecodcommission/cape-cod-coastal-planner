@@ -241,10 +241,9 @@ getCritFac env =
                 |> QS.add "returnGeometry" "true"
                 |> QS.add "geometryType" "esriGeometryPoint"
                 |> QS.add "spatialRel" "esriSpatialRelIntersects"
-                |> QS.add "outFields" "LOC_ID"
-                |> QS.add "inSR" "26986"
-                |> QS.add "outSR" "26986"
-                -- |> QS.add "geometry" (extentToString extent)
+                |> QS.add "outFields" "*"
+                |> QS.add "outSR" "3857"
+                |> QS.add "where" "1=1"
         getUrl =
             env.agsCritUrl ++ QS.render qs
     in
