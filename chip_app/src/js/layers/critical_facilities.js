@@ -1,28 +1,51 @@
 "use strict";
 
-import VectorLayer  from "ol/layer/Vector";
-import VectorSource  from "ol/source/Vector";
+import VectorSource from "ol/source/Vector";
+import VectorLayer from "ol/layer/Vector";
 import EsriJSON from "ol/format/EsriJSON";
+import Style from "ol/style/Style";
+import Stroke from "ol/style/Stroke";
+import Fill from "ol/style/Fill";
+import Circle from "ol/style/Circle";
 
-export function layer() {
-    let source = _source();
+const esrijsonformat = new EsriJSON();
 
-    let layer = new VectorLayer ({
-        visible: true,
-        source: source
+/**
+ * Vector Layer functions
+ */
+
+export function layer(map) {
+    let source = new VectorSource();
+
+    let layer = new VectorLayer({
+        visible: false,
+        source: source,
+        style: (feature, resolution) => {
+            return new Style({
+                image: new Circle({
+                    radius: 3,
+                    fill: new Fill({color: 'red'}),
+                    stroke: new Stroke({
+                        color: [255,0,0],
+                        width: 2
+                    })
+                })
+            });
+        }
     });
     layer.set("name", "critical_facilities");
+
+    map.on("render_critical_facilities", ({data}) => {
+        onRenderVulnRibbon(data, layer, source);
+    });
+
     return layer;
 }
 
-function _source() {
-    let url = process.env.ELM_APP_AGS_CRIT_URL;
-    if (!url) {
-        throw Error("Must configure environment variable `ELM_APP_AGS_MASS_IMG_URL`!");
-    }
-    let source = new VectorSource({
-        url: url,
-        format: new EsriJSON()
-    });
-    return source;
+function onRenderVulnRibbon(data, layer, source) {
+    // decode esri json to ol features
+    let features = esrijsonformat.readFeaturesFromObject(data.response);
+    
+    source.addFeatures(features);
+    layer.setVisible(true);
 }

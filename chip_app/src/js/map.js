@@ -34,7 +34,7 @@ export function init(onInit) {
     });
     map.addLayer(littoralCells(map));
     map.addLayer(vulnRibbon(map));
-    // map.addLayer(critFac(map))
+    map.addLayer(critFac(map))
     //map.addLayer(locHexes(map));
 
     // wait until next frame to attempt rendering the map
