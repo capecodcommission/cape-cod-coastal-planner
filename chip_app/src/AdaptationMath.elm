@@ -19,10 +19,13 @@ privateLandMultiplier = 3360699
 stormSurgeBldgMultiplier : Float
 stormSurgeBldgMultiplier = 0.21
 
-
+-- THIS MULTIPLIER IS USED ONLY FOR LIVING SHORELINE SALT MARSH CHANGE
 livingShorelineSaltMarshMultiplier : Float
 livingShorelineSaltMarshMultiplier = 0.85
 
+-- THIS MULTIPLIER IS USED ONLY FOR UNDEVELOPMENT BEACH AREA CHANGE
+undevelopmentBeachAreaMultiplier : Float
+undevelopmentBeachAreaMultiplier = 3.33
 
 metersPerFoot : Float
 metersPerFoot = 0.3048
@@ -246,8 +249,8 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen
                             ( (.beachAreaChange
                                 >> adjustAcreageResult
-                                    ( if hasRevetment hexes then 
-                                        Details.positiveAcreageImpact zoiTotal details
+                                    ( if hasRevetment hexes then
+                                        Details.positiveAcreageImpact (zoiTotal * undevelopmentBeachAreaMultiplier) details
                                       else
                                         0
                                     )
@@ -273,7 +276,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                             ( (.beachAreaChange
                                 >> adjustAcreageResult
                                     ( if hasRevetment hexes then 
-                                        Details.positiveAcreageImpact zoiTotal details
+                                        Details.positiveAcreageImpact (zoiTotal * undevelopmentBeachAreaMultiplier) details
                                       else
                                         0
                                     )
@@ -295,10 +298,10 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 )
                             )
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
-                        |> Result.andThen 
+                        |> Result.andThen
                             ( setBeachArea <|
                                 ( if hasRevetment hexes then 
-                                    Details.positiveAcreageImpact zoiTotal details
+                                    Details.positiveAcreageImpact (zoiTotal * undevelopmentBeachAreaMultiplier) details
                                   else
                                     0
                                 )
@@ -538,7 +541,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                             ( (.beachAreaChange
                                 >> adjustAcreageResult
                                     ( if hasRevetment hexes then 
-                                        Details.positiveAcreageImpact zoiTotal details
+                                        Details.positiveAcreageImpact (zoiTotal * undevelopmentBeachAreaMultiplier) details
                                       else
                                         0
                                     )
@@ -563,7 +566,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen 
                             ( setBeachArea <|
                                 ( if hasRevetment hexes then 
-                                    Details.positiveAcreageImpact zoiTotal details
+                                    Details.positiveAcreageImpact (zoiTotal * undevelopmentBeachAreaMultiplier) details
                                   else
                                     0
                                 )
@@ -649,7 +652,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen 
                             ( setBeachArea <|
                                 ( if hasRevetment hexes then 
-                                    Details.positiveAcreageImpact zoiTotal details
+                                    Details.positiveAcreageImpact (zoiTotal * undevelopmentBeachAreaMultiplier) details
                                   else
                                     0
                                 )
@@ -672,7 +675,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen 
                             ( setBeachArea <|
                                 ( if hasRevetment hexes then 
-                                    Details.positiveAcreageImpact zoiTotal details
+                                    Details.positiveAcreageImpact (zoiTotal * undevelopmentBeachAreaMultiplier) details
                                   else
                                     0
                                 )

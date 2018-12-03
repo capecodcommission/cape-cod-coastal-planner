@@ -198,7 +198,7 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "May create the need to build new inland coastal defense structures.", display_order: 6}
             ],
             is_active: true,
-            beach_width_impact_m: 30.48
+            beach_width_impact_m: 9.144
         }
         |> Repo.insert!
 
