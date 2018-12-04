@@ -840,7 +840,8 @@ view app =
                                 |> within
                                     [ 
                                         getRightSidebarChildViews model |> RSidebar.view model,
-                                        getLeftSidebarChildViews model |> LSidebar.view model
+                                        LSidebar.view model <| getLeftSidebarChildViews model
+                                        -- getLeftSidebarChildViews model |> LSidebar.view model
                                     ]
                                     
                             -- strategiesModalOpenness should probably be refactored away

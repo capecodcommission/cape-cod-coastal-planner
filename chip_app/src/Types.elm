@@ -35,6 +35,7 @@ type alias Paths =
         , zoiPath : String
         , shorePath : String
         , sloshPath : String
+        , downArrow: String
     }
 
 
@@ -62,7 +63,7 @@ decodeFlags =
 
 decodeFlags2 : Decoder Paths
 decodeFlags2 =
-    D.map7 Paths
+    D.map8 Paths
         (D.field "slrPath" D.string)
         (D.field "wetPath" D.string)
         (D.field "closePath" D.string)
@@ -70,6 +71,7 @@ decodeFlags2 =
         (D.field "zoiPath" D.string)
         (D.field "shorePath" D.string)
         (D.field "sloshPath" D.string)
+        (D.field "downArrow" D.string)
 
 
 type alias Env =

@@ -9,6 +9,7 @@ import slrPath from "./img/SeaLevelRise.png"
 import wetPath from "./img/wetlands.png"
 import shorePath from "./img/shoreline.png"
 import sloshPath from "./img/slosh.png"
+import downArrow from "./img/downArrow.png"
 import registerServiceWorker from './registerServiceWorker';
 
 window.chip = window.chip || {};
@@ -41,7 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "trianglePath": trianglePath,
             "zoiPath": zoiPath,
             "shorePath": shorePath,
-            "sloshPath": sloshPath
+            "sloshPath": sloshPath,
+            "downArrow": downArrow
         }
     });
 
