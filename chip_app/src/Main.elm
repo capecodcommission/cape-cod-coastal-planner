@@ -78,6 +78,12 @@ type alias Model =
     , slrPath : String
     , wetPath : String
     , paths : Paths
+    , slrOpenness : Openness
+    , slrFx : Animation.State
+    , slrToggleFx : Animation.State
+    , glpOpenness : Openness
+    , glpFx : Animation.State
+    , glpToggleFx : Animation.State
     }
 
 
@@ -128,7 +134,12 @@ initialModel flags =
         flags.wetPath
         -- paths object
         flags.paths
-
+        Closed
+        (Animation.style <| .closed <| Animations.slrStates)
+        (Animation.style <| .rotate180 <| Animations.toggleStates)
+        Closed
+        (Animation.style <| .closed <| Animations.glpStates)
+        (Animation.style <| .rotate180 <| Animations.toggleStates)
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -517,6 +528,10 @@ updateModel msg model =
                 , rightSidebarToggleFx = Animation.update animMsg model.rightSidebarToggleFx
                 , leftSidebarFx = Animation.update animMsg model.leftSidebarFx
                 , leftSidebarToggleFx = Animation.update animMsg model.leftSidebarToggleFx
+                , slrFx = Animation.update animMsg model.slrFx
+                , slrToggleFx = Animation.update animMsg model.slrToggleFx
+                , glpFx = Animation.update animMsg model.glpFx
+                , glpToggleFx = Animation.update animMsg model.glpToggleFx
             }
             , Cmd.none
             )
@@ -543,6 +558,22 @@ updateModel msg model =
             ( model
             , olCmd <| encodeOpenLayersCmd (RenderCritFac response)
             )
+
+        ToggleSLRSection ->
+            case model.slrOpenness of
+                Open ->
+                    ( model |> collapseSLRLayer, Cmd.none )
+
+                Closed ->
+                    ( model |> expandSLRLayer, Cmd.none )
+
+        ToggleGLPSection ->
+            case model.glpOpenness of
+                Open ->
+                    ( model |> collapseGLPLayer, Cmd.none )
+
+                Closed ->
+                    ( model |> expandGLPLayer, Cmd.none )
 
 
 applyStrategy : Model -> ( Model, Cmd Msg )
@@ -745,6 +776,62 @@ expandLeftSidebar model =
                 model.leftSidebarToggleFx
     }
 
+expandSLRLayer : Model -> Model
+expandSLRLayer model =
+    { model
+        | slrOpenness = Open
+        , slrFx =
+            Animation.interrupt
+                [ Animation.to <| .open <| Animations.slrStates ]
+                model.slrFx
+        , slrToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                model.slrToggleFx
+    }
+
+collapseSLRLayer : Model -> Model
+collapseSLRLayer model =
+    { model
+        | slrOpenness = Closed
+        , slrFx =
+            Animation.interrupt
+                [ Animation.to <| .closed <| Animations.slrStates ]
+                model.slrFx
+        , slrToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
+                model.slrToggleFx
+    }
+
+expandGLPLayer : Model -> Model
+expandGLPLayer model =
+    { model
+        | glpOpenness = Open
+        , glpFx =
+            Animation.interrupt
+                [ Animation.to <| .open <| Animations.glpStates ]
+                model.glpFx
+        , glpToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                model.glpToggleFx
+    }
+
+collapseGLPLayer : Model -> Model
+collapseGLPLayer model =
+    { model
+        | glpOpenness = Closed
+        , glpFx =
+            Animation.interrupt
+                [ Animation.to <| .closed <| Animations.glpStates ]
+                model.glpFx
+        , glpToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
+                model.glpToggleFx
+    }
+
 getCachedBaselineInfo : Model -> Maybe BaselineInfo
 getCachedBaselineInfo { shorelineLocationsDropdown, baselineInformation } =
     shorelineLocationsDropdown
@@ -838,10 +925,8 @@ view app =
                         column NoStyle [ height fill ] <|
                             [ el NoStyle [ id "map", height (percent 100) ] empty
                                 |> within
-                                    [ 
-                                        getRightSidebarChildViews model |> RSidebar.view model,
-                                        LSidebar.view model <| getLeftSidebarChildViews model
-                                        -- getLeftSidebarChildViews model |> LSidebar.view model
+                                    [ RSidebar.view model <| getRightSidebarChildViews model
+                                    , LSidebar.view model <| getLeftSidebarChildViews model
                                     ]
                                     
                             -- strategiesModalOpenness should probably be refactored away
@@ -898,29 +983,11 @@ getRightSidebarChildViews model =
 
 getLeftSidebarChildViews : Model -> (String, List (Element MainStyles Variations Msg))
 getLeftSidebarChildViews model =
-    ("PLANNING LAYERS"
-    , [ 
-        PL.view 
-        model.device 
-        model.paths ]
-    )
-    -- case model.zoneOfImpact of
-    --     Just zoi ->
-    --         model.calculationOutput
-    --             |> Maybe.map 
-    --                 (\output -> ( "STRATEGY OUTPUT", [ Results.view output ] ))
-    --             |> Maybe.withDefault 
-    --                 ("PLANNING LAYERS"
-    --                 , [ 
-    --                     PL.view 
-    --                     model.device 
-    --                     model.trianglePath 
-    --                     zoi ]
-    --                 )
+    ("PLANNING LAYERS", [ PL.view model model.device model.paths ])
 
-    --     Nothing ->
-    --         ("", [ el NoStyle [] empty ])
-
+getSLRChildViews : Model -> (String, List (Element MainStyles Variations Msg))
+getSLRChildViews model =
+    ("PLANNING LAYERS", [ PL.view model model.device model.paths ])
 
 
 ---- SUBSCRIPTIONS ----
@@ -946,6 +1013,10 @@ animations model =
     , model.rightSidebarToggleFx
     , model.leftSidebarFx
     , model.leftSidebarToggleFx 
+    , model.slrFx
+    , model.slrToggleFx
+    , model.glpFx
+    , model.glpToggleFx
     ]
     
 

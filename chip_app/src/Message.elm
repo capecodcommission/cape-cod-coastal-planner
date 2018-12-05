@@ -49,3 +49,5 @@ type Msg
     | ToggleLeftSidebar
     | ToggleCritFac
     | LoadCritFacResponse (Result Http.Error D.Value)
+    | ToggleSLRSection
+    | ToggleGLPSection

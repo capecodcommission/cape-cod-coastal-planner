@@ -13,6 +13,16 @@ type alias LeftSidebarStates =
     , closed : List Animation.Property
     }
 
+type alias SLRStates =
+    { open : List Animation.Property
+    , closed : List Animation.Property
+    }
+
+type alias GLPStates =
+    { open : List Animation.Property
+    , closed : List Animation.Property
+    }
+
 
 rightSidebarStates : RightSidebarStates
 rightSidebarStates =
@@ -28,6 +38,22 @@ leftSidebarStates =
         [ Animation.left (Animation.px 0.0) ]
     , closed =
         [ Animation.left (Animation.px -550.0) ]    
+    }
+
+slrStates : SLRStates
+slrStates =
+    { open =
+        [ Animation.bottom (Animation.px 50.0) ]
+    , closed =
+        [ Animation.bottom (Animation.px 0.0) ]    
+    }
+
+glpStates : GLPStates
+glpStates =
+    { open =
+        [ Animation.bottom (Animation.px 50.0) ]
+    , closed =
+        [ Animation.bottom (Animation.px 0.0) ]    
     }
 
 
