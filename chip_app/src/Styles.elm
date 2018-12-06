@@ -66,6 +66,7 @@ type MainStyles
     | Hairline
     | CircleBullet
     | Test
+    | PL PlanningLayerStyles
 
 
 type ModalStyles
@@ -165,6 +166,10 @@ type Variations
     | Tertiary
     | Quaternary
     | Disabled
+
+type PlanningLayerStyles 
+    = Line
+    | Clicked
 
 
 choiceStateToVariation : ChoiceState -> Variations
@@ -636,6 +641,13 @@ stylesheet device =
         , Style.style CircleBullet
             [ Color.background white
             , Color.border white
+            ]
+        , Style.style (PL Line) 
+            [ Color.background white
+            ]
+        , Style.style (PL Clicked) 
+            [ Color.background red
+            , Border.rounded 8
             ]
         ]
 

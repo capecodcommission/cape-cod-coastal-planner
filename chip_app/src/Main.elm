@@ -84,6 +84,10 @@ type alias Model =
     , glpOpenness : Openness
     , glpFx : Animation.State
     , glpToggleFx : Animation.State
+    , ceOpenness : Openness
+    , ceFx : Animation.State
+    , ceToggleFx : Animation.State
+    , critFacClicked : Openness
     }
 
 
@@ -134,12 +138,19 @@ initialModel flags =
         flags.wetPath
         -- paths object
         flags.paths
+        -- SLR Section
         Closed
         (Animation.style <| .closed <| Animations.slrStates)
         (Animation.style <| .rotate180 <| Animations.toggleStates)
+        -- GPL Section
         Closed
         (Animation.style <| .closed <| Animations.glpStates)
         (Animation.style <| .rotate180 <| Animations.toggleStates)
+        -- CE Section
+        Closed
+        (Animation.style <| .closed <| Animations.ceStates)
+        (Animation.style <| .rotate180 <| Animations.toggleStates)
+        Closed
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -532,6 +543,8 @@ updateModel msg model =
                 , slrToggleFx = Animation.update animMsg model.slrToggleFx
                 , glpFx = Animation.update animMsg model.glpFx
                 , glpToggleFx = Animation.update animMsg model.glpToggleFx
+                , ceFx = Animation.update animMsg model.ceFx
+                , ceToggleFx = Animation.update animMsg model.ceToggleFx
             }
             , Cmd.none
             )
@@ -551,6 +564,12 @@ updateModel msg model =
 
         ToggleCritFac ->
             ( model
+                |> \m -> 
+                    case m.critFacClicked of 
+                        Open -> 
+                            { m | critFacClicked = Closed }
+                        Closed -> 
+                            { m | critFacClicked = Open }
             , sendGetCritFacRequest model.env 
             )
         
@@ -574,6 +593,14 @@ updateModel msg model =
 
                 Closed ->
                     ( model |> expandGLPLayer, Cmd.none )
+
+        ToggleCESection ->
+            case model.ceOpenness of
+                Open ->
+                    ( model |> collapseCESection, Cmd.none )
+
+                Closed ->
+                    ( model |> expandCESection, Cmd.none )
 
 
 applyStrategy : Model -> ( Model, Cmd Msg )
@@ -786,7 +813,7 @@ expandSLRLayer model =
                 model.slrFx
         , slrToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 20.0 }) <| .rotateZero <| Animations.toggleStates ]
                 model.slrToggleFx
     }
 
@@ -800,7 +827,7 @@ collapseSLRLayer model =
                 model.slrFx
         , slrToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 20.0 }) <| .rotate180 <| Animations.toggleStates ]
                 model.slrToggleFx
     }
 
@@ -830,6 +857,34 @@ collapseGLPLayer model =
             Animation.interrupt
                 [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
                 model.glpToggleFx
+    }
+
+expandCESection : Model -> Model
+expandCESection model =
+    { model
+        | ceOpenness = Open
+        , ceFx =
+            Animation.interrupt
+                [ Animation.to <| .open <| Animations.ceStates ]
+                model.ceFx
+        , ceToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                model.ceToggleFx
+    }
+
+collapseCESection : Model -> Model
+collapseCESection model =
+    { model
+        | ceOpenness = Closed
+        , ceFx =
+            Animation.interrupt
+                [ Animation.to <| .closed <| Animations.ceStates ]
+                model.ceFx
+        , ceToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
+                model.ceToggleFx
     }
 
 getCachedBaselineInfo : Model -> Maybe BaselineInfo
@@ -985,10 +1040,6 @@ getLeftSidebarChildViews : Model -> (String, List (Element MainStyles Variations
 getLeftSidebarChildViews model =
     ("PLANNING LAYERS", [ PL.view model model.device model.paths ])
 
-getSLRChildViews : Model -> (String, List (Element MainStyles Variations Msg))
-getSLRChildViews model =
-    ("PLANNING LAYERS", [ PL.view model model.device model.paths ])
-
 
 ---- SUBSCRIPTIONS ----
 
@@ -1017,6 +1068,8 @@ animations model =
     , model.slrToggleFx
     , model.glpFx
     , model.glpToggleFx
+    , model.ceFx
+    , model.ceToggleFx
     ]
     
 

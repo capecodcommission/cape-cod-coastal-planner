@@ -51,3 +51,4 @@ type Msg
     | LoadCritFacResponse (Result Http.Error D.Value)
     | ToggleSLRSection
     | ToggleGLPSection
+    | ToggleCESection

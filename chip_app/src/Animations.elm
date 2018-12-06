@@ -23,6 +23,10 @@ type alias GLPStates =
     , closed : List Animation.Property
     }
 
+type alias CEStates =
+    { open : List Animation.Property
+    , closed : List Animation.Property
+    }
 
 rightSidebarStates : RightSidebarStates
 rightSidebarStates =
@@ -50,6 +54,14 @@ slrStates =
 
 glpStates : GLPStates
 glpStates =
+    { open =
+        [ Animation.bottom (Animation.px 50.0) ]
+    , closed =
+        [ Animation.bottom (Animation.px 0.0) ]    
+    }
+
+ceStates : CEStates
+ceStates =
     { open =
         [ Animation.bottom (Animation.px 50.0) ]
     , closed =
