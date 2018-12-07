@@ -88,6 +88,7 @@ type alias Model =
     , ceFx : Animation.State
     , ceToggleFx : Animation.State
     , critFacClicked : Openness
+    , drClicked : Openness
     }
 
 
@@ -141,7 +142,7 @@ initialModel flags =
         -- SLR Section
         Closed
         (Animation.style <| .closed <| Animations.slrStates)
-        (Animation.style <| .rotate180 <| Animations.toggleStates)
+        (Animation.style <| .rotate90 <| Animations.toggleStates)
         -- GPL Section
         Closed
         (Animation.style <| .closed <| Animations.glpStates)
@@ -150,6 +151,7 @@ initialModel flags =
         Closed
         (Animation.style <| .closed <| Animations.ceStates)
         (Animation.style <| .rotate180 <| Animations.toggleStates)
+        Closed
         Closed
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -563,19 +565,51 @@ updateModel msg model =
                     ( model |> expandLeftSidebar, Cmd.none )
 
         ToggleCritFac ->
-            ( model
-                |> \m -> 
-                    case m.critFacClicked of 
-                        Open -> 
-                            { m | critFacClicked = Closed }
-                        Closed -> 
-                            { m | critFacClicked = Open }
-            , sendGetCritFacRequest model.env 
-            )
-        
+            case model.critFacClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | critFacClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableCritFac) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | critFacClicked = Open 
+                            }
+                    , sendGetCritFacRequest model.env 
+                    )
+
+        ToggleDR ->
+            case model.drClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | drClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableDR) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | drClicked = Open 
+                            }
+                    , sendGetDRRequest model.env 
+                    )
+
         LoadCritFacResponse response ->
             ( model
             , olCmd <| encodeOpenLayersCmd (RenderCritFac response)
+            )
+
+        LoadDRResponse response ->
+            ( model
+            , olCmd <| encodeOpenLayersCmd (RenderDR response)
             )
 
         ToggleSLRSection ->
@@ -813,7 +847,7 @@ expandSLRLayer model =
                 model.slrFx
         , slrToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 20.0 }) <| .rotateZero <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
                 model.slrToggleFx
     }
 
@@ -827,7 +861,7 @@ collapseSLRLayer model =
                 model.slrFx
         , slrToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 20.0 }) <| .rotate180 <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 20.0 }) <| .rotate90 <| Animations.toggleStates ]
                 model.slrToggleFx
     }
 

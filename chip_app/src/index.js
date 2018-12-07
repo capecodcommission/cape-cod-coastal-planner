@@ -24,7 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "agsLittoralCellUrl": process.env.ELM_APP_AGS_LITT_CELLS_URL,
             "agsVulnerabilityRibbonUrl": process.env.ELM_APP_AGS_VULN_RIBBON_URL,
             "agsHexUrl": process.env.ELM_APP_AGS_HEX_URL,
-            "agsCritUrl": process.env.ELM_APP_AGS_CRIT_URL
+            "agsCritUrl": process.env.ELM_APP_AGS_CRIT_URL,
+            "agsDRUrl": process.env.ELM_APP_AGS_DR_URL
         },
         "closePath": closePath,
         "trianglePath": trianglePath,

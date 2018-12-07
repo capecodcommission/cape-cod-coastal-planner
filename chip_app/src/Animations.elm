@@ -47,9 +47,9 @@ leftSidebarStates =
 slrStates : SLRStates
 slrStates =
     { open =
-        [ Animation.bottom (Animation.px 50.0) ]
+        [ Animation.left (Animation.px 10.0) ]
     , closed =
-        [ Animation.bottom (Animation.px 0.0) ]    
+        [ Animation.left (Animation.px 0.0) ]    
     }
 
 glpStates : GLPStates
@@ -73,6 +73,7 @@ type alias ToggleStates =
     { rotateZero : List Animation.Property
     , rotateNeg180 : List Animation.Property
     , rotate180 : List Animation.Property
+    , rotate90 : List Animation.Property
     }
 
 
@@ -84,4 +85,6 @@ toggleStates =
         [ Animation.rotate (Animation.deg -180.0) ]
     , rotate180 =
         [ Animation.rotate (Animation.deg 180.0) ]
+    , rotate90 =
+        [ Animation.rotate (Animation.deg 90.0) ]
     }

@@ -22,31 +22,35 @@ export function layer(map) {
         source: source,
         style: (feature, resolution) => {
             return new Style({
-                image: new Circle({
-                    radius: 3,
-                    fill: new Fill({color: 'red'}),
-                    stroke: new Stroke({
-                        color: [255,0,0],
-                        width: 2
-                    })
+                stroke: new Stroke({
+                  color: [255,0,0],
+                  width: 2
                 })
+                // image: new Circle({
+                //     radius: 3,
+                //     fill: new Fill({color: 'red'}),
+                //     stroke: new Stroke({
+                //         color: [255,0,0],
+                //         width: 2
+                //     })
+                // })
             });
         }
     });
-    layer.set("name", "critical_facilities");
+    layer.set("name", "disconnected_roads");
 
-    map.on("render_critical_facilities", ({data}) => {
-        onRenderVulnRibbon(data, layer, source);
+    map.on("render_disconnected_roads", ({data}) => {
+        onRenderDR(data, layer, source);
     });
 
-    map.on("disable_critical_facilities", () => {
-        disableCritFac(layer, source);
+    map.on("disable_disconnected_roads", () => {
+        disableDisCon(layer, source);
     });
 
     return layer;
 }
 
-function onRenderVulnRibbon(data, layer, source) {
+function onRenderDR(data, layer, source) {
     // decode esri json to ol features
     let features = esrijsonformat.readFeaturesFromObject(data.response);
     
@@ -54,7 +58,7 @@ function onRenderVulnRibbon(data, layer, source) {
     layer.setVisible(true);
 }
 
-function disableCritFac(layer, source) {
+function disableDisCon(layer, source) {
     // decode esri json to ol features
     // let features = esrijsonformat.readFeaturesFromObject(data.response);
     

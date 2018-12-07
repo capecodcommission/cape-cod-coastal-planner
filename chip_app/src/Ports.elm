@@ -26,6 +26,9 @@ type OpenLayersCmd
     | ClearZoneOfImpact
     | RenderLocationHexes (Result Http.Error D.Value)
     | RenderCritFac (Result Http.Error D.Value)
+    | DisableCritFac 
+    | RenderDR (Result Http.Error D.Value)
+    | DisableDR
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -70,6 +73,23 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "render_critical_facilities" )
                 , ( "data", encodeRawResponse response )
                 ]
+
+        DisableCritFac ->
+            E.object
+                [ ( "cmd", E.string "disable_critical_facilities" )
+                ]
+            
+        RenderDR response ->
+            E.object
+                [ ( "cmd", E.string "render_disconnected_roads" )
+                , ( "data", encodeRawResponse response )
+                ]
+
+        DisableDR ->
+            E.object
+                [ ( "cmd", E.string "disable_disconnected_roads" )
+                ]
+            
 
 
 

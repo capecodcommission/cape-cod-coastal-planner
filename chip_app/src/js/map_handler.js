@@ -46,6 +46,18 @@ class MapHandler {
                     this.renderCriticalFacilities(data);
                     break;
 
+                case "disable_critical_facilities":
+                    this.disableCriticalFacilities(data);
+                    break;
+                
+                case "render_disconnected_roads":
+                    this.renderDisconnectedRoads(data);
+                    break;
+
+                case "disable_disconnected_roads":
+                    this.disableDisconnectedRoads(data);
+                    break;
+
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
             }
@@ -110,6 +122,25 @@ class MapHandler {
         this.map.dispatchEvent({
             "type": "render_critical_facilities",
             "data": data
+        });
+    }
+
+    disableCriticalFacilities(data) {
+        this.map.dispatchEvent({
+            "type": "disable_critical_facilities"
+        });
+    }
+
+    renderDisconnectedRoads(data) {
+        this.map.dispatchEvent({
+            "type": "render_disconnected_roads",
+            "data": data
+        });
+    }
+
+    disableDisconnectedRoads(data) {
+        this.map.dispatchEvent({
+            "type": "disable_disconnected_roads"
         });
     }
 

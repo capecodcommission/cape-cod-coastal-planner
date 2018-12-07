@@ -52,3 +52,5 @@ type Msg
     | ToggleSLRSection
     | ToggleGLPSection
     | ToggleCESection
+    | ToggleDR
+    | LoadDRResponse (Result Http.Error D.Value)
