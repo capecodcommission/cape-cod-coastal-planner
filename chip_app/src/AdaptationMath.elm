@@ -105,7 +105,7 @@ applyBasicInfo hexes location zoneOfImpact hazard ( strategy, details ) output =
         |> Result.andThen (applyDuration hazard)
         |> Result.andThen (applyScenarioSize zoneOfImpact)
 
-
+-- QUESTION: WHY ARE THERE getCriticalFacilityCount & countCriticalFacilities FUNCTIONS?
 {-| Calculate output for the NoAction scenario given a default copy of the output.
 -}
 calculateNoActionOutput : 
@@ -116,24 +116,28 @@ calculateNoActionOutput :
     -> Result OutputError OutputDetails
 calculateNoActionOutput hexes zoneOfImpact hazard output =
     case Hazards.toType hazard of
+        -- TODO: FOR ALL HAZARDS: THESE QUALIFIER CASES ARE NOT WORKING AS THEY SHOULD - QUALIFIERS WERE
+        -- NEEDED TO BE INJECTED DIRECTLY INTO THE SPECIFIC OUTPUT COMPONENT FUNCTIONS THAT NEEDED THEM
+        -- THE CASES SHOULD BE THE WAY FORWARD AND RESEARCH IS NEEDED TO DETERMINE HOW TO GET THESE WORKING
         Ok Hazards.Erosion ->
             let
                 avgErosion = averageErosion hexes
+                vulnerableToErosion = withErosion hexes
             in
             case avgErosion of
                 Eroding width ->
                     output
-                        |> (countCriticalFacilities >> loseCriticalFacilities) hexes
-                        |> Result.andThen ((sumPublicBldgValue >> losePublicBldgValue) hexes)
+                        |> (countCriticalFacilitiesEroding >> loseCriticalFacilities) hexes
+                        |> Result.andThen ((sumPublicBldgValueEroding >> losePublicBldgValue) hexes)
                         |> Result.andThen 
-                            ( (sumPrivateLandAcreage 
+                            ( (sumPrivateLandAcreageEroding 
                                 >> applyMultiplier privateLandMultiplier
                                 >> losePrivateLandValue)
                               hexes
                             )
-                        |> Result.andThen ((sumPrivateBldgValue >> losePrivateBldgValue) hexes)
-                        |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) hexes)
-                        |> Result.andThen ((isRareSpeciesHabitatPresent >> loseRareSpeciesHabitat) hexes)
+                        |> Result.andThen ((sumPrivateBldgValueEroding >> losePrivateBldgValue) hexes)
+                        |> Result.andThen ((sumSaltMarshAcreageEroding >> loseSaltMarshAcreage) hexes)
+                        |> Result.andThen ((isRareSpeciesHabitatPresentEroding >> loseRareSpeciesHabitat) hexes)
                         |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
 
                 Accreting width ->
@@ -144,7 +148,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
 
                 NoErosion -> 
                     output
-                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
+                        |> (countCriticalFacilities >> setCriticalFacilitiesUnchanged) hexes
 
         Ok Hazards.SeaLevelRise ->
             let
@@ -153,17 +157,17 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
             case avgSeaLevelRise of
                 VulnSeaRise width ->
                     output
-                        |> (countCriticalFacilities >> loseCriticalFacilities) hexes
-                        |> Result.andThen ((sumPublicBldgValue >> losePublicBldgValue) hexes)
+                        |> (countCriticalFacilitiesSLR >> loseCriticalFacilities) hexes
+                        |> Result.andThen ((sumPublicBldgValueSLR >> losePublicBldgValue) hexes)
                         |> Result.andThen
-                            ( (sumPrivateLandAcreage 
+                            ( (sumPrivateLandAcreageSLR 
                                 >> applyMultiplier privateLandMultiplier
                                 >> losePrivateLandValue)
                             hexes
                             )
-                        |> Result.andThen ((sumPrivateBldgValue >> losePrivateBldgValue) hexes)
-                        |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) hexes)
-                        |> Result.andThen ((isRareSpeciesHabitatPresent >> loseRareSpeciesHabitat) hexes)
+                        |> Result.andThen ((sumPrivateBldgValueSLR >> losePrivateBldgValue) hexes)
+                        |> Result.andThen ((sumSaltMarshAcreageSLR >> loseSaltMarshAcreage) hexes)
+                        |> Result.andThen ((isRareSpeciesHabitatPresentSLR >> loseRareSpeciesHabitat) hexes)
                         |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
 
                 NoSeaRise ->
@@ -178,14 +182,14 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                 True ->
                     output
                         |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
-                        |> Result.andThen 
-                            ( (sumPublicBldgValue
+                        |> Result.andThen
+                            ( (sumPublicBldgValueStormSurge
                                 >> applyMultiplier stormSurgeBldgMultiplier
                                 >> losePublicBldgValue)
                             hexes
                             )
                         |> Result.andThen
-                            ( (sumPrivateBldgValue
+                            ( (sumPrivateBldgValueStormSurge
                                 >> applyMultiplier stormSurgeBldgMultiplier
                                 >> losePrivateBldgValue)
                               hexes
@@ -193,7 +197,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
 
                 False ->
                     output
-                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
+                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes -- CHECK
 
         Err badHazard ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: '" ++ badHazard ++ "'")
@@ -637,26 +641,28 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
             case ( Strategies.toType strategy, vulnerableToSurge ) of
                 ( Ok Strategies.Undevelopment, True ) ->
                     output
+                    -- TODO: REMOVED SALT MARSH AND BEACH AREA CHANGE MATH FOR STORM SURGE
+                    -- - UNDEVELOPMENT - STILL FUZZY ON THIS - THIS NEEDS TO BE CONFIRMED
                         |> (getCriticalFacilityCount >> relocateCriticalFacilities) noActionOutput
                         |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> setPublicBldgValueNoLongerPresent) noActionOutput)
                         |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> setPrivateBldgValueNoLongerPresent) noActionOutput)
-                        |> Result.andThen
-                            ( setSaltMarshAcreage <|
-                                ( if hasSaltMarshAndRevetment hexes then
-                                    Details.positiveAcreageImpact zoiTotal details
-                                  else
-                                    0
-                                )
-                            )
+                        -- |> Result.andThen
+                        --     ( setSaltMarshAcreage <|
+                        --         ( if hasSaltMarshAndRevetment hexes then
+                        --             Details.positiveAcreageImpact zoiTotal details
+                        --           else
+                        --             0
+                        --         )
+                        --     )
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
-                        |> Result.andThen 
-                            ( setBeachArea <|
-                                ( if hasRevetment hexes then 
-                                    Details.positiveAcreageImpact (zoiTotal * undevelopmentBeachAreaMultiplier) details
-                                  else
-                                    0
-                                )
-                            )
+                        -- |> Result.andThen 
+                        --     ( setBeachArea <|
+                        --         ( if hasRevetment hexes then 
+                        --             Details.positiveAcreageImpact (zoiTotal * undevelopmentBeachAreaMultiplier) details
+                        --           else
+                        --             0
+                        --         )
+                        --     )
                 
                 ( Ok Strategies.Undevelopment, False ) ->
                     output
@@ -743,9 +749,10 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
 
                 ( Ok Strategies.BeachNourishment, True ) ->
                     output
-                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
-                            |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
-                            |> Result.andThen ((.privateBuildingValue >> copyPrivateBldgValue) noActionOutput)
+                        -- SWITCHED THE CRITICAL FACILITIES, PUBLIC BUILDING & PRIVATE BUILDING VALUES TO '..unchanged'
+                        |> (getCriticalFacilityCount >> setCriticalFacilitiesUnchanged) noActionOutput
+                            |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> setPublicBldgValueUnchanged) noActionOutput)
+                            |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> setPrivateBldgValueUnchanged) noActionOutput)
                             |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
                             |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
 
@@ -921,9 +928,9 @@ protectPublicBldgValue value output =
     else
         Ok { output | publicBuildingValue = ValueProtected <| abs value }
 
-
-setPublicBldgValueUnchanged : OutputDetails -> Result OutputError OutputDetails
-setPublicBldgValueUnchanged output =
+-- CLEARED UP UNCHANGED MATH
+setPublicBldgValueUnchanged : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
+setPublicBldgValueUnchanged value output =
     Ok { output | publicBuildingValue = ValueUnchanged }
 
 
@@ -998,8 +1005,9 @@ protectPrivateBldgValue value output =
         Ok { output | privateBuildingValue = ValueProtected <| abs value }
 
 
-setPrivateBldgValueUnchanged : OutputDetails -> Result OutputError OutputDetails
-setPrivateBldgValueUnchanged output =
+-- CLEARED UP UNCHANGED MATH
+setPrivateBldgValueUnchanged : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
+setPrivateBldgValueUnchanged value output =
     Ok { output | privateBuildingValue = ValueUnchanged }
 
 

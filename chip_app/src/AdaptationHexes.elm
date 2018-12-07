@@ -132,10 +132,19 @@ withErosion : AdaptationHexes -> AdaptationHexes
 withErosion hexes =
     hexes |> List.filter (\hex -> hex.erosion /= NoErosion)
 
+-- withoutErosion : AdaptationHexes -> AdaptationHexes
+-- withoutErosion hexes =
+--     hexes |> List.filter (\hex -> hex.erosion /= Eroding)
+
 
 withSeaLevelRise : AdaptationHexes -> AdaptationHexes
 withSeaLevelRise hexes =
     hexes |> List.filter (\hex -> hex.seaLevelRise /= NoSeaRise)
+
+
+withStormSurge : AdaptationHexes -> AdaptationHexes
+withStormSurge hexes =
+    hexes |> List.filter (\hex -> hex.stormSurge /= NoSurge)
 
 
 averageErosion : AdaptationHexes -> ErosionImpact
@@ -154,7 +163,8 @@ averageErosion hexes =
                     erosionImpactFromFloat (result / toFloat count)
             )
 
-
+-- CALCULATE THE AVERAGE SEA LEVEL RISE OF ONLY THOSE HEXES TAGGED WITH `Y`
+-- `Y` MAPS TO `VulnSeaRise` ANYTHING ELSE MAPS TO `NoSeaRise`
 averageSeaLevelRise : AdaptationHexes -> SeaLevelRise
 averageSeaLevelRise hexes =
     let
@@ -168,7 +178,7 @@ averageSeaLevelRise hexes =
                     NoSeaRise
 
                 count ->
-                    seaLevelRiseFromFloat (result / toFloat count)
+                    seaLevelRiseFromFloat (result / toFloat count) -- WE GET THE AVERAGE HERE
             )
 
 
@@ -178,9 +188,48 @@ countCriticalFacilities hexes =
         |> List.foldl (\hex acc -> hex.numCriticalFacilities + acc) 0
 
 
+countCriticalFacilitiesSLR : AdaptationHexes -> Int
+countCriticalFacilitiesSLR hexes =
+    let
+        hexesWithSLR = hexes |> withSeaLevelRise
+    in
+    hexesWithSLR
+        |> List.foldl (\hex acc -> hex.numCriticalFacilities + acc) 0
+
+countCriticalFacilitiesEroding : AdaptationHexes -> Int
+countCriticalFacilitiesEroding hexes =
+    let
+        hexesWithEroding = hexes |> withErosion
+    in
+    hexesWithEroding
+        |> List.foldl (\hex acc -> hex.numCriticalFacilities + acc) 0
+
+
 isRareSpeciesHabitatPresent : AdaptationHexes -> Bool
 isRareSpeciesHabitatPresent hexes =
     hexes
+        |> List.any (\hex -> hex.rareSpecies == True)
+
+
+-- INDICATE IF RARE SPECIES ARE PRESENT WITH
+-- ONLY THE HEXES WITH SLR TAGGED WITH `Y`
+isRareSpeciesHabitatPresentSLR : AdaptationHexes -> Bool
+isRareSpeciesHabitatPresentSLR hexes =
+    let
+        hexesWithSLR = hexes |> withSeaLevelRise
+    in
+    hexesWithSLR
+        |> List.any (\hex -> hex.rareSpecies == True)
+
+
+-- INDICATE IF RARE SPECIES ARE PRESENT WITH
+-- ONLY THE HEXES WITH EROSION TAGGED WITH `E`
+isRareSpeciesHabitatPresentEroding : AdaptationHexes -> Bool
+isRareSpeciesHabitatPresentEroding hexes =
+    let
+        hexesWithEroding = hexes |> withErosion
+    in
+    hexesWithEroding
         |> List.any (\hex -> hex.rareSpecies == True)
 
 
@@ -196,10 +245,64 @@ sumPublicBldgValue hexes =
         |> List.foldl (\hex acc -> hex.publicBldgValue + acc) 0.0
 
 
+-- CALCULATE THE SUM OF PUBLIC BUIDLING VALUES WITH
+-- ONLY THE HEXES WITH SLR TAGGED WITH `Y`
+sumPublicBldgValueSLR : AdaptationHexes -> Float
+sumPublicBldgValueSLR hexes =
+    let
+        hexesWithSLR = hexes |> withSeaLevelRise
+    in
+    hexesWithSLR
+        |> List.foldl (\hex acc -> hex.publicBldgValue + acc) 0.0
+
+-- CALCULATE THE SUM OF PUBLIC BUIDLING VALUES WITH
+-- ONLY THE HEXES WITH STORM SURGE TAGGED WITH `Y`
+sumPublicBldgValueStormSurge : AdaptationHexes -> Float
+sumPublicBldgValueStormSurge hexes =
+    let
+        hexesWithStormSurge = hexes |> withStormSurge
+    in
+    hexesWithStormSurge
+        |> List.foldl (\hex acc -> hex.publicBldgValue + acc) 0
+
+
+-- CALCULATE THE SUM OF PUBLIC BUIDLING VALUES WITH
+-- ONLY THE HEXES WITH EROSION TAGGED WITH `E`
+sumPublicBldgValueEroding : AdaptationHexes -> Float
+sumPublicBldgValueEroding hexes =
+    let
+        hexesWithEroding = hexes |> withErosion
+    in
+    hexesWithEroding
+        |> List.foldl (\hex acc -> hex.publicBldgValue + acc) 0
+
+
 sumPrivateLandAcreage : AdaptationHexes -> Float
 sumPrivateLandAcreage hexes =
     hexes
         |> List.foldl (\hex acc -> hex.shorelinePrivateAcres + acc) 0.0
+
+
+-- CALCULATE THE SUM OF PRIVATE LAND ACRES WITH
+-- ONLY THE HEXES WITH SLR TAGGED WITH `Y`
+sumPrivateLandAcreageSLR : AdaptationHexes -> Float
+sumPrivateLandAcreageSLR hexes =
+    let
+        hexesWithSLR = hexes |> withSeaLevelRise
+    in
+    hexesWithSLR
+        |> List.foldl (\hex acc -> hex.shorelinePrivateAcres + acc) 0.0
+
+
+-- CALCULATE THE SUM OF PRIVATE LAND ACRES WITH
+-- ONLY THE HEXES WITH EROSION TAGGED WITH `E`
+sumPrivateLandAcreageEroding : AdaptationHexes -> Float
+sumPrivateLandAcreageEroding hexes =
+    let
+        hexesWithEroding = hexes |> withErosion
+    in
+    hexesWithEroding
+        |> List.foldl (\hex acc -> hex.shorelinePrivateAcres + acc) 0
 
 
 sumPrivateBldgValue : AdaptationHexes -> Float
@@ -208,10 +311,64 @@ sumPrivateBldgValue hexes =
         |> List.foldl (\hex acc -> hex.privateBldgValue + acc) 0.0
 
 
+-- CALCULATE THE SUM OF PRIVATE BUILDING VALUES WITH
+-- ONLY THE HEXES WITH SLR TAGGED WITH `Y`
+sumPrivateBldgValueSLR : AdaptationHexes -> Float
+sumPrivateBldgValueSLR hexes =
+    let
+        hexesWithSLR = hexes |> withSeaLevelRise
+    in
+    hexesWithSLR
+        |> List.foldl (\hex acc -> hex.privateBldgValue + acc) 0.0
+
+
+-- CALCULATE THE SUM OF PRIVATE BUIDLING VALUES WITH
+-- ONLY THE HEXES WITH STORM SURGE TAGGED WITH `Y`
+sumPrivateBldgValueStormSurge : AdaptationHexes -> Float
+sumPrivateBldgValueStormSurge hexes =
+    let
+        hexesWithStormSurge = hexes |> withStormSurge
+    in
+    hexesWithStormSurge
+        |> List.foldl (\hex acc -> hex.privateBldgValue + acc) 0
+
+
+-- CALCULATE THE SUM OF PRIVATE BUIDLING VALUES WITH
+-- ONLY THE HEXES WITH EROSION TAGGED WITH `E`
+sumPrivateBldgValueEroding : AdaptationHexes -> Float
+sumPrivateBldgValueEroding hexes =
+    let
+        hexesWithEroding = hexes |> withErosion
+    in
+    hexesWithEroding
+        |> List.foldl (\hex acc -> hex.privateBldgValue + acc) 0
+
 sumSaltMarshAcreage : AdaptationHexes -> Float
 sumSaltMarshAcreage hexes =
     hexes
         |> List.foldl (\hex acc -> hex.saltMarshAcres + acc) 0.0
+
+
+-- CALCULATE THE SUM OF SALT MARSH ACRES WITH
+-- ONLY THE HEXES WITH SLR TAGGED WITH `Y`
+sumSaltMarshAcreageSLR : AdaptationHexes -> Float
+sumSaltMarshAcreageSLR hexes =
+    let
+        hexesWithSLR = hexes |> withSeaLevelRise
+    in
+    hexesWithSLR
+        |> List.foldl (\hex acc -> hex.saltMarshAcres + acc) 0.0
+
+
+-- CALCULATE THE SUM OF SALT MARSH ACRES WITH
+-- ONLY THE HEXES WITH EROSION TAGGED WITH `E`
+sumSaltMarshAcreageEroding : AdaptationHexes -> Float
+sumSaltMarshAcreageEroding hexes =
+    let
+        hexesWithEroding = hexes |> withErosion
+    in
+    hexesWithEroding
+        |> List.foldl (\hex acc -> hex.saltMarshAcres + acc) 0
 
 
 hasRevetment : AdaptationHexes -> Bool
