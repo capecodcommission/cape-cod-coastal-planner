@@ -132,16 +132,12 @@ withErosion : AdaptationHexes -> AdaptationHexes
 withErosion hexes =
     hexes |> List.filter (\hex -> hex.erosion /= NoErosion)
 
--- withoutErosion : AdaptationHexes -> AdaptationHexes
--- withoutErosion hexes =
---     hexes |> List.filter (\hex -> hex.erosion /= Eroding)
-
 
 withSeaLevelRise : AdaptationHexes -> AdaptationHexes
 withSeaLevelRise hexes =
     hexes |> List.filter (\hex -> hex.seaLevelRise /= NoSeaRise)
 
-
+-- ADDED FOR STORM SURGE QUALIFIER
 withStormSurge : AdaptationHexes -> AdaptationHexes
 withStormSurge hexes =
     hexes |> List.filter (\hex -> hex.stormSurge /= NoSurge)
@@ -187,7 +183,7 @@ countCriticalFacilities hexes =
     hexes
         |> List.foldl (\hex acc -> hex.numCriticalFacilities + acc) 0
 
-
+-- COUNTS SPECIFIC TO EROSION/ERODING & SLR Y
 countCriticalFacilitiesSLR : AdaptationHexes -> Int
 countCriticalFacilitiesSLR hexes =
     let
