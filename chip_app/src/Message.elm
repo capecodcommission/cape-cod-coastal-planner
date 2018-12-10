@@ -50,7 +50,11 @@ type Msg
     | ToggleCritFac
     | LoadCritFacResponse (Result Http.Error D.Value)
     | ToggleSLRSection
-    | ToggleGLPSection
+    | ToggleInfraSection
     | ToggleCESection
     | ToggleDR
     | LoadDRResponse (Result Http.Error D.Value)
+    | ToggleSLRLayer
+    | LoadSLRResponse (Result Http.Error D.Value)
+    | ToggleMOPLayer
+    | LoadMOPResponse (Result Http.Error D.Value)

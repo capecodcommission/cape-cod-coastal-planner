@@ -25,7 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
             "agsVulnerabilityRibbonUrl": process.env.ELM_APP_AGS_VULN_RIBBON_URL,
             "agsHexUrl": process.env.ELM_APP_AGS_HEX_URL,
             "agsCritUrl": process.env.ELM_APP_AGS_CRIT_URL,
-            "agsDRUrl": process.env.ELM_APP_AGS_DR_URL
+            "agsDRUrl": process.env.ELM_APP_AGS_DR_URL,
+            "agsSLRUrl": process.env.ELM_APP_AGS_SLR_URL,
+            "agsMOPUrl": process.env.ELM_APP_AGS_MOP_URL
         },
         "closePath": closePath,
         "trianglePath": trianglePath,

@@ -58,6 +58,22 @@ class MapHandler {
                     this.disableDisconnectedRoads(data);
                     break;
 
+                case "render_slr_2ft":
+                    this.renderSLR(data);
+                    break;
+
+                case "disable_sea_level_rise":
+                    this.disableSLR(data);
+                    break;
+
+                case "render_municipally_owned_parcels":
+                    this.renderMOP(data);
+                    break;
+
+                case "disable_municipally_owned_parcels":
+                    this.disableMOP(data);
+                    break;
+
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
             }
@@ -141,6 +157,32 @@ class MapHandler {
     disableDisconnectedRoads(data) {
         this.map.dispatchEvent({
             "type": "disable_disconnected_roads"
+        });
+    }
+
+    renderSLR(data) {
+        this.map.dispatchEvent({
+            "type": "render_sea_level_rise",
+            "data": data
+        });
+    }
+
+    disableSLR(data) {
+        this.map.dispatchEvent({
+            "type": "disable_slr"
+        });
+    }
+
+    renderMOP(data) {
+        this.map.dispatchEvent({
+            "type": "render_mop",
+            "data": data
+        });
+    }
+
+    disableMOP(data) {
+        this.map.dispatchEvent({
+            "type": "disable_mop"
         });
     }
 

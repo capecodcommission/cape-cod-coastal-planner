@@ -80,6 +80,8 @@ type alias Env =
     , agsHexUrl : String
     , agsCritUrl : String
     , agsDRUrl : String
+    , agsSLRUrl : String
+    , agsMOPUrl : String
     }
 
 
@@ -91,6 +93,8 @@ decodeEnv =
         |> required "agsHexUrl" D.string
         |> required "agsCritUrl" D.string
         |> required "agsDRUrl" D.string
+        |> required "agsSLRUrl" D.string
+        |> required "agsMOPUrl" D.string
 
 
 type Openness

@@ -29,6 +29,10 @@ type OpenLayersCmd
     | DisableCritFac 
     | RenderDR (Result Http.Error D.Value)
     | DisableDR
+    | RenderSLR 
+    | DisableSLR
+    | RenderMOP (Result Http.Error D.Value)
+    | DisableMOP
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -88,6 +92,27 @@ encodeOpenLayersCmd cmd =
         DisableDR ->
             E.object
                 [ ( "cmd", E.string "disable_disconnected_roads" )
+                ]
+
+        RenderSLR ->
+            E.object
+                [ ( "cmd", E.string "render_slr_2ft" )
+                ]
+        
+        DisableSLR ->
+            E.object
+                [ ( "cmd", E.string "disable_sea_level_rise" )
+                ]
+
+        RenderMOP response ->
+            E.object
+                [ ( "cmd", E.string "render_municipally_owned_parcels" )
+                , ( "data", encodeRawResponse response )
+                ]
+
+        DisableMOP ->
+            E.object
+                [ ( "cmd", E.string "disable_municipally_owned_parcels" )
                 ]
             
 

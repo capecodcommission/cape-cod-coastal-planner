@@ -81,14 +81,16 @@ type alias Model =
     , slrOpenness : Openness
     , slrFx : Animation.State
     , slrToggleFx : Animation.State
-    , glpOpenness : Openness
-    , glpFx : Animation.State
-    , glpToggleFx : Animation.State
+    , infraOpenness : Openness
+    , infraFx : Animation.State
+    , infraToggleFx : Animation.State
     , ceOpenness : Openness
     , ceFx : Animation.State
     , ceToggleFx : Animation.State
     , critFacClicked : Openness
     , drClicked : Openness
+    , slrClicked : Openness
+    , mopClicked : Openness
     }
 
 
@@ -145,12 +147,14 @@ initialModel flags =
         (Animation.style <| .rotate90 <| Animations.toggleStates)
         -- GPL Section
         Closed
-        (Animation.style <| .closed <| Animations.glpStates)
-        (Animation.style <| .rotate180 <| Animations.toggleStates)
+        (Animation.style <| .closed <| Animations.infraStates)
+        (Animation.style <| .rotate90 <| Animations.toggleStates)
         -- CE Section
         Closed
         (Animation.style <| .closed <| Animations.ceStates)
         (Animation.style <| .rotate180 <| Animations.toggleStates)
+        Closed
+        Closed
         Closed
         Closed
 
@@ -543,8 +547,8 @@ updateModel msg model =
                 , leftSidebarToggleFx = Animation.update animMsg model.leftSidebarToggleFx
                 , slrFx = Animation.update animMsg model.slrFx
                 , slrToggleFx = Animation.update animMsg model.slrToggleFx
-                , glpFx = Animation.update animMsg model.glpFx
-                , glpToggleFx = Animation.update animMsg model.glpToggleFx
+                , infraFx = Animation.update animMsg model.infraFx
+                , infraToggleFx = Animation.update animMsg model.infraToggleFx
                 , ceFx = Animation.update animMsg model.ceFx
                 , ceToggleFx = Animation.update animMsg model.ceToggleFx
             }
@@ -602,6 +606,25 @@ updateModel msg model =
                     , sendGetDRRequest model.env 
                     )
 
+        ToggleSLRLayer ->
+            case model.slrClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | slrClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableSLR) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | slrClicked = Open 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderSLR) 
+                    )
+
         LoadCritFacResponse response ->
             ( model
             , olCmd <| encodeOpenLayersCmd (RenderCritFac response)
@@ -612,6 +635,16 @@ updateModel msg model =
             , olCmd <| encodeOpenLayersCmd (RenderDR response)
             )
 
+        LoadSLRResponse response ->
+            ( model
+            , olCmd <| encodeOpenLayersCmd (RenderSLR)
+            )
+
+        LoadMOPResponse response ->
+            ( model
+            , olCmd <| encodeOpenLayersCmd (RenderMOP response)
+            )
+
         ToggleSLRSection ->
             case model.slrOpenness of
                 Open ->
@@ -620,13 +653,13 @@ updateModel msg model =
                 Closed ->
                     ( model |> expandSLRLayer, Cmd.none )
 
-        ToggleGLPSection ->
-            case model.glpOpenness of
+        ToggleInfraSection ->
+            case model.infraOpenness of
                 Open ->
-                    ( model |> collapseGLPLayer, Cmd.none )
+                    ( model |> collapseInfraLayer, Cmd.none )
 
                 Closed ->
-                    ( model |> expandGLPLayer, Cmd.none )
+                    ( model |> expandInfraLayer, Cmd.none )
 
         ToggleCESection ->
             case model.ceOpenness of
@@ -635,6 +668,25 @@ updateModel msg model =
 
                 Closed ->
                     ( model |> expandCESection, Cmd.none )
+
+        ToggleMOPLayer ->
+            case model.mopClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | mopClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableMOP) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | mopClicked = Open 
+                            }
+                    , sendGetMOPRequest model.env 
+                    )
 
 
 applyStrategy : Model -> ( Model, Cmd Msg )
@@ -865,32 +917,32 @@ collapseSLRLayer model =
                 model.slrToggleFx
     }
 
-expandGLPLayer : Model -> Model
-expandGLPLayer model =
+expandInfraLayer : Model -> Model
+expandInfraLayer model =
     { model
-        | glpOpenness = Open
-        , glpFx =
+        | infraOpenness = Open
+        , infraFx =
             Animation.interrupt
-                [ Animation.to <| .open <| Animations.glpStates ]
-                model.glpFx
-        , glpToggleFx =
+                [ Animation.to <| .open <| Animations.infraStates ]
+                model.infraFx
+        , infraToggleFx =
             Animation.interrupt
                 [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
-                model.glpToggleFx
+                model.infraToggleFx
     }
 
-collapseGLPLayer : Model -> Model
-collapseGLPLayer model =
+collapseInfraLayer : Model -> Model
+collapseInfraLayer model =
     { model
-        | glpOpenness = Closed
-        , glpFx =
+        | infraOpenness = Closed
+        , infraFx =
             Animation.interrupt
-                [ Animation.to <| .closed <| Animations.glpStates ]
-                model.glpFx
-        , glpToggleFx =
+                [ Animation.to <| .closed <| Animations.infraStates ]
+                model.infraFx
+        , infraToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
-                model.glpToggleFx
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
+                model.infraToggleFx
     }
 
 expandCESection : Model -> Model
@@ -1100,8 +1152,8 @@ animations model =
     , model.leftSidebarToggleFx 
     , model.slrFx
     , model.slrToggleFx
-    , model.glpFx
-    , model.glpToggleFx
+    , model.infraFx
+    , model.infraToggleFx
     , model.ceFx
     , model.ceToggleFx
     ]

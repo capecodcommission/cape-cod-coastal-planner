@@ -10,6 +10,9 @@ import {layer as littoralCells} from "./layers/littoral_cells";
 import {layer as vulnRibbon} from "./layers/vulnerability_ribbon";
 import {layer as critFac} from "./layers/critical_facilities"
 import {layer as disCon} from "./layers/disconnected_roads"
+// import {layer as SLR} from "./layers/sea_level_rise"
+import {layer as slrTile} from "./layers/slr"
+import {layer as mop} from "./layers/municipally_owned_parcels"
 //import {layer as locHexes} from "./layers/location_hexes";
 import {
     layer as impactZone
@@ -37,6 +40,9 @@ export function init(onInit) {
     map.addLayer(vulnRibbon(map));
     map.addLayer(critFac(map))
     map.addLayer(disCon(map))
+    // map.addLayer(SLR(map))
+    map.addLayer(slrTile(map))
+    map.addLayer(mop(map))
     //map.addLayer(locHexes(map));
 
     // wait until next frame to attempt rendering the map
