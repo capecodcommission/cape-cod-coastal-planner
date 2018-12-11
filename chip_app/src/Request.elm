@@ -279,10 +279,10 @@ getDR env =
 -- SEA LEVEL RISE (FEATURE SERVICE)
 --
 
-sendGetSLRRequest : Env -> Cmd Msg
-sendGetSLRRequest env =
-    getSLR env 
-    |> Http.send LoadSLRResponse
+-- sendGetSLRRequest : Env -> Cmd Msg
+-- sendGetSLRRequest env =
+--     getSLR env 
+--     |> Http.send LoadSLRResponse
 
 getSLR : Env -> Http.Request D.Value
 getSLR env =

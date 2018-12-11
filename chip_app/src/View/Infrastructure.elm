@@ -19,11 +19,14 @@ view :
         , critFacClicked : Openness
         , slrFx : Animation.State
         , drClicked : Openness
-        , slrClicked : Openness
+        , slr2ftClicked : Openness
         , infraOpenness : Openness
         , infraFx : Animation.State
         , infraToggleFx : Animation.State
         , mopClicked : Openness
+        , pprClicked : Openness
+        , spClicked : Openness
+        , cdsClicked : Openness
     } 
     -> Device 
     -> Paths 
@@ -76,8 +79,11 @@ infraDetails :
         | critFacClicked : Openness
         , slrFx : Animation.State
         , drClicked : Openness
-        , slrClicked : Openness
+        , slr2ftClicked : Openness
         , mopClicked : Openness
+        , pprClicked : Openness
+        , spClicked : Openness
+        , cdsClicked : Openness
     } 
     -> Paths 
     -> Element MainStyles Variations Msg
@@ -99,9 +105,9 @@ infraDetails config paths =
                 {src = paths.downArrow}
             , text "Municipal Properties"
             ]
-        , paragraph CloseIcon [onClick ToggleDR] 
+        , paragraph CloseIcon [onClick TogglePPRLayer] 
             [ decorativeImage 
-                ( case config.drClicked of 
+                ( case config.pprClicked of 
                     Open -> 
                         (PL Clicked)
                     Closed -> 
@@ -111,9 +117,9 @@ infraDetails config paths =
                 {src = paths.downArrow}
             , text "Public and Private Roads"
             ]
-        , paragraph CloseIcon [onClick ToggleCritFac] 
+        , paragraph CloseIcon [onClick ToggleSPLayer] 
             [ decorativeImage
-                ( case config.critFacClicked of 
+                ( case config.spClicked of 
                     Open -> 
                         (PL Clicked)
                     Closed ->
@@ -123,9 +129,9 @@ infraDetails config paths =
                 {src = paths.downArrow}
             , text "Sewered Parcels"
             ]
-        , paragraph CloseIcon [onClick ToggleCritFac] 
+        , paragraph CloseIcon [onClick ToggleCDSLayer] 
             [ decorativeImage
-                ( case config.critFacClicked of 
+                ( case config.cdsClicked of 
                     Open -> 
                         (PL Clicked)
                     Closed ->
@@ -135,7 +141,7 @@ infraDetails config paths =
                 {src = paths.downArrow}
             , text "Coastal Defense Structures"
             ]
-        , paragraph CloseIcon [onClick ToggleCritFac] 
+        , paragraph CloseIcon [onClick ToggleFZLayer] 
             [ decorativeImage
                 ( case config.critFacClicked of 
                     Open -> 

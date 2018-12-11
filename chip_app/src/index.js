@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "agsHexUrl": process.env.ELM_APP_AGS_HEX_URL,
             "agsCritUrl": process.env.ELM_APP_AGS_CRIT_URL,
             "agsDRUrl": process.env.ELM_APP_AGS_DR_URL,
-            "agsSLRUrl": process.env.ELM_APP_AGS_SLR_URL,
+            "agsSLRUrl": process.env.ELM_APP_AGS_SLR_TWO,
             "agsMOPUrl": process.env.ELM_APP_AGS_MOP_URL
         },
         "closePath": closePath,

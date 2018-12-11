@@ -89,8 +89,14 @@ type alias Model =
     , ceToggleFx : Animation.State
     , critFacClicked : Openness
     , drClicked : Openness
-    , slrClicked : Openness
+    , slr2ftClicked : Openness
     , mopClicked : Openness
+    , pprClicked : Openness
+    , spClicked : Openness
+    , cdsClicked : Openness
+    , fzClicked : Openness
+    , sloshClicked : Openness
+    , slr1ftClicked : Openness
     }
 
 
@@ -153,6 +159,12 @@ initialModel flags =
         Closed
         (Animation.style <| .closed <| Animations.ceStates)
         (Animation.style <| .rotate180 <| Animations.toggleStates)
+        Closed
+        Closed
+        Closed
+        Closed
+        Closed
+        Closed
         Closed
         Closed
         Closed
@@ -584,7 +596,7 @@ updateModel msg model =
                             { m 
                                 | critFacClicked = Open 
                             }
-                    , sendGetCritFacRequest model.env 
+                    , olCmd <| encodeOpenLayersCmd (RenderCritFac) 
                     )
 
         ToggleDR ->
@@ -603,46 +615,68 @@ updateModel msg model =
                             { m 
                                 | drClicked = Open 
                             }
-                    , sendGetDRRequest model.env 
+                    , olCmd <| encodeOpenLayersCmd (RenderDR) 
                     )
 
-        ToggleSLRLayer ->
-            case model.slrClicked of 
-                Open ->
-                    ( model 
-                        |> \m -> 
-                            { m 
-                                | slrClicked = Closed 
-                            }
-                    , olCmd <| encodeOpenLayersCmd (DisableSLR) 
-                    )
-                Closed ->
-                    ( model 
-                        |> \m -> 
-                            { m 
-                                | slrClicked = Open 
-                            }
-                    , olCmd <| encodeOpenLayersCmd (RenderSLR) 
-                    )
+        ToggleSLRLayer level ->
+            case level of 
+                "1" -> 
+                    case model.slr1ftClicked of 
+                        Open ->
+                            ( model 
+                                |> \m -> 
+                                    { m 
+                                        | slr1ftClicked = Closed 
+                                    }
+                            , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
+                            )
+                        Closed ->
+                            ( model 
+                                |> \m -> 
+                                    { m 
+                                        | slr1ftClicked = Open 
+                                    }
+                            , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
+                            )
+                "2" -> 
+                    case model.slr2ftClicked of 
+                        Open ->
+                            ( model 
+                                |> \m -> 
+                                    { m 
+                                        | slr2ftClicked = Closed 
+                                    }
+                            , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
+                            )
+                        Closed ->
+                            ( model 
+                                |> \m -> 
+                                    { m 
+                                        | slr2ftClicked = Open 
+                                    }
+                            , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
+                            )
+                "Nothing" ->
+                    (model, Cmd.none)
 
         LoadCritFacResponse response ->
             ( model
-            , olCmd <| encodeOpenLayersCmd (RenderCritFac response)
+            , olCmd <| encodeOpenLayersCmd (RenderCritFac)
             )
 
         LoadDRResponse response ->
             ( model
-            , olCmd <| encodeOpenLayersCmd (RenderDR response)
+            , olCmd <| encodeOpenLayersCmd (RenderDR)
             )
 
-        LoadSLRResponse response ->
-            ( model
-            , olCmd <| encodeOpenLayersCmd (RenderSLR)
-            )
+        -- LoadSLRResponse response ->
+        --     ( model
+        --     , olCmd <| encodeOpenLayersCmd (RenderSLR)
+        --     )
 
         LoadMOPResponse response ->
             ( model
-            , olCmd <| encodeOpenLayersCmd (RenderMOP response)
+            , olCmd <| encodeOpenLayersCmd (RenderMOP)
             )
 
         ToggleSLRSection ->
@@ -685,7 +719,102 @@ updateModel msg model =
                             { m 
                                 | mopClicked = Open 
                             }
-                    , sendGetMOPRequest model.env 
+                    , olCmd <| encodeOpenLayersCmd (RenderMOP) 
+                    )
+
+        TogglePPRLayer ->
+            case model.pprClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | pprClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisablePPR) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | pprClicked = Open 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderPPR) 
+                    )
+
+        ToggleSPLayer ->
+            case model.spClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | spClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableSP) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | spClicked = Open 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderSP) 
+                    )
+
+        ToggleCDSLayer ->
+            case model.cdsClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | cdsClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableCDS) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | cdsClicked = Open 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderCDS) 
+                    )
+
+        ToggleFZLayer ->
+            case model.fzClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | fzClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableFZ) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | fzClicked = Open 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderFZ) 
+                    )
+
+        ToggleSloshLayer ->
+            case model.sloshClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | sloshClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableSlosh) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | sloshClicked = Open 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderSlosh) 
                     )
 
 

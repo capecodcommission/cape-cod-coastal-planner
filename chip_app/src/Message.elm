@@ -54,7 +54,12 @@ type Msg
     | ToggleCESection
     | ToggleDR
     | LoadDRResponse (Result Http.Error D.Value)
-    | ToggleSLRLayer
-    | LoadSLRResponse (Result Http.Error D.Value)
+    | ToggleSLRLayer String
+    -- | LoadSLRResponse (Result Http.Error D.Value)
     | ToggleMOPLayer
     | LoadMOPResponse (Result Http.Error D.Value)
+    | TogglePPRLayer
+    | ToggleSPLayer
+    | ToggleCDSLayer
+    | ToggleFZLayer
+    | ToggleSloshLayer

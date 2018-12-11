@@ -19,7 +19,8 @@ view :
         , critFacClicked : Openness
         , slrFx : Animation.State
         , drClicked : Openness
-        , slrClicked : Openness
+        , slr2ftClicked : Openness
+        , slr1ftClicked : Openness
     } 
     -> Device 
     -> Paths 
@@ -72,7 +73,8 @@ slrDetails :
         | critFacClicked : Openness
         , slrFx : Animation.State
         , drClicked : Openness
-        , slrClicked : Openness
+        , slr2ftClicked : Openness
+        , slr1ftClicked : Openness
     } 
     -> Paths 
     -> Element MainStyles Variations Msg
@@ -83,20 +85,36 @@ slrDetails config paths =
             [ text "Toggle map layers related to the potential effects of Sea Level Rise" ]
         , hairline (PL Line)
         , paragraph CloseIcon 
-            [ 
-                onClick ToggleSLRLayer 
-            ] 
+            [] 
             [ decorativeImage
-                ( case config.slrClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                ) 
+                NoStyle
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
             , text "Sea Level Rise"
             ]
+        , paragraph CloseIcon [ paddingXY 32 0 ]
+            [ el 
+                ( case config.slr1ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "1") ] <| text " 1ft -"
+            , el 
+                ( case config.slr2ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "2") ] <| text " 2ft -"
+            , el NoStyle [] <| text " 3ft -"
+            , el NoStyle [] <| text " 4ft -"
+            , el NoStyle [] <| text " 5ft -"
+            , el NoStyle [] <| text " 6ft"
+            ]
+        , hairline (PL Line)
         , paragraph CloseIcon [onClick ToggleDR] 
             [ decorativeImage 
                 ( case config.drClicked of 

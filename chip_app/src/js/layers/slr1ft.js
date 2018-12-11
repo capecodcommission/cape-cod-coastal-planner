@@ -12,13 +12,13 @@ export function layer(map) {
         opacity: 0.5,
         source: source
     });
-    layer.set("name", "world_imagery");
+    layer.set("name", "sea_level_rise_1ft");
 
-    map.on("render_sea_level_rise", ({data}) => {
+    map.on("render_slr1ft", ({data}) => {
       onRenderSLR(data, layer, source);
     });
 
-    map.on("disable_slr", () => {
+    map.on("disable_slr1ft", () => {
       disableSLR(layer, source);
     });
 
@@ -26,13 +26,13 @@ export function layer(map) {
 }
 
 function _source() {
-    let url = process.env.ELM_APP_AGS_SLR_URL;
-    if (!url) {
-        throw Error("Must configure environment variable `ELM_APP_AGS_WORLD_IMG_URL`!");
-    }
+    // let url = process.env.ELM_APP_AGS_SLR_TWO;
+    // if (!url) {
+    //     throw Error("Must configure environment variable `ELM_APP_AGS_WORLD_SLR_TWO`!");
+    // }
     let source = new XYZ({
         crossOrigin: "anonymous",
-        url: url,
+        url: 'http://gis-services.capecodcommission.org/arcgis/rest/services/SeaLevelRise/SLR_1_Corrected/MapServer/tile/{z}/{y}/{x}',
         maxZoom: 16,
         minZoom: 3,
         opaque: false,

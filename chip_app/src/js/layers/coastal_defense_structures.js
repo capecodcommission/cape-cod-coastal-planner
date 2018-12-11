@@ -14,7 +14,7 @@ import Circle from "ol/style/Circle";
 
 export function layer(map) {
     let source = new VectorSource({
-        url: 'http://gis-services.capecodcommission.org/arcgis/rest/services/SeaLevelRise/Roads_Isolated_1ft/MapServer/1/query?f=pjson&geometryType=esriGeometryPolyline&outFields=*&outSR=3857&returnGeometry=true&spatialRel=esriSpatialRelIntersects&where=1%3D1',
+        url: "http://gis-services.capecodcommission.org/arcgis/rest/services/Planimetrics/coastalDefenseStructures/MapServer/0/query?f=pjson&geometryType=esriGeometryPolygon&outFields=*&outSR=3857&returnGeometry=true&spatialRel=esriSpatialRelIntersects&where=1%3D1",
         format: new EsriJSON()
     });
 
@@ -23,20 +23,19 @@ export function layer(map) {
         source: source,
         style: (feature, resolution) => {
             return new Style({
-                stroke: new Stroke({
-                  color: [255,0,0],
-                  width: 2
+                fill: new Fill({
+                  color: 'red'
                 })
             });
         }
     });
-    layer.set("name", "disconnected_roads");
+    layer.set("name", "coastal_defense_structures");
 
-    map.on("render_disconnected_roads", ({data}) => {
+    map.on("render_cds", ({data}) => {
         layer.setVisible(true)
     });
 
-    map.on("disable_disconnected_roads", () => {
+    map.on("disable_cds", () => {
         layer.setVisible(false)
     });
 

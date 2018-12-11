@@ -25,14 +25,24 @@ type OpenLayersCmd
     | RenderVulnerabilityRibbon (Result Http.Error D.Value)
     | ClearZoneOfImpact
     | RenderLocationHexes (Result Http.Error D.Value)
-    | RenderCritFac (Result Http.Error D.Value)
+    | RenderCritFac 
     | DisableCritFac 
-    | RenderDR (Result Http.Error D.Value)
+    | RenderDR 
     | DisableDR
-    | RenderSLR 
-    | DisableSLR
-    | RenderMOP (Result Http.Error D.Value)
+    | RenderSLR (String)
+    | DisableSLR (String)
+    | RenderMOP 
     | DisableMOP
+    | RenderPPR
+    | DisablePPR
+    | RenderSP
+    | DisableSP
+    | RenderCDS
+    | DisableCDS
+    | RenderFZ
+    | DisableFZ
+    | RenderSlosh
+    | DisableSlosh
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -72,10 +82,9 @@ encodeOpenLayersCmd cmd =
                 , ( "data", encodeRawResponse response )
                 ]
 
-        RenderCritFac response ->
+        RenderCritFac ->
             E.object
                 [ ( "cmd", E.string "render_critical_facilities" )
-                , ( "data", encodeRawResponse response )
                 ]
 
         DisableCritFac ->
@@ -83,10 +92,9 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "disable_critical_facilities" )
                 ]
             
-        RenderDR response ->
+        RenderDR ->
             E.object
                 [ ( "cmd", E.string "render_disconnected_roads" )
-                , ( "data", encodeRawResponse response )
                 ]
 
         DisableDR ->
@@ -94,25 +102,76 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "disable_disconnected_roads" )
                 ]
 
-        RenderSLR ->
+        RenderSLR level ->
             E.object
-                [ ( "cmd", E.string "render_slr_2ft" )
+                [ ( "cmd", E.string "render_slr" )
+                , ("data", E.string level)
                 ]
         
-        DisableSLR ->
+        DisableSLR level ->
             E.object
                 [ ( "cmd", E.string "disable_sea_level_rise" )
+                , ("data", E.string level)
                 ]
 
-        RenderMOP response ->
+        RenderMOP ->
             E.object
                 [ ( "cmd", E.string "render_municipally_owned_parcels" )
-                , ( "data", encodeRawResponse response )
                 ]
 
         DisableMOP ->
             E.object
                 [ ( "cmd", E.string "disable_municipally_owned_parcels" )
+                ]
+
+        RenderPPR ->
+            E.object
+                [ ( "cmd", E.string "render_public_private_roads" )
+                ]
+
+        DisablePPR ->
+            E.object
+                [ ( "cmd", E.string "disable_public_private_roads" )
+                ]
+
+        RenderSP ->
+            E.object
+                [ ( "cmd", E.string "render_sewered_parcels" )
+                ]
+
+        DisableSP ->
+            E.object
+                [ ( "cmd", E.string "disable_sewered_parcels" )
+                ]
+
+        RenderCDS ->
+            E.object
+                [ ( "cmd", E.string "render_coastal_defense_structures" )
+                ]
+
+        DisableCDS ->
+            E.object
+                [ ( "cmd", E.string "disable_coastal_defense_structures" )
+                ]
+
+        RenderFZ ->
+            E.object
+                [ ( "cmd", E.string "render_flood_zones" )
+                ]
+
+        DisableFZ ->
+            E.object
+                [ ( "cmd", E.string "disable_flood_zones" )
+                ]
+
+        RenderSlosh ->
+            E.object
+                [ ( "cmd", E.string "render_slosh_layer" )
+                ]
+
+        DisableSlosh ->
+            E.object
+                [ ( "cmd", E.string "disable_slosh_layer" )
                 ]
             
 

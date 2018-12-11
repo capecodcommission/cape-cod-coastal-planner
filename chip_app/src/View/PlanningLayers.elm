@@ -10,8 +10,10 @@ import Element.Events exposing (onClick)
 import View.Helpers exposing (title, adjustOnHeight, renderAnimation)
 import Styles exposing (..)
 import ShorelineLocation as SL
-import View.SeaLevelRise as SLRSection
-import View.Infrastructure as InfraSection
+import View.SeaLevelRise as SLR
+import View.Infrastructure as IF
+import View.FloodZone as FZ
+import View.Slosh as Slosh
 
 
 textLayoutSpacing : Device -> Float
@@ -32,11 +34,17 @@ view :
         , critFacClicked : Openness
         , slrFx : Animation.State
         , drClicked : Openness
-        , slrClicked : Openness
+        , slr2ftClicked : Openness
         , infraOpenness : Openness
         , infraFx : Animation.State
         , infraToggleFx : Animation.State
         , mopClicked : Openness
+        , pprClicked : Openness
+        , spClicked : Openness
+        , cdsClicked : Openness
+        , fzClicked : Openness
+        , sloshClicked : Openness
+        , slr1ftClicked : Openness
     } 
     -> Device 
     -> Paths 
@@ -44,6 +52,8 @@ view :
 view config device paths =
   column NoStyle
     [ height fill, verticalSpread ]
-    [ SLRSection.view config device paths "Sea Level Rise" ToggleSLRSection 
-    , InfraSection.view config device paths "Infrastructure" ToggleInfraSection 
+    [ SLR.view config device paths "Sea Level Rise" ToggleSLRSection 
+    , IF.view config device paths "Infrastructure" ToggleInfraSection 
+    , FZ.view config device paths "Flood Zone" ToggleFZLayer
+    , Slosh.view config device paths "SLOSH" ToggleSloshLayer
     ]

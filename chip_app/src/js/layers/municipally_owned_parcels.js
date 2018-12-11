@@ -8,14 +8,15 @@ import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import Circle from "ol/style/Circle";
 
-const esrijsonformat = new EsriJSON();
-
 /**
  * Vector Layer functions
  */
 
 export function layer(map) {
-    let source = new VectorSource();
+    let source = new VectorSource({
+        url: "http://gis-services.capecodcommission.org/arcgis/rest/services/Projects/PRB_Siting/MapServer/12/query?f=pjson&geometryType=esriGeometryPolygon&outFields=*&outSR=3857&returnGeometry=true&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+        format: new EsriJSON()
+    });
 
     let layer = new VectorLayer({
         visible: false,
@@ -31,28 +32,12 @@ export function layer(map) {
     layer.set("name", "municipally_owned_parcels");
 
     map.on("render_mop", ({data}) => {
-        onRenderMOP(data, layer, source);
+        layer.setVisible(true)
     });
 
     map.on("disable_mop", () => {
-        disableMOP(layer, source);
+        layer.setVisible(false)
     });
 
     return layer;
-}
-
-function onRenderMOP(data, layer, source) {
-    // decode esri json to ol features
-    let features = esrijsonformat.readFeaturesFromObject(data.response);
-    
-    source.addFeatures(features);
-    layer.setVisible(true);
-}
-
-function disableMOP(layer, source) {
-    // decode esri json to ol features
-    // let features = esrijsonformat.readFeaturesFromObject(data.response);
-    
-    // source.addFeatures(features);
-    layer.setVisible(false);
 }

@@ -15,7 +15,10 @@ const esrijsonformat = new EsriJSON();
  */
 
 export function layer(map) {
-    let source = new VectorSource();
+    let source = new VectorSource({
+        url: 'http://gis-services.capecodcommission.org/arcgis/rest/services/Data_People/Infrastructure/MapServer/12/query?f=pjson&geometryType=esriGeometryPoint&outFields=*&outSR=3857&returnGeometry=true&spatialRel=esriSpatialRelIntersects&where=1%3D1',
+        format: new EsriJSON()
+    });
 
     let layer = new VectorLayer({
         visible: false,
@@ -36,28 +39,12 @@ export function layer(map) {
     layer.set("name", "critical_facilities");
 
     map.on("render_critical_facilities", ({data}) => {
-        onRenderVulnRibbon(data, layer, source);
+        layer.setVisible(true);
     });
 
     map.on("disable_critical_facilities", () => {
-        disableCritFac(layer, source);
+        layer.setVisible(false);
     });
 
     return layer;
-}
-
-function onRenderVulnRibbon(data, layer, source) {
-    // decode esri json to ol features
-    let features = esrijsonformat.readFeaturesFromObject(data.response);
-    
-    source.addFeatures(features);
-    layer.setVisible(true);
-}
-
-function disableCritFac(layer, source) {
-    // decode esri json to ol features
-    // let features = esrijsonformat.readFeaturesFromObject(data.response);
-    
-    // source.addFeatures(features);
-    layer.setVisible(false);
 }
