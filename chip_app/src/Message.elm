@@ -52,8 +52,8 @@ type Msg
     | ToggleSLRSection
     | ToggleInfraSection
     | ToggleCESection
-    | ToggleDR
-    | LoadDRResponse (Result Http.Error D.Value)
+    | ToggleDR String
+    -- | LoadDRResponse (Result Http.Error D.Value)
     | ToggleSLRLayer String
     -- | LoadSLRResponse (Result Http.Error D.Value)
     | ToggleMOPLayer

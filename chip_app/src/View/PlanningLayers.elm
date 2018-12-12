@@ -33,7 +33,7 @@ view :
         , slrToggleFx : Animation.State
         , critFacClicked : Openness
         , slrFx : Animation.State
-        , drClicked : Openness
+        , dr1ftClicked : Openness
         , slr2ftClicked : Openness
         , infraOpenness : Openness
         , infraFx : Animation.State
@@ -45,6 +45,16 @@ view :
         , fzClicked : Openness
         , sloshClicked : Openness
         , slr1ftClicked : Openness
+        , slr3ftClicked : Openness
+        , slr4ftClicked : Openness
+        , slr5ftClicked : Openness
+        , slr6ftClicked : Openness
+        , dr2ftClicked : Openness
+        , dr3ftClicked : Openness
+        , dr4ftClicked : Openness
+        , dr5ftClicked : Openness
+        , dr6ftClicked : Openness
+        , structuresClicked : Openness
     } 
     -> Device 
     -> Paths 

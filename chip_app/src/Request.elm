@@ -253,27 +253,27 @@ getCritFac env =
 -- DISCONNECTED ROADS (FEATURE SERVICE)
 --
 
-sendGetDRRequest : Env -> Cmd Msg
-sendGetDRRequest env =
-    getDR env 
-    |> Http.send LoadDRResponse
+-- sendGetDRRequest : Env -> Cmd Msg
+-- sendGetDRRequest env =
+--     getDR env 
+--     |> Http.send LoadDRResponse
 
-getDR : Env -> Http.Request D.Value
-getDR env =
-    let
-        qs =
-            QS.empty
-                |> QS.add "f" "pjson"
-                |> QS.add "returnGeometry" "true"
-                |> QS.add "geometryType" "esriGeometryPolyline"
-                |> QS.add "spatialRel" "esriSpatialRelIntersects"
-                |> QS.add "outFields" "*"
-                |> QS.add "outSR" "3857"
-                |> QS.add "where" "1=1"
-        getUrl =
-            env.agsDRUrl ++ QS.render qs
-    in
-        Http.get getUrl D.value
+-- getDR : Env -> Http.Request D.Value
+-- getDR env =
+--     let
+--         qs =
+--             QS.empty
+--                 |> QS.add "f" "pjson"
+--                 |> QS.add "returnGeometry" "true"
+--                 |> QS.add "geometryType" "esriGeometryPolyline"
+--                 |> QS.add "spatialRel" "esriSpatialRelIntersects"
+--                 |> QS.add "outFields" "*"
+--                 |> QS.add "outSR" "3857"
+--                 |> QS.add "where" "1=1"
+--         getUrl =
+--             env.agsDRUrl ++ QS.render qs
+--     in
+--         Http.get getUrl D.value
 
 --
 -- SEA LEVEL RISE (FEATURE SERVICE)

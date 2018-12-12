@@ -27,8 +27,8 @@ type OpenLayersCmd
     | RenderLocationHexes (Result Http.Error D.Value)
     | RenderCritFac 
     | DisableCritFac 
-    | RenderDR 
-    | DisableDR
+    | RenderDR (String)
+    | DisableDR (String)
     | RenderSLR (String)
     | DisableSLR (String)
     | RenderMOP 
@@ -92,14 +92,16 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "disable_critical_facilities" )
                 ]
             
-        RenderDR ->
+        RenderDR level ->
             E.object
                 [ ( "cmd", E.string "render_disconnected_roads" )
+                , ("data", E.string level)
                 ]
 
-        DisableDR ->
+        DisableDR level ->
             E.object
                 [ ( "cmd", E.string "disable_disconnected_roads" )
+                , ("data", E.string level)
                 ]
 
         RenderSLR level ->

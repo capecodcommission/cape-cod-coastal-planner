@@ -576,7 +576,7 @@ stylesheet device =
             , Border.rounded 4
             ]
         , Style.style (Sidebar SidebarContainer)
-            [ Color.background <| Color.rgba 0 0 0 0.7
+            [ Color.background <| Color.rgba 0 0 0 0.5
             , Color.text white
             , Font.typeface fontstack
             ]

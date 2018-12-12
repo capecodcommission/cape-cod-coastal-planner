@@ -18,7 +18,6 @@ view :
         , slrToggleFx : Animation.State
         , critFacClicked : Openness
         , slrFx : Animation.State
-        , drClicked : Openness
         , slr2ftClicked : Openness
         , infraOpenness : Openness
         , infraFx : Animation.State
@@ -27,6 +26,7 @@ view :
         , pprClicked : Openness
         , spClicked : Openness
         , cdsClicked : Openness
+        , structuresClicked : Openness
     } 
     -> Device 
     -> Paths 
@@ -78,12 +78,12 @@ infraDetails :
     { config
         | critFacClicked : Openness
         , slrFx : Animation.State
-        , drClicked : Openness
         , slr2ftClicked : Openness
         , mopClicked : Openness
         , pprClicked : Openness
         , spClicked : Openness
         , cdsClicked : Openness
+        , structuresClicked : Openness
     } 
     -> Paths 
     -> Element MainStyles Variations Msg
@@ -141,9 +141,11 @@ infraDetails config paths =
                 {src = paths.downArrow}
             , text "Coastal Defense Structures"
             ]
-        , paragraph CloseIcon [onClick ToggleFZLayer] 
+        , paragraph 
+            CloseIcon 
+            [] 
             [ decorativeImage
-                ( case config.critFacClicked of 
+                ( case config.structuresClicked of 
                     Open -> 
                         (PL Clicked)
                     Closed ->

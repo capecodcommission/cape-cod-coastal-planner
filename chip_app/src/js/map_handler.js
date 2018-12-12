@@ -188,16 +188,95 @@ class MapHandler {
     }
 
     renderDisconnectedRoads(data) {
-        this.map.dispatchEvent({
-            "type": "render_disconnected_roads",
-            "data": data
-        });
+        switch (data) {
+            case "1":
+                this.map.dispatchEvent({
+                    "type": "render_dr1ft",
+                    "data": data
+                });
+                break
+
+            case "2":
+                this.map.dispatchEvent({
+                    "type": "render_dr2ft",
+                    "data": data
+                });
+                break
+
+            case "3":
+                this.map.dispatchEvent({
+                    "type": "render_dr3ft",
+                    "data": data
+                });
+                break
+
+            case "4":
+                this.map.dispatchEvent({
+                    "type": "render_dr4ft",
+                    "data": data
+                });
+                break
+
+            case "5":
+                this.map.dispatchEvent({
+                    "type": "render_dr5ft",
+                    "data": data
+                });
+                break
+
+            case "6":
+                this.map.dispatchEvent({
+                    "type": "render_dr6ft",
+                    "data": data
+                });
+                break
+        }
     }
 
     disableDisconnectedRoads(data) {
-        this.map.dispatchEvent({
-            "type": "disable_disconnected_roads"
-        });
+        switch (data) {
+            case "1":
+                this.map.dispatchEvent({
+                    "type": "disable_dr1ft",
+                    "data": data
+                });
+                break
+
+            case "2":
+                this.map.dispatchEvent({
+                    "type": "disable_dr2ft",
+                    "data": data
+                });
+                break
+
+            case "3":
+                this.map.dispatchEvent({
+                    "type": "disable_dr3ft",
+                    "data": data
+                });
+                break
+
+            case "4":
+                this.map.dispatchEvent({
+                    "type": "disable_dr4ft",
+                    "data": data
+                });
+                break
+
+            case "5":
+                this.map.dispatchEvent({
+                    "type": "disable_dr5ft",
+                    "data": data
+                });
+                break
+
+            case "6":
+                this.map.dispatchEvent({
+                    "type": "disable_dr6ft",
+                    "data": data
+                });
+                break
+        }
     }
 
     renderSLR(data) {
@@ -213,6 +292,34 @@ class MapHandler {
             case "2":
                 this.map.dispatchEvent({
                     "type": "render_slr2ft",
+                    "data": data
+                });
+                break
+
+            case "3":
+                this.map.dispatchEvent({
+                    "type": "render_slr3ft",
+                    "data": data
+                });
+                break
+
+            case "4":
+                this.map.dispatchEvent({
+                    "type": "render_slr4ft",
+                    "data": data
+                });
+                break
+
+            case "5":
+                this.map.dispatchEvent({
+                    "type": "render_slr5ft",
+                    "data": data
+                });
+                break
+
+            case "6":
+                this.map.dispatchEvent({
+                    "type": "render_slr6ft",
                     "data": data
                 });
                 break
@@ -232,6 +339,34 @@ class MapHandler {
             case "2":
                 this.map.dispatchEvent({
                     "type": "disable_slr2ft",
+                    "data": data
+                });
+                break
+
+            case "3":
+                this.map.dispatchEvent({
+                    "type": "disable_slr3ft",
+                    "data": data
+                });
+                break
+
+            case "4":
+                this.map.dispatchEvent({
+                    "type": "disable_slr4ft",
+                    "data": data
+                });
+                break
+
+            case "5":
+                this.map.dispatchEvent({
+                    "type": "disable_slr5ft",
+                    "data": data
+                });
+                break
+
+            case "6":
+                this.map.dispatchEvent({
+                    "type": "disable_slr6ft",
                     "data": data
                 });
                 break
