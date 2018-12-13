@@ -105,7 +105,6 @@ applyBasicInfo hexes location zoneOfImpact hazard ( strategy, details ) output =
         |> Result.andThen (applyDuration hazard)
         |> Result.andThen (applyScenarioSize zoneOfImpact)
 
--- QUESTION: WHY ARE THERE getCriticalFacilityCount & countCriticalFacilities FUNCTIONS?
 {-| Calculate output for the NoAction scenario given a default copy of the output.
 -}
 calculateNoActionOutput : 
@@ -116,35 +115,37 @@ calculateNoActionOutput :
     -> Result OutputError OutputDetails
 calculateNoActionOutput hexes zoneOfImpact hazard output =
     case Hazards.toType hazard of
-        -- TODO: FOR ALL HAZARDS: THESE QUALIFIER CASES ARE NOT WORKING AS THEY SHOULD - QUALIFIERS WERE
-        -- NEEDED TO BE INJECTED DIRECTLY INTO THE SPECIFIC OUTPUT COMPONENT FUNCTIONS THAT NEEDED THEM
-        -- THE CASES SHOULD BE THE WAY FORWARD AND RESEARCH IS NEEDED TO DETERMINE HOW TO GET THESE WORKING
         Ok Hazards.Erosion ->
             let
                 avgErosion = averageErosion hexes
-                vulnerableToErosion = withErosion hexes
             in
             case avgErosion of
                 Eroding width ->
-                    output
-                        |> (countCriticalFacilitiesEroding >> loseCriticalFacilities) hexes
-                        |> Result.andThen ((sumPublicBldgValueEroding >> losePublicBldgValue) hexes)
-                        |> Result.andThen 
-                            ( (sumPrivateLandAcreageEroding 
-                                >> applyMultiplier privateLandMultiplier
-                                >> losePrivateLandValue)
-                              hexes
-                            )
-                        |> Result.andThen ((sumPrivateBldgValueEroding >> losePrivateBldgValue) hexes)
-                        |> Result.andThen ((sumSaltMarshAcreageEroding >> loseSaltMarshAcreage) hexes)
-                        |> Result.andThen ((isRareSpeciesHabitatPresentEroding >> loseRareSpeciesHabitat) hexes)
-                        |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
+                    let
+                        vulnerableToErosion = withErosion hexes
+                    in
+                        output
+                            |> (countCriticalFacilities >> loseCriticalFacilities) vulnerableToErosion
+                            |> Result.andThen ((sumPublicBldgValue >> losePublicBldgValue) vulnerableToErosion)
+                            |> Result.andThen 
+                                ( (sumPrivateLandAcreage 
+                                    >> applyMultiplier privateLandMultiplier
+                                    >> losePrivateLandValue)
+                                vulnerableToErosion
+                                )
+                            |> Result.andThen ((sumPrivateBldgValue >> losePrivateBldgValue) vulnerableToErosion)
+                            |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) vulnerableToErosion)
+                            |> Result.andThen ((isRareSpeciesHabitatPresent >> loseRareSpeciesHabitat) vulnerableToErosion)
+                            |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
 
                 Accreting width ->
-                    output
-                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
-                        |> Result.andThen ((isRareSpeciesHabitatPresent >> gainRareSpeciesHabitat) hexes)
-                        |> Result.andThen ((zoiAcreageImpact width >> gainBeachArea) zoneOfImpact)
+                    let
+                        vulnerableToAccretion = withAccretion hexes
+                    in
+                        output
+                            |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) vulnerableToAccretion
+                            |> Result.andThen ((isRareSpeciesHabitatPresent >> gainRareSpeciesHabitat) vulnerableToAccretion)
+                            |> Result.andThen ((zoiAcreageImpact width >> gainBeachArea) zoneOfImpact)
 
                 NoErosion -> 
                     output
@@ -156,19 +157,22 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
             in
             case avgSeaLevelRise of
                 VulnSeaRise width ->
-                    output
-                        |> (countCriticalFacilitiesSLR >> loseCriticalFacilities) hexes
-                        |> Result.andThen ((sumPublicBldgValueSLR >> losePublicBldgValue) hexes)
-                        |> Result.andThen
-                            ( (sumPrivateLandAcreageSLR 
-                                >> applyMultiplier privateLandMultiplier
-                                >> losePrivateLandValue)
-                            hexes
-                            )
-                        |> Result.andThen ((sumPrivateBldgValueSLR >> losePrivateBldgValue) hexes)
-                        |> Result.andThen ((sumSaltMarshAcreageSLR >> loseSaltMarshAcreage) hexes)
-                        |> Result.andThen ((isRareSpeciesHabitatPresentSLR >> loseRareSpeciesHabitat) hexes)
-                        |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
+                    let
+                        vulnerableToSLR = withSeaLevelRise hexes
+                    in
+                        output
+                            |> (countCriticalFacilities >> loseCriticalFacilities) vulnerableToSLR
+                            |> Result.andThen ((sumPublicBldgValue >> losePublicBldgValue) vulnerableToSLR)
+                            |> Result.andThen
+                                ( (sumPrivateLandAcreage 
+                                    >> applyMultiplier privateLandMultiplier
+                                    >> losePrivateLandValue)
+                                vulnerableToSLR
+                                )
+                            |> Result.andThen ((sumPrivateBldgValue >> losePrivateBldgValue) vulnerableToSLR)
+                            |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) vulnerableToSLR)
+                            |> Result.andThen ((isRareSpeciesHabitatPresent >> loseRareSpeciesHabitat) vulnerableToSLR)
+                            |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
 
                 NoSeaRise ->
                     output
@@ -180,24 +184,27 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
             in
             case vulnerableToSurge of
                 True ->
+                let
+                    vulnerableToSS = withStormSurge hexes
+                in
                     output
                         |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
                         |> Result.andThen
-                            ( (sumPublicBldgValueStormSurge
+                            ( (sumPublicBldgValue
                                 >> applyMultiplier stormSurgeBldgMultiplier
                                 >> losePublicBldgValue)
-                            hexes
+                            vulnerableToSS
                             )
                         |> Result.andThen
-                            ( (sumPrivateBldgValueStormSurge
+                            ( (sumPrivateBldgValue
                                 >> applyMultiplier stormSurgeBldgMultiplier
                                 >> losePrivateBldgValue)
-                              hexes
+                              vulnerableToSS
                             )
 
                 False ->
                     output
-                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes -- CHECK
+                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
 
         Err badHazard ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: '" ++ badHazard ++ "'")
@@ -928,7 +935,7 @@ protectPublicBldgValue value output =
     else
         Ok { output | publicBuildingValue = ValueProtected <| abs value }
 
--- CLEARED UP UNCHANGED MATH
+
 setPublicBldgValueUnchanged : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
 setPublicBldgValueUnchanged value output =
     Ok { output | publicBuildingValue = ValueUnchanged }
