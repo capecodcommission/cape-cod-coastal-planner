@@ -7,6 +7,7 @@ import Style from "ol/style/Style";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import Circle from "ol/style/Circle";
+import {getPPRColors} from "../misc"
 
 /**
  * Vector Layer functions
@@ -14,7 +15,7 @@ import Circle from "ol/style/Circle";
 
 export function layer(map) {
     let source = new VectorSource({
-        url: 'http://gis-services.capecodcommission.org/arcgis/rest/services/Data_People/Infrastructure/MapServer/25/query?f=pjson&geometryType=esriGeometryPolyline&outFields=*&outSR=3857&returnGeometry=true&spatialRel=esriSpatialRelIntersects&where=1%3D1',
+        url: process.env.ELM_APP_AGS_PPR_URL,
         format: new EsriJSON()
     });
 
@@ -24,7 +25,7 @@ export function layer(map) {
         style: (feature, resolution) => {
             return new Style({
                 stroke: new Stroke({
-                  color: [255,0,0],
+                  color: getPPRColors(feature),
                   width: 2
                 })
             });

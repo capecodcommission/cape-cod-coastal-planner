@@ -32,7 +32,7 @@ function _source() {
     // }
     let source = new XYZ({
         crossOrigin: "anonymous",
-        url: 'http://gis-services.capecodcommission.org/arcgis/rest/services/SeaLevelRise/Roads_Isolated_5ft/MapServer/tile/{z}/{y}/{x}',
+        url: process.env.ELM_APP_AGS_DR_FIVE,
         maxZoom: 16,
         minZoom: 3,
         opaque: false,

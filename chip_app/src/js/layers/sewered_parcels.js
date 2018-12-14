@@ -14,7 +14,7 @@ import Circle from "ol/style/Circle";
 
 export function layer(map) {
     let source = new VectorSource({
-        url: "http://gis-services.capecodcommission.org/arcgis/rest/services/Projects/208_Plan/MapServer/17/query?f=pjson&geometryType=esriGeometryPolygon&outFields=*&outSR=3857&returnGeometry=true&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+        url: process.env.ELM_APP_AGS_SP_URL,
         format: new EsriJSON()
     });
 

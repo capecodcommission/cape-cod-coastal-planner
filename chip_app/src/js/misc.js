@@ -68,3 +68,48 @@ export function getVulnRibbonSegmentColor(feature) {
         return ribbonColors.burntSienna;
     }
 };
+
+const coastalColors = {
+    groins: "#7570b3",
+    revetment: "#1b9e77",
+    jetty: "#d95f02"
+};
+
+
+export function getCoastalColors(feature) {
+    if (!feature || !(typeof feature.get === 'function')) return "#3399CC";
+    
+    let structureType = feature.get("CoastalStructureType");
+    
+    switch (structureType) {
+        
+        case "Groins":
+            return coastalColors.groins
+        
+        case "Revetment":
+            return coastalColors.revetment
+        
+        case "Jetty":
+            return coastalColors.jetty
+    }
+};
+
+const pprColors = {
+    private: "#9c9c9c",
+    public: "#000000"
+}
+
+export function getPPRColors(feature) {
+    if (!feature || !(typeof feature.get === 'function')) return "#3399CC";
+    
+    let ownerType = feature.get("Ownership");
+    
+    switch (ownerType) {
+        
+        case "Private":
+            return pprColors.private
+        
+        case "Public":
+            return pprColors.public
+    }
+};

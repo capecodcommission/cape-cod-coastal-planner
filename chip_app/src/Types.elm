@@ -79,9 +79,6 @@ type alias Env =
     , agsVulnerabilityRibbonUrl : String
     , agsHexUrl : String
     , agsCritUrl : String
-    , agsDRUrl : String
-    , agsSLRUrl : String
-    , agsMOPUrl : String
     }
 
 
@@ -92,9 +89,6 @@ decodeEnv =
         |> required "agsVulnerabilityRibbonUrl" D.string
         |> required "agsHexUrl" D.string
         |> required "agsCritUrl" D.string
-        |> required "agsDRUrl" D.string
-        |> required "agsSLRUrl" D.string
-        |> required "agsMOPUrl" D.string
 
 
 type Openness

@@ -16,7 +16,7 @@ const esrijsonformat = new EsriJSON();
 
 export function layer(map) {
     let source = new VectorSource({
-        url: 'http://gis-services.capecodcommission.org/arcgis/rest/services/Data_People/Infrastructure/MapServer/12/query?f=pjson&geometryType=esriGeometryPoint&outFields=*&outSR=3857&returnGeometry=true&spatialRel=esriSpatialRelIntersects&where=1%3D1',
+        url: process.env.ELM_APP_AGS_CRITTOGGLE_URL,
         format: new EsriJSON()
     });
 
