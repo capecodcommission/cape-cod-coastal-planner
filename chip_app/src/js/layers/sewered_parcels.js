@@ -8,15 +8,13 @@ import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import Circle from "ol/style/Circle";
 
-const esrijsonformat = new EsriJSON();
-
 /**
  * Vector Layer functions
  */
 
 export function layer(map) {
     let source = new VectorSource({
-        url: process.env.ELM_APP_AGS_CRITTOGGLE_URL,
+        url: process.env.ELM_APP_AGS_SP_URL,
         format: new EsriJSON()
     });
 
@@ -25,25 +23,20 @@ export function layer(map) {
         source: source,
         style: (feature, resolution) => {
             return new Style({
-                image: new Circle({
-                    radius: 3,
-                    fill: new Fill({color: 'red'}),
-                    stroke: new Stroke({
-                        color: [255,0,0],
-                        width: 2
-                    })
+                fill: new Fill({
+                  color: [244, 188, 66, 1]
                 })
             });
         }
     });
-    layer.set("name", "critical_facilities");
+    layer.set("name", "sewered_parcels");
 
-    map.on("render_critical_facilities", ({data}) => {
-        layer.setVisible(true);
+    map.on("render_sp", ({data}) => {
+        layer.setVisible(true)
     });
 
-    map.on("disable_critical_facilities", () => {
-        layer.setVisible(false);
+    map.on("disable_sp", () => {
+        layer.setVisible(false)
     });
 
     return layer;

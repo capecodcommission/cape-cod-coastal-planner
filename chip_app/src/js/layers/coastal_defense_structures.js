@@ -7,8 +7,7 @@ import Style from "ol/style/Style";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import Circle from "ol/style/Circle";
-
-const esrijsonformat = new EsriJSON();
+import {getCoastalColors} from "../misc.js";
 
 /**
  * Vector Layer functions
@@ -16,7 +15,7 @@ const esrijsonformat = new EsriJSON();
 
 export function layer(map) {
     let source = new VectorSource({
-        url: process.env.ELM_APP_AGS_CRITTOGGLE_URL,
+        url: process.env.ELM_APP_AGS_CDS_URL,
         format: new EsriJSON()
     });
 
@@ -25,25 +24,20 @@ export function layer(map) {
         source: source,
         style: (feature, resolution) => {
             return new Style({
-                image: new Circle({
-                    radius: 3,
-                    fill: new Fill({color: 'red'}),
-                    stroke: new Stroke({
-                        color: [255,0,0],
-                        width: 2
-                    })
+                fill: new Fill({
+                  color: getCoastalColors(feature)
                 })
             });
         }
     });
-    layer.set("name", "critical_facilities");
+    layer.set("name", "coastal_defense_structures");
 
-    map.on("render_critical_facilities", ({data}) => {
-        layer.setVisible(true);
+    map.on("render_cds", ({data}) => {
+        layer.setVisible(true)
     });
 
-    map.on("disable_critical_facilities", () => {
-        layer.setVisible(false);
+    map.on("disable_cds", () => {
+        layer.setVisible(false)
     });
 
     return layer;

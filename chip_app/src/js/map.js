@@ -9,7 +9,24 @@ import {layer as massImagery} from "./layers/mass_imagery";
 import {layer as littoralCells} from "./layers/littoral_cells";
 import {layer as vulnRibbon} from "./layers/vulnerability_ribbon";
 import {layer as critFac} from "./layers/critical_facilities"
-import {layer as disCon} from "./layers/disconnected_roads"
+import {layer as dr1ft} from "./layers/dr1ft"
+import {layer as dr2ft} from "./layers/dr2ft"
+import {layer as dr3ft} from "./layers/dr3ft"
+import {layer as dr4ft} from "./layers/dr4ft"
+import {layer as dr5ft} from "./layers/dr5ft"
+import {layer as dr6ft} from "./layers/dr6ft"
+import {layer as slr1ft} from "./layers/slr1ft"
+import {layer as slr2ft} from "./layers/slr2ft"
+import {layer as slr3ft} from "./layers/slr3ft"
+import {layer as slr4ft} from "./layers/slr4ft"
+import {layer as slr5ft} from "./layers/slr5ft"
+import {layer as slr6ft} from "./layers/slr6ft"
+import {layer as mop} from "./layers/municipally_owned_parcels"
+import {layer as ppr} from "./layers/public_private_roads"
+import {layer as sp} from "./layers/sewered_parcels"
+import {layer as cds} from "./layers/coastal_defense_structures"
+import {layer as fz} from "./layers/flood_zones"
+import {layer as slosh} from "./layers/slosh"
 //import {layer as locHexes} from "./layers/location_hexes";
 import {
     layer as impactZone
@@ -36,7 +53,24 @@ export function init(onInit) {
     map.addLayer(littoralCells(map));
     map.addLayer(vulnRibbon(map));
     map.addLayer(critFac(map))
-    map.addLayer(disCon(map))
+    map.addLayer(dr1ft(map))
+    map.addLayer(dr2ft(map))
+    map.addLayer(dr3ft(map))
+    map.addLayer(dr4ft(map))
+    map.addLayer(dr5ft(map))
+    map.addLayer(dr6ft(map))
+    map.addLayer(slr1ft(map))
+    map.addLayer(slr2ft(map))
+    map.addLayer(slr3ft(map))
+    map.addLayer(slr4ft(map))
+    map.addLayer(slr5ft(map))
+    map.addLayer(slr6ft(map))
+    map.addLayer(mop(map))
+    map.addLayer(ppr(map))
+    map.addLayer(sp(map))
+    map.addLayer(cds(map))
+    map.addLayer(fz(map))
+    map.addLayer(slosh(map))
     //map.addLayer(locHexes(map));
 
     // wait until next frame to attempt rendering the map

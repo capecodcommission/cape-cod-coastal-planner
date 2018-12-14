@@ -18,7 +18,7 @@ type alias SLRStates =
     , closed : List Animation.Property
     }
 
-type alias GLPStates =
+type alias InfraStates =
     { open : List Animation.Property
     , closed : List Animation.Property
     }
@@ -52,12 +52,12 @@ slrStates =
         [ Animation.left (Animation.px 0.0) ]    
     }
 
-glpStates : GLPStates
-glpStates =
+infraStates : InfraStates
+infraStates =
     { open =
-        [ Animation.bottom (Animation.px 50.0) ]
+        [ Animation.left (Animation.px 10.0) ]
     , closed =
-        [ Animation.bottom (Animation.px 0.0) ]    
+        [ Animation.left (Animation.px 0.0) ]    
     }
 
 ceStates : CEStates

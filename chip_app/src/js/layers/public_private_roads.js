@@ -7,8 +7,7 @@ import Style from "ol/style/Style";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import Circle from "ol/style/Circle";
-
-const esrijsonformat = new EsriJSON();
+import {getPPRColors} from "../misc"
 
 /**
  * Vector Layer functions
@@ -16,7 +15,7 @@ const esrijsonformat = new EsriJSON();
 
 export function layer(map) {
     let source = new VectorSource({
-        url: process.env.ELM_APP_AGS_CRITTOGGLE_URL,
+        url: process.env.ELM_APP_AGS_PPR_URL,
         format: new EsriJSON()
     });
 
@@ -25,25 +24,21 @@ export function layer(map) {
         source: source,
         style: (feature, resolution) => {
             return new Style({
-                image: new Circle({
-                    radius: 3,
-                    fill: new Fill({color: 'red'}),
-                    stroke: new Stroke({
-                        color: [255,0,0],
-                        width: 2
-                    })
+                stroke: new Stroke({
+                  color: getPPRColors(feature),
+                  width: 2
                 })
             });
         }
     });
-    layer.set("name", "critical_facilities");
+    layer.set("name", "public_private_roads");
 
-    map.on("render_critical_facilities", ({data}) => {
-        layer.setVisible(true);
+    map.on("render_ppr", ({data}) => {
+        layer.setVisible(true)
     });
 
-    map.on("disable_critical_facilities", () => {
-        layer.setVisible(false);
+    map.on("disable_ppr", () => {
+        layer.setVisible(false)
     });
 
     return layer;
