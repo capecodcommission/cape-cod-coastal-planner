@@ -117,6 +117,11 @@ infraDetails config paths =
                 {src = paths.downArrow}
             , text "Public and Private Roads"
             ]
+        , case config.pprClicked of 
+            Open ->
+                pprLegend paths
+            Closed -> 
+                (el NoStyle [] empty )
         , paragraph CloseIcon [onClick ToggleSPLayer] 
             [ decorativeImage
                 ( case config.spClicked of 
@@ -154,5 +159,30 @@ infraDetails config paths =
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
             , text "Structures"
+            ]
+        ]
+
+pprLegend : Paths -> Element MainStyles Variations Msg
+pprLegend paths =
+    textLayout 
+        NoStyle 
+        [ verticalCenter, spacing 10, paddingXY 32 0 ]
+        [ paragraph 
+            NoStyle 
+            []
+            [ decorativeImage
+                (PL RoadsPrivate)
+                [height (px 20), width (px 20), moveDown 5, spacing 5] 
+                {src = paths.downArrow} 
+            , text "Private"
+            ]
+        , paragraph 
+            NoStyle 
+            []
+            [ decorativeImage
+                (PL RoadsPublic)
+                [height (px 20), width (px 20), moveDown 5, spacing 5] 
+                {src = paths.downArrow} 
+            , text "Public"
             ]
         ]

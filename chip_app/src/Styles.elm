@@ -170,6 +170,8 @@ type Variations
 type PlanningLayerStyles 
     = Line
     | Clicked
+    | RoadsPrivate
+    | RoadsPublic
 
 
 choiceStateToVariation : ChoiceState -> Variations
@@ -576,7 +578,7 @@ stylesheet device =
             , Border.rounded 4
             ]
         , Style.style (Sidebar SidebarContainer)
-            [ Color.background <| Color.rgba 0 0 0 0.5
+            [ Color.background <| Color.rgba 0 0 0 0.9
             , Color.text white
             , Font.typeface fontstack
             ]
@@ -647,6 +649,14 @@ stylesheet device =
             ]
         , Style.style (PL Clicked) 
             [ Color.background red
+            , Border.rounded 8
+            ]
+        , Style.style (PL RoadsPrivate) 
+            [ Color.background <| Color.rgba 156 156 156 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL RoadsPublic) 
+            [ Color.background <| Color.rgba 0 0 0 1
             , Border.rounded 8
             ]
         ]
