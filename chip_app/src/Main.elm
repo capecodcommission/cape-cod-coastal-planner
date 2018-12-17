@@ -160,11 +160,11 @@ initialModel flags =
         -- SLR Section
         Closed
         (Animation.style <| .closed <| Animations.slrStates)
-        (Animation.style <| .rotate90 <| Animations.toggleStates)
+        (Animation.style <| .rotate180 <| Animations.toggleStates)
         -- GPL Section
         Closed
         (Animation.style <| .closed <| Animations.infraStates)
-        (Animation.style <| .rotate90 <| Animations.toggleStates)
+        (Animation.style <| .rotate180 <| Animations.toggleStates)
         -- CE Section
         Closed
         (Animation.style <| .closed <| Animations.ceStates)
@@ -298,6 +298,7 @@ updateModel msg model =
             in
                 ( model
                     |> collapseRightSidebar
+                    |> collapseLeftSidebar
                     |> \m ->
                         { m
                             | shorelineLocationsDropdown = updatedLocationsDropdown 
@@ -416,6 +417,7 @@ updateModel msg model =
                 NotAsked ->
                     ( model
                         |> collapseRightSidebar
+                        |> collapseLeftSidebar
                         |> \m -> { m | adaptationInfo = Loading, strategiesModalOpenness = Open }
                     , getAdaptationInfo
                     )
@@ -423,6 +425,7 @@ updateModel msg model =
                 Loading ->
                     ( model
                         |> collapseRightSidebar
+                        |> collapseLeftSidebar
                         |> \m -> { m | strategiesModalOpenness = Open }
                     , Cmd.none
                     )
@@ -437,6 +440,7 @@ updateModel msg model =
                     in
                         ( model
                             |> collapseRightSidebar
+                            |> collapseLeftSidebar
                             |> \m -> { m | strategiesModalOpenness = Open }
                         , cmds
                         )
@@ -444,6 +448,7 @@ updateModel msg model =
                 Failure err ->
                     ( model
                         |> collapseRightSidebar
+                        |> collapseLeftSidebar
                         |> \m -> 
                             { m | strategiesModalOpenness = Open }
                     , Cmd.none
@@ -1223,7 +1228,7 @@ expandSLRLayer model =
                 model.slrFx
         , slrToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
                 model.slrToggleFx
     }
 
@@ -1237,7 +1242,7 @@ collapseSLRLayer model =
                 model.slrFx
         , slrToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 20.0 }) <| .rotate90 <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 20.0 }) <| .rotate180 <| Animations.toggleStates ]
                 model.slrToggleFx
     }
 
@@ -1251,7 +1256,7 @@ expandInfraLayer model =
                 model.infraFx
         , infraToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
                 model.infraToggleFx
     }
 
@@ -1265,7 +1270,7 @@ collapseInfraLayer model =
                 model.infraFx
         , infraToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
                 model.infraToggleFx
     }
 

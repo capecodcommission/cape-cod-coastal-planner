@@ -37,13 +37,13 @@ view config device paths titleText func =
   column NoStyle
     [paddingXY 0 0]
     [ row CloseIcon 
-      [ verticalCenter, spread, width fill, paddingXY 32 32, onClick func ]
+      [ verticalCenter, spread, width fill, paddingXY 10 20, onClick func ]
       [ headerView titleText 
-      , buttonView paths.downArrow config.infraToggleFx 
+      , buttonView paths.trianglePath config.infraToggleFx 
       ] 
     , row NoStyle 
         ( renderAnimation config.infraFx 
-          [width fill, paddingXY 32 0]
+          [width fill, paddingXY 0 0]
         ) 
         ( 
           [ case config.infraOpenness of 
@@ -58,7 +58,7 @@ view config device paths titleText func =
 headerView : String -> Element MainStyles Variations Msg
 headerView titleText =
     header (Sidebar SidebarHeader) 
-        [ height (px 60), width fill ] <| 
+        [ height (px 45), width fill ] <| 
             h5 (Headings H5) 
                 [ center, verticalCenter ] 
                 (text titleText)
@@ -67,10 +67,10 @@ headerView titleText =
 buttonView : String -> Animation.State -> Element MainStyles Variations Msg
 buttonView togglePath fx =
     el (Sidebar SidebarLeftToggle) 
-        [ height (px 60), width (px 70)] <| 
+        [ height (px 45), width (px 45)] <| 
             decorativeImage NoStyle 
                 ( renderAnimation fx
-                    [height (px 60), width (px 70)]
+                    [height (px 35), width (px 35), moveDown 5]
                 )
                 { src = togglePath } 
 
@@ -88,12 +88,9 @@ infraDetails :
     -> Paths 
     -> Element MainStyles Variations Msg
 infraDetails config paths =
-    textLayout NoStyle
-        [ verticalCenter, spacing 10, paddingXY 32 0 ]
-        [ paragraph NoStyle [] 
-            [ text "Toggle map layers related to Infrastructure" ]
-        , hairline (PL Line)
-        , paragraph CloseIcon [ onClick ToggleMOPLayer ] 
+    textLayout (Zoi ZoiText)
+        [ verticalCenter, spacing 0, paddingXY 20 0 ]
+        [ paragraph CloseIcon [ onClick ToggleMOPLayer ] 
             [ decorativeImage
                 ( case config.mopClicked of 
                     Open -> 

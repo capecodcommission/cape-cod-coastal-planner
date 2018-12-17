@@ -40,13 +40,13 @@ view config device paths titleText func =
   column NoStyle
     [paddingXY 0 0]
     [ row CloseIcon 
-      [ verticalCenter, spread, width fill, paddingXY 32 32, onClick func ]
+      [ verticalCenter, spread, width fill, paddingXY 10 20, onClick func ]
       [ headerView titleText 
-      , buttonView paths.downArrow config.slrToggleFx 
+      , buttonView paths.trianglePath config.slrToggleFx 
       ] 
     , row NoStyle 
         ( renderAnimation config.slrFx 
-          [width fill, paddingXY 32 0]
+          [width fill, paddingXY 0 0]
         ) 
         ( 
           [ case config.slrOpenness of 
@@ -61,7 +61,7 @@ view config device paths titleText func =
 headerView : String -> Element MainStyles Variations Msg
 headerView titleText =
     header (Sidebar SidebarHeader) 
-        [ height (px 60), width fill ] <| 
+        [ height (px 45), width fill ] <| 
             h5 (Headings H5) 
                 [ center, verticalCenter ] 
                 (text titleText)
@@ -70,10 +70,10 @@ headerView titleText =
 buttonView : String -> Animation.State -> Element MainStyles Variations Msg
 buttonView togglePath fx =
     el (Sidebar SidebarLeftToggle) 
-        [ height (px 60), width (px 70)] <| 
+        [ height (px 45), width (px 45)] <| 
             decorativeImage NoStyle 
                 ( renderAnimation fx
-                    [height (px 60), width (px 70)]
+                    [height (px 35), width (px 35), moveDown 5]
                 )
                 { src = togglePath } 
 
@@ -97,12 +97,9 @@ slrDetails :
     -> Paths 
     -> Element MainStyles Variations Msg
 slrDetails config paths =
-    textLayout NoStyle
-        [ verticalCenter, spacing 10, paddingXY 32 0 ]
-        [ paragraph NoStyle [] 
-            [ text "Toggle map layers related to the potential effects of Sea Level Rise" ]
-        , hairline (PL Line)
-        , paragraph 
+    textLayout (Zoi ZoiText)
+        [ verticalCenter, spacing 10, paddingXY 20 0 ]
+        [ paragraph 
             NoStyle 
             [] 
             [ decorativeImage
@@ -110,59 +107,111 @@ slrDetails config paths =
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
             , text "Sea Level Rise"
+            , paragraph 
+                CloseIcon 
+                [ paddingXY 32 0 ]
+                [ el 
+                    ( case config.slr1ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleSLRLayer "1") ] <| text " 1ft -"
+                , el 
+                    ( case config.slr2ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleSLRLayer "2") ] <| text " 2ft -"
+                , el 
+                    ( case config.slr3ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleSLRLayer "3") ] <| text " 3ft -"
+                , el 
+                    ( case config.slr4ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleSLRLayer "4") ] <| text " 4ft -"
+                , el 
+                    ( case config.slr5ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleSLRLayer "5") ] <| text " 5ft -"
+                , el 
+                    ( case config.slr6ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleSLRLayer "6") ] <| text " 6ft"
+                ]
             ]
-        , paragraph 
-            CloseIcon 
-            [ paddingXY 32 0 ]
-            [ el 
-                ( case config.slr1ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleSLRLayer "1") ] <| text " 1ft -"
-            , el 
-                ( case config.slr2ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleSLRLayer "2") ] <| text " 2ft -"
-            , el 
-                ( case config.slr3ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleSLRLayer "3") ] <| text " 3ft -"
-            , el 
-                ( case config.slr4ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleSLRLayer "4") ] <| text " 4ft -"
-            , el 
-                ( case config.slr5ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleSLRLayer "5") ] <| text " 5ft -"
-            , el 
-                ( case config.slr6ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleSLRLayer "6") ] <| text " 6ft"
-            ]
+        -- , paragraph 
+        --     CloseIcon 
+        --     [ paddingXY 32 0 ]
+        --     [ el 
+        --         ( case config.slr1ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleSLRLayer "1") ] <| text " 1ft -"
+        --     , el 
+        --         ( case config.slr2ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleSLRLayer "2") ] <| text " 2ft -"
+        --     , el 
+        --         ( case config.slr3ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleSLRLayer "3") ] <| text " 3ft -"
+        --     , el 
+        --         ( case config.slr4ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleSLRLayer "4") ] <| text " 4ft -"
+        --     , el 
+        --         ( case config.slr5ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleSLRLayer "5") ] <| text " 5ft -"
+        --     , el 
+        --         ( case config.slr6ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleSLRLayer "6") ] <| text " 6ft"
+        --     ]
         , hairline (PL Line)
         , paragraph 
             NoStyle 
@@ -171,60 +220,112 @@ slrDetails config paths =
                 NoStyle
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Disconnected Roads"
+            , text "Discnctd Roads"
+            , paragraph 
+                CloseIcon 
+                [ paddingXY 20 0 ]
+                [ el 
+                    ( case config.dr1ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleDR "1") ] <| text " 1ft -"
+                , el 
+                    ( case config.dr2ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleDR "2") ] <| text " 2ft -"
+                , el 
+                    ( case config.dr3ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleDR "3") ] <| text " 3ft -"
+                , el 
+                    ( case config.dr4ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleDR "4") ] <| text " 4ft -"
+                , el 
+                    ( case config.dr5ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleDR "5") ] <| text " 5ft -"
+                , el 
+                    ( case config.dr6ftClicked of 
+                        Open -> 
+                            (PL Clicked)
+                        Closed -> 
+                            (NoStyle)
+                    )  
+                    [ onClick (ToggleDR "6") ] <| text " 6ft"
+                ]
             ]
-        , paragraph 
-            CloseIcon 
-            [ paddingXY 32 0 ]
-            [ el 
-                ( case config.dr1ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleDR "1") ] <| text " 1ft -"
-            , el 
-                ( case config.dr2ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleDR "2") ] <| text " 2ft -"
-            , el 
-                ( case config.dr3ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleDR "3") ] <| text " 3ft -"
-            , el 
-                ( case config.dr4ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleDR "4") ] <| text " 4ft -"
-            , el 
-                ( case config.dr5ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleDR "5") ] <| text " 5ft -"
-            , el 
-                ( case config.dr6ftClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed -> 
-                        (NoStyle)
-                )  
-                [ onClick (ToggleDR "6") ] <| text " 6ft"
-            ]
+        -- , paragraph 
+        --     CloseIcon 
+        --     [ paddingXY 32 0 ]
+        --     [ el 
+        --         ( case config.dr1ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleDR "1") ] <| text " 1ft -"
+        --     , el 
+        --         ( case config.dr2ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleDR "2") ] <| text " 2ft -"
+        --     , el 
+        --         ( case config.dr3ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleDR "3") ] <| text " 3ft -"
+        --     , el 
+        --         ( case config.dr4ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleDR "4") ] <| text " 4ft -"
+        --     , el 
+        --         ( case config.dr5ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleDR "5") ] <| text " 5ft -"
+        --     , el 
+        --         ( case config.dr6ftClicked of 
+        --             Open -> 
+        --                 (PL Clicked)
+        --             Closed -> 
+        --                 (NoStyle)
+        --         )  
+        --         [ onClick (ToggleDR "6") ] <| text " 6ft"
+        --     ]
         , hairline (PL Line)
         , paragraph CloseIcon [onClick ToggleCritFac] 
             [ decorativeImage

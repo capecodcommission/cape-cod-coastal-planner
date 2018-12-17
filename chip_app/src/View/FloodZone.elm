@@ -25,9 +25,9 @@ view config device paths titleText func =
   column NoStyle
     [paddingXY 0 0]
     [ row CloseIcon 
-      [ verticalCenter, spread, width fill, paddingXY 32 32, onClick func ]
+      [ verticalCenter, spread, width fill, paddingXY 10 20, onClick func ]
       [ headerView titleText 
-      , buttonView config.fzClicked paths.downArrow 
+      , buttonView config.fzClicked paths.trianglePath 
       ] 
     
     ]
@@ -35,7 +35,7 @@ view config device paths titleText func =
 headerView : String -> Element MainStyles Variations Msg
 headerView titleText =
     header (Sidebar SidebarHeader) 
-        [ height (px 60), width fill ] <| 
+        [ height (px 45), width fill ] <| 
             h5 (Headings H5) 
                 [ center, verticalCenter ] 
                 (text titleText)
@@ -44,7 +44,7 @@ headerView titleText =
 buttonView : Openness -> String -> Element MainStyles Variations Msg
 buttonView fzClicked togglePath =
     el (Sidebar SidebarLeftToggle) 
-        [ height (px 60), width (px 70)] <| 
+        [ height (px 45), width (px 45)] <| 
             decorativeImage 
                 ( case fzClicked of 
                     Open -> 
@@ -53,5 +53,5 @@ buttonView fzClicked togglePath =
                       (NoStyle)
 
                 )
-                [ height (px 60), width (px 70)]
+                [ height (px 35), width (px 35), moveDown 5]
                 { src = togglePath } 
