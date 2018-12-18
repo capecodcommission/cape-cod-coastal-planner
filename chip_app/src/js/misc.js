@@ -113,3 +113,23 @@ export function getPPRColors(feature) {
             return pprColors.public
     }
 };
+
+const fyeColors = {
+    Erosion: " #FF7F7F",
+    Accretion: "#D1FF73"
+}
+
+export function getFYEColors(feature) {
+    if (!feature || !(typeof feature.get === 'function')) return "#3399CC";
+    
+    let erosion = feature.get("Erosion_M");
+    let accretion = feature.get("Accretion_M");
+    
+    if (erosion) {
+        return fyeColors.Erosion
+    }
+
+    if (accretion) {
+        return fyeColors.Accretion
+    }
+};

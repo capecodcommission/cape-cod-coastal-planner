@@ -1,4 +1,4 @@
-module View.Infrastructure exposing (..)
+module View.Erosion exposing (..)
 
 import Animation
 import View.ToggleButton as Toggle exposing (..)
@@ -27,6 +27,10 @@ view :
         , spClicked : Openness
         , cdsClicked : Openness
         , structuresClicked : Openness
+        , ceOpenness : Openness
+        , ceFx : Animation.State
+        , ceToggleFx : Animation.State
+        , fourtyYearClicked : Openness
     } 
     -> Device 
     -> Paths 
@@ -39,14 +43,14 @@ view config device paths titleText func =
     [ row CloseIcon 
       [ verticalCenter, spread, width fill, paddingXY 10 20, onClick func ]
       [ headerView titleText 
-      , buttonView paths.trianglePath config.infraToggleFx 
+      , buttonView paths.trianglePath config.ceToggleFx 
       ] 
     , row NoStyle 
-        ( renderAnimation config.infraFx 
+        ( renderAnimation config.ceFx 
           [width fill, paddingXY 0 0]
         ) 
         ( 
-          [ case config.infraOpenness of 
+          [ case config.ceOpenness of 
               Open -> 
                 infraDetails config paths 
               Closed ->
@@ -84,15 +88,16 @@ infraDetails :
         , spClicked : Openness
         , cdsClicked : Openness
         , structuresClicked : Openness
+        , fourtyYearClicked : Openness
     } 
     -> Paths 
     -> Element MainStyles Variations Msg
 infraDetails config paths =
     textLayout (Zoi ZoiText)
         [ verticalCenter, spacing 0, paddingXY 20 0 ]
-        [ paragraph CloseIcon [ onClick ToggleMOPLayer ] 
+        [ paragraph CloseIcon [ onClick ToggleFourtyYearLayer ] 
             [ decorativeImage
-                ( case config.mopClicked of 
+                ( case config.fourtyYearClicked of 
                     Open -> 
                         (PL Clicked)
                     Closed -> 
@@ -100,8 +105,13 @@ infraDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Municipal Properties"
+            , text "40-yr Erosion"
             ]
+        , case config.fourtyYearClicked of 
+            Open ->
+                fourtyYearLegend paths
+            Closed -> 
+                (el NoStyle [] empty )
         , paragraph CloseIcon [onClick TogglePPRLayer] 
             [ decorativeImage 
                 ( case config.pprClicked of 
@@ -112,60 +122,12 @@ infraDetails config paths =
                 )
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Public and Private Roads"
-            ]
-        , case config.pprClicked of 
-            Open ->
-                pprLegend paths
-            Closed -> 
-                (el NoStyle [] empty )
-        , paragraph CloseIcon [onClick ToggleSPLayer] 
-            [ decorativeImage
-                ( case config.spClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed ->
-                        (NoStyle)
-                ) 
-                [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow}
-            , text "Sewered Parcels"
-            ]
-        , paragraph CloseIcon [onClick ToggleCDSLayer] 
-            [ decorativeImage
-                ( case config.cdsClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed ->
-                        (NoStyle)
-                ) 
-                [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow}
-            , text "Coastal Defense Structures"
-            ]
-        , case config.cdsClicked of 
-            Open ->
-                cdsLegend paths
-            Closed -> 
-                (el NoStyle [] empty )
-        , paragraph 
-            CloseIcon 
-            [] 
-            [ decorativeImage
-                ( case config.structuresClicked of 
-                    Open -> 
-                        (PL Clicked)
-                    Closed ->
-                        (NoStyle)
-                ) 
-                [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow}
-            , text "Structures"
+            , text "Sediment Transport Indicators"
             ]
         ]
 
-pprLegend : Paths -> Element MainStyles Variations Msg
-pprLegend paths =
+fourtyYearLegend : Paths -> Element MainStyles Variations Msg
+fourtyYearLegend paths =
     textLayout 
         NoStyle 
         [ verticalCenter, spacing 5, paddingXY 32 0 ]
@@ -173,15 +135,15 @@ pprLegend paths =
             NoStyle 
             []
             [ decorativeImage
-                (PL RoadsPrivate)
+                (PL Accretion)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow} 
-            , text "Private   "
+            , text "Accretion   "
             , decorativeImage
-                (PL RoadsPublic)
+                (PL Erosion)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow} 
-            , text "Public"
+            , text "Erosion"
             ]
         ]
 

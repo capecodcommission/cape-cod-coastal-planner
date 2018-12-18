@@ -63,3 +63,4 @@ type Msg
     | ToggleCDSLayer
     | ToggleFZLayer
     | ToggleSloshLayer
+    | ToggleFourtyYearLayer

@@ -7,8 +7,7 @@ import Style from "ol/style/Style";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import Circle from "ol/style/Circle";
-
-const esrijsonformat = new EsriJSON();
+import {getFYEColors} from '../misc'
 
 /**
  * Vector Layer functions
@@ -16,7 +15,7 @@ const esrijsonformat = new EsriJSON();
 
 export function layer(map) {
     let source = new VectorSource({
-        url: process.env.ELM_APP_AGS_CRITTOGGLE_URL,
+        url: process.env.ELM_APP_AGS_FYE_URL,
         format: new EsriJSON()
     });
 
@@ -25,25 +24,20 @@ export function layer(map) {
         source: source,
         style: (feature, resolution) => {
             return new Style({
-                image: new Circle({
-                    radius: 3,
-                    fill: new Fill({color: 'orange'}),
-                    stroke: new Stroke({
-                        color: [244, 167, 66],
-                        width: 2
-                    })
+                fill: new Fill({
+                  color: getFYEColors(feature)
                 })
             });
         }
     });
-    layer.set("name", "critical_facilities");
+    layer.set("name", "fourty_years_erosion");
 
-    map.on("render_critical_facilities", ({data}) => {
-        layer.setVisible(true);
+    map.on("render_fourty_years_layer", ({data}) => {
+        layer.setVisible(true)
     });
 
-    map.on("disable_critical_facilities", () => {
-        layer.setVisible(false);
+    map.on("disable_fourty_years_layer", () => {
+        layer.setVisible(false)
     });
 
     return layer;

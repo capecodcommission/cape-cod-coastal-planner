@@ -107,6 +107,8 @@ type alias Model =
     , dr5ftClicked : Openness
     , dr6ftClicked : Openness
     , structuresClicked : Openness
+    , erosionOpenness : Openness
+    , fourtyYearClicked : Openness
     }
 
 
@@ -169,6 +171,8 @@ initialModel flags =
         Closed
         (Animation.style <| .closed <| Animations.ceStates)
         (Animation.style <| .rotate180 <| Animations.toggleStates)
+        Closed
+        Closed
         Closed
         Closed
         Closed
@@ -1017,6 +1021,27 @@ updateModel msg model =
                     , olCmd <| encodeOpenLayersCmd (RenderSlosh) 
                     )
 
+        ToggleFourtyYearLayer ->
+            case model.fourtyYearClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | fourtyYearClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableFourtyYears) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | fourtyYearClicked = Open 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderFourtyYears) 
+                    )
+
+        
+
 
 applyStrategy : Model -> ( Model, Cmd Msg )
 applyStrategy model =
@@ -1284,7 +1309,7 @@ expandCESection model =
                 model.ceFx
         , ceToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
                 model.ceToggleFx
     }
 

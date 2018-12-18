@@ -43,6 +43,8 @@ type OpenLayersCmd
     | DisableFZ
     | RenderSlosh
     | DisableSlosh
+    | RenderFourtyYears
+    | DisableFourtyYears
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -174,6 +176,16 @@ encodeOpenLayersCmd cmd =
         DisableSlosh ->
             E.object
                 [ ( "cmd", E.string "disable_slosh_layer" )
+                ]
+
+        RenderFourtyYears ->
+            E.object
+                [ ( "cmd", E.string "render_fourty_years" )
+                ]
+
+        DisableFourtyYears ->
+            E.object
+                [ ( "cmd", E.string "disable_fourty_years" )
                 ]
             
 

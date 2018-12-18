@@ -172,6 +172,11 @@ type PlanningLayerStyles
     | Clicked
     | RoadsPrivate
     | RoadsPublic
+    | Groins
+    | Revetment
+    | Jetty
+    | Accretion
+    | Erosion
 
 
 choiceStateToVariation : ChoiceState -> Variations
@@ -657,6 +662,26 @@ stylesheet device =
             ]
         , Style.style (PL RoadsPublic) 
             [ Color.background <| Color.rgba 0 0 0 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL Groins) 
+            [ Color.background <| Color.rgba 117 112 179 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL Revetment) 
+            [ Color.background <| Color.rgba 27 158 119 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL Jetty) 
+            [ Color.background <| Color.rgba 217 95 2 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL Accretion) 
+            [ Color.background <| Color.rgba 209 255 115 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL Erosion) 
+            [ Color.background <| Color.rgba 255 127 127 1
             , Border.rounded 8
             ]
         ]

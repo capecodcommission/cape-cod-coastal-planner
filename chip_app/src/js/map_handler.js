@@ -114,6 +114,14 @@ class MapHandler {
                     this.disableSlosh(data);
                     break;
 
+                case "render_fourty_years":
+                    this.renderFourtyYears(data);
+                    break;
+
+                case "disable_fourty_years":
+                    this.disableFourtyYears(data);
+                    break;
+
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
             }
@@ -442,6 +450,18 @@ class MapHandler {
     disableSlosh(data) {
         this.map.dispatchEvent({
             "type": "disable_slosh"
+        });
+    }
+
+    renderFourtyYears(data) {
+        this.map.dispatchEvent({
+            "type": "render_fourty_years_layer"
+        });
+    }
+
+    disableFourtyYears(data) {
+        this.map.dispatchEvent({
+            "type": "disable_fourty_years_layer"
         });
     }
 

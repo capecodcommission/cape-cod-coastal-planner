@@ -63,9 +63,9 @@ infraStates =
 ceStates : CEStates
 ceStates =
     { open =
-        [ Animation.bottom (Animation.px 50.0) ]
+        [ Animation.left (Animation.px 10.0) ]
     , closed =
-        [ Animation.bottom (Animation.px 0.0) ]    
+        [ Animation.left (Animation.px 0.0) ]    
     }
 
 

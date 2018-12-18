@@ -14,6 +14,7 @@ import View.SeaLevelRise as SLR
 import View.Infrastructure as IF
 import View.FloodZone as FZ
 import View.Slosh as Slosh
+import View.Erosion as Erosion
 
 
 textLayoutSpacing : Device -> Float
@@ -55,6 +56,10 @@ view :
         , dr5ftClicked : Openness
         , dr6ftClicked : Openness
         , structuresClicked : Openness
+        , ceOpenness : Openness
+        , ceFx : Animation.State
+        , ceToggleFx : Animation.State
+        , fourtyYearClicked : Openness
     } 
     -> Device 
     -> Paths 
@@ -64,6 +69,7 @@ view config device paths =
     [ height fill, verticalSpread ]
     [ SLR.view config device paths "Sea Level Rise" ToggleSLRSection 
     , IF.view config device paths "Infrastructure" ToggleInfraSection 
+    , Erosion.view config device paths "Erosion" ToggleCESection
     , FZ.view config device paths "Flood Zone" ToggleFZLayer
     , Slosh.view config device paths "SLOSH" ToggleSloshLayer
     ]
