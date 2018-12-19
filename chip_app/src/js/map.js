@@ -28,6 +28,7 @@ import {layer as cds} from "./layers/coastal_defense_structures"
 import {layer as fz} from "./layers/flood_zones"
 import {layer as slosh} from "./layers/slosh"
 import {layer as fourty_years} from "./layers/fourty_years"
+import {layer as sti} from "./layers/sediment_transport_indicators"
 //import {layer as locHexes} from "./layers/location_hexes";
 import {
     layer as impactZone
@@ -73,6 +74,7 @@ export function init(onInit) {
     map.addLayer(fz(map))
     map.addLayer(slosh(map))
     map.addLayer(fourty_years(map))
+    map.addLayer(sti(map))
     //map.addLayer(locHexes(map));
 
     // wait until next frame to attempt rendering the map

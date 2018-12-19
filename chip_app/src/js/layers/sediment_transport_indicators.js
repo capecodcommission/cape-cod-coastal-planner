@@ -7,6 +7,9 @@ import Style from "ol/style/Style";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import Circle from "ol/style/Circle";
+import Icon from "ol/style/Icon"
+import {getSTIRotation} from '../misc'
+
 
 /**
  * Vector Layer functions
@@ -14,7 +17,7 @@ import Circle from "ol/style/Circle";
 
 export function layer(map) {
     let source = new VectorSource({
-        url: process.env.ELM_APP_AGS_SP_URL,
+        url: process.env.ELM_APP_AGS_STI_URL,
         format: new EsriJSON()
     });
 
@@ -23,20 +26,22 @@ export function layer(map) {
         source: source,
         style: (feature, resolution) => {
             return new Style({
-                fill: new Fill({
-                  color: [168, 112, 0, 1]
+                image: new Icon({
+                    src: 'http://www.clker.com/cliparts/B/y/m/z/O/r/orange-arrow-md.png',
+                    scale: .08,
+                    rotation: getSTIRotation(feature),
                 })
             });
         }
     });
-    layer.set("name", "sewered_parcels");
+    layer.set("name", "sediment_transport_indicators");
 
-    map.on("render_sp", ({data}) => {
-        layer.setVisible(true)
+    map.on("render_sti", ({data}) => {
+        layer.setVisible(true);
     });
 
-    map.on("disable_sp", () => {
-        layer.setVisible(false)
+    map.on("disable_sti", () => {
+        layer.setVisible(false);
     });
 
     return layer;

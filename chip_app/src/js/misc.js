@@ -133,3 +133,11 @@ export function getFYEColors(feature) {
         return fyeColors.Accretion
     }
 };
+
+export function getSTIRotation(feature) {
+    if (!feature || !(typeof feature.get === 'function')) return 0;
+    
+    let vector = feature.get("Vector");
+    
+    return vector
+};

@@ -109,6 +109,7 @@ type alias Model =
     , structuresClicked : Openness
     , erosionOpenness : Openness
     , fourtyYearClicked : Openness
+    , stiClicked : Openness
     }
 
 
@@ -171,6 +172,7 @@ initialModel flags =
         Closed
         (Animation.style <| .closed <| Animations.ceStates)
         (Animation.style <| .rotate180 <| Animations.toggleStates)
+        Closed
         Closed
         Closed
         Closed
@@ -1038,6 +1040,25 @@ updateModel msg model =
                                 | fourtyYearClicked = Open 
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderFourtyYears) 
+                    )
+
+        ToggleSTILayer ->
+            case model.stiClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | stiClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableSTI) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | stiClicked = Open 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderSTI) 
                     )
 
         

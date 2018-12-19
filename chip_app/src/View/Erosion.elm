@@ -31,6 +31,7 @@ view :
         , ceFx : Animation.State
         , ceToggleFx : Animation.State
         , fourtyYearClicked : Openness
+        , stiClicked : Openness
     } 
     -> Device 
     -> Paths 
@@ -89,6 +90,7 @@ infraDetails :
         , cdsClicked : Openness
         , structuresClicked : Openness
         , fourtyYearClicked : Openness
+        , stiClicked : Openness
     } 
     -> Paths 
     -> Element MainStyles Variations Msg
@@ -112,9 +114,9 @@ infraDetails config paths =
                 fourtyYearLegend paths
             Closed -> 
                 (el NoStyle [] empty )
-        , paragraph CloseIcon [onClick TogglePPRLayer] 
+        , paragraph CloseIcon [onClick ToggleSTILayer] 
             [ decorativeImage 
-                ( case config.pprClicked of 
+                ( case config.stiClicked of 
                     Open -> 
                         (PL Clicked)
                     Closed -> 

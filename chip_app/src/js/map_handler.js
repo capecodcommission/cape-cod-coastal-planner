@@ -122,6 +122,14 @@ class MapHandler {
                     this.disableFourtyYears(data);
                     break;
 
+                case "render_sediment_transport":
+                    this.renderSTI(data);
+                    break;
+
+                case "disable_sediment_transport":
+                    this.disableSTI(data);
+                    break;
+
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
             }
@@ -462,6 +470,18 @@ class MapHandler {
     disableFourtyYears(data) {
         this.map.dispatchEvent({
             "type": "disable_fourty_years_layer"
+        });
+    }
+
+    renderSTI(data) {
+        this.map.dispatchEvent({
+            "type": "render_sti"
+        });
+    }
+
+    disableSTI(data) {
+        this.map.dispatchEvent({
+            "type": "disable_sti"
         });
     }
 

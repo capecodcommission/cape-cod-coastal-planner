@@ -60,6 +60,7 @@ view :
         , ceFx : Animation.State
         , ceToggleFx : Animation.State
         , fourtyYearClicked : Openness
+        , stiClicked : Openness
     } 
     -> Device 
     -> Paths 
