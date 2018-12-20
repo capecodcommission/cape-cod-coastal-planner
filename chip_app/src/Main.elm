@@ -110,6 +110,10 @@ type alias Model =
     , erosionOpenness : Openness
     , fourtyYearClicked : Openness
     , stiClicked : Openness
+    , fzFx : Animation.State
+    , fzToggleFx : Animation.State
+    , sloshFx : Animation.State
+    , sloshToggleFx : Animation.State
     }
 
 
@@ -195,6 +199,10 @@ initialModel flags =
         Closed
         Closed
         Closed
+        (Animation.style <| .closed <| Animations.fzStates)
+        (Animation.style <| .rotate180 <| Animations.toggleStates)
+        (Animation.style <| .closed <| Animations.sloshStates)
+        (Animation.style <| .rotate180 <| Animations.toggleStates)
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -594,6 +602,10 @@ updateModel msg model =
                 , infraToggleFx = Animation.update animMsg model.infraToggleFx
                 , ceFx = Animation.update animMsg model.ceFx
                 , ceToggleFx = Animation.update animMsg model.ceToggleFx
+                , fzFx = Animation.update animMsg model.fzFx
+                , fzToggleFx = Animation.update animMsg model.fzToggleFx
+                , sloshFx = Animation.update animMsg model.sloshFx
+                , sloshToggleFx = Animation.update animMsg model.sloshToggleFx
             }
             , Cmd.none
             )
@@ -988,38 +1000,22 @@ updateModel msg model =
         ToggleFZLayer ->
             case model.fzClicked of 
                 Open ->
-                    ( model 
-                        |> \m -> 
-                            { m 
-                                | fzClicked = Closed 
-                            }
+                    ( model |> collapseFZSection 
                     , olCmd <| encodeOpenLayersCmd (DisableFZ) 
                     )
                 Closed ->
-                    ( model 
-                        |> \m -> 
-                            { m 
-                                | fzClicked = Open 
-                            }
+                    ( model |> expandFZSection
                     , olCmd <| encodeOpenLayersCmd (RenderFZ) 
                     )
 
         ToggleSloshLayer ->
             case model.sloshClicked of 
                 Open ->
-                    ( model 
-                        |> \m -> 
-                            { m 
-                                | sloshClicked = Closed 
-                            }
+                    ( model |> collapseSloshSection
                     , olCmd <| encodeOpenLayersCmd (DisableSlosh) 
                     )
                 Closed ->
-                    ( model 
-                        |> \m -> 
-                            { m 
-                                | sloshClicked = Open 
-                            }
+                    ( model |> expandSloshSection
                     , olCmd <| encodeOpenLayersCmd (RenderSlosh) 
                     )
 
@@ -1348,6 +1344,62 @@ collapseCESection model =
                 model.ceToggleFx
     }
 
+expandFZSection : Model -> Model
+expandFZSection model =
+    { model
+        | fzClicked = Open
+        , fzFx =
+            Animation.interrupt
+                [ Animation.to <| .open <| Animations.fzStates ]
+                model.fzFx
+        , fzToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
+                model.fzToggleFx
+    }
+
+collapseFZSection : Model -> Model
+collapseFZSection model =
+    { model
+        | fzClicked = Closed
+        , fzFx =
+            Animation.interrupt
+                [ Animation.to <| .closed <| Animations.fzStates ]
+                model.fzFx
+        , fzToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
+                model.fzToggleFx
+    }
+
+expandSloshSection : Model -> Model
+expandSloshSection model =
+    { model
+        | sloshClicked = Open
+        , sloshFx =
+            Animation.interrupt
+                [ Animation.to <| .open <| Animations.sloshStates ]
+                model.sloshFx
+        , sloshToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
+                model.sloshToggleFx
+    }
+
+collapseSloshSection : Model -> Model
+collapseSloshSection model =
+    { model
+        | sloshClicked = Closed
+        , sloshFx =
+            Animation.interrupt
+                [ Animation.to <| .closed <| Animations.sloshStates ]
+                model.sloshFx
+        , sloshToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
+                model.sloshToggleFx
+    }
+
 getCachedBaselineInfo : Model -> Maybe BaselineInfo
 getCachedBaselineInfo { shorelineLocationsDropdown, baselineInformation } =
     shorelineLocationsDropdown
@@ -1531,6 +1583,10 @@ animations model =
     , model.infraToggleFx
     , model.ceFx
     , model.ceToggleFx
+    , model.fzFx
+    , model.fzToggleFx
+    , model.sloshFx
+    , model.sloshToggleFx
     ]
     
 

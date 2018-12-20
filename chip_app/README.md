@@ -8,9 +8,23 @@ Note that to run this locally, you need to make sure `"proxy": "http://0.0.0.0:4
 
 ## Front-end Build Update Workflow
 
-1. cd into local repo chip_app & execute 'yarn run build'
-2. copy build directory to server /tmp/ location using FileZilla
-3. ssh vulcan@10.19.180.6 <--- ssh into instance as user vulcan
-4. cd /usr/share/nginx/html <--- path to html directory (where build code goes)
-5. sudo cp -R /tmp/build/. . & enter vulcan password <--- copy all files from /tmp/build/ folder to html directory
-6. rm -rf /tmp/build/ <--- remove build directory
+1. cd into local repo `/chip_app` & execute build command
+```bash
+cd /chip_app
+yarn run build
+```
+2. Copy `/build` directory to server `/tmp` directory using FileZilla
+3. ssh into instance as user vulcan. Enter password on prompt
+```bash
+ssh vulcan@10.19.180.6
+
+# 4. Path to html directory (where build code goes)
+cd /usr/share/nginx/html
+
+# 5. Copy all files from /tmp/build/ directory to html directory
+# Enter password on prompt
+sudo cp -R /tmp/build/.
+
+# 6. Remove build directory
+rm -rf /tmp/build/
+```

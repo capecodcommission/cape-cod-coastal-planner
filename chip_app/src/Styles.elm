@@ -177,6 +177,14 @@ type PlanningLayerStyles
     | Jetty
     | Accretion
     | Erosion
+    | FZA
+    | FZAE
+    | FZAO
+    | FZVE
+    | CAT1
+    | CAT2
+    | CAT3
+    | CAT4
 
 
 choiceStateToVariation : ChoiceState -> Variations
@@ -682,6 +690,38 @@ stylesheet device =
             ]
         , Style.style (PL Erosion) 
             [ Color.background <| Color.rgba 255 127 127 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL FZA) 
+            [ Color.background <| Color.rgba 255 170 0 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL FZAE) 
+            [ Color.background <| Color.rgba 255 170 0 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL FZAO) 
+            [ Color.background <| Color.rgba 255 170 0 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL FZVE) 
+            [ Color.background <| Color.rgba 230 0 0 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL CAT1) 
+            [ Color.background <| Color.rgba 255 190 232 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL CAT2) 
+            [ Color.background <| Color.rgba 255 0 197 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL CAT3) 
+            [ Color.background <| Color.rgba 168 0 132 1
+            , Border.rounded 8
+            ]
+        , Style.style (PL CAT4) 
+            [ Color.background <| Color.rgba 197 0 255 1
             , Border.rounded 8
             ]
         ]

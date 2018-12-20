@@ -61,6 +61,10 @@ view :
         , ceToggleFx : Animation.State
         , fourtyYearClicked : Openness
         , stiClicked : Openness
+        , fzFx : Animation.State
+        , fzToggleFx : Animation.State
+        , sloshFx : Animation.State
+        , sloshToggleFx : Animation.State
     } 
     -> Device 
     -> Paths 

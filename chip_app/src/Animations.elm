@@ -28,6 +28,16 @@ type alias CEStates =
     , closed : List Animation.Property
     }
 
+type alias FZStates =
+    { open : List Animation.Property
+    , closed : List Animation.Property
+    }
+
+type alias SloshStates =
+    { open : List Animation.Property
+    , closed : List Animation.Property
+    }
+
 rightSidebarStates : RightSidebarStates
 rightSidebarStates =
     { open =
@@ -62,6 +72,22 @@ infraStates =
 
 ceStates : CEStates
 ceStates =
+    { open =
+        [ Animation.left (Animation.px 10.0) ]
+    , closed =
+        [ Animation.left (Animation.px 0.0) ]    
+    }
+
+fzStates : FZStates
+fzStates =
+    { open =
+        [ Animation.left (Animation.px 10.0) ]
+    , closed =
+        [ Animation.left (Animation.px 0.0) ]    
+    }
+
+sloshStates : SloshStates
+sloshStates =
     { open =
         [ Animation.left (Animation.px 10.0) ]
     , closed =
