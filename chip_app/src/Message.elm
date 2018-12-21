@@ -51,7 +51,7 @@ type Msg
     | LoadCritFacResponse (Result Http.Error D.Value)
     | ToggleSLRSection
     | ToggleInfraSection
-    | ToggleCESection
+    | ToggleErosionSection
     | ToggleDR String
     -- | LoadDRResponse (Result Http.Error D.Value)
     | ToggleSLRLayer String

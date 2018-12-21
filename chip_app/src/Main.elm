@@ -84,9 +84,9 @@ type alias Model =
     , infraOpenness : Openness
     , infraFx : Animation.State
     , infraToggleFx : Animation.State
-    , ceOpenness : Openness
-    , ceFx : Animation.State
-    , ceToggleFx : Animation.State
+    , erosionSectionOpenness : Openness
+    , erosionFx : Animation.State
+    , erosionToggleFx : Animation.State
     , critFacClicked : Openness
     , dr1ftClicked : Openness
     , slr2ftClicked : Openness
@@ -168,40 +168,67 @@ initialModel flags =
         Closed
         (Animation.style <| .closed <| Animations.slrStates)
         (Animation.style <| .rotate180 <| Animations.toggleStates)
-        -- GPL Section
+        -- Infrastructure Section
         Closed
         (Animation.style <| .closed <| Animations.infraStates)
         (Animation.style <| .rotate180 <| Animations.toggleStates)
-        -- CE Section
+        -- Erosion Section
         Closed
-        (Animation.style <| .closed <| Animations.ceStates)
+        (Animation.style <| .closed <| Animations.erosionStates)
         (Animation.style <| .rotate180 <| Animations.toggleStates)
+        -- Critical Facilities Layer clicked
         Closed
+        -- Discon Roads 1ft clicked
         Closed
+        -- SLR 2ft clicked
         Closed
+        -- Muni properties clicked
         Closed
+        -- Public/private roads clicked
         Closed
+        -- Sewered parcels clicked
         Closed
+        -- Coastal defense structures clicked
         Closed
+        -- Flood zone clicked
         Closed
+        -- Slosh clicked
         Closed
+        -- SLR 1ft clicked
         Closed
+        -- SLR 3ft clicked
         Closed
+        -- SLR 4ft clicked
         Closed
+        -- SLR 5ft clicked
         Closed
+        -- SLR 6ft clicked
         Closed
+        -- Discon roads 2ft clicked
         Closed
+        -- Discon roads 3ft clicked
         Closed
+        -- Discon roads 4ft clicked
         Closed
+        -- Discon roads 5ft clicked
         Closed
+        -- Discon roads 6ft clicked
         Closed
+        -- Structures clicked
         Closed
+        -- Erosion clicked
         Closed
+        -- 40-yr erosion layer clicked
         Closed
+        -- Sediment transport clicked
         Closed
+        -- Flood zone legend fx
         (Animation.style <| .closed <| Animations.fzStates)
+        -- Flood zone legend button toggle fx
         (Animation.style <| .rotate180 <| Animations.toggleStates)
+        -- Slosh legend fx
         (Animation.style <| .closed <| Animations.sloshStates)
+        -- Slosh legend button toggle fx
         (Animation.style <| .rotate180 <| Animations.toggleStates)
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -600,8 +627,8 @@ updateModel msg model =
                 , slrToggleFx = Animation.update animMsg model.slrToggleFx
                 , infraFx = Animation.update animMsg model.infraFx
                 , infraToggleFx = Animation.update animMsg model.infraToggleFx
-                , ceFx = Animation.update animMsg model.ceFx
-                , ceToggleFx = Animation.update animMsg model.ceToggleFx
+                , erosionFx = Animation.update animMsg model.erosionFx
+                , erosionToggleFx = Animation.update animMsg model.erosionToggleFx
                 , fzFx = Animation.update animMsg model.fzFx
                 , fzToggleFx = Animation.update animMsg model.fzToggleFx
                 , sloshFx = Animation.update animMsg model.sloshFx
@@ -913,13 +940,13 @@ updateModel msg model =
                 Closed ->
                     ( model |> expandInfraLayer, Cmd.none )
 
-        ToggleCESection ->
-            case model.ceOpenness of
+        ToggleErosionSection ->
+            case model.erosionSectionOpenness of
                 Open ->
-                    ( model |> collapseCESection, Cmd.none )
+                    ( model |> collapseErosionSection, Cmd.none )
 
                 Closed ->
-                    ( model |> expandCESection, Cmd.none )
+                    ( model |> expandErosionSection, Cmd.none )
 
         ToggleMOPLayer ->
             case model.mopClicked of 
@@ -1316,32 +1343,32 @@ collapseInfraLayer model =
                 model.infraToggleFx
     }
 
-expandCESection : Model -> Model
-expandCESection model =
+expandErosionSection : Model -> Model
+expandErosionSection model =
     { model
-        | ceOpenness = Open
-        , ceFx =
+        | erosionSectionOpenness = Open
+        , erosionFx =
             Animation.interrupt
-                [ Animation.to <| .open <| Animations.ceStates ]
-                model.ceFx
-        , ceToggleFx =
+                [ Animation.to <| .open <| Animations.erosionStates ]
+                model.erosionFx
+        , erosionToggleFx =
             Animation.interrupt
                 [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
-                model.ceToggleFx
+                model.erosionToggleFx
     }
 
-collapseCESection : Model -> Model
-collapseCESection model =
+collapseErosionSection : Model -> Model
+collapseErosionSection model =
     { model
-        | ceOpenness = Closed
-        , ceFx =
+        | erosionSectionOpenness = Closed
+        , erosionFx =
             Animation.interrupt
-                [ Animation.to <| .closed <| Animations.ceStates ]
-                model.ceFx
-        , ceToggleFx =
+                [ Animation.to <| .closed <| Animations.erosionStates ]
+                model.erosionFx
+        , erosionToggleFx =
             Animation.interrupt
                 [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
-                model.ceToggleFx
+                model.erosionToggleFx
     }
 
 expandFZSection : Model -> Model
@@ -1581,8 +1608,8 @@ animations model =
     , model.slrToggleFx
     , model.infraFx
     , model.infraToggleFx
-    , model.ceFx
-    , model.ceToggleFx
+    , model.erosionFx
+    , model.erosionToggleFx
     , model.fzFx
     , model.fzToggleFx
     , model.sloshFx

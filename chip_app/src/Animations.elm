@@ -23,7 +23,7 @@ type alias InfraStates =
     , closed : List Animation.Property
     }
 
-type alias CEStates =
+type alias ErosionStates =
     { open : List Animation.Property
     , closed : List Animation.Property
     }
@@ -70,8 +70,8 @@ infraStates =
         [ Animation.left (Animation.px 0.0) ]    
     }
 
-ceStates : CEStates
-ceStates =
+erosionStates : ErosionStates
+erosionStates =
     { open =
         [ Animation.left (Animation.px 10.0) ]
     , closed =

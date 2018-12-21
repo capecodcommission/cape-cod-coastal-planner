@@ -27,9 +27,9 @@ view :
         , spClicked : Openness
         , cdsClicked : Openness
         , structuresClicked : Openness
-        , ceOpenness : Openness
-        , ceFx : Animation.State
-        , ceToggleFx : Animation.State
+        , erosionSectionOpenness : Openness
+        , erosionFx : Animation.State
+        , erosionToggleFx : Animation.State
         , fourtyYearClicked : Openness
         , stiClicked : Openness
     } 
@@ -44,16 +44,16 @@ view config device paths titleText func =
     [ row CloseIcon 
       [ verticalCenter, spread, width fill, paddingXY 10 20, onClick func ]
       [ headerView titleText 
-      , buttonView paths.trianglePath config.ceToggleFx 
+      , buttonView paths.trianglePath config.erosionToggleFx 
       ] 
     , row NoStyle 
-        ( renderAnimation config.ceFx 
+        ( renderAnimation config.erosionFx 
           [width fill, paddingXY 0 0]
         ) 
         ( 
-          [ case config.ceOpenness of 
+          [ case config.erosionSectionOpenness of 
               Open -> 
-                infraDetails config paths 
+                erosionDetails config paths 
               Closed ->
                 (el NoStyle [] empty )
           ] 
@@ -79,7 +79,7 @@ buttonView togglePath fx =
                 )
                 { src = togglePath } 
 
-infraDetails :
+erosionDetails :
     { config
         | critFacClicked : Openness
         , slrFx : Animation.State
@@ -94,7 +94,7 @@ infraDetails :
     } 
     -> Paths 
     -> Element MainStyles Variations Msg
-infraDetails config paths =
+erosionDetails config paths =
     textLayout (Zoi ZoiText)
         [ verticalCenter, spacing 0, paddingXY 20 0 ]
         [ paragraph CloseIcon [ onClick ToggleFourtyYearLayer ] 

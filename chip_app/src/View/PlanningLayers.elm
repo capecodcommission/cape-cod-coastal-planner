@@ -56,9 +56,9 @@ view :
         , dr5ftClicked : Openness
         , dr6ftClicked : Openness
         , structuresClicked : Openness
-        , ceOpenness : Openness
-        , ceFx : Animation.State
-        , ceToggleFx : Animation.State
+        , erosionSectionOpenness : Openness
+        , erosionFx : Animation.State
+        , erosionToggleFx : Animation.State
         , fourtyYearClicked : Openness
         , stiClicked : Openness
         , fzFx : Animation.State
@@ -71,10 +71,10 @@ view :
     -> Element MainStyles Variations Msg
 view config device paths =
   column NoStyle
-    [ height fill, verticalSpread ]
+    [ height fill ]
     [ SLR.view config device paths "Sea Level Rise" ToggleSLRSection 
     , IF.view config device paths "Infrastructure" ToggleInfraSection 
-    , Erosion.view config device paths "Erosion" ToggleCESection
+    , Erosion.view config device paths "Erosion" ToggleErosionSection
     , FZ.view config device paths "Flood Zone" ToggleFZLayer
     , Slosh.view config device paths "SLOSH" ToggleSloshLayer
     ]
