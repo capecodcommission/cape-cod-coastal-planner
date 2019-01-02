@@ -24,7 +24,7 @@ export function layer(map) {
         style: (feature, resolution) => {
             return new Style({
                 fill: new Fill({
-                  color: [255, 0, 0, 1]
+                  color: [255, 0, 0, .7]
                 })
             });
         }

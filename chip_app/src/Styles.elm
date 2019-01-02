@@ -221,7 +221,7 @@ stylesheet device =
             , Font.letterSpacing 1.0
             ]
         , Style.style (Header HeaderMenu)
-            [ Color.background <| rgba 0 0 0 0.7
+            [ Color.background <| rgba 0 0 0 0.9
             , Color.text white
             , Font.size 22.0
             , Font.typeface fontstack
@@ -239,7 +239,7 @@ stylesheet device =
                 ]
             ]
         , Style.style (Header HeaderSubMenu)
-            [ Color.background <| rgba 0 0 0 0.7
+            [ Color.background <| rgba 0 0 0 0.9
             ]
         , Style.style (Header HeaderMenuItem)
             [ Color.text white
@@ -587,7 +587,7 @@ stylesheet device =
         , Style.style (Modal ModalBackground)
             [ Color.background <| rgba 0 0 0 0.59 ]
         , Style.style (Modal ModalContainer)
-            [ Color.background <| rgba 0 0 0 0.7
+            [ Color.background <| rgba 0 0 0 0.9
             , Border.rounded 4
             ]
         , Style.style (Sidebar SidebarContainer)

@@ -27,8 +27,8 @@ export function layer(map) {
         style: (feature, resolution) => {
             return new Style({
                 image: new Icon({
-                    src: 'http://www.clker.com/cliparts/B/y/m/z/O/r/orange-arrow-md.png',
-                    scale: .08,
+                    src: 'http://kamalkarki.com/assets/img/business-grow.png',
+                    scale: .04,
                     rotation: getSTIRotation(feature),
                 })
             });

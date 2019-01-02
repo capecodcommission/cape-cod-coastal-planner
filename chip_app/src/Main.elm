@@ -114,6 +114,7 @@ type alias Model =
     , fzToggleFx : Animation.State
     , sloshFx : Animation.State
     , sloshToggleFx : Animation.State
+    , shorelineSelected : Openness
     }
 
 
@@ -230,6 +231,8 @@ initialModel flags =
         (Animation.style <| .closed <| Animations.sloshStates)
         -- Slosh legend button toggle fx
         (Animation.style <| .rotate180 <| Animations.toggleStates)
+        -- Shoreline Dropdown item selected
+        Closed
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -419,6 +422,10 @@ updateModel msg model =
 
         LoadVulnerabilityRibbonResponse response ->
             ( model
+                |> \m ->
+                    { m 
+                        | shorelineSelected = Open
+                    }
             , olCmd <| encodeOpenLayersCmd (RenderVulnerabilityRibbon response)
             )
 
@@ -1240,7 +1247,7 @@ collapseRightSidebar model =
                 model.rightSidebarFx
         , rightSidebarToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
                 model.rightSidebarToggleFx
     }
 
@@ -1254,7 +1261,7 @@ collapseLeftSidebar model =
                 model.leftSidebarFx
         , leftSidebarToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotateZero <| Animations.toggleStates ]
                 model.leftSidebarToggleFx
     }
 
@@ -1269,7 +1276,7 @@ expandRightSidebar model =
                 model.rightSidebarFx
         , rightSidebarToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotateZero <| Animations.toggleStates ]
                 model.rightSidebarToggleFx
     }
 
@@ -1283,7 +1290,7 @@ expandLeftSidebar model =
                 model.leftSidebarFx
         , leftSidebarToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
                 model.leftSidebarToggleFx
     }
 
@@ -1520,9 +1527,14 @@ view app =
                         column NoStyle [ height fill ] <|
                             [ el NoStyle [ id "map", height (percent 100) ] empty
                                 |> within
-                                    [ RSidebar.view model <| getRightSidebarChildViews model
+                                    [ case model.zoneOfImpact of 
+                                        Just zoi -> 
+                                            RSidebar.view model <| getRightSidebarChildViews model
+                                        Nothing ->
+                                            el NoStyle [] empty
                                     , LSidebar.view model <| getLeftSidebarChildViews model
                                     ]
+                                    
                                     
                             -- strategiesModalOpenness should probably be refactored away
                             -- ie: modal should never be open when zone of impact is Nothing (make impossible states impossible)
@@ -1555,7 +1567,12 @@ headerView ({ device } as model) =
                 [ row NoStyle
                     [ width fill, spacingXY 16 0, alignRight ]
                     [ el NoStyle [] <| Dropdown.view model.shorelineLocationsDropdown model.shorelineLocations
-                    , BaselineInfo.view model
+                    -- , BaselineInfo.view model
+                    , case model.shorelineSelected of 
+                        Open ->
+                            BaselineInfo.view model
+                        Closed ->
+                            el NoStyle [] empty
                     ]
                 ]
             ]
