@@ -67,6 +67,7 @@ type MainStyles
     | CircleBullet
     | Test
     | PL PlanningLayerStyles
+    | Rbn RibbonStyles
 
 
 type ModalStyles
@@ -186,6 +187,11 @@ type PlanningLayerStyles
     | CAT3
     | CAT4
 
+type RibbonStyles
+    = LessThanZero
+    | OneToFive
+    | SixPlus
+
 
 choiceStateToVariation : ChoiceState -> Variations
 choiceStateToVariation state =
@@ -221,7 +227,7 @@ stylesheet device =
             , Font.letterSpacing 1.0
             ]
         , Style.style (Header HeaderMenu)
-            [ Color.background <| rgba 0 0 0 0.7
+            [ Color.background <| rgba 0 0 0 0.9
             , Color.text white
             , Font.size 22.0
             , Font.typeface fontstack
@@ -239,7 +245,7 @@ stylesheet device =
                 ]
             ]
         , Style.style (Header HeaderSubMenu)
-            [ Color.background <| rgba 0 0 0 0.7
+            [ Color.background <| rgba 0 0 0 0.9
             ]
         , Style.style (Header HeaderMenuItem)
             [ Color.text white
@@ -587,7 +593,7 @@ stylesheet device =
         , Style.style (Modal ModalBackground)
             [ Color.background <| rgba 0 0 0 0.59 ]
         , Style.style (Modal ModalContainer)
-            [ Color.background <| rgba 0 0 0 0.7
+            [ Color.background <| rgba 0 0 0 0.9
             , Border.rounded 4
             ]
         , Style.style (Sidebar SidebarContainer)
@@ -722,6 +728,18 @@ stylesheet device =
             ]
         , Style.style (PL CAT4) 
             [ Color.background <| Color.rgba 197 0 255 1
+            , Border.rounded 8
+            ]
+        , Style.style (Rbn LessThanZero) 
+            [ Color.background <| Color.rgba 245 200 171 1
+            , Border.rounded 8
+            ]
+        , Style.style (Rbn OneToFive) 
+            [ Color.background <| Color.rgba 243 117 92 1
+            , Border.rounded 8
+            ]
+        , Style.style (Rbn SixPlus) 
+            [ Color.background <| Color.rgba 164 27 30 1
             , Border.rounded 8
             ]
         ]

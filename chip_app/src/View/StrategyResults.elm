@@ -392,12 +392,12 @@ footerView =
                 , height (px 42)
                 , title "Back to strategy selection"
                 ] <| text "back"
-            , button CancelButton
-                [ onClick CancelPickStrategy
-                , width (px 175) 
-                , height (px 42)
-                , title "Clear strategy selection"
-                ] <| text "clear"
+            -- , button CancelButton
+            --     [ onClick CancelPickStrategy
+            --     , width (px 175) 
+            --     , height (px 42)
+            --     , title "Clear strategy selection"
+            --     ] <| text "clear"
             ]
     
 

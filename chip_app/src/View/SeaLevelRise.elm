@@ -160,58 +160,6 @@ slrDetails config paths =
                     [ onClick (ToggleSLRLayer "6") ] <| text " 6ft"
                 ]
             ]
-        -- , paragraph 
-        --     CloseIcon 
-        --     [ paddingXY 32 0 ]
-        --     [ el 
-        --         ( case config.slr1ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleSLRLayer "1") ] <| text " 1ft -"
-        --     , el 
-        --         ( case config.slr2ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleSLRLayer "2") ] <| text " 2ft -"
-        --     , el 
-        --         ( case config.slr3ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleSLRLayer "3") ] <| text " 3ft -"
-        --     , el 
-        --         ( case config.slr4ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleSLRLayer "4") ] <| text " 4ft -"
-        --     , el 
-        --         ( case config.slr5ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleSLRLayer "5") ] <| text " 5ft -"
-        --     , el 
-        --         ( case config.slr6ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleSLRLayer "6") ] <| text " 6ft"
-        --     ]
         , hairline (PL Line)
         , paragraph 
             NoStyle 
@@ -231,7 +179,7 @@ slrDetails config paths =
                         Closed -> 
                             (NoStyle)
                     )  
-                    [ onClick (ToggleDR "1") ] <| text " 1ft -"
+                    [ onClick (ToggleSLRLayer "1") ] <| text " 1ft -"
                 , el 
                     ( case config.dr2ftClicked of 
                         Open -> 
@@ -239,7 +187,7 @@ slrDetails config paths =
                         Closed -> 
                             (NoStyle)
                     )  
-                    [ onClick (ToggleDR "2") ] <| text " 2ft -"
+                    [ onClick (ToggleSLRLayer "2") ] <| text " 2ft -"
                 , el 
                     ( case config.dr3ftClicked of 
                         Open -> 
@@ -247,7 +195,7 @@ slrDetails config paths =
                         Closed -> 
                             (NoStyle)
                     )  
-                    [ onClick (ToggleDR "3") ] <| text " 3ft -"
+                    [ onClick (ToggleSLRLayer "3") ] <| text " 3ft -"
                 , el 
                     ( case config.dr4ftClicked of 
                         Open -> 
@@ -255,7 +203,7 @@ slrDetails config paths =
                         Closed -> 
                             (NoStyle)
                     )  
-                    [ onClick (ToggleDR "4") ] <| text " 4ft -"
+                    [ onClick (ToggleSLRLayer "4") ] <| text " 4ft -"
                 , el 
                     ( case config.dr5ftClicked of 
                         Open -> 
@@ -263,7 +211,7 @@ slrDetails config paths =
                         Closed -> 
                             (NoStyle)
                     )  
-                    [ onClick (ToggleDR "5") ] <| text " 5ft -"
+                    [ onClick (ToggleSLRLayer "5") ] <| text " 5ft -"
                 , el 
                     ( case config.dr6ftClicked of 
                         Open -> 
@@ -271,61 +219,9 @@ slrDetails config paths =
                         Closed -> 
                             (NoStyle)
                     )  
-                    [ onClick (ToggleDR "6") ] <| text " 6ft"
+                    [ onClick (ToggleSLRLayer "6") ] <| text " 6ft"
                 ]
             ]
-        -- , paragraph 
-        --     CloseIcon 
-        --     [ paddingXY 32 0 ]
-        --     [ el 
-        --         ( case config.dr1ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleDR "1") ] <| text " 1ft -"
-        --     , el 
-        --         ( case config.dr2ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleDR "2") ] <| text " 2ft -"
-        --     , el 
-        --         ( case config.dr3ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleDR "3") ] <| text " 3ft -"
-        --     , el 
-        --         ( case config.dr4ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleDR "4") ] <| text " 4ft -"
-        --     , el 
-        --         ( case config.dr5ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleDR "5") ] <| text " 5ft -"
-        --     , el 
-        --         ( case config.dr6ftClicked of 
-        --             Open -> 
-        --                 (PL Clicked)
-        --             Closed -> 
-        --                 (NoStyle)
-        --         )  
-        --         [ onClick (ToggleDR "6") ] <| text " 6ft"
-        --     ]
         , hairline (PL Line)
         , paragraph CloseIcon [onClick ToggleCritFac] 
             [ decorativeImage

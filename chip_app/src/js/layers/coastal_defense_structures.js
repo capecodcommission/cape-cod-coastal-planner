@@ -9,6 +9,7 @@ import Fill from "ol/style/Fill";
 import Circle from "ol/style/Circle";
 import {getCoastalColors} from "../misc.js";
 
+
 /**
  * Vector Layer functions
  */

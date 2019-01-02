@@ -114,6 +114,8 @@ type alias Model =
     , fzToggleFx : Animation.State
     , sloshFx : Animation.State
     , sloshToggleFx : Animation.State
+    , shorelineSelected : Openness
+    , layerClicked : Openness
     }
 
 
@@ -230,6 +232,10 @@ initialModel flags =
         (Animation.style <| .closed <| Animations.sloshStates)
         -- Slosh legend button toggle fx
         (Animation.style <| .rotate180 <| Animations.toggleStates)
+        -- Shoreline Dropdown item selected
+        Closed
+        -- Any layer activated
+        Closed
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -419,6 +425,10 @@ updateModel msg model =
 
         LoadVulnerabilityRibbonResponse response ->
             ( model
+                |> \m ->
+                    { m 
+                        | shorelineSelected = Open
+                    }
             , olCmd <| encodeOpenLayersCmd (RenderVulnerabilityRibbon response)
             )
 
@@ -665,6 +675,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | critFacClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderCritFac) 
                     )
@@ -796,6 +807,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr1ftClicked = Closed 
+                                        , dr1ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -804,6 +816,8 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr1ftClicked = Open 
+                                        , dr1ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -814,6 +828,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr2ftClicked = Closed 
+                                        , dr2ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -822,6 +837,8 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr2ftClicked = Open 
+                                        , dr2ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -833,6 +850,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr3ftClicked = Closed 
+                                        , dr3ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -841,6 +859,8 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr3ftClicked = Open 
+                                        , dr3ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -852,6 +872,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr4ftClicked = Closed 
+                                        , dr4ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -860,6 +881,8 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr4ftClicked = Open 
+                                        , dr4ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -871,6 +894,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr5ftClicked = Closed 
+                                        , dr5ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -879,6 +903,8 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr5ftClicked = Open 
+                                        , dr5ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -890,6 +916,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr6ftClicked = Closed 
+                                        , dr6ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -898,6 +925,8 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr6ftClicked = Open 
+                                        , dr6ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -963,6 +992,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | mopClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderMOP) 
                     )
@@ -982,6 +1012,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | pprClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderPPR) 
                     )
@@ -1001,6 +1032,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | spClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderSP) 
                     )
@@ -1020,6 +1052,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | cdsClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderCDS) 
                     )
@@ -1027,11 +1060,17 @@ updateModel msg model =
         ToggleFZLayer ->
             case model.fzClicked of 
                 Open ->
-                    ( model |> collapseFZSection 
+                    ( model 
+                        |> collapseFZSection 
                     , olCmd <| encodeOpenLayersCmd (DisableFZ) 
                     )
                 Closed ->
-                    ( model |> expandFZSection
+                    ( model 
+                        |> expandFZSection
+                        |> \m ->
+                            { m
+                                | layerClicked = Open
+                            }
                     , olCmd <| encodeOpenLayersCmd (RenderFZ) 
                     )
 
@@ -1042,7 +1081,12 @@ updateModel msg model =
                     , olCmd <| encodeOpenLayersCmd (DisableSlosh) 
                     )
                 Closed ->
-                    ( model |> expandSloshSection
+                    ( model 
+                        |> expandSloshSection
+                        |> \m ->
+                            { m
+                                | layerClicked = Open
+                            }
                     , olCmd <| encodeOpenLayersCmd (RenderSlosh) 
                     )
 
@@ -1061,6 +1105,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | fourtyYearClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderFourtyYears) 
                     )
@@ -1080,9 +1125,40 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | stiClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderSTI) 
                     )
+
+        ClearAllLayers ->
+            ( model 
+                |> \m -> 
+                    { m 
+                        | layerClicked = Closed 
+                        , stiClicked = Closed 
+                        , fourtyYearClicked = Closed
+                        , sloshClicked = Closed
+                        , fzClicked = Closed
+                        , cdsClicked = Closed
+                        , spClicked = Closed
+                        , pprClicked = Closed
+                        , mopClicked = Closed
+                        , slr6ftClicked = Closed 
+                        , dr6ftClicked = Closed
+                        , slr5ftClicked = Closed 
+                        , dr5ftClicked = Closed
+                        , slr4ftClicked = Closed 
+                        , dr4ftClicked = Closed
+                        , slr3ftClicked = Closed 
+                        , dr3ftClicked = Closed
+                        , slr2ftClicked = Closed 
+                        , dr2ftClicked = Closed
+                        , slr1ftClicked = Closed 
+                        , dr1ftClicked = Closed
+                        , critFacClicked = Closed
+                    }
+            , olCmd <| encodeOpenLayersCmd (ClearLayers)
+            )
 
         
 
@@ -1240,7 +1316,7 @@ collapseRightSidebar model =
                 model.rightSidebarFx
         , rightSidebarToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
                 model.rightSidebarToggleFx
     }
 
@@ -1254,7 +1330,7 @@ collapseLeftSidebar model =
                 model.leftSidebarFx
         , leftSidebarToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotateZero <| Animations.toggleStates ]
                 model.leftSidebarToggleFx
     }
 
@@ -1269,7 +1345,7 @@ expandRightSidebar model =
                 model.rightSidebarFx
         , rightSidebarToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateZero <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotateZero <| Animations.toggleStates ]
                 model.rightSidebarToggleFx
     }
 
@@ -1283,7 +1359,7 @@ expandLeftSidebar model =
                 model.leftSidebarFx
         , leftSidebarToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotateNeg180 <| Animations.toggleStates ]
                 model.leftSidebarToggleFx
     }
 
@@ -1520,9 +1596,14 @@ view app =
                         column NoStyle [ height fill ] <|
                             [ el NoStyle [ id "map", height (percent 100) ] empty
                                 |> within
-                                    [ RSidebar.view model <| getRightSidebarChildViews model
+                                    [ case model.zoneOfImpact of 
+                                        Just zoi -> 
+                                            RSidebar.view model <| getRightSidebarChildViews model
+                                        Nothing ->
+                                            el NoStyle [] empty
                                     , LSidebar.view model <| getLeftSidebarChildViews model
                                     ]
+                                    
                                     
                             -- strategiesModalOpenness should probably be refactored away
                             -- ie: modal should never be open when zone of impact is Nothing (make impossible states impossible)
@@ -1552,10 +1633,44 @@ headerView ({ device } as model) =
                 [ h1 (Header HeaderTitle) [] <| Element.text "Cape Cod Coastal Planner" ]
             , column NoStyle
                 [ verticalCenter, width fill ]
+                [ case model.shorelineSelected of
+                    Open ->
+                        textLayout 
+                            NoStyle 
+                            [ verticalCenter, spacing 5, paddingXY 32 0 ]
+                            [ paragraph 
+                                (Header HeaderTitle) 
+                                []
+                                [ decorativeImage
+                                    (Rbn LessThanZero)
+                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
+                                    {src = model.paths.downArrow} 
+                                , Element.text "Score <= 0   "
+                                , decorativeImage
+                                    (Rbn OneToFive)
+                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
+                                    {src = model.paths.downArrow} 
+                                , Element.text "Score 1 - 5   "
+                                , decorativeImage
+                                    (Rbn SixPlus)
+                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
+                                    {src = model.paths.downArrow} 
+                                , Element.text "Score >= 6"
+                                ]
+                            ]
+                    Closed ->
+                        el NoStyle [] empty
+                ]
+            , column NoStyle
+                [ verticalCenter, width fill ]
                 [ row NoStyle
                     [ width fill, spacingXY 16 0, alignRight ]
                     [ el NoStyle [] <| Dropdown.view model.shorelineLocationsDropdown model.shorelineLocations
-                    , BaselineInfo.view model
+                    , case model.shorelineSelected of 
+                        Open ->
+                            BaselineInfo.view model
+                        Closed ->
+                            el NoStyle [] empty
                     ]
                 ]
             ]

@@ -29,6 +29,7 @@ import {layer as fz} from "./layers/flood_zones"
 import {layer as slosh} from "./layers/slosh"
 import {layer as fourty_years} from "./layers/fourty_years"
 import {layer as sti} from "./layers/sediment_transport_indicators"
+import LayerGroup from 'ol/layer/Group'
 //import {layer as locHexes} from "./layers/location_hexes";
 import {
     layer as impactZone
@@ -46,36 +47,50 @@ export function init(onInit) {
     let map = new Map({
         view: _view(),
         layers: [
-            worldImagery(), 
-            // massImagery()
-            // critFac()
+            worldImagery()
         ],
-        loadTilesWhileAnimating: true
+        loadTilesWhileAnimating: true,
+        controls: []
     });
-    map.addLayer(littoralCells(map));
-    map.addLayer(vulnRibbon(map));
-    map.addLayer(critFac(map))
-    map.addLayer(dr1ft(map))
-    map.addLayer(dr2ft(map))
-    map.addLayer(dr3ft(map))
-    map.addLayer(dr4ft(map))
-    map.addLayer(dr5ft(map))
-    map.addLayer(dr6ft(map))
-    map.addLayer(slr1ft(map))
-    map.addLayer(slr2ft(map))
-    map.addLayer(slr3ft(map))
-    map.addLayer(slr4ft(map))
-    map.addLayer(slr5ft(map))
-    map.addLayer(slr6ft(map))
-    map.addLayer(mop(map))
-    map.addLayer(ppr(map))
-    map.addLayer(sp(map))
-    map.addLayer(cds(map))
     map.addLayer(fz(map))
-    map.addLayer(slosh(map))
     map.addLayer(fourty_years(map))
+    map.addLayer(slr6ft(map))
+    map.addLayer(slr5ft(map))
+    map.addLayer(slr4ft(map))
+    map.addLayer(slr3ft(map))
+    map.addLayer(slr2ft(map))
+    map.addLayer(slr1ft(map))
+    map.addLayer(slosh(map))
+    map.addLayer(mop(map))
+    map.addLayer(sp(map))
+    map.addLayer(ppr(map))
+    map.addLayer(cds(map))
+    map.addLayer(dr6ft(map))
+    map.addLayer(dr5ft(map))
+    map.addLayer(dr4ft(map))
+    map.addLayer(dr3ft(map))
+    map.addLayer(dr2ft(map))
+    map.addLayer(dr1ft(map))
     map.addLayer(sti(map))
-    //map.addLayer(locHexes(map));
+    map.addLayer(critFac(map))
+    map.addLayer(vulnRibbon(map));
+    map.addLayer(littoralCells(map));
+
+
+    // hide all layers except base-layers
+    map.on("clear_ol_layers", () => {
+
+        let baseLayers = ['world_imagery', 'littoral_cells', 'vulnerability_ribbon']
+
+        map.getLayers().forEach((layer) => {
+
+            if ( !baseLayers.includes(layer.get('name')) ) {
+
+                layer.setVisible(false)
+            }
+        })
+    })
+
 
     // wait until next frame to attempt rendering the map
     // ie: target div needs to exist before attempt
