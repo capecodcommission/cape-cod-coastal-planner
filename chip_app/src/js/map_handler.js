@@ -60,10 +60,12 @@ class MapHandler {
 
                 case "render_slr":
                     this.renderSLR(data);
+                    this.renderDisconnectedRoads(data);
                     break;
 
                 case "disable_sea_level_rise":
                     this.disableSLR(data);
+                    this.disableDisconnectedRoads(data);
                     break;
 
                 case "render_municipally_owned_parcels":

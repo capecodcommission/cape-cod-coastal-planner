@@ -803,6 +803,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr1ftClicked = Closed 
+                                        , dr1ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -811,6 +812,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr1ftClicked = Open 
+                                        , dr1ftClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -821,6 +823,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr2ftClicked = Closed 
+                                        , dr2ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -829,6 +832,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr2ftClicked = Open 
+                                        , dr2ftClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -840,6 +844,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr3ftClicked = Closed 
+                                        , dr3ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -848,6 +853,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr3ftClicked = Open 
+                                        , dr3ftClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -859,6 +865,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr4ftClicked = Closed 
+                                        , dr4ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -867,6 +874,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr4ftClicked = Open 
+                                        , dr4ftClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -878,6 +886,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr5ftClicked = Closed 
+                                        , dr5ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -886,6 +895,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr5ftClicked = Open 
+                                        , dr5ftClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -897,6 +907,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr6ftClicked = Closed 
+                                        , dr6ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (DisableSLR level) 
                             )
@@ -905,6 +916,7 @@ updateModel msg model =
                                 |> \m -> 
                                     { m 
                                         | slr6ftClicked = Open 
+                                        , dr6ftClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -1567,7 +1579,6 @@ headerView ({ device } as model) =
                 [ row NoStyle
                     [ width fill, spacingXY 16 0, alignRight ]
                     [ el NoStyle [] <| Dropdown.view model.shorelineLocationsDropdown model.shorelineLocations
-                    -- , BaselineInfo.view model
                     , case model.shorelineSelected of 
                         Open ->
                             BaselineInfo.view model

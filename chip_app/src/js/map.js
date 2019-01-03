@@ -50,7 +50,8 @@ export function init(onInit) {
             // massImagery()
             // critFac()
         ],
-        loadTilesWhileAnimating: true
+        loadTilesWhileAnimating: true,
+        controls: []
     });
     map.addLayer(littoralCells(map));
     map.addLayer(vulnRibbon(map));

@@ -44,16 +44,24 @@ headerView titleText togglePath fx =
     (header (Sidebar SidebarHeader) [ height (px 72), width fill ] <| 
         h5 (Headings H5) [ center, verticalCenter ] (text titleText)
     ) |> onLeft
-    [ el (Sidebar SidebarToggle) 
-        [ height (px 72)
-        , width (px 70)
-        , onClick ToggleRightSidebar
-        ] <| 
-        el NoStyle 
-            [ center
-            , verticalCenter
-            , height fill
-            , width fill
-            , moveRight 18
-            ] <| Toggle.view togglePath fx
-    ]
+        [ el (Sidebar SidebarToggle) 
+            [ height (px 72)
+            , width (px 70)
+            , onClick ToggleRightSidebar
+            ] <| 
+            el NoStyle 
+                [ center
+                , verticalCenter
+                , height fill
+                , width fill
+                , moveRight 18
+                ] <| Toggle.view togglePath fx
+        ]
+    -- |> onRight
+    --     [ button CancelButton
+    --         [ onClick CancelPickStrategy
+    --         , width (px 175) 
+    --         , height (px 42)
+    --         -- , title "Clear strategy selection"
+    --         ] <| text "clear"
+    --     ]
