@@ -65,3 +65,4 @@ type Msg
     | ToggleSloshLayer
     | ToggleFourtyYearLayer
     | ToggleSTILayer
+    | ClearAllLayers

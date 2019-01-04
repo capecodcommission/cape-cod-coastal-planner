@@ -115,6 +115,7 @@ type alias Model =
     , sloshFx : Animation.State
     , sloshToggleFx : Animation.State
     , shorelineSelected : Openness
+    , layerClicked : Openness
     }
 
 
@@ -233,6 +234,8 @@ initialModel flags =
         (Animation.style <| .rotate180 <| Animations.toggleStates)
         -- Shoreline Dropdown item selected
         Closed
+        -- Any layer activated
+        Open
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -1102,6 +1105,15 @@ updateModel msg model =
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderSTI) 
                     )
+
+        ClearAllLayers ->
+            ( model 
+                |> \m -> 
+                    { m 
+                        | layerClicked = Closed 
+                    }
+            , olCmd <| encodeOpenLayersCmd (ClearLayers)
+            )
 
         
 

@@ -131,6 +131,10 @@ class MapHandler {
                 case "disable_sediment_transport":
                     this.disableSTI(data);
                     break;
+                
+                case "clear_layers":
+                    this.clearLayers()
+                    break
 
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
@@ -157,6 +161,12 @@ class MapHandler {
                 duration: 1000
             });
         }
+    }
+
+    clearLayers() {
+        this.map.dispatchEvent({
+            "type": "clear_ol_layers"
+        })
     }
 
     littoralCellsLoaded(data) {

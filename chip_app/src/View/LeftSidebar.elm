@@ -42,15 +42,26 @@ view config (titleText, childViews) =
 headerView : String -> String -> Animation.State -> Element MainStyles Variations Msg
 headerView titleText togglePath fx =
     ( header (Sidebar SidebarHeader) 
-        [ height (px 72), width fill ] <| 
-            h5 (Headings H5) 
-                [ center, verticalCenter ] 
-                (text titleText)
-    ) |> 
-        onRight
+        [ height (px 72), width fill ]
+        ( h5 (Headings H5) 
+            [ center, verticalCenter ] 
+            ( text titleText
+            ) |> onRight
+                [ case titleText of 
+                    "PLANNING LAYERS" ->
+                        button CancelButton
+                            [ onClick ClearAllLayers, width (px 75), height (px 42), moveRight 50 ]
+                            ( text "clear" )
+                    _ ->
+                        el NoStyle [] empty    
+                ]
+        )
+                
+    ) |> onRight
             [ el (Sidebar SidebarLeftToggle) 
-                [ height (px 72), width (px 70), onClick ToggleLeftSidebar ] <| 
-                    el NoStyle 
-                        [ center, verticalCenter, height fill, width fill, moveRight 14 ] <| 
-                            Toggle.view togglePath fx
+                [ height (px 72), width (px 70), onClick ToggleLeftSidebar ]
+                ( el NoStyle 
+                    [ center, verticalCenter, height fill, width fill, moveRight 14 ]
+                    ( Toggle.view togglePath fx )
+                )
             ]
