@@ -67,6 +67,7 @@ type MainStyles
     | CircleBullet
     | Test
     | PL PlanningLayerStyles
+    | Rbn RibbonStyles
 
 
 type ModalStyles
@@ -185,6 +186,11 @@ type PlanningLayerStyles
     | CAT2
     | CAT3
     | CAT4
+
+type RibbonStyles
+    = LessThanZero
+    | OneToFive
+    | SixPlus
 
 
 choiceStateToVariation : ChoiceState -> Variations
@@ -722,6 +728,18 @@ stylesheet device =
             ]
         , Style.style (PL CAT4) 
             [ Color.background <| Color.rgba 197 0 255 1
+            , Border.rounded 8
+            ]
+        , Style.style (Rbn LessThanZero) 
+            [ Color.background <| Color.rgba 245 200 171 1
+            , Border.rounded 8
+            ]
+        , Style.style (Rbn OneToFive) 
+            [ Color.background <| Color.rgba 243 117 92 1
+            , Border.rounded 8
+            ]
+        , Style.style (Rbn SixPlus) 
+            [ Color.background <| Color.rgba 164 27 30 1
             , Border.rounded 8
             ]
         ]

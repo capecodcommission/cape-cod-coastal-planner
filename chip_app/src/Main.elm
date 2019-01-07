@@ -235,7 +235,7 @@ initialModel flags =
         -- Shoreline Dropdown item selected
         Closed
         -- Any layer activated
-        Open
+        Closed
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -675,6 +675,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | critFacClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderCritFac) 
                     )
@@ -816,6 +817,7 @@ updateModel msg model =
                                     { m 
                                         | slr1ftClicked = Open 
                                         , dr1ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -836,6 +838,7 @@ updateModel msg model =
                                     { m 
                                         | slr2ftClicked = Open 
                                         , dr2ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -857,6 +860,7 @@ updateModel msg model =
                                     { m 
                                         | slr3ftClicked = Open 
                                         , dr3ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -878,6 +882,7 @@ updateModel msg model =
                                     { m 
                                         | slr4ftClicked = Open 
                                         , dr4ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -899,6 +904,7 @@ updateModel msg model =
                                     { m 
                                         | slr5ftClicked = Open 
                                         , dr5ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -920,6 +926,7 @@ updateModel msg model =
                                     { m 
                                         | slr6ftClicked = Open 
                                         , dr6ftClicked = Open
+                                        , layerClicked = Open
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -985,6 +992,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | mopClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderMOP) 
                     )
@@ -1004,6 +1012,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | pprClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderPPR) 
                     )
@@ -1023,6 +1032,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | spClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderSP) 
                     )
@@ -1042,6 +1052,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | cdsClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderCDS) 
                     )
@@ -1049,11 +1060,17 @@ updateModel msg model =
         ToggleFZLayer ->
             case model.fzClicked of 
                 Open ->
-                    ( model |> collapseFZSection 
+                    ( model 
+                        |> collapseFZSection 
                     , olCmd <| encodeOpenLayersCmd (DisableFZ) 
                     )
                 Closed ->
-                    ( model |> expandFZSection
+                    ( model 
+                        |> expandFZSection
+                        |> \m ->
+                            { m
+                                | layerClicked = Open
+                            }
                     , olCmd <| encodeOpenLayersCmd (RenderFZ) 
                     )
 
@@ -1064,7 +1081,12 @@ updateModel msg model =
                     , olCmd <| encodeOpenLayersCmd (DisableSlosh) 
                     )
                 Closed ->
-                    ( model |> expandSloshSection
+                    ( model 
+                        |> expandSloshSection
+                        |> \m ->
+                            { m
+                                | layerClicked = Open
+                            }
                     , olCmd <| encodeOpenLayersCmd (RenderSlosh) 
                     )
 
@@ -1083,6 +1105,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | fourtyYearClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderFourtyYears) 
                     )
@@ -1102,6 +1125,7 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | stiClicked = Open 
+                                , layerClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderSTI) 
                     )
@@ -1111,6 +1135,27 @@ updateModel msg model =
                 |> \m -> 
                     { m 
                         | layerClicked = Closed 
+                        , stiClicked = Closed 
+                        , fourtyYearClicked = Closed
+                        , sloshClicked = Closed
+                        , fzClicked = Closed
+                        , cdsClicked = Closed
+                        , spClicked = Closed
+                        , pprClicked = Closed
+                        , mopClicked = Closed
+                        , slr6ftClicked = Closed 
+                        , dr6ftClicked = Closed
+                        , slr5ftClicked = Closed 
+                        , dr5ftClicked = Closed
+                        , slr4ftClicked = Closed 
+                        , dr4ftClicked = Closed
+                        , slr3ftClicked = Closed 
+                        , dr3ftClicked = Closed
+                        , slr2ftClicked = Closed 
+                        , dr2ftClicked = Closed
+                        , slr1ftClicked = Closed 
+                        , dr1ftClicked = Closed
+                        , critFacClicked = Closed
                     }
             , olCmd <| encodeOpenLayersCmd (ClearLayers)
             )
@@ -1586,6 +1631,36 @@ headerView ({ device } as model) =
             [ column NoStyle
                 [ verticalCenter, width fill ]
                 [ h1 (Header HeaderTitle) [] <| Element.text "Cape Cod Coastal Planner" ]
+            , column NoStyle
+                [ verticalCenter, width fill ]
+                [ case model.shorelineSelected of
+                    Open ->
+                        textLayout 
+                            NoStyle 
+                            [ verticalCenter, spacing 5, paddingXY 32 0 ]
+                            [ paragraph 
+                                (Header HeaderTitle) 
+                                []
+                                [ decorativeImage
+                                    (Rbn LessThanZero)
+                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
+                                    {src = model.paths.downArrow} 
+                                , Element.text "Score <= 0   "
+                                , decorativeImage
+                                    (Rbn OneToFive)
+                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
+                                    {src = model.paths.downArrow} 
+                                , Element.text "Score 1 - 5   "
+                                , decorativeImage
+                                    (Rbn SixPlus)
+                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
+                                    {src = model.paths.downArrow} 
+                                , Element.text "Score >= 6"
+                                ]
+                            ]
+                    Closed ->
+                        el NoStyle [] empty
+                ]
             , column NoStyle
                 [ verticalCenter, width fill ]
                 [ row NoStyle
