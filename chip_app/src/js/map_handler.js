@@ -131,6 +131,14 @@ class MapHandler {
                 case "disable_sediment_transport":
                     this.disableSTI(data);
                     break;
+
+                case "render_structures":
+                    this.renderStructures(data);
+                    break;
+
+                case "disable_structures":
+                    this.disableStructures(data);
+                    break;
                 
                 case "clear_layers":
                     this.clearLayers()
@@ -166,6 +174,18 @@ class MapHandler {
     clearLayers() {
         this.map.dispatchEvent({
             "type": "clear_ol_layers"
+        })
+    }
+
+    renderStructures() {
+        this.map.dispatchEvent({
+            "type": "render_struct"
+        })
+    }
+
+    disableStructures() {
+        this.map.dispatchEvent({
+            "type": "disable_struct"
         })
     }
 

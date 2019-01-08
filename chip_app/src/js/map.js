@@ -29,6 +29,7 @@ import {layer as fz} from "./layers/flood_zones"
 import {layer as slosh} from "./layers/slosh"
 import {layer as fourty_years} from "./layers/fourty_years"
 import {layer as sti} from "./layers/sediment_transport_indicators"
+import {layer as struct} from "./layers/structures"
 import LayerGroup from 'ol/layer/Group'
 //import {layer as locHexes} from "./layers/location_hexes";
 import {
@@ -61,6 +62,7 @@ export function init(onInit) {
     map.addLayer(slr2ft(map))
     map.addLayer(slr1ft(map))
     map.addLayer(slosh(map))
+    map.addLayer(struct(map))
     map.addLayer(mop(map))
     map.addLayer(sp(map))
     map.addLayer(ppr(map))

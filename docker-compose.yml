@@ -1,6 +1,17 @@
 version: '3'
 services:
-  web:
+  front:
     build: ./chip_app
     ports:
-     - "8080:3000"
+     - "3000:3000"
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "test123"
+    ports:
+     - "8081:5432"
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8081

@@ -1130,6 +1130,27 @@ updateModel msg model =
                     , olCmd <| encodeOpenLayersCmd (RenderSTI) 
                     )
 
+        ToggleStructuresLayer ->
+            case model.structuresClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | structuresClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableStructures) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | structuresClicked = Open 
+                                , layerClicked = Open
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderStructures) 
+                    )
+
+
         ClearAllLayers ->
             ( model 
                 |> \m -> 
