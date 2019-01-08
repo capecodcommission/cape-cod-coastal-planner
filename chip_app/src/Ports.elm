@@ -48,6 +48,8 @@ type OpenLayersCmd
     | RenderSTI
     | DisableSTI
     | ClearLayers
+    | RenderStructures
+    | DisableStructures
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -199,6 +201,16 @@ encodeOpenLayersCmd cmd =
         DisableSTI ->
             E.object
                 [ ( "cmd", E.string "disable_sediment_transport" )
+                ]
+
+        DisableStructures ->
+            E.object
+                [ ( "cmd", E.string "disable_structures" )
+                ]
+
+        RenderStructures ->
+            E.object
+                [ ( "cmd", E.string "render_structures" )
                 ]
 
         ClearLayers ->

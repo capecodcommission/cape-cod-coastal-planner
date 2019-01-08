@@ -136,6 +136,18 @@ class MapHandler {
                     this.clearLayers()
                     break
 
+                case "render_structures":
+                    this.renderStructures(data);
+                    break;
+
+                case "disable_structures":
+                    this.disableStructures(data);
+                    break;
+                
+                case "clear_layers":
+                    this.clearLayers()
+                    break
+
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
             }
@@ -166,6 +178,18 @@ class MapHandler {
     clearLayers() {
         this.map.dispatchEvent({
             "type": "clear_ol_layers"
+        })
+    }
+
+    renderStructures() {
+        this.map.dispatchEvent({
+            "type": "render_struct"
+        })
+    }
+
+    disableStructures() {
+        this.map.dispatchEvent({
+            "type": "disable_struct"
         })
     }
 

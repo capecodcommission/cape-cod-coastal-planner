@@ -150,7 +150,7 @@ infraDetails config paths =
                 (el NoStyle [] empty )
         , paragraph 
             CloseIcon 
-            [] 
+            [onClick ToggleStructuresLayer] 
             [ decorativeImage
                 ( case config.structuresClicked of 
                     Open -> 

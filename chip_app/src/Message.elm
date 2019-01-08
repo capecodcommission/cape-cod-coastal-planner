@@ -66,3 +66,4 @@ type Msg
     | ToggleFourtyYearLayer
     | ToggleSTILayer
     | ClearAllLayers
+    | ToggleStructuresLayer
