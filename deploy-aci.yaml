@@ -1,0 +1,46 @@
+apiVersion: 2018-10-01
+location: eastus
+name: capeCodCoastalPlannerContainerGroup
+properties:
+  containers:
+  - name: cape-cod-coastal-planner-front
+    properties:
+      image: ccccontainers.azurecr.io/front:v1
+      resources:
+        requests:
+          cpu: 1
+          memoryInGb: 1.5
+      ports:
+      - port: 3000
+  - name: cape-cod-coastal-planner-api
+    properties:
+      image: ccccontainers.azurecr.io/api:v1
+      resources:
+        requests:
+          cpu: 1
+          memoryInGb: 1.5
+      ports:
+      - port: 4000
+  - name: cape-cod-coastal-planner-db
+    properties:
+      image: postgres:latest
+      resources:
+        requests:
+          cpu: 1
+          memoryInGb: 1.5
+      ports:
+      - port: 5432
+  osType: Linux
+  ipAddress:
+    type: Public
+    ports:
+    - protocol: tcp
+      port: '3000'
+    - protocol: tcp
+      port: '4000'
+  imageRegistryCredentials:
+  - server: ccccontainers.azurecr.io
+    username: ccccontainers
+    password: pi7ot9/lbIzuuM2Vok+=ylncI6ExL0Xc
+tags: null
+type: Microsoft.ContainerInstance/containerGroups
