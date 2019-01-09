@@ -815,9 +815,19 @@ updateModel msg model =
                             ( model 
                                 |> \m -> 
                                     { m 
-                                        | slr1ftClicked = Open 
+                                        | slr1ftClicked = Open  
                                         , dr1ftClicked = Open
                                         , layerClicked = Open
+                                        , slr2ftClicked = Closed
+                                        , slr3ftClicked = Closed
+                                        , slr4ftClicked = Closed
+                                        , slr5ftClicked = Closed
+                                        , slr6ftClicked = Closed
+                                        , dr2ftClicked = Closed
+                                        , dr3ftClicked = Closed
+                                        , dr4ftClicked = Closed
+                                        , dr5ftClicked = Closed
+                                        , dr6ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -839,6 +849,16 @@ updateModel msg model =
                                         | slr2ftClicked = Open 
                                         , dr2ftClicked = Open
                                         , layerClicked = Open
+                                        , slr1ftClicked = Closed
+                                        , slr3ftClicked = Closed
+                                        , slr4ftClicked = Closed
+                                        , slr5ftClicked = Closed
+                                        , slr6ftClicked = Closed
+                                        , dr1ftClicked = Closed
+                                        , dr3ftClicked = Closed
+                                        , dr4ftClicked = Closed
+                                        , dr5ftClicked = Closed
+                                        , dr6ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -861,6 +881,16 @@ updateModel msg model =
                                         | slr3ftClicked = Open 
                                         , dr3ftClicked = Open
                                         , layerClicked = Open
+                                        , slr1ftClicked = Closed
+                                        , slr2ftClicked = Closed
+                                        , slr4ftClicked = Closed
+                                        , slr5ftClicked = Closed
+                                        , slr6ftClicked = Closed
+                                        , dr1ftClicked = Closed
+                                        , dr2ftClicked = Closed
+                                        , dr4ftClicked = Closed
+                                        , dr5ftClicked = Closed
+                                        , dr6ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -883,6 +913,16 @@ updateModel msg model =
                                         | slr4ftClicked = Open 
                                         , dr4ftClicked = Open
                                         , layerClicked = Open
+                                        , slr1ftClicked = Closed
+                                        , slr2ftClicked = Closed
+                                        , slr3ftClicked = Closed
+                                        , slr5ftClicked = Closed
+                                        , slr6ftClicked = Closed
+                                        , dr1ftClicked = Closed
+                                        , dr2ftClicked = Closed
+                                        , dr3ftClicked = Closed
+                                        , dr5ftClicked = Closed
+                                        , dr6ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -905,6 +945,16 @@ updateModel msg model =
                                         | slr5ftClicked = Open 
                                         , dr5ftClicked = Open
                                         , layerClicked = Open
+                                        , slr1ftClicked = Closed
+                                        , slr2ftClicked = Closed
+                                        , slr3ftClicked = Closed
+                                        , slr4ftClicked = Closed
+                                        , slr6ftClicked = Closed
+                                        , dr1ftClicked = Closed
+                                        , dr2ftClicked = Closed
+                                        , dr3ftClicked = Closed
+                                        , dr4ftClicked = Closed
+                                        , dr6ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )
@@ -927,6 +977,16 @@ updateModel msg model =
                                         | slr6ftClicked = Open 
                                         , dr6ftClicked = Open
                                         , layerClicked = Open
+                                        , slr1ftClicked = Closed
+                                        , slr2ftClicked = Closed
+                                        , slr3ftClicked = Closed
+                                        , slr4ftClicked = Closed
+                                        , slr5ftClicked = Closed
+                                        , dr1ftClicked = Closed
+                                        , dr2ftClicked = Closed
+                                        , dr3ftClicked = Closed
+                                        , dr4ftClicked = Closed
+                                        , dr5ftClicked = Closed
                                     }
                             , olCmd <| encodeOpenLayersCmd (RenderSLR level) 
                             )

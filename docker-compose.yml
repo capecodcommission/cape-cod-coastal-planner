@@ -1,6 +1,41 @@
-version: '3'
+version: '3.1'
+
 services:
-  web:
+
+  front:
+    container_name: front
     build: ./chip_app
+    depends_on:
+      - db
+      - api
     ports:
-     - "8080:3000"
+      - 3000:3000
+    # volumes:
+    #   - ./chip_app/src:/app/src
+    
+  api:
+    container_name: api
+    build: ./chip_api
+    depends_on:
+      - db
+    ports:
+      - 4000:4000
+
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${PG_PW}
+
+  admin:
+    container_name: admin
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  pgdata:
