@@ -1,43 +1,61 @@
 "use strict";
 
-import VectorSource from "ol/source/Vector";
-import VectorLayer from "ol/layer/Vector";
-import EsriJSON from "ol/format/EsriJSON";
-import Style from "ol/style/Style";
-import Stroke from "ol/style/Stroke";
-import Fill from "ol/style/Fill";
-import Circle from "ol/style/Circle";
-
-/**
- * Vector Layer functions
- */
+import TileLayer from "ol/layer/Tile";
+import XYZ from "ol/source/XYZ";
 
 export function layer(map) {
-    let source = new VectorSource({
-        url: process.env.ELM_APP_AGS_STRUCTURES_URL,
-        format: new EsriJSON()
-    });
+    let source = _source();
 
-    let layer = new VectorLayer({
+    let layer = new TileLayer({
         visible: false,
-        source: source,
-        style: (feature, resolution) => {
-            return new Style({
-                fill: new Fill({
-                  color: [156, 156, 156, .7]
-                })
-            });
-        }
+        preload: 4,
+        opacity: 0.5,
+        source: source
     });
     layer.set("name", "structures");
 
     map.on("render_struct", ({data}) => {
-        layer.setVisible(true)
+      renderStruct(data, layer, source);
     });
 
     map.on("disable_struct", () => {
-        layer.setVisible(false)
+      disableStruct(layer, source);
     });
 
     return layer;
+}
+
+function _source() {
+    // let url = process.env.ELM_APP_AGS_SLR_URL;
+    // if (!url) {
+    //     throw Error("Must configure environment variable `ELM_APP_AGS_WORLD_IMG_URL`!");
+    // }
+    let source = new XYZ({
+        crossOrigin: "anonymous",
+        url: process.env.ELM_APP_AGS_STRUCTURES_URL,
+        maxZoom: 16,
+        minZoom: 3,
+        opaque: false,
+        transition: 4,
+        tileLoadFunction: (imageTile, src) => {
+            imageTile.getImage().src = src;
+        }
+    });
+    return source;
+}
+
+function renderStruct(data, layer, source) {
+  // decode esri json to ol features
+  // let features = esrijsonformat.readFeaturesFromObject(data.response);
+  
+  // source.addFeatures(features);
+  layer.setVisible(true);
+}
+
+function disableStruct(layer, source) {
+  // decode esri json to ol features
+  // let features = esrijsonformat.readFeaturesFromObject(data.response);
+  
+  // source.addFeatures(features);
+  layer.setVisible(false);
 }
