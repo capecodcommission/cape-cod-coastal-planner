@@ -59,9 +59,10 @@ config :phoenix, :stacktrace_depth, 20
 # 
 config :chip_api, ChipApi.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  database: "chip_api_dev",
+  username: "chip_dev",
+  database: "chip_dev",
   hostname: "localhost",
+  port: 5000,
   pool_size: 10
 
 import_config "#{Mix.env}.secret.exs"
