@@ -61,8 +61,8 @@ config :chip_api, ChipApi.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "chip_dev",
   database: "chip_dev",
-  hostname: "localhost",
-  port: 5000,
+  hostname: "db",
+  port: 5432,
   pool_size: 10
 
 import_config "#{Mix.env}.secret.exs"
