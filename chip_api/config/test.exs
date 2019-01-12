@@ -20,8 +20,8 @@ config :logger, level: :warn
 # Configure your database
 config :chip_api, ChipApi.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "chip_dev",
-  database: "chip_dev",
+  username: "postgres",
+  database: "chip_api_test",
   hostname: "db",
   port: 5432,
   pool: Ecto.Adapters.SQL.Sandbox

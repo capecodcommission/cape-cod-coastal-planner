@@ -59,8 +59,8 @@ config :phoenix, :stacktrace_depth, 20
 # 
 config :chip_api, ChipApi.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "chip_dev",
-  database: "chip_dev",
+  username: "postgres",
+  database: "chip_api_dev",
   hostname: "db",
   port: 5432,
   pool_size: 10
