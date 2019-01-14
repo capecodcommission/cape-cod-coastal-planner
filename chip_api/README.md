@@ -17,11 +17,13 @@ cd cape-cod-coastal-planner/
 # Run API service
 docker-compose up --build api
 ```
-
-
 Now you can visit [`localhost:4000/graphiql`](http://localhost:4000/graphiql) from your browser and query the API.
 
 Ready to run in production? Please [check our deployment guides](http://www.phoenixframework.org/docs/deployment).
+
+## Making Changes (FROM Timmons)
+so there's a manual step right now, dependent on developer (though it could be set up to run automatically with git pre-commit hook) whenever you modify seeds or migrations. from chip_api/ you'll want to run `mix dump` which will generate a new migration file (sounds like this one probably won't change since migrations weren't added) and then to change seeds you'll want to run `dev\support\dump_seeds.bat` and it will prompt you for your db password (edited) 
+that will generate new seeds.sql file
 
 ## Learn more
 
@@ -32,7 +34,7 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
   * Source: https://github.com/phoenixframework/phoenix
 
 
-# More Commands cheatsheet
+## More Commands cheatsheet
 
   * `mix help <command>`
     * print help documentation for a given command
@@ -56,11 +58,7 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
     * dumps a `seeds.sql` file to `priv\repo`
 
 
-
-
-
-
-
+## Production Server Prerequisites
 Prerequisites
 
 Centos7 server
