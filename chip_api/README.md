@@ -8,11 +8,13 @@
 
 Create  `/config/dev.secret.exs` and `/config/test.secret.exs` containing the PostgreSQL server password.
 
-Change the line-ending format of startup.sh from CRLF (Windows) to LF (Unix)
-
-Run the api service
+Change the line-ending format of `startup.sh` from CRLF (Windows) to LF (Unix)
 
 ```bash
+# Nativgate to project folder directory
+cd cape-cod-coastal-planner/
+
+# Run API service
 docker-compose up --build api
 ```
 
