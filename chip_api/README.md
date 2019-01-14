@@ -1,10 +1,21 @@
 # ChipApi
 
-To start your Phoenix server:
+**Cape Cod Coastal Planner API**
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
-  * Start Phoenix endpoint with `mix phx.server`
+> This API serves coastal strategy information from a PostgreSQL database to a front-end 
+
+## Getting started
+
+Create  `/config/dev.secret.exs` and `/config/test.secret.exs` containing the PostgreSQL server password.
+
+Change the line-ending format of startup.sh from CRLF (Windows) to LF (Unix)
+
+Run the api service
+
+```bash
+docker-compose up --build api
+```
+
 
 Now you can visit [`localhost:4000/graphiql`](http://localhost:4000/graphiql) from your browser and query the API.
 
