@@ -1,8 +1,6 @@
-## ccc
+# Cape Cod Coastal planner
 
-# Cape Cod Coastal Planner
-
-This project is designed and built for the Cape Cod Commission of Barnstable County, Massachusetts and provides a public portal for communities of Cape Cod to assess, compare, and plan various strategies in response to the three major coastal hazards: storm surges, erosion, and sea level rise. 
+> This project is designed and built for the Cape Cod Commission of Barnstable County, Massachusetts and provides a public portal for communities of Cape Cod to assess, compare, and plan various strategies in response to the three major coastal hazards: storm surges, erosion, and sea level rise. 
 
 It is divided into two main projects:
 
@@ -11,3 +9,12 @@ It is divided into two main projects:
 
 Architecture Decision Records can be found in `ccc/docs/architecture` and document the major architectural choices made throughout this project.
 
+
+## Getting Started
+```bash
+# Navigate to the project directory
+cd cape-cod-coastal-planner/
+
+# Run all services
+docker-compose up
+```
