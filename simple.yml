@@ -109,12 +109,14 @@ items:
           io.kompose.service: api
       spec:
         containers:
-        - image: api
+        - image: ccccontainers.azurecr.io/api:v1
           name: api
           ports:
           - containerPort: 4000
           resources: {}
         restartPolicy: Always
+        imagePullSecrets:
+        - name: acr-auth
   status: {}
 - apiVersion: extensions/v1beta1
   kind: Deployment
@@ -140,12 +142,14 @@ items:
         containers:
         - env:
           - name: POSTGRES_PASSWORD
+            value: chip_dev
           image: postgres
           name: db
           resources: {}
           volumeMounts:
           - mountPath: /var/lib/postgresql/data
             name: pgdata
+            subPath: postgres
         restartPolicy: Always
         volumes:
         - name: pgdata
@@ -187,12 +191,14 @@ items:
           io.kompose.service: front
       spec:
         containers:
-        - image: front
+        - image: ccccontainers.azurecr.io/front:v1
           name: front
           ports:
           - containerPort: 3000
           resources: {}
         restartPolicy: Always
+        imagePullSecrets:
+        - name: acr-auth
   status: {}
 kind: List
 metadata: {}

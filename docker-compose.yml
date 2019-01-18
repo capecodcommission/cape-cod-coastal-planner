@@ -5,6 +5,7 @@ services:
   front:
     container_name: front
     build: ./chip_app
+    image: ccccontainers.azurecr.io/front:v1
     depends_on:
       - db
       - api
@@ -16,6 +17,7 @@ services:
   api:
     container_name: api
     build: ./chip_api
+    image: ccccontainers.azurecr.io/api:v1
     depends_on:
       - db
     ports:
@@ -28,7 +30,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: ${PG_PW}
+      POSTGRES_PASSWORD: "chip_dev"
 
   admin:
     container_name: admin
