@@ -19,6 +19,36 @@ cd cape-cod-coastal-planner/
 docker-compose up
 ```
 
+## Kubernetes
+### Deployment
+To deploy to Azure Kubernetes Cluster CCC-AKS-DEV-01
+```bash
+# Log in to Azure
+az login
+
+# Connect to cluster
+az aks get-credentials --resource-group CCC-AKSGroup --name CCC-AKS-DEV-01
+
+# Convert the Docker Compose file into a Kubernetes config file
+kompose convert -f docker-compose.yml -o kubernetes-compose.yml
+
+# If containers haven't yet been created on AKS, create Kubernetes containers on AKS Cluster
+kubectl create -f kubernetes-compose.yml
+
+# Deploy new Kubernetes config to AKS Cluster
+kubectl apply -f kubernetes-compose.yml
+```
+
+### Administration
+To view the CCC-AKS-DEV-01 Cluster:
+```bash
+# Log into Azure
+az login
+
+# Start local webapp to view CCC-AKS-DEV-01
+az aks browse --resource-group CCC-AKSGroup --name CCC-AKS-DEV-01
+```
+
 
 ## TIMMONS PROD SETUP
 CHIP_DB_USERNAME=chipdbuser
