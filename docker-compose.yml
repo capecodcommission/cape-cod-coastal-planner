@@ -1,23 +1,21 @@
-version: '3.1'
+version: "3.1"
 
 services:
 
   front:
     container_name: front
-    build: ./chip_app
-    image: ccccontainers.azurecr.io/front:v1
+    build: "./chip_app"
+    image: ccccontainers.azurecr.io/front:v2
     depends_on:
       - db
       - api
     ports:
       - 3000:3000
-    # volumes:
-    #   - ./chip_app/src:/app/src
     
   api:
     container_name: api
-    build: ./chip_api
-    image: ccccontainers.azurecr.io/api:v1
+    build: "./chip_api"
+    image: ccccontainers.azurecr.io/api:v3
     depends_on:
       - db
     ports:
