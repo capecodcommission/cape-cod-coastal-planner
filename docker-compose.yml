@@ -15,7 +15,7 @@ services:
   api:
     container_name: api
     build: "./chip_api"
-    image: ccccontainers.azurecr.io/api:v3
+    image: ccccontainers.azurecr.io/api:v2
     depends_on:
       - db
     ports:
