@@ -5,7 +5,7 @@ services:
   front:
     container_name: front
     build: "./chip_app"
-    image: ccccontainers.azurecr.io/front:v2
+    image: ccccontainers.azurecr.io/front:latest
     depends_on:
       - db
       - api
@@ -15,7 +15,7 @@ services:
   api:
     container_name: api
     build: "./chip_api"
-    image: ccccontainers.azurecr.io/api:v2
+    image: ccccontainers.azurecr.io/api:latest
     depends_on:
       - db
     ports:

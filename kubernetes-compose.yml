@@ -109,7 +109,7 @@ items:
           io.kompose.service: api
       spec:
         containers:
-        - image: ccccontainers.azurecr.io/api:v2
+        - image: ccccontainers.azurecr.io/api:latest
           name: api
           ports:
           - containerPort: 4000
@@ -189,7 +189,7 @@ items:
           io.kompose.service: front
       spec:
         containers:
-        - image: ccccontainers.azurecr.io/front:v2
+        - image: ccccontainers.azurecr.io/front:latest
           name: front
           ports:
           - containerPort: 3000

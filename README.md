@@ -33,9 +33,12 @@ az acr login --name ccccontainers
 docker build ./chip_app -t ccccontainers.azurecr.io/front:v1
 docker build ./chip_api -t ccccontainers.azurecr.io/api:v1
 
-# Push images to ACR
-docker push ccccontainers.azurecr.io/front:v1
-docker push ccccontainers.azurecr.io/api:v1
+# Push images to ACR, use :latest for default tag
+docker push ccccontainers.azurecr.io/front:latest
+docker push ccccontainers.azurecr.io/api:tagname
+
+# To remove local images and build cache
+docker system prune -a
 ```
 
 ## Kubernetes
@@ -48,17 +51,33 @@ az login
 # Connect to cluster
 az aks get-credentials --resource-group CCC-AKSGroup --name CCC-AKS-DEV-01
 
+# View status of pods, services, deployments, recplicasets
+kubectl get pods
+kubectl get services
+kubectl get deployments
+
 # Convert the Docker Compose file into a Kubernetes config file
 kompose convert -f docker-compose.yml -o kubernetes-compose.yml
 
 # If containers haven't yet been created on AKS, create Kubernetes containers on AKS Cluster
 kubectl create -f kubernetes-compose.yml
 
+# After creation of containers, expose a deployment to other containers internally on the Kubernetes cluster
+# Allows other containers to access the container using its name, ie. "db", "api"
+kubectl expose deploy db --port=5432 --target-port=5432
+
+# Expose front through Load Balancer, given an External IP address to use
+kubectl expose deployment front --type=LoadBalancer --name=cccp
+
 # Deploy new Kubernetes config to AKS Cluster
+# NOTE: Run only when kubernetes-compose.yml file changes
 kubectl apply -f kubernetes-compose.yml
 
 # To delete all services, deployments, pods, replicasets, volumes, etc
 kubectl delete daemonsets,replicasets,services,deployments,pods,rc --all
+
+# To delete a persistent volume and claim
+kubectl delete pvc -n volumeName
 ```
 
 ### Administration
