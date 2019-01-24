@@ -22,7 +22,7 @@ config :chip_api, ChipApi.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   database: "chip_api_test",
-  hostname: "localhost",
+  hostname: "db",
   port: 5432,
   pool: Ecto.Adapters.SQL.Sandbox
 
