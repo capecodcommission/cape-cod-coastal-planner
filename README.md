@@ -15,8 +15,60 @@ Architecture Decision Records can be found in `ccc/docs/architecture` and docume
 # Navigate to the project directory
 cd cape-cod-coastal-planner/
 
-# Run all services
+# Run all services locally
 docker-compose up
+```
+
+## Azure
+To build and push local images to Azure Container Registry
+```bash
+# Log in to Azure
+az login
+
+# Log in to Azure Container Registry ccccontainers
+az acr login --name ccccontainers
+
+# Build local images from Dockerfile directories and tag with ACR login server name
+# NOTE: Increment tag version number for each additional build
+docker build ./chip_app -t ccccontainers.azurecr.io/front:v1
+docker build ./chip_api -t ccccontainers.azurecr.io/api:v1
+
+# Push images to ACR
+docker push ccccontainers.azurecr.io/front:v1
+docker push ccccontainers.azurecr.io/api:v1
+```
+
+## Kubernetes
+### Deployment
+To deploy to Azure Kubernetes Cluster CCC-AKS-DEV-01
+```bash
+# Log in to Azure
+az login
+
+# Connect to cluster
+az aks get-credentials --resource-group CCC-AKSGroup --name CCC-AKS-DEV-01
+
+# Convert the Docker Compose file into a Kubernetes config file
+kompose convert -f docker-compose.yml -o kubernetes-compose.yml
+
+# If containers haven't yet been created on AKS, create Kubernetes containers on AKS Cluster
+kubectl create -f kubernetes-compose.yml
+
+# Deploy new Kubernetes config to AKS Cluster
+kubectl apply -f kubernetes-compose.yml
+
+# To delete all services, deployments, pods, replicasets, volumes, etc
+kubectl delete daemonsets,replicasets,services,deployments,pods,rc --all
+```
+
+### Administration
+To view the CCC-AKS-DEV-01 Cluster:
+```bash
+# Log into Azure
+az login
+
+# Start local webapp to view CCC-AKS-DEV-01
+az aks browse --resource-group CCC-AKSGroup --name CCC-AKS-DEV-01
 ```
 
 
