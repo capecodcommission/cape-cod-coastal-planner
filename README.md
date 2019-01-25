@@ -42,12 +42,12 @@ az acr login --name ccccontainers
 
 # Build local images from Dockerfile directories and tag with ACR login server name
 # NOTE: Increment tag version number for each additional build
-docker build ./chip_app -t ccccontainers.azurecr.io/front:v1
-docker build ./chip_api -t ccccontainers.azurecr.io/api:v1
+docker build ./chip_app -t ccccontainers.azurecr.io/front:latest
+docker build ./chip_api -t ccccontainers.azurecr.io/api:latest
 
 # Push images to ACR, use :latest for default tag
 docker push ccccontainers.azurecr.io/front:latest
-docker push ccccontainers.azurecr.io/api:tagname
+docker push ccccontainers.azurecr.io/api:latest
 
 # To remove local images and build cache
 docker system prune -a
