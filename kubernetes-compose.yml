@@ -196,6 +196,19 @@ items:
           resources: {}
         restartPolicy: Always
   status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: azure-load-balancer
+  spec:
+    loadBalancerIP: 40.117.154.127
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 3000
+    selector:
+      io.kompose.service: front
+  status: {}
 kind: List
 metadata: {}
 

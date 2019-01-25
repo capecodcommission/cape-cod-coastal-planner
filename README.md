@@ -19,6 +19,18 @@ cd cape-cod-coastal-planner/
 docker-compose up
 ```
 
+## AKS Specs
+```bash
+# Resource Group
+CCC-AKSGroup
+
+# Kubernetes Service
+CCC-AKS-DEV-01
+
+# Node Resource Group
+MC_CCC-AKSGroup_CCC-AKS-DEV-01_eastus
+```
+
 ## Azure
 To build and push local images to Azure Container Registry
 ```bash
