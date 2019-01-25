@@ -5,7 +5,7 @@ items:
   metadata:
     annotations:
       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-        convert -f docker-compose.yml -o kubernetes-compose.yml
+        convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
@@ -25,7 +25,7 @@ items:
   metadata:
     annotations:
       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-        convert -f docker-compose.yml -o kubernetes-compose.yml
+        convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
@@ -45,7 +45,7 @@ items:
   metadata:
     annotations:
       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-        convert -f docker-compose.yml -o kubernetes-compose.yml
+        convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
@@ -65,7 +65,7 @@ items:
   metadata:
     annotations:
       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-        convert -f docker-compose.yml -o kubernetes-compose.yml
+        convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
@@ -93,7 +93,7 @@ items:
   metadata:
     annotations:
       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-        convert -f docker-compose.yml -o kubernetes-compose.yml
+        convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
@@ -109,7 +109,7 @@ items:
           io.kompose.service: api
       spec:
         containers:
-        - image: ccccontainers.azurecr.io/api:latest
+        - image: api
           name: api
           ports:
           - containerPort: 4000
@@ -121,7 +121,7 @@ items:
   metadata:
     annotations:
       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-        convert -f docker-compose.yml -o kubernetes-compose.yml
+        convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
@@ -140,14 +140,12 @@ items:
         containers:
         - env:
           - name: POSTGRES_PASSWORD
-            value: chip_dev
           image: postgres
           name: db
           resources: {}
           volumeMounts:
           - mountPath: /var/lib/postgresql/data
             name: pgdata
-            subPath: postgres
         restartPolicy: Always
         volumes:
         - name: pgdata
@@ -173,7 +171,7 @@ items:
   metadata:
     annotations:
       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-        convert -f docker-compose.yml -o kubernetes-compose.yml
+        convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
@@ -189,25 +187,12 @@ items:
           io.kompose.service: front
       spec:
         containers:
-        - image: ccccontainers.azurecr.io/front:latest
+        - image: front
           name: front
           ports:
           - containerPort: 3000
           resources: {}
         restartPolicy: Always
-  status: {}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    name: azure-load-balancer
-  spec:
-    loadBalancerIP: 40.117.154.127
-    type: LoadBalancer
-    ports:
-    - port: 80
-      targetPort: 3000
-    selector:
-      io.kompose.service: front
   status: {}
 kind: List
 metadata: {}
