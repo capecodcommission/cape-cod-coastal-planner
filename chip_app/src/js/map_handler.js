@@ -61,6 +61,7 @@ class MapHandler {
                 case "render_slr":
                     this.renderSLR(data);
                     this.renderDisconnectedRoads(data);
+                    this.disableSLRLayers(data)
                     break;
 
                 case "disable_sea_level_rise":
@@ -332,6 +333,7 @@ class MapHandler {
     }
 
     renderSLR(data) {
+
         switch (data) {
 
             case "1":
@@ -533,6 +535,30 @@ class MapHandler {
             return i.get("name") === "select_vulnerability_ribbon";
         });
         return interactions.length > 0 ? interactions[0] : null;
+    }
+
+    disableSLRLayers(data) {
+
+        const disSLRLayers = ["disable_slr1ft", "disable_slr2ft", "disable_slr3ft", "disable_slr4ft", "disable_slr5ft", "disable_slr6ft"]
+        const disDRLayers = ["disable_dr1ft", "disable_dr2ft", "disable_dr3ft", "disable_dr4ft", "disable_dr5ft", "disable_dr6ft"]
+
+        disSLRLayers.map((layer) => {
+            if (layer != "disable_slr" + data + "ft") {
+                this.map.dispatchEvent({
+                    "type": layer,
+                    "data": data
+                });
+            }
+        })
+
+        disDRLayers.map((layer) => {
+            if (layer != "disable_dr" + data + "ft") {
+                this.map.dispatchEvent({
+                    "type": layer,
+                    "data": data
+                });
+            }
+        })
     }
 }
 
