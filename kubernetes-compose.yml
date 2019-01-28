@@ -9,26 +9,6 @@ items:
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
-      io.kompose.service: admin
-    name: admin
-  spec:
-    ports:
-    - name: "8080"
-      port: 8080
-      targetPort: 8080
-    selector:
-      io.kompose.service: admin
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-        convert -f docker-compose.yml -o kubernetes-compose.yml
-      kompose.version: 1.17.0 (a74acad)
-    creationTimestamp: null
-    labels:
       io.kompose.service: api
     name: api
   spec:
@@ -60,34 +40,6 @@ items:
       io.kompose.service: front
   status:
     loadBalancer: {}
-- apiVersion: extensions/v1beta1
-  kind: Deployment
-  metadata:
-    annotations:
-      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-        convert -f docker-compose.yml -o kubernetes-compose.yml
-      kompose.version: 1.17.0 (a74acad)
-    creationTimestamp: null
-    labels:
-      io.kompose.service: admin
-    name: admin
-  spec:
-    replicas: 1
-    strategy: {}
-    template:
-      metadata:
-        creationTimestamp: null
-        labels:
-          io.kompose.service: admin
-      spec:
-        containers:
-        - image: adminer
-          name: admin
-          ports:
-          - containerPort: 8080
-          resources: {}
-        restartPolicy: Always
-  status: {}
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
@@ -209,6 +161,21 @@ items:
     selector:
       io.kompose.service: front
   status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      io.kompose.service: db
+    name: db
+  spec:
+    ports:
+    - name: "5432"
+      port: 5432
+      targetPort: 5432
+    selector:
+      io.kompose.service: db
+  status:
+    loadBalancer: {}
 kind: List
 metadata: {}
 

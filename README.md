@@ -74,22 +74,15 @@ kompose convert -f docker-compose.yml -o kubernetes-compose.yml
 # If containers haven't yet been created on AKS, create Kubernetes containers on AKS Cluster
 kubectl create -f kubernetes-compose.yml
 
-# After creation of containers, expose a deployment to other containers internally on the Kubernetes cluster
-# Allows other containers to access the container using its name, ie. "db", "api"
-kubectl expose deploy db --port=5432 --target-port=5432
-
-# Expose front through Load Balancer, given an External IP address to use
-kubectl expose deployment front --type=LoadBalancer --name=cccp
-
 # Deploy new Kubernetes config to AKS Cluster
 # NOTE: Run only when kubernetes-compose.yml file changes
 kubectl apply -f kubernetes-compose.yml
 
-# To delete all services, deployments, pods, replicasets, volumes, etc
+# To delete all services, deployments, pods, replicasets, volumes
 kubectl delete daemonsets,replicasets,services,deployments,pods,rc --all
 
 # To delete a persistent volume and claim
-kubectl delete pvc -n volumeName
+kubectl delete pvc volumeName
 ```
 
 ### Administration
