@@ -38,7 +38,7 @@ To build and push local images to Azure Container Registry
 az login
 
 # Log in to Azure Container Registry ccccontainers
-az acr login --name ccccontainers
+az acr login -n ccccontainers
 
 # Build local images from Dockerfile directories and tag with ACR login server name
 # NOTE: Increment tag version number for each additional build
@@ -46,8 +46,8 @@ docker build ./chip_app -t ccccontainers.azurecr.io/front:latest
 docker build ./chip_api -t ccccontainers.azurecr.io/api:latest
 
 # Push images to ACR, use :latest for default tag
-docker push ccccontainers.azurecr.io/front:latest
-docker push ccccontainers.azurecr.io/api:latest
+docker push ccccontainers.azurecr.io/project-front:latest
+docker push ccccontainers.azurecr.io/project-api:latest
 
 # To remove local images and build cache
 docker system prune -a

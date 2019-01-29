@@ -9,15 +9,15 @@ items:
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
-      io.kompose.service: api
-    name: api
+      io.kompose.service: cccpapi
+    name: cccpapi
   spec:
     ports:
     - name: "4000"
       port: 4000
       targetPort: 4000
     selector:
-      io.kompose.service: api
+      io.kompose.service: cccpapi
   status:
     loadBalancer: {}
 - apiVersion: v1
@@ -29,15 +29,15 @@ items:
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
-      io.kompose.service: front
-    name: front
+      io.kompose.service: cccpfront
+    name: cccpfront
   spec:
     ports:
     - name: "3000"
       port: 3000
       targetPort: 3000
     selector:
-      io.kompose.service: front
+      io.kompose.service: cccpfront
   status:
     loadBalancer: {}
 - apiVersion: extensions/v1beta1
@@ -49,8 +49,8 @@ items:
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
-      io.kompose.service: api
-    name: api
+      io.kompose.service: cccpapi
+    name: cccpapi
   spec:
     replicas: 1
     strategy: {}
@@ -58,11 +58,11 @@ items:
       metadata:
         creationTimestamp: null
         labels:
-          io.kompose.service: api
+          io.kompose.service: cccpapi
       spec:
         containers:
-        - image: ccccontainers.azurecr.io/api:latest
-          name: api
+        - image: ccccontainers.azurecr.io/cccpapi:v1
+          name: cccpapi
           ports:
           - containerPort: 4000
           resources: {}
@@ -77,8 +77,8 @@ items:
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
-      io.kompose.service: db
-    name: db
+      io.kompose.service: cccpdb
+    name: cccpdb
   spec:
     replicas: 1
     strategy:
@@ -87,14 +87,14 @@ items:
       metadata:
         creationTimestamp: null
         labels:
-          io.kompose.service: db
+          io.kompose.service: cccpdb
       spec:
         containers:
         - env:
           - name: POSTGRES_PASSWORD
             value: chip_dev
           image: postgres
-          name: db
+          name: cccpdb
           resources: {}
           volumeMounts:
           - mountPath: /var/lib/postgresql/data
@@ -129,8 +129,8 @@ items:
       kompose.version: 1.17.0 (a74acad)
     creationTimestamp: null
     labels:
-      io.kompose.service: front
-    name: front
+      io.kompose.service: cccpfront
+    name: cccpfront
   spec:
     replicas: 1
     strategy: {}
@@ -138,11 +138,11 @@ items:
       metadata:
         creationTimestamp: null
         labels:
-          io.kompose.service: front
+          io.kompose.service: cccpfront
       spec:
         containers:
-        - image: ccccontainers.azurecr.io/front:latest
-          name: front
+        - image: ccccontainers.azurecr.io/cccpfront:v1
+          name: cccpfront
           ports:
           - containerPort: 3000
           resources: {}
@@ -151,7 +151,7 @@ items:
 - apiVersion: v1
   kind: Service
   metadata:
-    name: azure-load-balancer
+    name: cccp-load-balancer
   spec:
     loadBalancerIP: 40.117.154.127
     type: LoadBalancer
@@ -159,21 +159,21 @@ items:
     - port: 80
       targetPort: 3000
     selector:
-      io.kompose.service: front
+      io.kompose.service: cccpfront
   status: {}
 - apiVersion: v1
   kind: Service
   metadata:
     labels:
-      io.kompose.service: db
-    name: db
+      io.kompose.service: cccpdb
+    name: cccpdb
   spec:
     ports:
     - name: "5432"
       port: 5432
       targetPort: 5432
     selector:
-      io.kompose.service: db
+      io.kompose.service: cccpdb
   status:
     loadBalancer: {}
 kind: List
