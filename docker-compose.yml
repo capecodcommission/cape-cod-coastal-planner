@@ -5,7 +5,7 @@ services:
   cccpfront:
     container_name: cccpfront
     build: "./chip_app"
-    image: ccccontainers.azurecr.io/cccp-front:v1
+    image: ccccontainers.azurecr.io/cccp-front:latest
     depends_on:
       - cccpdb
       - cccpapi
@@ -15,7 +15,7 @@ services:
   cccpapi:
     container_name: cccpapi
     build: "./chip_api"
-    image: ccccontainers.azurecr.io/cccp-api:v1
+    image: ccccontainers.azurecr.io/cccp-api:latest
     depends_on:
       - cccpdb
     ports:

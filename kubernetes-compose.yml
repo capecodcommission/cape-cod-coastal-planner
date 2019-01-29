@@ -61,7 +61,7 @@ items:
           io.kompose.service: cccpapi
       spec:
         containers:
-        - image: ccccontainers.azurecr.io/cccpapi:v1
+        - image: ccccontainers.azurecr.io/cccp-api:latest
           name: cccpapi
           ports:
           - containerPort: 4000
@@ -141,7 +141,7 @@ items:
           io.kompose.service: cccpfront
       spec:
         containers:
-        - image: ccccontainers.azurecr.io/cccpfront:v1
+        - image: ccccontainers.azurecr.io/cccp-front:latest
           name: cccpfront
           ports:
           - containerPort: 3000
