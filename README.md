@@ -63,7 +63,7 @@ az login
 # Connect to cluster
 az aks get-credentials --resource-group CCC-AKSGroup --name CCC-AKS-DEV-01
 
-# View status of pods, services, deployments, recplicasets
+# View status of pods, services, deployments, and recplicasets
 kubectl get pods
 kubectl get services
 kubectl get deployments
@@ -72,7 +72,7 @@ kubectl get deployments
 kompose convert -f docker-compose.yml -o kubernetes-compose.yml
 
 # Deploy new Kubernetes config to AKS Cluster
-# NOTE: Run only when kubernetes-compose.yml file changes
+# Please note: Run only when kubernetes-compose.yml file changes
 kubectl apply -f kubernetes-compose.yml
 
 # To delete all services, deployments, pods, replicasets, volumes
