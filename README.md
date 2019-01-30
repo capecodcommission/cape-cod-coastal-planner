@@ -38,16 +38,16 @@ To build and push local images to Azure Container Registry
 az login
 
 # Log in to Azure Container Registry ccccontainers
-az acr login --name ccccontainers
+az acr login -n ccccontainers
 
 # Build local images from Dockerfile directories and tag with ACR login server name
 # NOTE: Increment tag version number for each additional build
-docker build ./chip_app -t ccccontainers.azurecr.io/front:latest
-docker build ./chip_api -t ccccontainers.azurecr.io/api:latest
+docker build ./chip_app -t ccccontainers.azurecr.io/cccp-front:latest
+docker build ./chip_api -t ccccontainers.azurecr.io/cccp-api:latest
 
 # Push images to ACR, use :latest for default tag
-docker push ccccontainers.azurecr.io/front:latest
-docker push ccccontainers.azurecr.io/api:latest
+docker push ccccontainers.azurecr.io/cccp-front:latest
+docker push ccccontainers.azurecr.io/cccp-api:latest
 
 # To remove local images and build cache
 docker system prune -a
@@ -71,9 +71,6 @@ kubectl get deployments
 # Convert the Docker Compose file into a Kubernetes config file
 kompose convert -f docker-compose.yml -o kubernetes-compose.yml
 
-# If containers haven't yet been created on AKS, create Kubernetes containers on AKS Cluster
-kubectl create -f kubernetes-compose.yml
-
 # Deploy new Kubernetes config to AKS Cluster
 # NOTE: Run only when kubernetes-compose.yml file changes
 kubectl apply -f kubernetes-compose.yml
@@ -82,7 +79,7 @@ kubectl apply -f kubernetes-compose.yml
 kubectl delete daemonsets,replicasets,services,deployments,pods,rc --all
 
 # To delete a persistent volume and claim
-kubectl delete pvc volumeName
+kubectl delete pvc pgdata
 ```
 
 ### Administration
