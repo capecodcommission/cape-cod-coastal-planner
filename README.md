@@ -55,7 +55,7 @@ docker system prune -a
 
 ## Kubernetes
 ### Deployment
-To deploy to Azure Kubernetes Cluster CCC-AKS-DEV-01
+To deploy to Azure Kubernetes Cluster (AKS) CCC-AKS-DEV-01
 ```bash
 # Log in to Azure
 az login
@@ -85,7 +85,7 @@ kubectl delete pvc pgdata
 ### Administration
 To view the CCC-AKS-DEV-01 Cluster:
 ```bash
-# Log into Azure
+# Log in
 az login
 
 # Start local webapp to view CCC-AKS-DEV-01
