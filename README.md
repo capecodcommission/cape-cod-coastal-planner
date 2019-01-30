@@ -37,7 +37,7 @@ To build and push local images to Azure Container Registry
 # Log in to Azure
 az login
 
-# Log in to Azure Container Registry ccccontainers
+# Log in to Azure Container Registry (ACR) ccccontainers
 az acr login -n ccccontainers
 
 # Build local images from Dockerfile directories and tag with ACR login server name
