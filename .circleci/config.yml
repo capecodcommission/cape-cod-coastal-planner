@@ -1,0 +1,28 @@
+version: 2.0
+jobs:
+  BuildPush:
+    docker:
+      - image: circleci/node
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Build and Push to ACR
+          command: |
+            echo use Mix.Config >> ./chip_api/config/dev.secret.exs
+            echo config :chip_api, ChipApi.Repo, password: "\"$PGPW\"" >> ./chip_api/config/dev.secret.exs
+            echo use Mix.Config >> ./chip_api/config/test.secret.exs
+            echo config :chip_api, ChipApi.Repo, password: "\"$PGPW\"" >> ./chip_api/config/test.secret.exs
+            docker build ./chip_app -t ccccontainers.azurecr.io/cccp-front:latest
+            docker build ./chip_api -t ccccontainers.azurecr.io/cccp-api:latest
+            docker login ccccontainers.azurecr.io -u ccccontainers -p $CCCCONTAINERSPW
+            docker push ccccontainers.azurecr.io/cccp-front:latest
+            docker push ccccontainers.azurecr.io/cccp-api:latest
+workflows:
+  version: 2
+  CCCP_Workflow:
+    jobs:
+      - BuildPush:
+          filters:
+            branches:
+              only: master
