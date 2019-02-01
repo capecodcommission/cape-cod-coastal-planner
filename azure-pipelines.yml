@@ -10,13 +10,13 @@ steps:
 - bash: echo use Mix.Config >> ./chip_api/config/dev.secret.exs
   displayName: 'Mix.Config'
 
-- bash: echo config :chip_api, ChipApi.Repo, password:$(pgPassword) >> ./chip_api/config/dev.secret.exs
+- bash: echo config :chip_api, ChipApi.Repo, password: $(pgPassword) >> ./chip_api/config/dev.secret.exs
   displayName: 'config chip_api dev'
 
 - bash: echo use Mix.Config >> ./chip_api/config/test.secret.exs
   displayName: 'Mix.Config'
 
-- bash: echo config :chip_api, ChipApi.Repo, password:$(pgPassword) >> ./chip_api/config/test.secret.exs
+- bash: echo config :chip_api, ChipApi.Repo, password: $(pgPassword) >> ./chip_api/config/test.secret.exs
   displayName: 'config chip_api test'
 
 - bash: docker build ./chip_app -t $(registryName).azurecr.io/$(frontImageName)
