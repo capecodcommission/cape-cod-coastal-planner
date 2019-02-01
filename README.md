@@ -34,8 +34,6 @@ MC_CCC-AKSGroup_CCC-AKS-DEV-01_eastus
 ## Azure
 To build and push local images to Azure Container Registry
 ```bash
-# Log in to Azure
-az login
 
 # Log in to Azure Container Registry (ACR) ccccontainers
 az acr login -n ccccontainers
