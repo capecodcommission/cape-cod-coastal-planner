@@ -60,6 +60,6 @@
     "reactor": "elm-reactor",
     "test": "elm-test",
     "analyse": "elm-analyse -s",
-    "api": "graphqelm http://cccpapi:4000/api --base ChipApi"
+     "api": "graphqelm http://cccpapidev:9000/api --base ChipApi"
   }
 }

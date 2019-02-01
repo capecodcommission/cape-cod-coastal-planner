@@ -2,24 +2,24 @@ version: "3.1"
 
 services:
 
-  cccpfront:
-    container_name: cccpfront
+  cccpfrontdev:
+    container_name: cccpfrontdev
     build: "./chip_app"
     image: ccccontainers.azurecr.io/cccp-front:latest
     depends_on:
       - cccpdb
-      - cccpapi
+      - cccpapidev
     ports:
-      - 3000:3000
+      - 3002:3002
     
-  cccpapi:
-    container_name: cccpapi
+  cccpapidev:
+    container_name: cccpapidev
     build: "./chip_api"
     image: ccccontainers.azurecr.io/cccp-api:latest
     depends_on:
       - cccpdb
     ports:
-      - 4000:4000
+      - 9000:9000
 
   cccpdb:
     container_name: cccpdb
