@@ -7,32 +7,31 @@ variables:
 - group: cccpVariableGroup
 
 steps:
-- bash: |
-    echo use Mix.Config >> ./chip_api/config/dev.secret.exs
+- bash: echo use Mix.Config >> ./chip_api/config/dev.secret.exs
   displayName: 'Mix.Config'
 
-    echo config :chip_api, ChipApi.Repo, password: "\"$(pgPassword)\"" >> ./chip_api/config/dev.secret.exs
+- bash: echo config :chip_api, ChipApi.Repo, password: $(pgPassword) >> ./chip_api/config/dev.secret.exs
   displayName: 'config chip_api dev'
 
-    echo use Mix.Config >> ./chip_api/config/test.secret.exs
+- bash: echo use Mix.Config >> ./chip_api/config/test.secret.exs
   displayName: 'Mix.Config'
 
-    echo config :chip_api, ChipApi.Repo, password: "\"$(pgPassword)\"" >> ./chip_api/config/test.secret.exs
+- bash: echo config :chip_api, ChipApi.Repo, password: $(pgPassword) >> ./chip_api/config/test.secret.exs
   displayName: 'config chip_api test'
 
-    docker build ./chip_app -t $(registryName).azurecr.io/$(frontImageName)
+- bash: docker build ./chip_app -t $(registryName).azurecr.io/$(frontImageName)
   displayName: 'docker build frontImageName'
 
-    docker build ./chip_api -t $(registryName).azurecr.io/$(apiImageName)
+- bash: docker build ./chip_api -t $(registryName).azurecr.io/$(apiImageName)
   displayName: 'docker build apiImageName'
 
-    docker login $(registryName).azurecr.io -u $(registryName) -p $(registryPassword)
+-bash: docker login $(registryName).azurecr.io -u $(registryName) -p $(registryPassword)
   displayName: 'docker login acr'
 
-    docker push $(registryName).azurecr.io/$(frontImageName)
+- bash: docker push $(registryName).azurecr.io/$(frontImageName)
   displayName: 'docker push frontImageName'
 
-    docker push $(registryName).azurecr.io/$(apiImageName)
+- bash: docker push $(registryName).azurecr.io/$(apiImageName)
   displayName: 'docker push apiImageName'
 
 trigger:

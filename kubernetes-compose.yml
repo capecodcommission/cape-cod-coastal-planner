@@ -47,9 +47,13 @@ items:
       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
         convert -f docker-compose.yml -o kubernetes-compose.yml
       kompose.version: 1.17.0 (a74acad)
+      keel.sh/pollSchedule: "@every 1m"
     creationTimestamp: null
     labels:
       io.kompose.service: cccpapi
+      keel.sh/policy: major
+      keel.sh/trigger: poll
+      keel.sh/policy: force
     name: cccpapi
   spec:
     replicas: 1
@@ -63,6 +67,7 @@ items:
         containers:
         - image: ccccontainers.azurecr.io/cccp-api:latest
           name: cccpapi
+          imagePullPolicy: Always
           ports:
           - containerPort: 4000
           resources: {}
@@ -127,9 +132,13 @@ items:
       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
         convert -f docker-compose.yml -o kubernetes-compose.yml
       kompose.version: 1.17.0 (a74acad)
+      keel.sh/pollSchedule: "@every 1m"
     creationTimestamp: null
     labels:
       io.kompose.service: cccpfront
+      keel.sh/policy: major
+      keel.sh/trigger: poll
+      keel.sh/policy: force
     name: cccpfront
   spec:
     replicas: 1
@@ -143,6 +152,7 @@ items:
         containers:
         - image: ccccontainers.azurecr.io/cccp-front:latest
           name: cccpfront
+          imagePullPolicy: Always
           ports:
           - containerPort: 3000
           resources: {}
@@ -176,6 +186,165 @@ items:
       io.kompose.service: cccpdb
   status:
     loadBalancer: {}
+- apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: "keel"
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: keel
+    namespace: keel
+    labels:
+      app: keel
+      chart: keel-0.7.0
+      release: keel
+      heritage: Tiller
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRole
+  metadata:
+    name: keel
+  rules:
+    - apiGroups:
+        - ""
+      resources:
+        - namespaces
+      verbs:
+        - watch
+        - list
+    - apiGroups:
+        - ""
+      resources:
+        - secrets
+      verbs:
+        - get
+        - watch
+        - list
+    - apiGroups:
+        - ""
+        - extensions
+        - apps
+        - batch
+      resources:
+        - pods
+        - replicasets
+        - replicationcontrollers
+        - statefulsets
+        - deployments
+        - daemonsets
+        - jobs
+        - cronjobs
+      verbs:
+        - get
+        - delete # required to delete pods during force upgrade of the same tag
+        - watch
+        - list
+        - update
+    - apiGroups:
+        - ""
+      resources:
+        - configmaps
+      verbs:
+        - get
+        - create
+        - update
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRoleBinding
+  metadata:
+    name: keel
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: keel
+  subjects:
+    - kind: ServiceAccount
+      name: keel
+      namespace: keel
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: keel
+    namespace: keel
+    labels:
+      app: keel
+      chart: keel-0.7.0
+      release: keel
+      heritage: Tiller
+  spec:
+    type: LoadBalancer
+    ports:
+      - port: 9300
+        targetPort: 9300
+        protocol: TCP
+        name: keel
+    selector:
+      app: keel
+    sessionAffinity: None
+- apiVersion: apps/v1beta2
+  kind: Deployment
+  metadata:
+    name: keel
+    namespace: keel
+    labels:
+      app: keel
+      chart: keel-0.7.0
+      release: keel
+      heritage: Tiller
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: keel
+        release: keel
+    template:
+      metadata:
+        labels:
+          app: keel
+          release: keel
+      spec:
+        serviceAccountName: keel
+        containers:
+          - name: keel
+            # Note that we use appVersion to get images tag.
+            image: "keelhq/keel:0.12.0"
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/keel"]
+            env:
+              - name: NAMESPACE
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
+              # Enable polling
+              - name: POLL
+                value: "1"
+              # Enable insecure registries
+              - name: INSECURE_REGISTRY
+                value: "true"
+            ports:
+              - containerPort: 9300
+            livenessProbe:
+              httpGet:
+                path: /healthz
+                port: 9300
+              initialDelaySeconds: 30
+              timeoutSeconds: 10
+            resources:
+              limits:
+                cpu: 100m
+                memory: 128Mi
+              requests:
+                cpu: 50m
+                memory: 64Mi
+- apiVersion: policy/v1beta1
+  kind: PodDisruptionBudget
+  metadata:
+    name: keel
+    namespace: keel
+  spec:
+    maxUnavailable: 1
+    selector:
+      matchLabels:
+        app: keel
 kind: List
 metadata: {}
 
