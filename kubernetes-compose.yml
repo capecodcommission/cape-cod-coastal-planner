@@ -185,7 +185,7 @@ items:
   metadata:
     name: cccp-load-balancer
   spec:
-    loadBalancerIP: 40.117.154.127
+    loadBalancerIP: 52.168.124.32
     type: LoadBalancer
     ports:
     - port: 80

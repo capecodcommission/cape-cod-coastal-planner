@@ -33,10 +33,10 @@ Pushing to dev or master branches will trigger our pipeline:
 CCC-AKSGroup
 
 # Kubernetes Service
-CCC-AKS-DEV-01
+CCC-AKS-01
 
 # Node Resource Group
-MC_CCC-AKSGroup_CCC-AKS-DEV-01_eastus
+MC_CCC-AKSGroup_CCC-AKS-01_eastus
 ```
 
 ## Azure
@@ -61,13 +61,13 @@ docker system prune -a
 
 ## Kubernetes
 ### Deployment
-To deploy to Azure Kubernetes Cluster (AKS) CCC-AKS-DEV-01
+To deploy to Azure Kubernetes Cluster (AKS) CCC-AKS-01
 ```bash
 # Log in to Azure
 az login
 
 # Connect to cluster
-az aks get-credentials --resource-group CCC-AKSGroup --name CCC-AKS-DEV-01
+az aks get-credentials --resource-group CCC-AKSGroup --name CCC-AKS-01
 
 # View status of pods, services, deployments, and recplicasets
 kubectl get pods
@@ -81,11 +81,17 @@ kompose convert -f docker-compose.yml -o kubernetes-compose.yml
 # Please note: Run only when kubernetes-compose.yml file changes
 kubectl apply -f kubernetes-compose.yml
 
+# Enter an interactive terminal into a pod id
+kubectl exec -it cccpapi-1234567 -- /bin/bash
+
+# Install Keel on an RBAC-enabled cluster
+helm upgrade --install keel --namespace=keel keel/keel --set service.enabled="true" 
+
 # To delete all services, deployments, pods, replicasets, volumes
 kubectl delete daemonsets,replicasets,services,deployments,pods,rc --all
 
 # To delete a persistent volume and claim
-kubectl delete pvc pgdata
+kubectl delete pvc pgdata-claim
 ```
 
 ### Administration
@@ -95,5 +101,5 @@ To view the CCC-AKS-DEV-01 Cluster:
 az login
 
 # Start local webapp to view CCC-AKS-DEV-01
-az aks browse --resource-group CCC-AKSGroup --name CCC-AKS-DEV-01
+az aks browse --resource-group CCC-AKSGroup --name CCC-AKS-01
 ```
