@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Cape Cod Coastal Planner",
   "main": "index.js",
-  "author": "Timmons Group, Inc.",
+  "author": "Cape Cod Commission",
   "license": "ISC",
   "private": true,
   "dependencies": {
@@ -60,6 +60,6 @@
     "reactor": "elm-reactor",
     "test": "elm-test",
     "analyse": "elm-analyse -s",
-     "api": "graphqelm http://cccpapidev:9000/api --base ChipApi"
+     "api": "graphqelm http://cccpapi:4000/api --base ChipApi"
   }
 }
