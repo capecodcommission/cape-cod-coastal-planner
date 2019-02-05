@@ -80,10 +80,11 @@ items:
     labels:
       io.kompose.service: cccpapi
       keel.sh/policy: force
+      keel.sh/match-tag: "true"
     name: cccpapi
   spec:
     replicas: 1
-    revisionHistoryLimit: 5
+    revisionHistoryLimit: 1
     selector:
       matchLabels:
         app: cccpapi
@@ -153,10 +154,11 @@ items:
     labels:
       io.kompose.service: cccpfront
       keel.sh/policy: force
+      keel.sh/match-tag: "true"
     name: cccpfront
   spec:
     replicas: 1
-    revisionHistoryLimit: 5
+    revisionHistoryLimit: 1
     selector:
       matchLabels:
         app: cccpfront
