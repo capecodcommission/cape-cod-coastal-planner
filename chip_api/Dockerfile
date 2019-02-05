@@ -5,5 +5,8 @@ RUN apt-get update && apt-get install -y postgresql-client && apt-get autoclean
 RUN mix local.hex --force Y
 RUN mix local.rebar
 RUN mix deps.get
-EXPOSE 4000
+# MASTER
+# EXPOSE 4000 
+# DEV
+EXPOSE 9000 
 CMD ["/bin/bash","/app/startup.sh"]
