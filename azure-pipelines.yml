@@ -30,7 +30,11 @@ steps:
       displayName: "docker push apiImageLatest"
 variables: 
     - 
-      group: CCC-ACR, CCC-PostgreSQL, cccp-latest
+      group: CCC-ACR
+    - 
+      group: CCC-PostgreSQL
+    -
+      group: cccp-latest
 
 trigger:
   - master
