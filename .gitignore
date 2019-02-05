@@ -1,3 +1,4 @@
 # VSCode User & Workspace settings
 .vscode/
 ccc.code-workspace
+azure-pipelines.yml
