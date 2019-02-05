@@ -19,6 +19,14 @@ cd cape-cod-coastal-planner/
 docker-compose up
 ```
 
+## CI/CD
+Pushing to dev or master branches will trigger our pipeline:
+1. CircleCI or Azure Devlops will pull our recent code from the specified branch
+    * Then rebuild, tag, and push the Front and API containers with our latest code to ACR
+1. Azure Webhooks watch our tagged containers on ACR 
+    * On-push, will ping Keel
+1. Keel rebuilds pods with the correctly tagged images on Kubernetes
+
 ## AKS Specs
 ```bash
 # Resource Group
