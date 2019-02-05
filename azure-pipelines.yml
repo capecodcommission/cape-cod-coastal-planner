@@ -1,81 +1,36 @@
-jobs:
-
-- job: dev
-
-  pool:
-    vmImage: 'Ubuntu 16.04'
-  
-  variables:
-  # registryServerName, ImageName, projectName, registryName, registryLogin and registryPassword in the build pipeline in UI
-  - group: cccpVariableGroup-dev
-
-  steps:
-  - bash: echo use Mix.Config >> ./chip_api/config/dev.secret.exs
-    displayName: 'Mix.Config'
-
-  - bash: echo config :chip_api, ChipApi.Repo, password:$(pgPassword) >> ./chip_api/config/dev.secret.exs
-    displayName: 'config chip_api dev'
-
-  - bash: echo use Mix.Config >> ./chip_api/config/test.secret.exs
-    displayName: 'Mix.Config'
-
-  - bash: echo config :chip_api, ChipApi.Repo, password:$(pgPassword) >> ./chip_api/config/test.secret.exs
-    displayName: 'config chip_api test'
-
-  - bash: docker build ./chip_app -t $(registryName).azurecr.io/$(frontImageDev)
-    displayName: 'docker build frontImageDev'
-
-  - bash: docker build ./chip_api -t $(registryName).azurecr.io/$(apiImageDev)
-    displayName: 'docker build apiImageDev'
-
-  - bash: docker login $(registryName).azurecr.io -u $(registryName) -p $(registryPassword)
-    displayName: 'docker login acr'
-
-  - bash: docker push $(registryName).azurecr.io/$(frontImageDev)
-    displayName: 'docker push frontImageDev'
-
-  - bash: docker push $(registryName).azurecr.io/$(apiImageDev)
-    displayName: 'docker push apiImageDev'
-
-- job: master
-
-  pool:
-    vmImage: 'Ubuntu 16.04'
-
-  variables:
-  # registryServerName, ImageName, projectName, registryName, registryLogin and registryPassword in the build pipeline in UI
-  - group: cccpVariableGroup-latest
-
-  steps:
-  - bash: echo use Mix.Config >> ./chip_api/config/dev.secret.exs
-    displayName: 'Mix.Config'
-
-  - bash: echo config :chip_api, ChipApi.Repo, password:$(pgPassword) >> ./chip_api/config/dev.secret.exs
-    displayName: 'config chip_api dev'
-
-  - bash: echo use Mix.Config >> ./chip_api/config/test.secret.exs
-    displayName: 'Mix.Config'
-
-  - bash: echo config :chip_api, ChipApi.Repo, password:$(pgPassword) >> ./chip_api/config/test.secret.exs
-    displayName: 'config chip_api test'
-
-  - bash: docker build ./chip_app -t $(registryName).azurecr.io/$(frontImageLatest)
-    displayName: 'docker build frontImageLatest'
-
-  - bash: docker build ./chip_api -t $(registryName).azurecr.io/$(apiImageLatest)
-    displayName: 'docker build apiImageLatest'
-
-  - bash: docker login $(registryName).azurecr.io -u $(registryName) -p $(registryPassword)
-    displayName: 'docker login acr'
-
-  - bash: docker push $(registryName).azurecr.io/$(frontImageLatest)
-    displayName: 'docker push frontImageLatest'
-
-  - bash: docker push $(registryName).azurecr.io/$(apiImageLatest)
-    displayName: 'docker push apiImageLatest'
+pool: 
+  vmImage: "Ubuntu 16.04"
+steps: 
+  - 
+    bash: "echo use Mix.Config >> ./chip_api/config/dev.secret.exs"
+    displayName: Mix.Config
+  - 
+      bash: "echo config :chip_api, ChipApi.Repo, password:$(pgPassword) >> ./chip_api/config/dev.secret.exs"
+      displayName: "config chip_api dev"
+  - 
+      bash: "echo use Mix.Config >> ./chip_api/config/test.secret.exs"
+      displayName: Mix.Config
+  - 
+      bash: "echo config :chip_api, ChipApi.Repo, password:$(pgPassword) >> ./chip_api/config/test.secret.exs"
+      displayName: "config chip_api test"
+  - 
+      bash: "docker build ./chip_app -t $(registryName).azurecr.io/$(frontImageLatest)"
+      displayName: "docker build frontImageLatest"
+  - 
+      bash: "docker build ./chip_api -t $(registryName).azurecr.io/$(apiImageLatest)"
+      displayName: "docker build apiImageLatest"
+  - 
+      bash: "docker login $(registryName).azurecr.io -u $(registryName) -p $(registryPassword)"
+      displayName: "docker login acr"
+  - 
+      bash: "docker push $(registryName).azurecr.io/$(frontImageLatest)"
+      displayName: "docker push frontImageLatest"
+  - 
+      bash: "docker push $(registryName).azurecr.io/$(apiImageLatest)"
+      displayName: "docker push apiImageLatest"
+variables: 
+    - 
+      group: CCC-ACR, CCC-PostgreSQL, cccp-latest
 
 trigger:
-- master
-- dev
-
-# Reference: https://github.com/Azure/phippyandfriends/blob/master/azure-build-pipeline.yml
+  - master
