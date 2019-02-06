@@ -14,27 +14,27 @@ steps:
       bash: "echo config :chip_api, ChipApi.Repo, password:$(pgPassword) >> ./chip_api/config/test.secret.exs"
       displayName: "config chip_api test"
   - 
-      bash: "docker build ./chip_app -t $(registryName).azurecr.io/$(frontImageDev)"
-      displayName: "docker build frontImageDev"
+      bash: "docker build ./chip_app -t $(registryName).azurecr.io/$(frontImageLatest)"
+      displayName: "docker build frontImageLatest"
   - 
-      bash: "docker build ./chip_api -t $(registryName).azurecr.io/$(apiImageDev)"
-      displayName: "docker build apiImageDev"
+      bash: "docker build ./chip_api -t $(registryName).azurecr.io/$(apiImageLatest)"
+      displayName: "docker build apiImageLatest"
   - 
       bash: "docker login $(registryName).azurecr.io -u $(registryName) -p $(registryPassword)"
       displayName: "docker login acr"
   - 
-      bash: "docker push $(registryName).azurecr.io/$(frontImageDev)"
-      displayName: "docker push frontImageDev"
+      bash: "docker push $(registryName).azurecr.io/$(frontImageLatest)"
+      displayName: "docker push frontImageLatest"
   - 
-      bash: "docker push $(registryName).azurecr.io/$(apiImageDev)"
-      displayName: "docker push apiImageDev"
+      bash: "docker push $(registryName).azurecr.io/$(apiImageLatest)"
+      displayName: "docker push apiImageLatest"
 variables: 
     - 
       group: CCC-ACR
     - 
       group: CCC-PostgreSQL
     -
-      group: cccp-dev
+      group: cccp-latest
 
 trigger:
-  - dev
+  - master
