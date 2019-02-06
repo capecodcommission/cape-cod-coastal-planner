@@ -15,8 +15,9 @@ use Mix.Config
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
 config :chip_api, ChipApiWeb.Endpoint,
-  http: [port: 4000], # MASTER
-  # http: [port: 9000], # DEV
+  # http: [port: 4000], # MASTER
+  http: [port: 9000], # DEV
+  # http: [port: 9001], # UAT
   debug_errors: true,
   code_reloader: true,
   check_origin: false,

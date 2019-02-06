@@ -453,7 +453,7 @@ items:
   spec:
     type: LoadBalancer
     ports:
-    - port: 22
+    - port: 443
       targetPort: 3030
     selector:
       io.kompose.service: cccpfrontuat
