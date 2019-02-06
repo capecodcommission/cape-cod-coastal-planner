@@ -6,9 +6,9 @@ RUN mix local.hex --force Y
 RUN mix local.rebar
 RUN mix deps.get
 # MASTER
-EXPOSE 4000 
+# EXPOSE 4000 
 # DEV
-# EXPOSE 9000
+EXPOSE 9000
 # UAT
 # EXPOSE 9001  
 CMD ["/bin/bash","/app/startup.sh"]
