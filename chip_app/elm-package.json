@@ -8,7 +8,7 @@
         "src",
         "src/ChipApi"
     ],
-    "proxy": "http://cccpapidev:9000",
+    "proxy": "http://cccpapi:4000",
     "exposed-modules": [],
     "dependencies": {
         "Bogdanp/elm-querystring": "1.0.0 <= v < 2.0.0",
