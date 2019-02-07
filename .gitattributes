@@ -8,3 +8,4 @@ azure-pipelines.yml merge=ours
 /chip_app/scripts/start.js merge=ours
 /chip_app/elm-package.json merge=ours
 /chip_app/package.json merge=ours
+/chip_app/config/webpackDevServer.config.js merge=ours
