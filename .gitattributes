@@ -1,6 +1,7 @@
 * text=auto
 *.sh text eol=lf
 azure-pipelines.yml merge=ours
+.gitattributes merge=ours
 ./chip_api/config/dev.exs merge=ours
 ./chip_api/config/test.exs merge=ours
 ./chip_api/Dockerfile merge=ours
