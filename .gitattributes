@@ -2,9 +2,9 @@
 *.sh text eol=lf
 azure-pipelines.yml merge=ours
 .gitattributes  merge=ours
-./chip_api/config/dev.exs merge=ours
-./chip_api/config/test.exs merge=ours
-./chip_api/Dockerfile merge=ours
-./chip_app/scripts/start.js merge=ours
-./chip_app/elm-package.json merge=ours
-./chip_app/package.json merge=ours
+/chip_api/config/dev.exs merge=ours
+/chip_api/config/test.exs merge=ours
+/chip_api/Dockerfile merge=ours
+/chip_app/scripts/start.js merge=ours
+/chip_app/elm-package.json merge=ours
+/chip_app/package.json merge=ours
