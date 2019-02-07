@@ -61,9 +61,11 @@ items:
       io.kompose.service: cccpfront
     name: cccpfront
   spec:
+    type: LoadBalancer
+    loadBalancerIP: 52.168.124.32
     ports:
-    - name: "3000"
-      port: 3000
+    - name: "80"
+      port: 80
       targetPort: 3000
     selector:
       io.kompose.service: cccpfront
@@ -179,19 +181,6 @@ items:
           - containerPort: 3000
           resources: {}
         restartPolicy: Always
-  status: {}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    name: cccp-load-balancer
-  spec:
-    loadBalancerIP: 52.168.124.32
-    type: LoadBalancer
-    ports:
-    - port: 80
-      targetPort: 3000
-    selector:
-      io.kompose.service: cccpfront
   status: {}
 - apiVersion: v1
   kind: Service
