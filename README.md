@@ -84,7 +84,7 @@ kubectl apply -f kubernetes-compose.yml
 # Enter an interactive terminal into a pod id
 kubectl exec -it cccpapi-1234567 -- /bin/bash
 
-# Install Keel on an RBAC-enabled cluster
+# Install Keel on AKS to rebuild pods when pinged
 helm upgrade --install keel --namespace=keel keel/keel --set service.enabled="true" 
 
 # To delete all services, deployments, pods, replicasets, volumes
