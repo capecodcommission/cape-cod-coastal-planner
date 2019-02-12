@@ -26,10 +26,9 @@ create `dev.secret.exs` & `test.secret.exs`
 # Navigate to chip_api/startup.sh
 uncomment `mix ecto.setup` line (Only for development)
 
-# Run all services locally
-docker-compose up --build (initially)
-docker-compose up (thereafter)
-docker-compose down -v (destroy all docker services)
+# Run & destroy all services locally with docker
+`docker-compose up --build` (initially & after `docker-compose down -v`)
+`docker-compose down -v` (destroy all docker services)
 
 #Prior to rebasing feature-branch against dev branch
 navigate to `chip_api/startup.sh` and comment `mix ecto.setup` line again
