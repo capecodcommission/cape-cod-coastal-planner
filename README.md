@@ -10,13 +10,29 @@ It is divided into 2 main projects:
 Architecture Decision Records can be found in `ccc/docs/architecture` and document the major architectural choices made throughout this project.
 
 
-## Getting Started
+## Local Docker & Development - (!!if developing create a feature branch off the dev branch!!)
 ```bash
 # Navigate to the project directory
 cd cape-cod-coastal-planner/
 
+# Checkout the dev branch
+
+# Create a feature branch off the dev branch
+naming convention of feature branch `this-feature`
+
+# Navigate to chip_api/config
+create `dev.secret.exs` & `test.secret.exs`
+
+# Navigate to chip_api/startup.sh
+uncomment `mix ecto.setup` line (Only for development)
+
 # Run all services locally
-docker-compose up
+docker-compose up --build (initially)
+docker-compose up (thereafter)
+docker-compose down -v (destroy all docker services)
+
+#Prior to rebasing feature-branch against dev branch
+navigate to `chip_api/startup.sh` and comment `mix ecto.setup` line again
 ```
 
 ## CI/CD
