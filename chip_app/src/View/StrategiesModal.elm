@@ -494,7 +494,7 @@ mainDetailsView device benefits hazards strategy details =
                 , hairline Hairline
                 , el NoStyle [] <|
                     column (AddStrategies StrategiesDetailsHeading) []
-                        [ h6 NoStyle [center] <| text "BENEFITS PROVIDED" ]
+                        [ h6 NoStyle [center] <| text "ECOSYSTEM SERVICES" ]
                 , benefitsProvidedView benefits details
                 , hairline Hairline
                 ]
