@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Navigation
+import Element.Events exposing (onClick)
 import Html exposing (Html)
 import Element exposing (..)
 import Element.Attributes exposing (..)
@@ -1241,6 +1242,47 @@ updateModel msg model =
             , olCmd <| encodeOpenLayersCmd (ClearLayers)
             )
 
+        ResetAll ->
+            ( model 
+                |> \m -> 
+                    { m 
+                        | shorelineSelected = Closed
+                        , shorelineLocationsDropdown = 
+                            { menu = Input.dropMenu Nothing SelectLocationInput
+                            , isOpen = False
+                            , name = "Shoreline Location"
+                            }
+                        , layerClicked = Closed 
+                        , stiClicked = Closed 
+                        , fourtyYearClicked = Closed
+                        , sloshClicked = Closed
+                        , fzClicked = Closed
+                        , cdsClicked = Closed
+                        , spClicked = Closed
+                        , pprClicked = Closed
+                        , mopClicked = Closed
+                        , slr6ftClicked = Closed 
+                        , dr6ftClicked = Closed
+                        , slr5ftClicked = Closed 
+                        , dr5ftClicked = Closed
+                        , slr4ftClicked = Closed 
+                        , dr4ftClicked = Closed
+                        , slr3ftClicked = Closed 
+                        , dr3ftClicked = Closed
+                        , slr2ftClicked = Closed 
+                        , dr2ftClicked = Closed
+                        , slr1ftClicked = Closed 
+                        , dr1ftClicked = Closed
+                        , critFacClicked = Closed
+                        , strategiesModalOpenness = Closed
+                        , calculationOutput = Nothing
+                        , zoneOfImpact = Nothing
+                        , calculationOutput = Nothing
+                        , adaptationHexes = NotAsked
+                    }
+            , olCmd <| encodeOpenLayersCmd (ResetAllOL)
+            )
+
         
 
 
@@ -1750,6 +1792,13 @@ headerView ({ device } as model) =
                     , case model.shorelineSelected of 
                         Open ->
                             BaselineInfo.view model
+                        Closed ->
+                            el NoStyle [] empty
+                    , case model.shorelineSelected of
+                        Open ->
+                            button (Baseline BaselineInfoBtn)
+                                [ height (px 42), width (px 42), title "Reset Scenario", onClick ResetAll ]
+                                (Element.text "⟲")
                         Closed ->
                             el NoStyle [] empty
                     ]

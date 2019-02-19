@@ -282,7 +282,6 @@ stylesheet device =
             , Color.border white
             , Font.size 22.0
             , Font.typeface fontstack
-            , Font.italic
             , Border.rounded 50.0
             , Border.all 2
             , Transition.all

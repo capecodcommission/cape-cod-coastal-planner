@@ -93,6 +93,17 @@ export function init(onInit) {
         })
     })
 
+    // Default map view
+    map.on("reset_view", () => {
+
+        let view = map.getView()
+        view.animate({
+            center: fromLonLat([-70.2962, 41.6688]),
+            zoom: 11,
+            duration: 1000
+        })
+    })
+
 
     // wait until next frame to attempt rendering the map
     // ie: target div needs to exist before attempt

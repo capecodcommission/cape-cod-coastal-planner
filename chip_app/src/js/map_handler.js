@@ -144,10 +144,13 @@ class MapHandler {
                 case "disable_structures":
                     this.disableStructures(data);
                     break;
-                
-                case "clear_layers":
+
+                case "reset_all":
                     this.clearLayers()
-                    break
+                    this.clearVulnerabilityRibbon()
+                    this.clearZoneOfImpact();
+                    this.resetView()
+                    break;
 
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
@@ -558,6 +561,12 @@ class MapHandler {
                     "data": data
                 });
             }
+        })
+    }
+
+    resetView() {
+        this.map.dispatchEvent({
+            "type": "reset_view"
         })
     }
 }

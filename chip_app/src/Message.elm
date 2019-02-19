@@ -67,3 +67,4 @@ type Msg
     | ToggleSTILayer
     | ClearAllLayers
     | ToggleStructuresLayer
+    | ResetAll

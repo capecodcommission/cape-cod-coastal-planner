@@ -50,6 +50,7 @@ type OpenLayersCmd
     | ClearLayers
     | RenderStructures
     | DisableStructures
+    | ResetAllOL
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -216,6 +217,12 @@ encodeOpenLayersCmd cmd =
         ClearLayers ->
             E.object
                 [ ( "cmd", E.string "clear_layers" )
+
+                ]
+
+        ResetAllOL ->
+            E.object
+                [ ( "cmd", E.string "reset_all" )
 
                 ]
             
