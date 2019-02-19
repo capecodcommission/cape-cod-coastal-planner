@@ -478,15 +478,14 @@ mainDetailsView device benefits hazards strategy details =
     column (AddStrategies StrategiesDetailsMain)
         [ scrollbars, height (px <| mainHeight device) ]
         [ row NoStyle
-            [ padding 32, spacing 32 ]
+            [ paddingXY 32 1, spacing 0 ]
             [ column NoStyle
-                [ width (percent 50), spacingXY 0 25 ]
+                [ width (percent 50) ]
                 [ ModalImage.view NoStyle NoStyle details.imagePath
                 ]
             , column NoStyle
-                [ width (percent 50), spacingXY 0 14 ]
-                [ hairline Hairline
-                , el NoStyle [] <|
+                [ width (percent 50) ]
+                [ el NoStyle [] <|
                     column (AddStrategies StrategiesDetailsHeading) [ spacingXY 0 2 ]
                         [ h6 NoStyle [center] <| text "ADDRESSES THE FOLLOWING"
                         , h6 NoStyle [center] <| text "CLIMATE CHANGE HAZARDS"
@@ -501,7 +500,7 @@ mainDetailsView device benefits hazards strategy details =
                 ]
             ]
         , column NoStyle
-            [ paddingXY 32 0, spacing 32 ]
+            [ paddingXY 32 0 ]
             [ paragraph (AddStrategies StrategiesDetailsDescription) []
                 [ el (AddStrategies StrategiesDetailsDescription) 
                     [ vary Secondary True ] <| text "Description: "
@@ -510,7 +509,7 @@ mainDetailsView device benefits hazards strategy details =
             , hairline Hairline
             ]
         , column NoStyle
-            [ padding 32, spacing 32 ]
+            [ paddingXY 32 0 ]
             [ paragraph (AddStrategies StrategiesDetailsDescription) []
                 [ el (AddStrategies StrategiesDetailsDescription) 
                     [ vary Secondary True ] <| text "Permitability: "
@@ -519,7 +518,7 @@ mainDetailsView device benefits hazards strategy details =
             , hairline Hairline
             ]
         , row NoStyle
-            [ padding 32, spacing 32 ]
+            [ paddingXY 32 0 ]
             [ el NoStyle 
                 [ width (percent 50) ] <|
                     basicListView "Advantages:" details.advantages
