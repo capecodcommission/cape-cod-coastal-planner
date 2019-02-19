@@ -485,12 +485,12 @@ mainDetailsView device benefits hazards strategy details =
                 ]
             , column NoStyle
                 [ width (percent 50) ]
-                [ el NoStyle [] <|
-                    column (AddStrategies StrategiesDetailsHeading) [ spacingXY 0 2 ]
-                        [ h6 NoStyle [center] <| text "ADDRESSES THE FOLLOWING"
-                        , h6 NoStyle [center] <| text "CLIMATE CHANGE HAZARDS"
+                [  el NoStyle [] <|
+                    paragraph (AddStrategies StrategiesDetailsDescription) []
+                        [ el (AddStrategies StrategiesDetailsDescription) 
+                            [ vary Secondary True ] <| text "Applicability: "
+                        , text <| Maybe.withDefault "This will be filled in the future with adaptation strategy-specific applicability content." details.currentlyPermittable
                         ]
-                , coastalHazardsView hazards details
                 , hairline Hairline
                 , el NoStyle [] <|
                     column (AddStrategies StrategiesDetailsHeading) []
