@@ -38,6 +38,19 @@ type alias SloshStates =
     , closed : List Animation.Property
     }
 
+type alias TitleStates =
+    { open : List Animation.Property
+    , closed : List Animation.Property
+    }
+
+titleStates : TitleStates
+titleStates =
+    { open =
+        [ Animation.top (Animation.px 0.0) ]
+    , closed =
+        [ Animation.top (Animation.px -162.0) ]    
+    }
+
 rightSidebarStates : RightSidebarStates
 rightSidebarStates =
     { open =

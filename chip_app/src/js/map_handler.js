@@ -1,9 +1,19 @@
 "use strict";
 
 import proj4 from "proj4";
+import {fromLonLat} from "ol/proj";
 import {register} from "ol/proj/proj4";
 import {logError, convertExtent} from "./misc";
 import {init as initMap} from "./map";
+import Feature from 'ol/Feature';
+import Style from 'ol/style/Style';
+import CircleStyle from 'ol/style/Circle';
+import Fill from 'ol/style/Fill';
+import Stroke from 'ol/style/Stroke';
+import Point from 'ol/geom/Point';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/layer/Vector';
+import Vector from 'ol/layer/Vector';
 
 class MapHandler {
     constructor({onInit}) {
@@ -150,6 +160,18 @@ class MapHandler {
                     this.clearVulnerabilityRibbon()
                     this.clearZoneOfImpact();
                     this.resetView()
+                    break;
+
+                case "zoom_in":
+                    this.zoomIn()
+                    break;
+
+                case "zoom_out":
+                    this.zoomOut()
+                    break;
+
+                case "get_loc":
+                    this.getLoc()
                     break;
 
                 default:
@@ -565,8 +587,35 @@ class MapHandler {
     }
 
     resetView() {
-        this.map.dispatchEvent({
-            "type": "reset_view"
+        let view = this.map.getView()
+        view.animate({
+            center: fromLonLat([-70.2962, 41.6688]),
+            zoom: 11,
+            duration: 1000
+        })
+    }
+
+    zoomIn() {
+        let view = this.map.getView()
+        view.animate({
+            zoom: view.getZoom() + 1,
+            duration: 500
+        })
+    }
+
+    zoomOut() {
+        let view = this.map.getView()
+        view.animate({
+            zoom: view.getZoom() - 1,
+            duration: 500
+        })
+    }
+
+    getLoc() {
+        let view = this.map.getView()
+        navigator.geolocation.getCurrentPosition((pos) => {
+            const coords = fromLonLat([pos.coords.longitude, pos.coords.latitude]);
+            view.animate({center: coords, zoom: 16});
         })
     }
 }

@@ -68,3 +68,6 @@ type Msg
     | ClearAllLayers
     | ToggleStructuresLayer
     | ResetAll
+    | ZoomIn
+    | ZoomOut
+    | GetLocation

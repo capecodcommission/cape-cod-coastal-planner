@@ -51,6 +51,9 @@ type OpenLayersCmd
     | RenderStructures
     | DisableStructures
     | ResetAllOL
+    | ZoomInOL
+    | ZoomOutOL
+    | GetLocOL
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -223,6 +226,24 @@ encodeOpenLayersCmd cmd =
         ResetAllOL ->
             E.object
                 [ ( "cmd", E.string "reset_all" )
+
+                ]
+
+        ZoomInOL -> 
+            E.object
+                [ ( "cmd", E.string "zoom_in" )
+
+                ]
+        
+        ZoomOutOL -> 
+            E.object
+                [ ( "cmd", E.string "zoom_out" )
+
+                ]
+
+        GetLocOL -> 
+            E.object
+                [ ( "cmd", E.string "get_loc" )
 
                 ]
             

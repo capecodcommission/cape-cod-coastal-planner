@@ -44,6 +44,7 @@ import View.Helpers exposing (..)
 import Styles exposing (..)
 import ChipApi.Scalar as Scalar
 import Ports exposing (..)
+import View.Tray as Tray
 
 
 ---- MODEL ----
@@ -117,6 +118,7 @@ type alias Model =
     , sloshToggleFx : Animation.State
     , shorelineSelected : Openness
     , layerClicked : Openness
+    , titleRibbonFX : Animation.State
     }
 
 
@@ -237,6 +239,8 @@ initialModel flags =
         Closed
         -- Any layer activated
         Closed
+        -- Title Ribbon activated
+        (Animation.style <| .closed <| Animations.titleStates)
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -429,6 +433,10 @@ updateModel msg model =
                 |> \m ->
                     { m 
                         | shorelineSelected = Open
+                        , titleRibbonFX =
+                            Animation.interrupt
+                                [ Animation.to <| .open <| Animations.titleStates ]
+                                model.titleRibbonFX
                     }
             , olCmd <| encodeOpenLayersCmd (RenderVulnerabilityRibbon response)
             )
@@ -644,6 +652,7 @@ updateModel msg model =
                 , fzToggleFx = Animation.update animMsg model.fzToggleFx
                 , sloshFx = Animation.update animMsg model.sloshFx
                 , sloshToggleFx = Animation.update animMsg model.sloshToggleFx
+                , titleRibbonFX = Animation.update animMsg model.titleRibbonFX
             }
             , Cmd.none
             )
@@ -1279,9 +1288,29 @@ updateModel msg model =
                         , zoneOfImpact = Nothing
                         , calculationOutput = Nothing
                         , adaptationHexes = NotAsked
+                        , titleRibbonFX =
+                            Animation.interrupt
+                                [ Animation.to <| .closed <| Animations.titleStates ]
+                                model.titleRibbonFX
                     }
             , olCmd <| encodeOpenLayersCmd (ResetAllOL)
             )
+
+        ZoomIn -> 
+            ( model
+            , olCmd <| encodeOpenLayersCmd (ZoomInOL) 
+            )
+
+        ZoomOut -> 
+            ( model
+            , olCmd <| encodeOpenLayersCmd (ZoomOutOL) 
+            )
+
+        GetLocation -> 
+            ( model
+            , olCmd <| encodeOpenLayersCmd (GetLocOL) 
+            )
+
 
         
 
@@ -1725,6 +1754,7 @@ view app =
                                         Nothing ->
                                             el NoStyle [] empty
                                     , LSidebar.view model <| getLeftSidebarChildViews model
+                                    , Tray.view model
                                     ]
                                     
                                     
@@ -1754,36 +1784,6 @@ headerView ({ device } as model) =
             [ column NoStyle
                 [ verticalCenter, width fill ]
                 [ h1 (Header HeaderTitle) [] <| Element.text "Cape Cod Coastal Planner" ]
-            , column NoStyle
-                [ verticalCenter, width fill ]
-                [ case model.shorelineSelected of
-                    Open ->
-                        textLayout 
-                            NoStyle 
-                            [ verticalCenter, spacing 5, paddingXY 32 0 ]
-                            [ paragraph 
-                                (Header HeaderTitle) 
-                                []
-                                [ decorativeImage
-                                    (Rbn LessThanZero)
-                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                                    {src = model.paths.downArrow} 
-                                , Element.text "Score <= 0   "
-                                , decorativeImage
-                                    (Rbn OneToFive)
-                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                                    {src = model.paths.downArrow} 
-                                , Element.text "Score 1 - 5   "
-                                , decorativeImage
-                                    (Rbn SixPlus)
-                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                                    {src = model.paths.downArrow} 
-                                , Element.text "Score >= 6"
-                                ]
-                            ]
-                    Closed ->
-                        el NoStyle [] empty
-                ]
             , column NoStyle
                 [ verticalCenter, width fill ]
                 [ row NoStyle
@@ -1859,6 +1859,7 @@ animations model =
     , model.fzToggleFx
     , model.sloshFx
     , model.sloshToggleFx
+    , model.titleRibbonFX
     ]
     
 

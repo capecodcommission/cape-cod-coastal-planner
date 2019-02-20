@@ -91,6 +91,7 @@ type HeaderStyles
     | HeaderSubMenu
     | HeaderMenuItem
     | HeaderMenuError
+    | HeaderBackgroundRounded
 
 
 type BaselineStyles
@@ -218,6 +219,12 @@ stylesheet device =
             [ Color.background palette.elephant ]
         , Style.style (Header HeaderBackground)
             [ Color.background palette.chambray
+            ]
+        , Style.style (Header HeaderBackgroundRounded)
+            [ Color.background palette.chambray
+            , Border.rounded 20.0
+            , Color.border black
+            , Border.all 4
             ]
         , Style.style (Header HeaderTitle)
             [ Color.text white
