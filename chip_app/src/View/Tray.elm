@@ -31,18 +31,18 @@ view model =
             , width content
             ]
         )
-        ( scoreCard model.paths ) 
+        ( centerRibbon model.paths ) 
     ]
 
 
 
 
-scoreCard : Paths -> Element MainStyles Variations Msg
-scoreCard paths = 
+centerRibbon : Paths -> Element MainStyles Variations Msg
+centerRibbon paths = 
   row (Header HeaderBackgroundRounded)
-    [paddingXY 0 20]
+    [paddingXY 0 10]
     [ zoomButtons
-    , legend paths
+    , scaleLegend paths
     , geoLocate
     ]
 
@@ -55,7 +55,7 @@ zoomButtons =
     []
     [ textLayout 
       (Header HeaderBackground)
-      [ verticalCenter, spacing 5, paddingXY 32 10 ]
+      [ verticalCenter, spacing 5, paddingXY 32 5 ]
       [ column NoStyle
           [spacing 10]
           [ button (Baseline BaselineInfoBtn)
@@ -68,33 +68,31 @@ zoomButtons =
       ]
     ]
 
-legend : Paths -> Element MainStyles Variations Msg
-legend paths = 
-  column NoStyle
-    [verticalCenter]
-    [ textLayout 
-        (Header HeaderBackground)
-        [ verticalCenter, spacing 5, paddingXY 32 10 ]
-        [ paragraph 
-            (Header HeaderTitle) 
-            []
-            [ decorativeImage
-                (Rbn LessThanZero)
-                [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
-            , Element.text "Low   "
-            , decorativeImage
-                (Rbn OneToFive)
-                [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
-            , Element.text "Medium   "
-            , decorativeImage
-                (Rbn SixPlus)
-                [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
-            , Element.text "High"
-            ]
+scaleLegend : Paths -> Element MainStyles Variations Msg
+scaleLegend paths = 
+  column (Header ScaleHeader)
+    [verticalCenter, paddingXY 10 0, spacing 5]
+    [ Element.text "Low   "
+      |> onRight
+        [ decorativeImage
+          (Rbn LessThanZero)
+          [height (px 20), width (px 20), moveLeft 10] 
+          {src = paths.downArrow} 
         ]
+    , Element.text "Med   "
+        |> onRight
+          [ decorativeImage
+              (Rbn OneToFive)
+              [height (px 20), width (px 20), moveLeft 10] 
+              {src = paths.downArrow} 
+          ]
+    , Element.text "High"
+        |> onRight
+          [ decorativeImage
+              (Rbn SixPlus)
+              [height (px 20), width (px 20), moveLeft 10] 
+              {src = paths.downArrow} 
+          ] 
     ]
 
 geoLocate : Element MainStyles Variations Msg

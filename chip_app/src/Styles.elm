@@ -92,6 +92,7 @@ type HeaderStyles
     | HeaderMenuItem
     | HeaderMenuError
     | HeaderBackgroundRounded
+    | ScaleHeader
 
 
 type BaselineStyles
@@ -229,6 +230,13 @@ stylesheet device =
         , Style.style (Header HeaderTitle)
             [ Color.text white
             , Font.size 24.0
+            , Font.bold
+            , Font.typeface fontstack
+            , Font.letterSpacing 1.0
+            ]
+        , Style.style (Header ScaleHeader)
+            [ Color.text white
+            , Font.size 18.0
             , Font.bold
             , Font.typeface fontstack
             , Font.letterSpacing 1.0

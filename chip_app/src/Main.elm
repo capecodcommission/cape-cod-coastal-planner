@@ -1247,6 +1247,7 @@ updateModel msg model =
                         , slr1ftClicked = Closed 
                         , dr1ftClicked = Closed
                         , critFacClicked = Closed
+                        , structuresClicked = Closed 
                     }
             , olCmd <| encodeOpenLayersCmd (ClearLayers)
             )
@@ -1283,6 +1284,7 @@ updateModel msg model =
                         , slr1ftClicked = Closed 
                         , dr1ftClicked = Closed
                         , critFacClicked = Closed
+                        , structuresClicked = Closed 
                         , strategiesModalOpenness = Closed
                         , calculationOutput = Nothing
                         , zoneOfImpact = Nothing
