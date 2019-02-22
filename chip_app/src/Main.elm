@@ -119,6 +119,7 @@ type alias Model =
     , shorelineSelected : Openness
     , layerClicked : Openness
     , titleRibbonFX : Animation.State
+    , outputDetails : AdaptationOutput
     }
 
 
@@ -241,6 +242,8 @@ initialModel flags =
         Closed
         -- Title Ribbon activated
         (Animation.style <| .closed <| Animations.titleStates)
+        -- AdaptationOutput
+        NotCalculated
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -1764,7 +1767,7 @@ view app =
                             -- ie: modal should never be open when zone of impact is Nothing (make impossible states impossible)
                             , case ( model.zoneOfImpact, model.strategiesModalOpenness ) of
                                 ( Just zoi, Open ) ->
-                                    StrategiesModal.view model model.adaptationInfo zoi
+                                    StrategiesModal.view model model.adaptationInfo zoi model.outputDetails
 
                                 ( _, _ ) ->
                                     el NoStyle [] empty

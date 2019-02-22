@@ -28,8 +28,8 @@ view result =
                 [ el NoStyle [ height fill ] empty, footerView ]
 
             Ok (OnlyNoAction output) ->
-                [ resultsHeader output
-                , resultsMainContent output
+                [ 
+                resultsMainContent output
                 , footerView 
                 ]
 
@@ -121,49 +121,49 @@ resultsHeader output =
                         |> within [ infoIconView output.description ]
                     )
                 ]
-            , row NoStyle [ height (percent 55), width fill, spread, alignBottom ]
-                [ column NoStyle [center ]
-                    [ el (ShowOutput OutputImpact) 
-                        [ moveUp 2, paddingXY 4 2, minWidth (px 115) ] <| text output.cost.name
-                    , el NoStyle [ moveDown 3 ] (text "COST")
-                        |> within [ infoIconView (Just "...") ]
-                    ]
-                , column NoStyle [center]
-                    [ el (ShowOutput OutputImpact) 
-                        [ moveUp 2, paddingXY 4 2, minWidth (px 115), vary Secondary True ] <| text output.lifespan.name
-                    , el NoStyle [ moveDown 3 ] (text "LIFESPAN")
-                        |> within [ infoIconView (Just "...") ]
-                    ]
-                , column NoStyle [center]                    
-                    [ column NoStyle []
-                        [ row NoStyle [ minWidth (px 115) ]
-                            [ el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0 
-                                , scaleDisabled "Site"
-                                ] <| text "Site"
-                            , el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0
-                                , vary Secondary True 
-                                , scaleDisabled "Neighborhood"
-                                ] <| text "Neighborhood"
-                            ]
-                        , row NoStyle [ minWidth (px 115) ]
-                            [ el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0
-                                , vary Tertiary True 
-                                , scaleDisabled "Community"
-                                ] <| text "Community"
-                            , el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0
-                                , vary Quaternary True
-                                , scaleDisabled "Region"
-                                ] <| text "Region"
-                            ]
-                        ]
-                    , el NoStyle [ moveDown 3 ] (text "SCALE")
-                        |> within [ infoIconView (Just "...") ]
-                    ]
-                ]
+            -- , row NoStyle [ height (percent 55), width fill, spread, alignBottom ]
+            --     [ column NoStyle [center ]
+            --         [ el (ShowOutput OutputImpact) 
+            --             [ moveUp 2, paddingXY 4 2, minWidth (px 115) ] <| text output.cost.name
+            --         , el NoStyle [ moveDown 3 ] (text "COST")
+            --             |> within [ infoIconView (Just "...") ]
+            --         ]
+            --     , column NoStyle [center]
+            --         [ el (ShowOutput OutputImpact) 
+            --             [ moveUp 2, paddingXY 4 2, minWidth (px 115), vary Secondary True ] <| text output.lifespan.name
+            --         , el NoStyle [ moveDown 3 ] (text "LIFESPAN")
+            --             |> within [ infoIconView (Just "...") ]
+            --         ]
+            --     , column NoStyle [center]                    
+            --         [ column NoStyle []
+            --             [ row NoStyle [ minWidth (px 115) ]
+            --                 [ el (ShowOutput OutputMultiImpact) 
+            --                     [ paddingXY 4 0 
+            --                     , scaleDisabled "Site"
+            --                     ] <| text "Site"
+            --                 , el (ShowOutput OutputMultiImpact) 
+            --                     [ paddingXY 4 0
+            --                     , vary Secondary True 
+            --                     , scaleDisabled "Neighborhood"
+            --                     ] <| text "Neighborhood"
+            --                 ]
+            --             , row NoStyle [ minWidth (px 115) ]
+            --                 [ el (ShowOutput OutputMultiImpact) 
+            --                     [ paddingXY 4 0
+            --                     , vary Tertiary True 
+            --                     , scaleDisabled "Community"
+            --                     ] <| text "Community"
+            --                 , el (ShowOutput OutputMultiImpact) 
+            --                     [ paddingXY 4 0
+            --                     , vary Quaternary True
+            --                     , scaleDisabled "Region"
+            --                     ] <| text "Region"
+            --                 ]
+            --             ]
+            --         , el NoStyle [ moveDown 3 ] (text "SCALE")
+            --             |> within [ infoIconView (Just "...") ]
+            --         ]
+            --     ]
             ]
 
 
