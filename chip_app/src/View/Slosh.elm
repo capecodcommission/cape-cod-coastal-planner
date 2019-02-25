@@ -51,7 +51,7 @@ headerView titleText =
         [ height (px 45), width fill ] <| 
             h5 (Headings H5) 
                 [ center, verticalCenter ] 
-                (text titleText)
+                (text titleText |> within [ infoIconView (Just "...") ])
      
 
 buttonView : Openness -> String -> Animation.State -> Element MainStyles Variations Msg
@@ -94,3 +94,14 @@ sloshLegend paths =
             , text "CAT4"
             ]
         ]
+
+infoIconView : Maybe String -> Element MainStyles Variations Msg
+infoIconView maybeHelpText =
+    case maybeHelpText of
+        Just helpText ->
+            circle 6 (ShowOutput OutputInfoIcon) 
+                [ title helpText, alignRight, moveRight 18 ] <| 
+                    el NoStyle [verticalCenter, center] (text "i")
+
+        Nothing ->
+            empty   

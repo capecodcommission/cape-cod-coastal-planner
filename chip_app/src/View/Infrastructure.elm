@@ -100,7 +100,7 @@ infraDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Municipal Properties"
+            , text "Municipal Properties" |> within [ infoIconView (Just "...") ]
             ]
         , paragraph CloseIcon [onClick TogglePPRLayer] 
             [ decorativeImage 
@@ -112,7 +112,7 @@ infraDetails config paths =
                 )
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Public and Private Roads"
+            , text "Public and Private Roads" |> within [ infoIconView (Just "...") ]
             ]
         , case config.pprClicked of 
             Open ->
@@ -129,7 +129,7 @@ infraDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Sewered Parcels"
+            , text "Sewered Parcels" |> within [ infoIconView (Just "...") ]
             ]
         , paragraph CloseIcon [onClick ToggleCDSLayer] 
             [ decorativeImage
@@ -141,7 +141,7 @@ infraDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Coastal Defense Structures"
+            , text "Coastal Defense Structures" |> within [ infoIconView (Just "...") ]
             ]
         , case config.cdsClicked of 
             Open ->
@@ -160,7 +160,7 @@ infraDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Structures"
+            , text "Structures" |> within [ infoIconView (Just "...") ]
             ]
         ]
 
@@ -210,3 +210,15 @@ cdsLegend paths =
             , text "Jetty"
             ]
         ]
+
+
+infoIconView : Maybe String -> Element MainStyles Variations Msg
+infoIconView maybeHelpText =
+    case maybeHelpText of
+        Just helpText ->
+            circle 6 (ShowOutput OutputInfoIcon) 
+                [ title helpText, alignRight, moveRight 18 ] <| 
+                    el NoStyle [verticalCenter, center] (text "i")
+
+        Nothing ->
+            empty   

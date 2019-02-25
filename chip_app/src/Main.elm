@@ -542,13 +542,15 @@ updateModel msg model =
                     ( { model | adaptationInfo = info }, cmd )
 
         SelectStrategy id ->
-            model.adaptationInfo
+             model.adaptationInfo
                 |> updateHazardsWith
                     (Hazards.updateStrategyIds 
                         (ZipHelp.tryFindFirst <| ZipHelp.matches id)
                     )
                 |> \(info, cmd) ->
                     ( { model | adaptationInfo = info }, cmd )
+                
+            
             
         HandleStrategyKeyboardEvent evt ->
             case evt.keyCode of
@@ -1252,6 +1254,8 @@ updateModel msg model =
                         , critFacClicked = Closed
                         , structuresClicked = Closed 
                     }
+                |> collapseFZSection
+                |> collapseSloshSection
             , olCmd <| encodeOpenLayersCmd (ClearLayers)
             )
 
@@ -1298,6 +1302,8 @@ updateModel msg model =
                                 [ Animation.to <| .closed <| Animations.titleStates ]
                                 model.titleRibbonFX
                     }
+                |> collapseFZSection
+                |> collapseSloshSection
             , olCmd <| encodeOpenLayersCmd (ResetAllOL)
             )
 

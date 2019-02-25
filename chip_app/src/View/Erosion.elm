@@ -107,7 +107,7 @@ erosionDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "40-yr Erosion"
+            , text "40-yr Erosion" |> within [ infoIconView (Just "...") ]
             ]
         , case config.fourtyYearClicked of 
             Open ->
@@ -124,7 +124,7 @@ erosionDetails config paths =
                 )
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Sediment Transport Indicators"
+            , text "Sediment Transport Indicators" |> within [ infoIconView (Just "...") ]
             ]
         ]
 
@@ -174,3 +174,15 @@ cdsLegend paths =
             , text "Jetty"
             ]
         ]
+
+
+infoIconView : Maybe String -> Element MainStyles Variations Msg
+infoIconView maybeHelpText =
+    case maybeHelpText of
+        Just helpText ->
+            circle 6 (ShowOutput OutputInfoIcon) 
+                [ title helpText, alignRight, moveRight 18 ] <| 
+                    el NoStyle [verticalCenter, center] (text "i")
+
+        Nothing ->
+            empty  

@@ -106,10 +106,10 @@ slrDetails config paths =
                 NoStyle
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Sea Level Rise"
+            , text "Sea Level Rise" |> within [ infoIconView (Just "...") ]
             , paragraph 
                 CloseIcon 
-                [ paddingXY 32 0 ]
+                [ paddingXY 35 0 ]
                 [ el 
                     ( case config.slr1ftClicked of 
                         Open -> 
@@ -168,10 +168,10 @@ slrDetails config paths =
                 NoStyle
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Discnctd Roads"
+            , text "Discnctd Roads" |> within [ infoIconView (Just "...") ]
             , paragraph 
                 CloseIcon 
-                [ paddingXY 20 0 ]
+                [ paddingXY 30 0 ]
                 [ el 
                     ( case config.dr1ftClicked of 
                         Open -> 
@@ -233,6 +233,17 @@ slrDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Critical Facilities"
+            , text "Critical Facilities" |> within [ infoIconView (Just "...") ]
             ]
         ]
+
+infoIconView : Maybe String -> Element MainStyles Variations Msg
+infoIconView maybeHelpText =
+    case maybeHelpText of
+        Just helpText ->
+            circle 6 (ShowOutput OutputInfoIcon) 
+                [ title helpText, alignRight, moveRight 18 ] <| 
+                    el NoStyle [verticalCenter, center] (text "i")
+
+        Nothing ->
+            empty       
