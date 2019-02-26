@@ -99,6 +99,7 @@ type BaselineStyles
     = BaselineInfoBtn
     | BaselineInfoHeader
     | BaselineInfoText
+    | BaselineInfoBtnClicked
 
 
 type SidebarStyles
@@ -305,7 +306,22 @@ stylesheet device =
                 , Color.border palette.mySin
                 , Transition.all
                 ]
-            ]        
+            ]    
+        , Style.style (Baseline BaselineInfoBtnClicked)
+            [ Color.background <| rgba 0 0 0 0
+            , Color.text orange
+            , Color.border orange
+            , Font.size 22.0
+            , Font.typeface fontstack
+            , Border.rounded 50.0
+            , Border.all 2
+            , Transition.all
+            , Style.hover
+                [ Color.text palette.mySin
+                , Color.border palette.mySin
+                , Transition.all
+                ]
+            ]      
         , Style.style (Baseline BaselineInfoHeader)
             [ Color.background palette.chambray
             , Color.text white

@@ -54,6 +54,8 @@ type OpenLayersCmd
     | ZoomInOL
     | ZoomOutOL
     | GetLocOL
+    | DisableVulnOL
+    | RenderVulnOL
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -244,6 +246,18 @@ encodeOpenLayersCmd cmd =
         GetLocOL -> 
             E.object
                 [ ( "cmd", E.string "get_loc" )
+
+                ]
+
+        DisableVulnOL -> 
+            E.object
+                [ ( "cmd", E.string "disable_vuln_ribbon" )
+
+                ]
+
+        RenderVulnOL -> 
+            E.object
+                [ ( "cmd", E.string "render_vuln_ribbon" )
 
                 ]
             

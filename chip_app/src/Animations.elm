@@ -48,7 +48,7 @@ titleStates =
     { open =
         [ Animation.top (Animation.px 0.0) ]
     , closed =
-        [ Animation.top (Animation.px -162.0) ]    
+        [ Animation.top (Animation.px -183.0) ]    
     }
 
 rightSidebarStates : RightSidebarStates

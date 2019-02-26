@@ -174,6 +174,14 @@ class MapHandler {
                     this.getLoc()
                     break;
 
+                case "render_vuln_ribbon":
+                    this.renderVulnRibbon();         
+                    break;
+
+                case "disable_vuln_ribbon":
+                    this.disableVulnRibbon();         
+                    break;
+
                 default:
                     throw new Error("Unhandled OpenLayers command from Elm port 'olCmd'.");
             }
@@ -616,6 +624,18 @@ class MapHandler {
         navigator.geolocation.getCurrentPosition((pos) => {
             const coords = fromLonLat([pos.coords.longitude, pos.coords.latitude]);
             view.animate({center: coords, zoom: 16});
+        })
+    }
+
+    renderVulnRibbon() {
+        this.map.dispatchEvent({
+            "type": "render_vuln_ribbon"
+        })
+    }
+
+    disableVulnRibbon(){
+        this.map.dispatchEvent({
+            "type": "disable_vuln_ribbon"
         })
     }
 }

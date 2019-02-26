@@ -196,7 +196,7 @@ mainContentView { device } info =
                 [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "PRIVATE INFRASTRUCTURE"
                 , infoRowView
                     "Total assessed value:"
-                    ("$" ++ formatDecimal 2 info.totalAssessedValue)
+                    ("$" ++ formatDecimal 0 info.totalAssessedValue)
                 ]
             ]
         ]         

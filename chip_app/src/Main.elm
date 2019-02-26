@@ -120,6 +120,7 @@ type alias Model =
     , layerClicked : Openness
     , titleRibbonFX : Animation.State
     , outputDetails : AdaptationOutput
+    , vulnRibbonClicked : Openness
     }
 
 
@@ -244,6 +245,8 @@ initialModel flags =
         (Animation.style <| .closed <| Animations.titleStates)
         -- AdaptationOutput
         NotCalculated
+        -- vuln ribbon clicked
+        Open
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -1321,6 +1324,25 @@ updateModel msg model =
             ( model
             , olCmd <| encodeOpenLayersCmd (GetLocOL) 
             )
+
+        ToggleVulnRibbon -> 
+            case model.vulnRibbonClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | vulnRibbonClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableVulnOL) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | vulnRibbonClicked = Open 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderVulnOL) 
+                    )
 
 
         

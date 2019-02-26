@@ -72,25 +72,29 @@ fzLegend paths =
         [ paragraph 
             NoStyle 
             []
-            [ decorativeImage
+            [ button
                 (PL FZA)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "A   "
-            , decorativeImage
+            , button
                 (PL FZAE)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "AE   "
-            , decorativeImage
+            , button
                 (PL FZAO)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "AO    "
-            , decorativeImage
+            , button
                 (PL FZVE)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "VE"
             ]
         ]

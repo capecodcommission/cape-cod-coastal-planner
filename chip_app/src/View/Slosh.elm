@@ -72,25 +72,29 @@ sloshLegend paths =
         [ paragraph 
             NoStyle 
             []
-            [ decorativeImage
+            [ button
                 (PL CAT1)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                (Element.text "")
+                -- {src = paths.downArrow} 
             , text "CAT1   "
-            , decorativeImage
+            , button
                 (PL CAT2)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                (Element.text "")
+                -- {src = paths.downArrow} 
             , text "CAT2   "
-            , decorativeImage
+            , button
                 (PL CAT3)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                (Element.text "")
+                -- {src = paths.downArrow} 
             , text "CAT3    "
-            , decorativeImage
+            , button
                 (PL CAT4)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                (Element.text "")
+                -- {src = paths.downArrow} 
             , text "CAT4"
             ]
         ]

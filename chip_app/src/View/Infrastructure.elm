@@ -172,15 +172,17 @@ pprLegend paths =
         [ paragraph 
             NoStyle 
             []
-            [ decorativeImage
+            [ button
                 (PL RoadsPrivate)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Private   "
-            , decorativeImage
+            , button
                 (PL RoadsPublic)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Public"
             ]
         ]
@@ -193,20 +195,23 @@ cdsLegend paths =
         [ paragraph 
             NoStyle 
             []
-            [ decorativeImage
+            [ button
                 (PL Groins)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Groins   "
-            , decorativeImage
+            , button
                 (PL Revetment)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Revetment   "
-            , decorativeImage
+            , button
                 (PL Jetty)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Jetty"
             ]
         ]

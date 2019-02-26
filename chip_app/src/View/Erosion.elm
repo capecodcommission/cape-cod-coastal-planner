@@ -136,15 +136,17 @@ fourtyYearLegend paths =
         [ paragraph 
             NoStyle 
             []
-            [ decorativeImage
+            [ button
                 (PL Accretion)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Accretion   "
-            , decorativeImage
+            , button
                 (PL Erosion)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Erosion"
             ]
         ]

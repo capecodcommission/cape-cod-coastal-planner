@@ -71,3 +71,4 @@ type Msg
     | ZoomIn
     | ZoomOut
     | GetLocation
+    | ToggleVulnRibbon
