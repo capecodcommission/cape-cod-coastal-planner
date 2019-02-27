@@ -51,7 +51,7 @@ headerView titleText =
         [ height (px 45), width fill ] <| 
             h5 (Headings H5) 
                 [ center, verticalCenter ] 
-                (text titleText |> within [ infoIconView (Just "...") ])
+                (text titleText |> within [ infoIconView (Just "Worst case Hurricane Surge Inundation areas for category 1 through 4 hurricanes striking the coast of Massachusetts. Hurricane surge values were developed by the National Hurricane Center using the PV2 basin SLOSH (Sea Lake and Overland Surge from Hurricanes) Model data. This Surge Inundation layer was created by the U.S. Army Corps of Engineers, New England District. Using ArcInfo's Grid extension, LiDAR bare earth elevation data USGS was subtracted from the worst-case hurricane surge values to determine which areas could be expected to be inundated. ") ])
      
 
 buttonView : Openness -> String -> Animation.State -> Element MainStyles Variations Msg

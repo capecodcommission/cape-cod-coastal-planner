@@ -51,7 +51,7 @@ headerView titleText =
         [ height (px 45), width fill ] <| 
             h5 (Headings H5) 
                 [ center, verticalCenter ] 
-                (text titleText |> within [ infoIconView (Just "...") ])
+                (text titleText |> within [ infoIconView (Just "This layer displays flood zone areas denoted by 2013 data from FEMA") ])
      
 
 buttonView : Openness -> String -> Animation.State -> Element MainStyles Variations Msg
