@@ -1813,15 +1813,15 @@ view app =
 headerView : Model -> Element MainStyles Variations Msg
 headerView ({ device } as model) =
     header (Header HeaderBackground) [ width fill, height (px <| adjustOnHeight ( 60, 80 ) device) ] <|
-        row NoStyle [ height fill, width fill, paddingXY 54 0, spacingXY 54 0 ] <|
+        row NoStyle [ height fill, width fill, paddingXY 54 15, spacingXY 54 0 ] <|
             [ column NoStyle
                 [ verticalCenter, width fill ]
                 [ el NoStyle [] empty
                 ]
             , column NoStyle
                 [ verticalCenter, center, width fill]
-                [ decorativeImage (Header HeaderBackgroundRounded) 
-                    [width (percent 80), paddingXY 10 0]
+                [ decorativeImage NoStyle
+                    [width (percent 76)]
                     { src = model.paths.logoPath } 
                 ]
             , column NoStyle
