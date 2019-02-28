@@ -1821,7 +1821,7 @@ headerView ({ device } as model) =
             , column NoStyle
                 [ verticalCenter, center, width fill]
                 [ decorativeImage (Header HeaderBackgroundRounded) 
-                    [height fill, width fill, moveDown 15]
+                    [width (percent 80), paddingXY 10 0]
                     { src = model.paths.logoPath } 
                 ]
             , column NoStyle
