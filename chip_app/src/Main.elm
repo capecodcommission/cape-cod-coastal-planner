@@ -1816,7 +1816,14 @@ headerView ({ device } as model) =
         row NoStyle [ height fill, width fill, paddingXY 54 0, spacingXY 54 0 ] <|
             [ column NoStyle
                 [ verticalCenter, width fill ]
-                [ h1 (Header HeaderTitle) [] <| Element.text "Cape Cod Coastal Planner" ]
+                [ el NoStyle [] empty
+                ]
+            , column NoStyle
+                [ verticalCenter, center, width fill]
+                [ decorativeImage (Header HeaderBackgroundRounded) 
+                    [height fill, width fill, moveDown 15]
+                    { src = model.paths.logoPath } 
+                ]
             , column NoStyle
                 [ verticalCenter, width fill ]
                 [ row NoStyle
