@@ -32,12 +32,12 @@ import AdaptationStrategy.Impacts as Impacts
 
 modalHeight : Device -> Float
 modalHeight device =
-    adjustOnHeight ( 580, 800 ) device
+    adjustOnHeight ( 525, 650 ) device
 
 
 detailsHeaderHeight : Device -> Float
 detailsHeaderHeight device =
-    adjustOnHeight ( 165, 225 ) device
+    adjustOnHeight ( 70, 120 ) device
 
 mainHeight : Device -> Float
 mainHeight device =
@@ -45,7 +45,7 @@ mainHeight device =
 
 
 sidebarHeaderHeight : Float
-sidebarHeaderHeight = 58
+sidebarHeaderHeight = 120
 
 sidebarFooterHeight : Float
 sidebarFooterHeight = 89
@@ -81,8 +81,8 @@ view config adaptationInfo zoneOfImpact outputDetails =
                 , verticalCenter
                 ] <|
                 row NoStyle 
-                    [ height fill ] 
-                    [ sidebarView config adaptationInfo zoneOfImpact
+                    [ height fill ]
+                    [ sidebarView config adaptationInfo zoneOfImpact 
                     , mainContentView config adaptationInfo outputDetails
                     ]
         ]
@@ -381,7 +381,7 @@ categoriesRowView : List (String, Element MainStyles Variations Msg) -> Element 
 categoriesRowView views =
     el NoStyle 
         [ alignRight 
-        , moveDown 50
+        , moveDown 10
         , moveLeft 50
         ] <| 
         Keyed.row NoStyle [ spacingXY 20 0 ] views
@@ -427,7 +427,7 @@ categoryLabelView lbl matched =
 categoryIconView : String -> String -> Bool -> ( String, Element MainStyles Variations Msg )
 categoryIconView srcPath name matched =
     ( "category_icon_" ++ name ++ "_" ++ keySuffix matched
-    , image NoStyle [ center, verticalCenter, width (px 84), height (px 84) ]
+    , image NoStyle [ center, verticalCenter, width (px 78), height (px 78) ]
         { src = srcPath, caption = name  }
     )
     
