@@ -61,6 +61,7 @@ view :
         | device : Device
         , closePath : String
         , trianglePath : String
+        , slrPath : String
     }
     -> GqlData AdaptationInfo
     -> ZoneOfImpact
@@ -92,11 +93,12 @@ sidebarView :
     { config
         | device : Device
         , trianglePath : String
+        , slrPath :String
     }
     -> GqlData AdaptationInfo
     -> ZoneOfImpact
     -> Element MainStyles Variations Msg
-sidebarView { device, trianglePath } adaptationInfo zoneOfImpact =
+sidebarView { device, trianglePath, slrPath } adaptationInfo zoneOfImpact =
     let
         currentHazard =
             adaptationInfo
@@ -115,7 +117,7 @@ sidebarView { device, trianglePath } adaptationInfo zoneOfImpact =
         ]
         [ header (AddStrategies StrategiesSidebarHeader)
             [ height ( px sidebarHeaderHeight ) ] <| 
-                hazardPickerView device trianglePath currentHazard
+                hazardPickerView device trianglePath currentHazard slrPath
         , column (AddStrategies StrategiesSidebarList)
             [ height ( px <| activeStrategiesHeight device ) ] <| 
                 strategiesView zoneOfImpact adaptationInfo
@@ -127,32 +129,57 @@ sidebarView { device, trianglePath } adaptationInfo zoneOfImpact =
         ]
 
 
-hazardPickerView : Device -> String -> Maybe CoastalHazard -> Element MainStyles Variations Msg
-hazardPickerView device trianglePath currentHazard = 
+hazardPickerView : Device -> String -> Maybe CoastalHazard -> String -> Element MainStyles Variations Msg
+hazardPickerView device trianglePath currentHazard slrPath = 
     h5 (Headings H5) 
         [ height fill, width fill ] <| 
             case currentHazard of
                 Just hazard ->
                     row NoStyle
-                        [ verticalCenter
-                        , width fill
-                        , height fill 
-                        , paddingXY 16 0
-                        ]
-                        [ image (AddStrategies StrategiesHazardPicker) 
-                            [ alignLeft
-                            , onClick SelectPreviousHazard
-                            , title "Select previous hazard"
-                            , vary Secondary True
-                            ] 
-                            { src = trianglePath, caption = "left arrow" }
-                        , el NoStyle [ width fill ] <| Element.text hazard.name
-                        , image (AddStrategies StrategiesHazardPicker) 
-                            [ alignRight
-                            , onClick SelectNextHazard
-                            , title "Select next hazard"
-                            ] 
-                            { src = trianglePath, caption = "right arrow" }
+                            [ verticalCenter
+                            , width fill
+                            , height fill
+                            , paddingXY 16 0
+                            , paddingTop 16
+                            ]
+                        [ column NoStyle [alignLeft]
+                             [ image (AddStrategies StrategiesHazardPicker) 
+                                [ alignLeft
+                                , onClick SelectPreviousHazard
+                                , title "Select previous hazard"
+                                , vary Secondary True
+                                ] 
+                                { src = trianglePath, caption = "left arrow" }
+                             ]
+                        , column NoStyle [center]
+                            [ column NoStyle
+                                [ alignBottom
+                                , verticalCenter
+                                , height (percent 50)
+                                , center
+                                ]
+                                [ image (AddStrategies StrategiesHazardPicker) 
+                                    [ center
+                                    , width (percent 20)
+                                    ] 
+                                    { src = slrPath, caption = "selected hazard" }
+                            , column NoStyle
+                                [
+                                width fill
+                                , height (percent 50)
+                                , center
+                                ]
+                                [ el NoStyle [ width fill ] <| Element.text hazard.name ]
+                                ]
+                            ]
+                        , column NoStyle [alignRight]
+                            [ image (AddStrategies StrategiesHazardPicker) 
+                                [ alignRight
+                                , onClick SelectNextHazard
+                                , title "Select next hazard"
+                                ] 
+                                { src = trianglePath, caption = "right arrow" }
+                            ]
                         ]
 
                 Nothing -> 
