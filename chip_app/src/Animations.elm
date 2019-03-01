@@ -43,6 +43,19 @@ type alias TitleStates =
     , closed : List Animation.Property
     }
 
+type alias MenuStates =
+    { open : List Animation.Property
+    , closed : List Animation.Property
+    }
+
+menuStates : TitleStates
+menuStates =
+    { open =
+        [ Animation.top (Animation.px 0.0) ]
+    , closed =
+        [ Animation.top (Animation.px -183.0) ]    
+    }
+
 titleStates : TitleStates
 titleStates =
     { open =
