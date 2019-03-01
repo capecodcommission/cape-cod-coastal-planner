@@ -45,6 +45,7 @@ import Styles exposing (..)
 import ChipApi.Scalar as Scalar
 import Ports exposing (..)
 import View.Tray as Tray
+import View.Menu as Menu
 
 
 ---- MODEL ----
@@ -121,6 +122,8 @@ type alias Model =
     , titleRibbonFX : Animation.State
     , outputDetails : AdaptationOutput
     , vulnRibbonClicked : Openness
+    , menuClicked : Openness
+    , menuFX : Animation.State
     }
 
 
@@ -247,6 +250,10 @@ initialModel flags =
         NotCalculated
         -- vuln ribbon clicked
         Open
+        -- menu clicked
+        Closed
+        -- menu FX
+        (Animation.style <| .closed <| Animations.menuStates)
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -661,6 +668,7 @@ updateModel msg model =
                 , sloshFx = Animation.update animMsg model.sloshFx
                 , sloshToggleFx = Animation.update animMsg model.sloshToggleFx
                 , titleRibbonFX = Animation.update animMsg model.titleRibbonFX
+                , menuFX = Animation.update animMsg model.menuFX
             }
             , Cmd.none
             )
@@ -1344,6 +1352,33 @@ updateModel msg model =
                     , olCmd <| encodeOpenLayersCmd (RenderVulnOL) 
                     )
 
+        ToggleMenu ->
+            case model.menuClicked of 
+                Closed -> 
+                    ( model
+                        |> \m ->
+                            { m
+                                | menuFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .open <| Animations.menuStates ]
+                                        model.menuFX
+                                , menuClicked = Open
+                            }
+                    , Cmd.none
+                    )
+                Open -> 
+                    ( model
+                        |> \m ->
+                            { m
+                                | menuFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .closed <| Animations.menuStates ]
+                                        model.menuFX
+                                , menuClicked = Closed
+                            }
+                    , Cmd.none
+                    )
+
 
         
 
@@ -1788,6 +1823,7 @@ view app =
                                             el NoStyle [] empty
                                     , LSidebar.view model <| getLeftSidebarChildViews model
                                     , Tray.view model
+                                    , Menu.view model
                                     ]
                                     
                                     
@@ -1816,12 +1852,20 @@ headerView ({ device } as model) =
         row NoStyle [ height fill, width fill, paddingXY 54 15, spacingXY 54 0 ] <|
             [ column NoStyle
                 [ verticalCenter, width fill ]
-                [ el NoStyle [] empty
+                [ button 
+                    (case model.menuClicked of
+                        Open ->
+                            (Baseline BaselineInfoBtnClicked)
+                        Closed ->
+                            (Baseline BaselineInfoBtn)
+                    )
+                    [ height (px 42), width (px 42), title "Toggle Menu", onClick ToggleMenu ]
+                    (Element.text "☰")
                 ]
             , column NoStyle
                 [ verticalCenter, center, width fill]
                 [ decorativeImage NoStyle
-                    [width (percent 76)]
+                    [width (px 375), height (px 65)]
                     { src = model.paths.logoPath } 
                 ]
             , column NoStyle
@@ -1900,6 +1944,7 @@ animations model =
     , model.sloshFx
     , model.sloshToggleFx
     , model.titleRibbonFX
+    , model.menuFX
     ]
     
 

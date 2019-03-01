@@ -72,3 +72,4 @@ type Msg
     | ZoomOut
     | GetLocation
     | ToggleVulnRibbon
+    | ToggleMenu
