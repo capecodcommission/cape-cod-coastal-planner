@@ -48,7 +48,7 @@ type alias MenuStates =
     , closed : List Animation.Property
     }
 
-menuStates : TitleStates
+menuStates : MenuStates
 menuStates =
     { open =
         [ Animation.top (Animation.px 0.0) ]
