@@ -59,7 +59,7 @@ To build and push local images to Azure Container Registry
 ```bash
 
 # Log in to Azure Container Registry (ACR) ccccontainers
-az acr login -n ccccontainers
+sudo az acr login -n ccccontainers
 
 # Build local images from Dockerfile directories and tag with ACR login server name
 # NOTE: Increment tag version number for each additional build
@@ -97,7 +97,7 @@ kompose convert -f docker-compose.yml -o kubernetes-compose.yml
 kubectl apply -f kubernetes-compose.yml
 
 # Enter an interactive terminal into a pod id
-kubectl exec -it cccpapi-1234567 -- /bin/bash
+kubectl exec -it --namespace NAMESPACE cccpapi-1234567 -- /bin/bash
 
 # Install Keel on AKS to rebuild pods when pinged
 helm upgrade --install keel --namespace=keel keel/keel --set service.enabled="true" 
@@ -117,4 +117,35 @@ az login
 
 # Start local webapp to view CCC-AKS-DEV-01
 az aks browse --resource-group CCC-AKSGroup --name CCC-AKS-01
+```
+
+
+### HTTPS Steps
+Steps for RBAC-enabled AKS cluster:
+```
+helm install stable/nginx-ingress \
+    --namespace kube-system \
+    --set controller.service.loadBalancerIP="40.121.63.72"  \
+    --set controller.replicaCount=2
+
+# Install the CustomResourceDefinition resources separately
+kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.6/deploy/manifests/00-crds.yaml
+
+# Create the namespace for cert-manager
+kubectl create namespace cert-manager
+
+# Label the cert-manager namespace to disable resource validation
+kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
+
+# Update your local Helm chart repository cache
+helm repo update
+
+# Install cert-manager
+helm install stable/cert-manager \
+    --name cert-manager \
+    --namespace cert-manager \
+    --set ingressShim.defaultIssuerName=letsencrypt-prod \
+    --set ingressShim.defaultIssuerKind=ClusterIssuer
+
+kubectl apply -f oneOffs.yml
 ```
