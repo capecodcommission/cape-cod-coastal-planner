@@ -14,7 +14,7 @@ docker-compose up --build front
 ```
 
 ## FROM Timmons Group
-Note that to run this locally, you need to make sure `"proxy": "http://0.0.0.0:4000"` is added to elm-package.json. Additionally, be aware that if you add a new elm package, it seems to rewrite the elm-package.json file, removing the `proxy` entry, making it necessary to re-add. The proxy address is the address of your locally running `chip_api` backend. If the port for the api changes, this `proxy` entry will need to change to continue with local development. Also note that using `localhost` in place of `0.0.0.0` is sometimes necessary. I'm not entirely sure why, but I bet a sysops guy could tell you. :)
+Note that to run this locally, you need to make sure `"proxy": "http://0.0.0.0:4000"` is added to elm-package.json. Additionally, be aware that if you add a new elm package, it seems to rewrite the elm-package.json file, removing the `proxy` entry, making it necessary to re-add. The proxy address is the address of your locally running `chip_api` backend. If the port for the api changes, this `proxy` entry will need to change to continue with local development. Also note that using `localhost` in place of `0.0.0.0` is sometimes necessary. I'm not entirely sure why, but I bet a sysops guy could tell you. :P
 
 ## Front-end Build Update Workflow
 

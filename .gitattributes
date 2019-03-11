@@ -1,11 +1,11 @@
 * text=auto
 *.sh text eol=lf
-.gitattributes -diff
-/chip_api/config/dev.exs -diff
-/chip_api/config/test.exs -diff
-/chip_api/Dockerfile -diff
-/chip_app/scripts/start.js -diff
-/chip_app/elm-package.json -diff
-/chip_app/package.json -diff
-/chip_app/Dockerfile -diff
-/chip_api/startup.sh -diff
+.gitattributes merge=ours
+/chip_api/config/dev.exs merge=ours
+/chip_api/config/test.exs merge=ours
+/chip_api/Dockerfile merge=ours
+/chip_app/scripts/start.js merge=ours
+/chip_app/elm-package.json merge=ours
+/chip_app/package.json merge=ours
+/chip_app/Dockerfile merge=ours
+/chip_api/startup.sh merge=ours
