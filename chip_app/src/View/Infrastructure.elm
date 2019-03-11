@@ -100,7 +100,7 @@ infraDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Municipal Properties"
+            , text "Municipal Properties" |> within [ infoIconView (Just "This layer displays all parcels owned by Barnstable County Municipal Government") ]
             ]
         , paragraph CloseIcon [onClick TogglePPRLayer] 
             [ decorativeImage 
@@ -112,7 +112,7 @@ infraDetails config paths =
                 )
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Public and Private Roads"
+            , text "Public and Private Roads" |> within [ infoIconView (Just "This layer displays all private and public roads within Barnstable County") ]
             ]
         , case config.pprClicked of 
             Open ->
@@ -129,7 +129,7 @@ infraDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Sewered Parcels"
+            , text "Sewered Parcels" |> within [ infoIconView (Just "Barnstable County parcels which are served by sewer treatment systems.") ]
             ]
         , paragraph CloseIcon [onClick ToggleCDSLayer] 
             [ decorativeImage
@@ -141,7 +141,7 @@ infraDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Coastal Defense Structures"
+            , text "Coastal Defense Structures" |> within [ infoIconView (Just "Coastal defence strucutres are groins, jetties and revetements. All planimetric features were derived from 2014 imagery, with a horizontal positional accuracy that shall not exceed 0.38-meters NSSDA 95% confidence (0.22-meters Root Mean Squared (RMSE) Error XY (0.15 meter RMSE X or Y), suitable for 40-scale planimetrics. All data was compiled using softcopy photogrammetric methods and map compilation was conducted under the direct supervision of an ASPRS Certified Photogrammetrist. Map compilation methods used must ensure that the final deliverable will meet the project's accuracy requirements.") ]
             ]
         , case config.cdsClicked of 
             Open ->
@@ -160,7 +160,7 @@ infraDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Structures"
+            , text "Structures" |> within [ infoIconView (Just "This dataset consists of 2-dimensional roof outlines (roofprints) for all buildings larger than 150 square feet, as interpreted by a contractor (Rolta) for the whole area of the Commonwealth using DigitalGlobe ortho images obtained in 2011 and 2012, supplemented with LiDAR (Light Detection And Ranging) data collected from 2002 to 2011 for the eastern half of the state. The roofprints as delivered were enhanced by MassGIS using Normalized Digital Surface Models (NDSMs) derived from the same LiDAR data. Other layers were used, including the Level 3 Parcels, to aid in review, especially where LiDAR data were not available.This feature class is being updated using ortho imagery captured in 2013, 2014, 2015 and 2016. The newer imagery allows MassGIS staff to remove, modify and add structures to keep up with more current ground conditions. Structures from the original compilation that are removed are stored in an archive feature class for edit tracking and historical purposes.Last updated on 10/2/2017.In ArcSDE the layer is named STRUCTURES_POLY. ") ]
             ]
         ]
 
@@ -172,15 +172,17 @@ pprLegend paths =
         [ paragraph 
             NoStyle 
             []
-            [ decorativeImage
+            [ button
                 (PL RoadsPrivate)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Private   "
-            , decorativeImage
+            , button
                 (PL RoadsPublic)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Public"
             ]
         ]
@@ -193,20 +195,35 @@ cdsLegend paths =
         [ paragraph 
             NoStyle 
             []
-            [ decorativeImage
+            [ button
                 (PL Groins)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Groins   "
-            , decorativeImage
+            , button
                 (PL Revetment)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Revetment   "
-            , decorativeImage
+            , button
                 (PL Jetty)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "Jetty"
             ]
         ]
+
+
+infoIconView : Maybe String -> Element MainStyles Variations Msg
+infoIconView maybeHelpText =
+    case maybeHelpText of
+        Just helpText ->
+            circle 6 (ShowOutput OutputInfoIcon) 
+                [ title helpText, alignRight, moveRight 18 ] <| 
+                    el NoStyle [verticalCenter, center] (text "i")
+
+        Nothing ->
+            empty   

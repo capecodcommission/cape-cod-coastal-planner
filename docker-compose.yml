@@ -11,6 +11,8 @@ services:
       - cccpapidev
     ports:
       - 3002:3002
+    volumes:
+      - ./chip_app/src:/app/src:rw
     
   cccpapidev:
     container_name: cccpapidev

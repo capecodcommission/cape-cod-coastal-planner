@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Navigation
+import Element.Events exposing (onClick)
 import Html exposing (Html)
 import Element exposing (..)
 import Element.Attributes exposing (..)
@@ -43,6 +44,8 @@ import View.Helpers exposing (..)
 import Styles exposing (..)
 import ChipApi.Scalar as Scalar
 import Ports exposing (..)
+import View.Tray as Tray
+import View.Menu as Menu
 
 
 ---- MODEL ----
@@ -116,6 +119,11 @@ type alias Model =
     , sloshToggleFx : Animation.State
     , shorelineSelected : Openness
     , layerClicked : Openness
+    , titleRibbonFX : Animation.State
+    , outputDetails : AdaptationOutput
+    , vulnRibbonClicked : Openness
+    , menuClicked : Openness
+    , menuFX : Animation.State
     }
 
 
@@ -236,6 +244,16 @@ initialModel flags =
         Closed
         -- Any layer activated
         Closed
+        -- Title Ribbon activated
+        (Animation.style <| .closed <| Animations.titleStates)
+        -- AdaptationOutput
+        NotCalculated
+        -- vuln ribbon clicked
+        Open
+        -- menu clicked
+        Closed
+        -- menu FX
+        (Animation.style <| .closed <| Animations.menuStates)
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -428,6 +446,10 @@ updateModel msg model =
                 |> \m ->
                     { m 
                         | shorelineSelected = Open
+                        , titleRibbonFX =
+                            Animation.interrupt
+                                [ Animation.to <| .open <| Animations.titleStates ]
+                                model.titleRibbonFX
                     }
             , olCmd <| encodeOpenLayersCmd (RenderVulnerabilityRibbon response)
             )
@@ -530,13 +552,15 @@ updateModel msg model =
                     ( { model | adaptationInfo = info }, cmd )
 
         SelectStrategy id ->
-            model.adaptationInfo
+             model.adaptationInfo
                 |> updateHazardsWith
                     (Hazards.updateStrategyIds 
                         (ZipHelp.tryFindFirst <| ZipHelp.matches id)
                     )
                 |> \(info, cmd) ->
                     ( { model | adaptationInfo = info }, cmd )
+                
+            
             
         HandleStrategyKeyboardEvent evt ->
             case evt.keyCode of
@@ -643,6 +667,8 @@ updateModel msg model =
                 , fzToggleFx = Animation.update animMsg model.fzToggleFx
                 , sloshFx = Animation.update animMsg model.sloshFx
                 , sloshToggleFx = Animation.update animMsg model.sloshToggleFx
+                , titleRibbonFX = Animation.update animMsg model.titleRibbonFX
+                , menuFX = Animation.update animMsg model.menuFX
             }
             , Cmd.none
             )
@@ -1237,9 +1263,122 @@ updateModel msg model =
                         , slr1ftClicked = Closed 
                         , dr1ftClicked = Closed
                         , critFacClicked = Closed
+                        , structuresClicked = Closed 
                     }
+                |> collapseFZSection
+                |> collapseSloshSection
             , olCmd <| encodeOpenLayersCmd (ClearLayers)
             )
+
+        ResetAll ->
+            ( model 
+                |> \m -> 
+                    { m 
+                        | shorelineSelected = Closed
+                        , shorelineLocationsDropdown = 
+                            { menu = Input.dropMenu Nothing SelectLocationInput
+                            , isOpen = False
+                            , name = "Shoreline Location"
+                            }
+                        , layerClicked = Closed 
+                        , stiClicked = Closed 
+                        , fourtyYearClicked = Closed
+                        , sloshClicked = Closed
+                        , fzClicked = Closed
+                        , cdsClicked = Closed
+                        , spClicked = Closed
+                        , pprClicked = Closed
+                        , mopClicked = Closed
+                        , slr6ftClicked = Closed 
+                        , dr6ftClicked = Closed
+                        , slr5ftClicked = Closed 
+                        , dr5ftClicked = Closed
+                        , slr4ftClicked = Closed 
+                        , dr4ftClicked = Closed
+                        , slr3ftClicked = Closed 
+                        , dr3ftClicked = Closed
+                        , slr2ftClicked = Closed 
+                        , dr2ftClicked = Closed
+                        , slr1ftClicked = Closed 
+                        , dr1ftClicked = Closed
+                        , critFacClicked = Closed
+                        , structuresClicked = Closed 
+                        , strategiesModalOpenness = Closed
+                        , calculationOutput = Nothing
+                        , zoneOfImpact = Nothing
+                        , calculationOutput = Nothing
+                        , adaptationHexes = NotAsked
+                        , titleRibbonFX =
+                            Animation.interrupt
+                                [ Animation.to <| .closed <| Animations.titleStates ]
+                                model.titleRibbonFX
+                    }
+                |> collapseFZSection
+                |> collapseSloshSection
+            , olCmd <| encodeOpenLayersCmd (ResetAllOL)
+            )
+
+        ZoomIn -> 
+            ( model
+            , olCmd <| encodeOpenLayersCmd (ZoomInOL) 
+            )
+
+        ZoomOut -> 
+            ( model
+            , olCmd <| encodeOpenLayersCmd (ZoomOutOL) 
+            )
+
+        GetLocation -> 
+            ( model
+            , olCmd <| encodeOpenLayersCmd (GetLocOL) 
+            )
+
+        ToggleVulnRibbon -> 
+            case model.vulnRibbonClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | vulnRibbonClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableVulnOL) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | vulnRibbonClicked = Open 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderVulnOL) 
+                    )
+
+        ToggleMenu ->
+            case model.menuClicked of 
+                Closed -> 
+                    ( model
+                        |> \m ->
+                            { m
+                                | menuFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .open <| Animations.menuStates ]
+                                        model.menuFX
+                                , menuClicked = Open
+                            }
+                    , Cmd.none
+                    )
+                Open -> 
+                    ( model
+                        |> \m ->
+                            { m
+                                | menuFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .closed <| Animations.menuStates ]
+                                        model.menuFX
+                                , menuClicked = Closed
+                            }
+                    , Cmd.none
+                    )
+
 
         
 
@@ -1683,6 +1822,8 @@ view app =
                                         Nothing ->
                                             el NoStyle [] empty
                                     , LSidebar.view model <| getLeftSidebarChildViews model
+                                    , Tray.view model
+                                    , Menu.view model
                                     ]
                                     
                                     
@@ -1690,7 +1831,7 @@ view app =
                             -- ie: modal should never be open when zone of impact is Nothing (make impossible states impossible)
                             , case ( model.zoneOfImpact, model.strategiesModalOpenness ) of
                                 ( Just zoi, Open ) ->
-                                    StrategiesModal.view model model.adaptationInfo zoi
+                                    StrategiesModal.view model model.adaptationInfo zoi model.outputDetails
 
                                 ( _, _ ) ->
                                     el NoStyle [] empty
@@ -1708,39 +1849,24 @@ view app =
 headerView : Model -> Element MainStyles Variations Msg
 headerView ({ device } as model) =
     header (Header HeaderBackground) [ width fill, height (px <| adjustOnHeight ( 60, 80 ) device) ] <|
-        row NoStyle [ height fill, width fill, paddingXY 54 0, spacingXY 54 0 ] <|
+        row NoStyle [ height fill, width fill, paddingXY 54 15, spacingXY 54 0 ] <|
             [ column NoStyle
                 [ verticalCenter, width fill ]
-                [ h1 (Header HeaderTitle) [] <| Element.text "Cape Cod Coastal Planner" ]
+                [ button 
+                    (case model.menuClicked of
+                        Open ->
+                            (Baseline BaselineInfoBtnClicked)
+                        Closed ->
+                            (Baseline BaselineInfoBtn)
+                    )
+                    [ height (px 42), width (px 42), title "Toggle Menu", onClick ToggleMenu ]
+                    (Element.text "☰")
+                ]
             , column NoStyle
-                [ verticalCenter, width fill ]
-                [ case model.shorelineSelected of
-                    Open ->
-                        textLayout 
-                            NoStyle 
-                            [ verticalCenter, spacing 5, paddingXY 32 0 ]
-                            [ paragraph 
-                                (Header HeaderTitle) 
-                                []
-                                [ decorativeImage
-                                    (Rbn LessThanZero)
-                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                                    {src = model.paths.downArrow} 
-                                , Element.text "Score <= 0   "
-                                , decorativeImage
-                                    (Rbn OneToFive)
-                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                                    {src = model.paths.downArrow} 
-                                , Element.text "Score 1 - 5   "
-                                , decorativeImage
-                                    (Rbn SixPlus)
-                                    [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                                    {src = model.paths.downArrow} 
-                                , Element.text "Score >= 6"
-                                ]
-                            ]
-                    Closed ->
-                        el NoStyle [] empty
+                [ verticalCenter, center, width fill]
+                [ decorativeImage NoStyle
+                    [width (px 375), height (px 65)]
+                    { src = model.paths.logoPath } 
                 ]
             , column NoStyle
                 [ verticalCenter, width fill ]
@@ -1750,6 +1876,13 @@ headerView ({ device } as model) =
                     , case model.shorelineSelected of 
                         Open ->
                             BaselineInfo.view model
+                        Closed ->
+                            el NoStyle [] empty
+                    , case model.shorelineSelected of
+                        Open ->
+                            button (Baseline BaselineInfoBtn)
+                                [ height (px 42), width (px 42), title "Reset Scenario", onClick ResetAll ]
+                                (Element.text "⟲")
                         Closed ->
                             el NoStyle [] empty
                     ]
@@ -1810,6 +1943,8 @@ animations model =
     , model.fzToggleFx
     , model.sloshFx
     , model.sloshToggleFx
+    , model.titleRibbonFX
+    , model.menuFX
     ]
     
 

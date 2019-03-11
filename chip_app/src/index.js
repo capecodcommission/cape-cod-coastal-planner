@@ -8,7 +8,7 @@ import zoiPath from "./img/zoi.png";
 import slrPath from "./img/SeaLevelRise.png"
 import wetPath from "./img/wetlands.png"
 import shorePath from "./img/shoreline.png"
-import sloshPath from "./img/slosh.png"
+import logoPath from "./img/logo.png"
 import downArrow from "./img/downArrow.png"
 import registerServiceWorker from './registerServiceWorker';
 
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "trianglePath": trianglePath,
             "zoiPath": zoiPath,
             "shorePath": shorePath,
-            "sloshPath": sloshPath,
+            "logoPath": logoPath,
             "downArrow": downArrow
         }
     });

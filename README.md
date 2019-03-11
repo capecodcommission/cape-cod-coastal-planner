@@ -10,13 +10,28 @@ It is divided into 2 main projects:
 Architecture Decision Records can be found in `ccc/docs/architecture` and document the major architectural choices made throughout this project.
 
 
-## Getting Started
+## Local Docker & Development - (!!if developing create a feature branch off the dev branch!!)
 ```bash
 # Navigate to the project directory
 cd cape-cod-coastal-planner/
 
-# Run all services locally
-docker-compose up
+# Checkout the dev branch
+
+# Create a feature branch off the dev branch
+naming convention of feature branch `this-feature`
+
+# Navigate to chip_api/config
+create `dev.secret.exs` & `test.secret.exs`
+
+# Navigate to chip_api/startup.sh
+uncomment `mix ecto.setup` line (Only for development)
+
+# Run & destroy all services locally with docker
+`docker-compose up --build` (create docker-compose services)
+`docker-compose down -v` (destroy docker-compose services)
+
+#Prior to rebasing feature-branch against dev branch
+navigate to `chip_api/startup.sh` and comment `mix ecto.setup` line again
 ```
 
 ## CI/CD
@@ -44,7 +59,7 @@ To build and push local images to Azure Container Registry
 ```bash
 
 # Log in to Azure Container Registry (ACR) ccccontainers
-az acr login -n ccccontainers
+sudo az acr login -n ccccontainers
 
 # Build local images from Dockerfile directories and tag with ACR login server name
 # NOTE: Increment tag version number for each additional build
@@ -82,9 +97,9 @@ kompose convert -f docker-compose.yml -o kubernetes-compose.yml
 kubectl apply -f kubernetes-compose.yml
 
 # Enter an interactive terminal into a pod id
-kubectl exec -it cccpapi-12345678 -- /bin/bash
+kubectl exec -it --namespace NAMESPACE cccpapi-1234567 -- /bin/bash
 
-# Install Keel on an RBAC-enabled cluster
+# Install Keel on AKS to rebuild pods when pinged
 helm upgrade --install keel --namespace=keel keel/keel --set service.enabled="true" 
 
 # To delete all services, deployments, pods, replicasets, volumes
@@ -102,4 +117,35 @@ az login
 
 # Start local webapp to view CCC-AKS-DEV-01
 az aks browse --resource-group CCC-AKSGroup --name CCC-AKS-01
+```
+
+
+### HTTPS Steps
+Steps for RBAC-enabled AKS cluster:
+```
+helm install stable/nginx-ingress \
+    --namespace kube-system \
+    --set controller.service.loadBalancerIP="40.121.63.72"  \
+    --set controller.replicaCount=2
+
+# Install the CustomResourceDefinition resources separately
+kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.6/deploy/manifests/00-crds.yaml
+
+# Create the namespace for cert-manager
+kubectl create namespace cert-manager
+
+# Label the cert-manager namespace to disable resource validation
+kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
+
+# Update your local Helm chart repository cache
+helm repo update
+
+# Install cert-manager
+helm install stable/cert-manager \
+    --name cert-manager \
+    --namespace cert-manager \
+    --set ingressShim.defaultIssuerName=letsencrypt-prod \
+    --set ingressShim.defaultIssuerKind=ClusterIssuer
+
+kubectl apply -f oneOffs.yml
 ```

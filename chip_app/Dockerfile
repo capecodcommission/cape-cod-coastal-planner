@@ -2,7 +2,7 @@ FROM node
 WORKDIR /app
 COPY . /app
 RUN yarn upgrade
-RUN yarn global add elm elm-test nodemon
+RUN yarn global add elm elm-test
 RUN yarn
 # MASTER
 # EXPOSE 3000

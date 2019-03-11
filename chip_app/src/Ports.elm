@@ -50,6 +50,12 @@ type OpenLayersCmd
     | ClearLayers
     | RenderStructures
     | DisableStructures
+    | ResetAllOL
+    | ZoomInOL
+    | ZoomOutOL
+    | GetLocOL
+    | DisableVulnOL
+    | RenderVulnOL
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -216,6 +222,42 @@ encodeOpenLayersCmd cmd =
         ClearLayers ->
             E.object
                 [ ( "cmd", E.string "clear_layers" )
+
+                ]
+
+        ResetAllOL ->
+            E.object
+                [ ( "cmd", E.string "reset_all" )
+
+                ]
+
+        ZoomInOL -> 
+            E.object
+                [ ( "cmd", E.string "zoom_in" )
+
+                ]
+        
+        ZoomOutOL -> 
+            E.object
+                [ ( "cmd", E.string "zoom_out" )
+
+                ]
+
+        GetLocOL -> 
+            E.object
+                [ ( "cmd", E.string "get_loc" )
+
+                ]
+
+        DisableVulnOL -> 
+            E.object
+                [ ( "cmd", E.string "disable_vuln_ribbon" )
+
+                ]
+
+        RenderVulnOL -> 
+            E.object
+                [ ( "cmd", E.string "render_vuln_ribbon" )
 
                 ]
             
