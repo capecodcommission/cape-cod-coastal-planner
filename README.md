@@ -82,7 +82,7 @@ kompose convert -f docker-compose.yml -o kubernetes-compose.yml
 kubectl apply -f kubernetes-compose.yml
 
 # Enter an interactive terminal into a pod id
-kubectl exec -it cccpapi-1234567 -- /bin/bash
+kubectl exec -it cccpapi-12345678 -- /bin/bash
 
 # Install Keel on an RBAC-enabled cluster
 helm upgrade --install keel --namespace=keel keel/keel --set service.enabled="true" 
