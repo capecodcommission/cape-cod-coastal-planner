@@ -11,8 +11,8 @@ use Mix.Config
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :chip_api, ChipApiWeb.Endpoint,
-  # http: [port: 4000], # MASTER
-  http: [port: 9000], # DEV
+  http: [port: 4000], # MASTER
+  # http: [port: 9000], # DEV
   # http: [port: 9001], # UAT
   server: false
 
