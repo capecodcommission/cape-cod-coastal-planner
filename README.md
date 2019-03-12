@@ -146,6 +146,4 @@ helm install stable/cert-manager \
     --namespace cert-manager \
     --set ingressShim.defaultIssuerName=letsencrypt-prod \
     --set ingressShim.defaultIssuerKind=ClusterIssuer
-
-kubectl apply -f oneOffs.yml
 ```
