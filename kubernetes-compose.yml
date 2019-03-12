@@ -1,486 +1,429 @@
 apiVersion: v1
 items:
-# - apiVersion: v1
-#   kind: PersistentVolume
-#   metadata:
-#     name: pgdata
-#     namespace: cccp
-#     labels:
-#       name: pgdata
-#       type: local
-#   spec:
-#     capacity:
-#       storage: 100Mi
-#     accessModes:
-#       - ReadWriteOnce
-#     hostPath:
-#       path: "/var/lib/postgresql/data"
-#   status: {}
-# - apiVersion: v1
-#   kind: PersistentVolumeClaim
-#   metadata:
-#     name: pgdata-claim
-#     namespace: cccp
-#     labels:
-#       name: pgdata-claim
-#   spec:
-#     accessModes:
-#     - ReadWriteOnce
-#     volumeMode: Filesystem
-#     resources:
-#       requests:
-#         storage: 100Mi
-#   status: {}
-# - apiVersion: v1
-#   kind: Service
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpapi
-#     name: cccpapi
-#     namespace: cccp
-#   spec:
-#     ports:
-#     - name: "4000"
-#       port: 4000
-#       targetPort: 4000
-#     selector:
-#       io.kompose.service: cccpapi
-#   status:
-#     loadBalancer: {}
-# - apiVersion: v1
-#   kind: Service
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpfront
-#     name: cccpfront
-#     namespace: cccp
-#   spec:
-#     type: LoadBalancer
-#     ports:
-#     - name: "80"
-#       port: 80
-#       targetPort: 3000
-#     selector:
-#       io.kompose.service: cccpfront
-#   status:
-#     loadBalancer: {}
-# - apiVersion: extensions/v1beta1
-#   kind: Deployment
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpapi
-#       keel.sh/policy: force
-#       keel.sh/match-tag: "true"
-#     name: cccpapi
-#     namespace: cccp
-#   spec:
-#     replicas: 1
-#     revisionHistoryLimit: 1
-#     selector:
-#       matchLabels:
-#         app: cccpapi
-#     strategy: {}
-#     template:
-#       metadata:
-#         creationTimestamp: null
-#         labels:
-#           io.kompose.service: cccpapi
-#           app: cccpapi
-#       spec:
-#         containers:
-#         - image: ccccontainers.azurecr.io/cccp-api:latest
-#           imagePullPolicy: Always
-#           name: cccpapi
-#           ports:
-#           - containerPort: 4000
-#           resources: {}
-#         restartPolicy: Always
-#   status: {}
-# - apiVersion: extensions/v1beta1
-#   kind: Deployment
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpdb
-#     name: cccpdb
-#     namespace: cccp
-#   spec:
-#     replicas: 1
-#     strategy:
-#       type: Recreate
-#     template:
-#       metadata:
-#         creationTimestamp: null
-#         labels:
-#           io.kompose.service: cccpdb
-#       spec:
-#         containers:
-#         - env:
-#           - name: POSTGRES_PASSWORD
-#             value: chip_dev
-#           image: postgres
-#           name: cccpdb
-#           resources: {}
-#           volumeMounts:
-#           - mountPath: /var/lib/postgresql/data
-#             name: pgdata
-#             subPath: postgres
-#         restartPolicy: Always
-#         volumes:
-#         - name: pgdata
-#           persistentVolumeClaim:
-#             claimName: pgdata-claim
-#   status: {}
-# - apiVersion: extensions/v1beta1
-#   kind: Deployment
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpfront
-#       keel.sh/policy: force
-#       keel.sh/match-tag: "true"
-#     name: cccpfront
-#     namespace: cccp
-#   spec:
-#     replicas: 1
-#     revisionHistoryLimit: 1
-#     selector:
-#       matchLabels:
-#         app: cccpfront
-#     strategy: {}
-#     template:
-#       metadata:
-#         name: cccpfront
-#         creationTimestamp: null
-#         labels:
-#           io.kompose.service: cccpfront
-#           app: cccpfront
-#       spec:
-#         containers:
-#         - image: ccccontainers.azurecr.io/cccp-front:latest
-#           imagePullPolicy: Always
-#           name: cccpfront
-#           ports:
-#           - containerPort: 3000
-#           resources: {}
-#         restartPolicy: Always
-#   status: {}
-# - apiVersion: v1
-#   kind: Service
-#   metadata:
-#     labels:
-#       io.kompose.service: cccpdb
-#     name: cccpdb
-#     namespace: cccp
-#   spec:
-#     ports:
-#     - name: "5432"
-#       port: 5432
-#       targetPort: 5432
-#     selector:
-#       io.kompose.service: cccpdb
-#   status:
-#     loadBalancer: {}
-# - apiVersion: v1
-#   kind: Service
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpapidev
-#     name: cccpapidev
-#     namespace: cccp
-#   spec:
-#     ports:
-#     - name: "9000"
-#       port: 9000
-#       targetPort: 9000
-#     selector:
-#       io.kompose.service: cccpapidev
-#   status:
-#     loadBalancer: {}
-# - apiVersion: v1
-#   kind: Service
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpfrontdev
-#     name: cccpfrontdev
-#     namespace: cccp
-#   spec:
-#     type: LoadBalancer
-#     ports:
-#     - name: "3002"
-#       port: 3002
-#       targetPort: 3002
-#     selector:
-#       io.kompose.service: cccpfrontdev
-#   status:
-#     loadBalancer: {}
-# - apiVersion: extensions/v1beta1
-#   kind: Deployment
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpapidev
-#       keel.sh/policy: force
-#       keel.sh/match-tag: "true"
-#     name: cccpapidev
-#     namespace: cccp
-#   spec:
-#     replicas: 1
-#     revisionHistoryLimit: 5
-#     selector:
-#       matchLabels:
-#         app: cccpapidev
-#     strategy: {}
-#     template:
-#       metadata:
-#         creationTimestamp: null
-#         labels:
-#           io.kompose.service: cccpapidev
-#           app: cccpapidev
-#       spec:
-#         containers:
-#         - image: ccccontainers.azurecr.io/cccp-api:dev
-#           imagePullPolicy: Always
-#           name: cccpapidev
-#           ports:
-#           - containerPort: 9000
-#           resources: {}
-#         restartPolicy: Always
-#   status: {}
-# - apiVersion: extensions/v1beta1
-#   kind: Deployment
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpfrontdev
-#       keel.sh/policy: force
-#       keel.sh/match-tag: "true"
-#     name: cccpfrontdev
-#     namespace: cccp
-#   spec:
-#     replicas: 1
-#     revisionHistoryLimit: 5
-#     selector:
-#       matchLabels:
-#         app: cccpfrontdev
-#     strategy: {}
-#     template:
-#       metadata:
-#         name: cccpfrontdev
-#         creationTimestamp: null
-#         labels:
-#           io.kompose.service: cccpfrontdev
-#           app: cccpfrontdev
-#       spec:
-#         containers:
-#         - image: ccccontainers.azurecr.io/cccp-front:dev
-#           imagePullPolicy: Always
-#           name: cccpfrontdev
-#           ports:
-#           - containerPort: 3002
-#           resources: {}
-#         restartPolicy: Always
-#   status: {}
-# - apiVersion: v1
-#   kind: Service
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpapiuat
-#     name: cccpapiuat
-#     namespace: cccp
-#   spec:
-#     ports:
-#     - name: "9001"
-#       port: 9001
-#       targetPort: 9001
-#     selector:
-#       io.kompose.service: cccpapiuat
-#   status:
-#     loadBalancer: {}
-# - apiVersion: v1
-#   kind: Service
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpfrontuat
-#     name: cccpfrontuat
-#     namespace: cccp
-#   spec:
-#     type: LoadBalancer
-#     ports:
-#     - name: "3030"
-#       port: 3030
-#       targetPort: 3030
-#     selector:
-#       io.kompose.service: cccpfrontuat
-#   status:
-#     loadBalancer: {}
-# - apiVersion: extensions/v1beta1
-#   kind: Deployment
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpapiuat
-#       keel.sh/policy: force
-#       keel.sh/match-tag: "true"
-#     name: cccpapiuat
-#     namespace: cccp
-#   spec:
-#     replicas: 1
-#     revisionHistoryLimit: 5
-#     selector:
-#       matchLabels:
-#         app: cccpapiuat
-#     strategy: {}
-#     template:
-#       metadata:
-#         creationTimestamp: null
-#         labels:
-#           io.kompose.service: cccpapiuat
-#           app: cccpapiuat
-#       spec:
-#         containers:
-#         - image: ccccontainers.azurecr.io/cccp-api:uat
-#           imagePullPolicy: Always
-#           name: cccpapiuat
-#           ports:
-#           - containerPort: 9001
-#           resources: {}
-#         restartPolicy: Always
-#   status: {}
-# - apiVersion: extensions/v1beta1
-#   kind: Deployment
-#   metadata:
-#     annotations:
-#       kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
-#         convert -f docker-compose.yml -o kubernetes-compose.yml
-#       kompose.version: 1.17.0 (a74acad)
-#     creationTimestamp: null
-#     labels:
-#       io.kompose.service: cccpfrontuat
-#       keel.sh/policy: force
-#       keel.sh/match-tag: "true"
-#     name: cccpfrontuat
-#     namespace: cccp
-#   spec:
-#     replicas: 1
-#     revisionHistoryLimit: 5
-#     selector:
-#       matchLabels:
-#         app: cccpfrontuat
-#     strategy: {}
-#     template:
-#       metadata:
-#         name: cccpfrontuat
-#         creationTimestamp: null
-#         labels:
-#           io.kompose.service: cccpfrontuat
-#           app: cccpfrontuat
-#       spec:
-#         containers:
-#         - image: ccccontainers.azurecr.io/cccp-front:uat
-#           imagePullPolicy: Always
-#           name: cccpfrontuat
-#           ports:
-#           - containerPort: 3030
-#           resources: {}
-#         restartPolicy: Always
-#   status: {}
-# - apiVersion: extensions/v1beta1
-#   kind: Ingress
-#   metadata:
-#     name: cccp-ingress
-#     namespace: cccp
-#     annotations:
-#       kubernetes.io/ingress.class: nginx
-#       certmanager.k8s.io/cluster-issuer: letsencrypt-prod
-#       nginx.ingress.kubernetes.io/rewrite-target: /
-#   spec:
-#     tls:
-#     - hosts:
-#       - www.capecodcoast.org
-#       secretName: cccpfront-tls-secret
-#     - hosts:
-#       - dev.capecodcoast.org
-#       secretName: cccpfrontdev-tls-secret
-#     - hosts:
-#       - uat.capecodcoast.org
-#       secretName: cccpfrontuat-tls-secret
-#     rules:
-#     - host: www.capecodcoast.org
-#       http:
-#         paths:
-#         - path: /
-#           backend:
-#             serviceName: cccpfront
-#             servicePort: 3000
-#     - host: dev.capecodcoast.org
-#       http:
-#         paths:
-#         - path: /
-#           backend:
-#             serviceName: cccpfrontdev
-#             servicePort: 3002
-#     - host: uat.capecodcoast.org
-#       http:
-#         paths:
-#         - path: /
-#           backend:
-#             serviceName: cccpfrontuat
-#             servicePort: 3030
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: pgdata
+    labels:
+      name: pgdata
+      type: local
+  spec:
+    capacity:
+      storage: 100Mi
+    accessModes:
+      - ReadWriteOnce
+    hostPath:
+      path: "/var/lib/postgresql/data"
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: pgdata-claim
+    labels:
+      name: pgdata-claim
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    volumeMode: Filesystem
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpapi
+    name: cccpapi
+  spec:
+    ports:
+    - name: "4000"
+      port: 4000
+      targetPort: 4000
+    selector:
+      io.kompose.service: cccpapi
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpfront
+    name: cccpfront
+  spec:
+    type: LoadBalancer
+    loadBalancerIP: 52.168.124.32
+    ports:
+    - name: "80"
+      port: 80
+      targetPort: 3000
+    selector:
+      io.kompose.service: cccpfront
+  status:
+    loadBalancer: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpapi
+      keel.sh/policy: force
+      keel.sh/match-tag: "true"
+    name: cccpapi
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 1
+    selector:
+      matchLabels:
+        app: cccpapi
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: cccpapi
+          app: cccpapi
+      spec:
+        containers:
+        - image: ccccontainers.azurecr.io/cccp-api:latest
+          imagePullPolicy: Always
+          name: cccpapi
+          ports:
+          - containerPort: 4000
+          resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpdb
+    name: cccpdb
+  spec:
+    replicas: 1
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: cccpdb
+      spec:
+        containers:
+        - env:
+          - name: POSTGRES_PASSWORD
+            value: chip_dev
+          image: postgres
+          name: cccpdb
+          resources: {}
+          volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: pgdata
+            subPath: postgres
+        restartPolicy: Always
+        volumes:
+        - name: pgdata
+          persistentVolumeClaim:
+            claimName: pgdata-claim
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpfront
+      keel.sh/policy: force
+      keel.sh/match-tag: "true"
+    name: cccpfront
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 1
+    selector:
+      matchLabels:
+        app: cccpfront
+    strategy: {}
+    template:
+      metadata:
+        name: cccpfront
+        creationTimestamp: null
+        labels:
+          io.kompose.service: cccpfront
+          app: cccpfront
+      spec:
+        containers:
+        - image: ccccontainers.azurecr.io/cccp-front:latest
+          imagePullPolicy: Always
+          name: cccpfront
+          ports:
+          - containerPort: 3000
+          resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      io.kompose.service: cccpdb
+    name: cccpdb
+  spec:
+    ports:
+    - name: "5432"
+      port: 5432
+      targetPort: 5432
+    selector:
+      io.kompose.service: cccpdb
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpapidev
+    name: cccpapidev
+  spec:
+    ports:
+    - name: "9000"
+      port: 9000
+      targetPort: 9000
+    selector:
+      io.kompose.service: cccpapidev
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpfrontdev
+    name: cccpfrontdev
+  spec:
+    type: LoadBalancer
+    ports:
+    - name: "3002"
+      port: 3002
+      targetPort: 3002
+    selector:
+      io.kompose.service: cccpfrontdev
+  status:
+    loadBalancer: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpapidev
+      keel.sh/policy: force
+      keel.sh/match-tag: "true"
+    name: cccpapidev
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 5
+    selector:
+      matchLabels:
+        app: cccpapidev
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: cccpapidev
+          app: cccpapidev
+      spec:
+        containers:
+        - image: ccccontainers.azurecr.io/cccp-api:dev
+          imagePullPolicy: Always
+          name: cccpapidev
+          ports:
+          - containerPort: 9000
+          resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpfrontdev
+      keel.sh/policy: force
+      keel.sh/match-tag: "true"
+    name: cccpfrontdev
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 5
+    selector:
+      matchLabels:
+        app: cccpfrontdev
+    strategy: {}
+    template:
+      metadata:
+        name: cccpfrontdev
+        creationTimestamp: null
+        labels:
+          io.kompose.service: cccpfrontdev
+          app: cccpfrontdev
+      spec:
+        containers:
+        - image: ccccontainers.azurecr.io/cccp-front:dev
+          imagePullPolicy: Always
+          name: cccpfrontdev
+          ports:
+          - containerPort: 3002
+          resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpapiuat
+    name: cccpapiuat
+  spec:
+    ports:
+    - name: "9001"
+      port: 9001
+      targetPort: 9001
+    selector:
+      io.kompose.service: cccpapiuat
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpfrontuat
+    name: cccpfrontuat
+  spec:
+    type: LoadBalancer
+    ports:
+    - name: "3030"
+      port: 3030
+      targetPort: 3030
+    selector:
+      io.kompose.service: cccpfrontuat
+  status:
+    loadBalancer: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpapiuat
+      keel.sh/policy: force
+      keel.sh/match-tag: "true"
+    name: cccpapiuat
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 5
+    selector:
+      matchLabels:
+        app: cccpapiuat
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: cccpapiuat
+          app: cccpapiuat
+      spec:
+        containers:
+        - image: ccccontainers.azurecr.io/cccp-api:uat
+          imagePullPolicy: Always
+          name: cccpapiuat
+          ports:
+          - containerPort: 9001
+          resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f docker-compose.yml -o kubernetes-compose.yml
+      kompose.version: 1.17.0 (a74acad)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: cccpfrontuat
+      keel.sh/policy: force
+      keel.sh/match-tag: "true"
+    name: cccpfrontuat
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 5
+    selector:
+      matchLabels:
+        app: cccpfrontuat
+    strategy: {}
+    template:
+      metadata:
+        name: cccpfrontuat
+        creationTimestamp: null
+        labels:
+          io.kompose.service: cccpfrontuat
+          app: cccpfrontuat
+      spec:
+        containers:
+        - image: ccccontainers.azurecr.io/cccp-front:uat
+          imagePullPolicy: Always
+          name: cccpfrontuat
+          ports:
+          - containerPort: 3030
+          resources: {}
+        restartPolicy: Always
+  status: {}
 kind: List
 metadata: {}
