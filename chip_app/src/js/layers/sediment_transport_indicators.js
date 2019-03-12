@@ -9,6 +9,7 @@ import Fill from "ol/style/Fill";
 import Circle from "ol/style/Circle";
 import Icon from "ol/style/Icon"
 import {getSTIRotation} from '../misc'
+import upArrow from '../../img/upArrow.png'
 
 
 /**
@@ -27,7 +28,7 @@ export function layer(map) {
         style: (feature, resolution) => {
             return new Style({
                 image: new Icon({
-                    src: 'http://kamalkarki.com/assets/img/business-grow.png',
+                    src: upArrow,
                     scale: .04,
                     rotation: getSTIRotation(feature),
                 })

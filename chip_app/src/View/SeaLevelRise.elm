@@ -106,10 +106,10 @@ slrDetails config paths =
                 NoStyle
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Sea Level Rise"
+            , text "Sea Level Rise" |> within [ infoIconView (Just "To map the predicted sea level rise for Barnstable County (Cape Cod) the most accurate elevation data was obtained and adjusted to account for vertical datum variations as well as localized tidal information. This adjusted data, was then separated into areas below sea level and into 1 ft increments (up to 6ft) above sea level. Topographical elevation data was sourced from remotely sensed LiDAR data which was collected in the Winter and Spring of 2011, while no snow was on the ground, rivers were at or below normal levels and within 90 minutes of the daily predicted low tide. For Barnstable County, the LiDAR was processed and classified to meet a bare earth Fundamental Vertical Accuracy (FVA) of 18.13 cm at a 95% confidence level. The topological elevation data was in a grid format, as a Digital Elevation Model (DEM) with a cell size of 1 meter. In order to incorporate tidal variability within an area when mapping sea level rise, a “modeled” surface (or raster) is needed that represents this variability. In addition, this surface must be represented in the same vertical datum as the elevation data. To account for the datum and tidal differences across the county the DEM was adjusted to localized conditions using the NOAA VDatum (Verticle Datum Transformation) software. The VDatum program was used to convert a 500m grid of points that covered the entire Barnstable County area from the source of North American Vertical Datum 88 (NAVD 88) to Mean Higher High Water (MHHW). MHHW is the average of the higher high water height of each tidal day observed over the National Tidal Datum Epoch. The 500m MHHW grid was then interpolated into a 1m grid that was identical in spatial extent to the 1m topographical DEM. The topographical DEM was then adjusted on a cell-by-cell basis to account for the MHHW elevation. ") ]
             , paragraph 
                 CloseIcon 
-                [ paddingXY 32 0 ]
+                [ paddingXY 35 0 ]
                 [ el 
                     ( case config.slr1ftClicked of 
                         Open -> 
@@ -168,10 +168,10 @@ slrDetails config paths =
                 NoStyle
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Discnctd Roads"
+            , text "Discnctd Roads" |> within [ infoIconView (Just "ESRI Network Analyst was used to determine which roads are disconnected from the network at each increment of Sea Level Rise. The network was created using the 2013 Navteq road dataset and service areas generated from a facility located on a high elevation. Thus, any roadway that was seperated from this facility by a barrier caused by flooding was identified by the software and would be considered disconnected.") ]
             , paragraph 
                 CloseIcon 
-                [ paddingXY 20 0 ]
+                [ paddingXY 30 0 ]
                 [ el 
                     ( case config.dr1ftClicked of 
                         Open -> 
@@ -233,6 +233,17 @@ slrDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Critical Facilities"
+            , text "Critical Facilities" |> within [ infoIconView (Just "Critical facilities are the following: airport, bridge, child care, church, military, community center, municipal, fire station, hospital, library, marina, police, Red Cross, school, senior center, wastewater treatment plant, solid waste, utility, vet and water department. ") ]
             ]
         ]
+
+infoIconView : Maybe String -> Element MainStyles Variations Msg
+infoIconView maybeHelpText =
+    case maybeHelpText of
+        Just helpText ->
+            circle 6 (ShowOutput OutputInfoIcon) 
+                [ title helpText, alignRight, moveRight 18 ] <| 
+                    el NoStyle [verticalCenter, center] (text "i")
+
+        Nothing ->
+            empty       

@@ -28,8 +28,8 @@ view result =
                 [ el NoStyle [ height fill ] empty, footerView ]
 
             Ok (OnlyNoAction output) ->
-                [ resultsHeader output
-                , resultsMainContent output
+                [ 
+                resultsMainContent output
                 , footerView 
                 ]
 
@@ -121,49 +121,49 @@ resultsHeader output =
                         |> within [ infoIconView output.description ]
                     )
                 ]
-            , row NoStyle [ height (percent 55), width fill, spread, alignBottom ]
-                [ column NoStyle [center ]
-                    [ el (ShowOutput OutputImpact) 
-                        [ moveUp 2, paddingXY 4 2, minWidth (px 115) ] <| text output.cost.name
-                    , el NoStyle [ moveDown 3 ] (text "COST")
-                        |> within [ infoIconView (Just "...") ]
-                    ]
-                , column NoStyle [center]
-                    [ el (ShowOutput OutputImpact) 
-                        [ moveUp 2, paddingXY 4 2, minWidth (px 115), vary Secondary True ] <| text output.lifespan.name
-                    , el NoStyle [ moveDown 3 ] (text "LIFESPAN")
-                        |> within [ infoIconView (Just "...") ]
-                    ]
-                , column NoStyle [center]                    
-                    [ column NoStyle []
-                        [ row NoStyle [ minWidth (px 115) ]
-                            [ el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0 
-                                , scaleDisabled "Site"
-                                ] <| text "Site"
-                            , el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0
-                                , vary Secondary True 
-                                , scaleDisabled "Neighborhood"
-                                ] <| text "Neighborhood"
-                            ]
-                        , row NoStyle [ minWidth (px 115) ]
-                            [ el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0
-                                , vary Tertiary True 
-                                , scaleDisabled "Community"
-                                ] <| text "Community"
-                            , el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0
-                                , vary Quaternary True
-                                , scaleDisabled "Region"
-                                ] <| text "Region"
-                            ]
-                        ]
-                    , el NoStyle [ moveDown 3 ] (text "SCALE")
-                        |> within [ infoIconView (Just "...") ]
-                    ]
-                ]
+            -- , row NoStyle [ height (percent 55), width fill, spread, alignBottom ]
+            --     [ column NoStyle [center ]
+            --         [ el (ShowOutput OutputImpact) 
+            --             [ moveUp 2, paddingXY 4 2, minWidth (px 115) ] <| text output.cost.name
+            --         , el NoStyle [ moveDown 3 ] (text "COST")
+            --             |> within [ infoIconView (Just "...") ]
+            --         ]
+            --     , column NoStyle [center]
+            --         [ el (ShowOutput OutputImpact) 
+            --             [ moveUp 2, paddingXY 4 2, minWidth (px 115), vary Secondary True ] <| text output.lifespan.name
+            --         , el NoStyle [ moveDown 3 ] (text "LIFESPAN")
+            --             |> within [ infoIconView (Just "...") ]
+            --         ]
+            --     , column NoStyle [center]                    
+            --         [ column NoStyle []
+            --             [ row NoStyle [ minWidth (px 115) ]
+            --                 [ el (ShowOutput OutputMultiImpact) 
+            --                     [ paddingXY 4 0 
+            --                     , scaleDisabled "Site"
+            --                     ] <| text "Site"
+            --                 , el (ShowOutput OutputMultiImpact) 
+            --                     [ paddingXY 4 0
+            --                     , vary Secondary True 
+            --                     , scaleDisabled "Neighborhood"
+            --                     ] <| text "Neighborhood"
+            --                 ]
+            --             , row NoStyle [ minWidth (px 115) ]
+            --                 [ el (ShowOutput OutputMultiImpact) 
+            --                     [ paddingXY 4 0
+            --                     , vary Tertiary True 
+            --                     , scaleDisabled "Community"
+            --                     ] <| text "Community"
+            --                 , el (ShowOutput OutputMultiImpact) 
+            --                     [ paddingXY 4 0
+            --                     , vary Quaternary True
+            --                     , scaleDisabled "Region"
+            --                     ] <| text "Region"
+            --                 ]
+            --             ]
+            --         , el NoStyle [ moveDown 3 ] (text "SCALE")
+            --             |> within [ infoIconView (Just "...") ]
+            --         ]
+            --     ]
             ]
 
 
@@ -178,17 +178,29 @@ resultsMainContent output =
                 , text " taking no action within the planning area." 
                 ]
             ]
-        , row NoStyle [ paddingXY 40 20, spread, height fill ]
-            [ monetaryResultView "Public Building" "Value" output.publicBuildingValue
-            , monetaryResultView "Private Shoreline" "Land Value" output.privateLandValue
-            , monetaryResultView "Private Building" "Value" output.privateBuildingValue
-            ]
+        , if output.name == "No Action" 
+            then
+            row NoStyle [ paddingXY 40 20, spread, height fill ]
+                [ monetaryResultView "Public Building" "Value" output.publicBuildingValue (Just "In the No Action scenario, Public Building Value represents the anticipated change in public building value due to sea level rise and erosion over the 40-year planning horizon, or the cost of damage due to a one-time storm surge event.")
+                , monetaryResultView "Private Shoreline" "Land Value" output.privateLandValue (Just "In the No Action scenario, Private Shoreline Value represents the anticipated change in private shoreline land value due to sea level rise, erosion, or storm surge.")
+                , monetaryResultView "Private Building" "Value" output.privateBuildingValue (Just "In the No Action scenario, Private Building Value represents the anticipated change in private shoreline building value (within 100 feet of the coast) due to sea level rise, erosion, or storm surge.")
+                ] 
+            else
+            row NoStyle [ paddingXY 40 20, spread, height fill ]
+                [ monetaryResultView "Public Building" "Value" output.publicBuildingValue (Just "Public Building Value is the anticipated gain or loss in municipally-owned buildings' value that occurs due to adaptation strategy implementation.")
+                , monetaryResultView "Private Shoreline" "Land Value" output.privateLandValue (Just "Private Shoreline Land Value is the anticipated gain or loss in private shoreline land value that occurs due to adaptation strategy implementation.")
+                , monetaryResultView "Private Building" "Value" output.privateBuildingValue (Just "Private Shoreline Building Value is the anticipated gain or loss in private shoreline building value (within 100 feet of the coast) that occurs due to adaptation strategy implementation.")
+                ]
         , row NoStyle [ paddingXY 40 20, width fill, height fill ]
-            [ acreageResultView "Salt Marsh Change" output.saltMarshChange
-            , acreageResultView "Beach Area Change" output.beachAreaChange
+            [ acreageResultView "Salt Marsh Change" output.saltMarshChange "SM"
+            , acreageResultView "Beach Area Change" output.beachAreaChange "B"
             ]
         , row NoStyle [spread, height fill, width fill]
-            [ criticalFacilitiesView output.criticalFacilities
+            [ if output.name == "No Action"
+                then
+                criticalFacilitiesView output.criticalFacilities "NA"
+                else
+                criticalFacilitiesView output.criticalFacilities "ST"
             , rareSpeciesHabitatView output.rareSpeciesHabitat
             ]
         ]
@@ -238,20 +250,20 @@ scenarioGeneralInfoView output =
                 ]
         , column NoStyle [ paddingLeft 15, spacingXY 0 4 ]
             [ renderDetails "LOCATION:" output.location (Just "area") Nothing
-            , renderDetails "DURATION:" output.duration Nothing (Just "...")
-            , renderDetails "SCENARIO SIZE:" (toString output.scenarioSize) (Just "linear ft.") (Just "...")
+            , renderDetails "DURATION:" output.duration Nothing (Just "The Cape Cod Coastal Planner's planning horizon for sea level rise is 40 years, in alignment with the 2-feet of predicted sea level rise factored into the MA Municipal Vulnerability Planning Process. The horizon for erosion also reflects 40 years, using the long-term erosion rates calculated in the MA Shoreline Change project. Storm surge is considered a one-time, immediate-impact event.")
+            , renderDetails "SCENARIO SIZE:" (toString output.scenarioSize) (Just "linear ft.") (Just "The size of the scenario is the length of shoreline selected by the user, with Zones of Impact ranging from 500 to 4,000 contiguous feet.")
             ]
         ]
 
 
-monetaryResultView : String -> String -> MonetaryResult -> Element MainStyles Variations Msg
-monetaryResultView lblPart1 lblPart2 result =
+monetaryResultView : String -> String -> MonetaryResult -> Maybe String -> Element MainStyles Variations Msg
+monetaryResultView lblPart1 lblPart2 result infoText =
     let
         render a ( b, c ) d e f =
             column NoStyle [ spacing 5, verticalCenter ]
                 [ el (ShowOutput OutputValue) [ center, f ] <| text a 
                 , el (ShowOutput OutputValueLbl) [ center, f ] (text b)
-                    |> within [ infoIconView c ]
+                    |> within [ infoIconView infoText ]
                 , h6 (ShowOutput OutputH6Bold) [ center ] <| text d
                 , h6 (ShowOutput OutputH6Bold) [ center ] <| text e
                 ]
@@ -273,8 +285,8 @@ monetaryResultView lblPart1 lblPart2 result =
             render (abbreviateMonetaryValue protected) ("PROTECTED", Just "...") lblPart1 lblPart2 (vary Tertiary True)
 
 
-acreageResultView : String -> AcreageResult -> Element MainStyles Variations Msg
-acreageResultView lbl result =
+acreageResultView : String -> AcreageResult -> String -> Element MainStyles Variations Msg
+acreageResultView lbl result metric =
     let
         render a ( b, c ) d e =
             column NoStyle [ spacing 5, width fill, verticalCenter ]
@@ -284,21 +296,33 @@ acreageResultView lbl result =
                 , el (ShowOutput OutputValue) [ center, e ] <| text a
                 ]
     in
-    case result of
-        AcreageUnchanged ->
+    case (result, metric) of
+        (AcreageUnchanged, "SM") ->
+            render "--" ( "NO CHANGE", Just "There is no change in salt marsh acres due to the strategy implementation or hazard." ) lbl (vary Secondary False)
+        
+        (AcreageUnchanged, "B") ->
+            render "--" ( "NO CHANGE", Just "There is no change in beach acres to strategy implementation or hazard." ) lbl (vary Secondary False)
+
+        (AcreageLost loss, "SM") ->
+            render (abbreviateAcreageValue loss) ( "ACRES LOST", Just "Relative to No Action, there is an anticipated loss in salt marsh acres due to the hazard and/or loss related to strategy implementation." ) lbl (vary Secondary True)
+
+        (AcreageLost loss, "B") ->
+            render (abbreviateAcreageValue loss) ( "ACRES LOST", Just "Relative to No Action, there is an anticipated loss in beach acres due to strategy implementation and/or loss caused by the hazard." ) lbl (vary Secondary True)
+
+        (AcreageGained gain, "SM") ->
+            render (abbreviateAcreageValue gain) ( "ACRES GAINED", Just "Relative to No Action, there is an anticipated gain in salt marsh acres due to strategy implementation and/or avoiding loss caused by the hazard." ) lbl (vary Tertiary True)
+
+        (AcreageGained gain, "B") ->
+            render (abbreviateAcreageValue gain) ( "ACRES GAINED", Just "Relative to No Action, there is an anticipated gain in beach acres due to strategy implementation and/or avoiding loss caused by the hazard." ) lbl (vary Tertiary True)
+
+        (_, _) ->
             render "--" ( "NO CHANGE", Just "..." ) lbl (vary Secondary False)
 
-        AcreageLost loss ->
-            render (abbreviateAcreageValue loss) ( "ACRES LOST", Just "..." ) lbl (vary Secondary True)
 
-        AcreageGained gain ->
-            render (abbreviateAcreageValue gain) ( "ACRES GAINED", Just "..." ) lbl (vary Tertiary True)
-
-
-criticalFacilitiesView : CriticalFacilities -> Element MainStyles Variations Msg
-criticalFacilitiesView facilities =
+criticalFacilitiesView : CriticalFacilities -> String -> Element MainStyles Variations Msg
+criticalFacilitiesView facilities strat =
     let
-        render a b c =
+        render a b c d =
             column (ShowOutput OutputValueBox)
                 [ moveRight 15
                 , height (px 58)
@@ -309,37 +333,56 @@ criticalFacilitiesView facilities =
                 ]
                 [ el NoStyle [] <| text a
                 , el NoStyle [] <| b
-                ]
+                ] |> within [ infoIconView (Just d) ]
     in
     row NoStyle [ height fill, width fill, center, verticalCenter ]
         [ column (ShowOutput OutputDivider) [ spacing 5, paddingRight 15 ]
             [ el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Critical"
             , el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Facilities"
             ]
-        , ( case facilities of
-            FacilitiesUnchanged num ->
-                render "--" empty (vary Secondary False)
+        , ( case (facilities, strat) of
+            (FacilitiesUnchanged num, "NA") ->
+                render 
+                    "--" empty (vary Secondary False) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
 
-            FacilitiesLost num ->
-                render (toString num) (text "LOST") (vary Secondary True)
+            (FacilitiesUnchanged num, "ST") ->
+                render 
+                    "--" empty (vary Secondary False) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
 
-            FacilitiesProtected num ->
-                render (toString num) (text "PROT.") (vary Tertiary True)
+            (FacilitiesLost num, "NA") ->
+                render (toString num) (text "LOST") (vary Secondary True) "Critical facilities threatened by coastal hazards are impacted in a No Action scenario."
+            
+            (FacilitiesLost num, "ST") ->
+                render (toString num) (text "LOST") (vary Secondary True) "Critical facilities threatened by coastal hazards are impacted in a No Action scenario due to strategy implementation."
 
-            FacilitiesPresent num ->
-                render (toString num) empty (vary Secondary False)
+            (FacilitiesProtected num, "NA") ->
+                render (toString num) (text "PROT.") (vary Tertiary True) "Critical facilities with anticipated hazard-induced impacts in a No Action scenario are now protected due to strategy implementation."
 
-            FacilitiesRelocated num ->
-                render (toString num) (text "RELOC.") (vary Tertiary True)
+            (FacilitiesProtected num, "ST") ->
+                render (toString num) (text "PROT.") (vary Tertiary True) "Critical facilities with anticipated hazard-induced impacts in a No Action scenario are now protected due to strategy implementation."    
+
+            (FacilitiesPresent num, "NA") ->
+                render (toString num) empty (vary Secondary False) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
+
+            (FacilitiesPresent num, "ST") ->
+                render (toString num) empty (vary Secondary False) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
+
+            (FacilitiesRelocated num, "NA") ->
+                render (toString num) (text "RELOC.") (vary Tertiary True) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
+
+            (FacilitiesRelocated num, "ST") ->
+                render (toString num) (text "RELOC.") (vary Tertiary True) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
+
+            (_, _) ->
+                render (toString 0) (text "...") (vary Secondary True) "..."
           )
-            |> within [ infoIconView (Just "...") ]
         ]
 
 
 rareSpeciesHabitatView : RareSpeciesHabitat -> Element MainStyles Variations Msg
 rareSpeciesHabitatView habitat =
     let
-        render a b =
+        render a b c =
             column (ShowOutput OutputValueBox) 
                 [ moveRight 15
                 , height (px 58)
@@ -348,7 +391,7 @@ rareSpeciesHabitatView habitat =
                 , verticalCenter
                 , b
                 ] 
-                [ el NoStyle [] <| text a ]
+                [ el NoStyle [] <| text a ] |> within [ infoIconView (Just c) ]
     in
     row NoStyle [ height fill, width fill, center, verticalCenter ]
         [ column (ShowOutput OutputDivider) [ spacing 5, paddingRight 15 ]
@@ -357,15 +400,14 @@ rareSpeciesHabitatView habitat =
             ]
         , ( case habitat of
             HabitatUnchanged ->
-                render "--" (vary Secondary False)
+                render "--" (vary Secondary False) "Rare Species Habitat is protected under Massachusetts law, and provides habitat to plant or animal species listed as Endangered, Threatened, or Special Concern. This output indicates if Rare Species Habitat may be gained or maintained (check sign) or negatively impacted (minus sign) once a strategy is implemented. "
 
             HabitatLost ->
-                render "LOSS" (vary Secondary True)
+                render "LOSS" (vary Secondary True) "Relative to No Action, there is an anticipated loss in Rare Species Habitat due to strategy implementation and/or loss caused by the hazard."
 
             HabitatGained ->
-                render "GAIN" (vary Tertiary True)
+                render "GAIN" (vary Tertiary True) "Relative to No Action, there is an anticipated gain in Rare Species Habitat due to strategy implementation and/or avoiding loss caused by the hazard."
           )
-            |> within [ infoIconView (Just "...") ]
         ]
 
 

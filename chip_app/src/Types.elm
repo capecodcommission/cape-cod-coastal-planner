@@ -34,7 +34,7 @@ type alias Paths =
         , trianglePath : String
         , zoiPath : String
         , shorePath : String
-        , sloshPath : String
+        , logoPath : String
         , downArrow : String
     }
 
@@ -70,7 +70,7 @@ decodeFlags2 =
         (D.field "trianglePath" D.string)
         (D.field "zoiPath" D.string)
         (D.field "shorePath" D.string)
-        (D.field "sloshPath" D.string)
+        (D.field "logoPath" D.string)
         (D.field "downArrow" D.string)
 
 

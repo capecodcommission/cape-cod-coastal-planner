@@ -1,4 +1,4 @@
-# Cape Cod Coastal planner
+# Cape Cod Coastal Planner
 
 > This project is designed and built for the Cape Cod Commission of Barnstable County, Massachusetts and provides a public portal for communities of Cape Cod to assess, compare, and plan various strategies in response to the three major coastal hazards: storm surges, erosion, and sea level rise. 
 
@@ -10,13 +10,28 @@ It is divided into 2 main projects:
 Architecture Decision Records can be found in `ccc/docs/architecture` and document the major architectural choices made throughout this project.
 
 
-## Getting Started
+## Local Docker & Development - (!!if developing create a feature branch off the dev branch!!)
 ```bash
 # Navigate to the project directory
 cd cape-cod-coastal-planner/
 
-# Run all services locally
-docker-compose up
+# Checkout the dev branch
+
+# Create a feature branch off the dev branch
+naming convention of feature branch `this-feature`
+
+# Navigate to chip_api/config
+create `dev.secret.exs` & `test.secret.exs`
+
+# Navigate to chip_api/startup.sh
+uncomment `mix ecto.setup` line (Only for development)
+
+# Run & destroy all services locally with docker
+`docker-compose up --build` (create docker-compose services)
+`docker-compose down -v` (destroy docker-compose services)
+
+#Prior to rebasing feature-branch against dev branch
+navigate to `chip_api/startup.sh` and comment `mix ecto.setup` line again
 ```
 
 ## CI/CD
@@ -84,7 +99,7 @@ kubectl apply -f kubernetes-compose.yml
 # Enter an interactive terminal into a pod id
 kubectl exec -it cccpapi-1234567 -- /bin/bash
 
-# Install Keel on an RBAC-enabled cluster
+# Install Keel on AKS to rebuild pods when pinged
 helm upgrade --install keel --namespace=keel keel/keel --set service.enabled="true" 
 
 # To delete all services, deployments, pods, replicasets, volumes

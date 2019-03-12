@@ -51,7 +51,7 @@ headerView titleText =
         [ height (px 45), width fill ] <| 
             h5 (Headings H5) 
                 [ center, verticalCenter ] 
-                (text titleText)
+                (text titleText |> within [ infoIconView (Just "This layer displays flood zone areas denoted by 2013 data from FEMA") ])
      
 
 buttonView : Openness -> String -> Animation.State -> Element MainStyles Variations Msg
@@ -72,25 +72,40 @@ fzLegend paths =
         [ paragraph 
             NoStyle 
             []
-            [ decorativeImage
+            [ button
                 (PL FZA)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "A   "
-            , decorativeImage
+            , button
                 (PL FZAE)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "AE   "
-            , decorativeImage
+            , button
                 (PL FZAO)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "AO    "
-            , decorativeImage
+            , button
                 (PL FZVE)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                {src = paths.downArrow} 
+                -- {src = paths.downArrow} 
+                (Element.text "")
             , text "VE"
             ]
         ]
+
+infoIconView : Maybe String -> Element MainStyles Variations Msg
+infoIconView maybeHelpText =
+    case maybeHelpText of
+        Just helpText ->
+            circle 6 (ShowOutput OutputInfoIcon) 
+                [ title helpText, alignRight, moveRight 18 ] <| 
+                    el NoStyle [verticalCenter, center] (text "i")
+
+        Nothing ->
+            empty   

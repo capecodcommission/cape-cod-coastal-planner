@@ -67,3 +67,9 @@ type Msg
     | ToggleSTILayer
     | ClearAllLayers
     | ToggleStructuresLayer
+    | ResetAll
+    | ZoomIn
+    | ZoomOut
+    | GetLocation
+    | ToggleVulnRibbon
+    | ToggleMenu

@@ -89,16 +89,23 @@ headerView :
     -> Element MainStyles Variations Msg
 headerView { closePath, device } info =
     header (Baseline BaselineInfoHeader)
-        [ width fill, height (px <| headerHeight device) ]
-        (column (Baseline BaselineInfoHeader)
-            [ alignBottom
+        [ width fill ]
+        (row (Baseline BaselineInfoHeader)
+            [ verticalCenter
             , height fill
             , width fill
-            , paddingXY 40 10
+            , paddingXY 40 5
             , spacingXY 0 5
             ]
-            [ h6 (Headings H6) [ width fill ] <| Element.text "BASELINE LOCATION INFORMATION"
-            , h3 (Headings H3) [ width fill, height (px 65) ] <| Element.text info.name
+            [ column (Baseline BaselineInfoText)
+                []
+                [ h6 (Headings H6) [ width fill ] <| Element.text "BASELINE LOCATION INFORMATION"
+                , h3 (Headings H3) [ width fill, moveLeft 2 ] <| Element.text info.name
+                ]
+            , column (Baseline BaselineInfoText)
+                [ alignRight, paddingXY 75 10 ]
+                [ ModalImage.view NoStyle NoStyle info.imagePath
+                ]
             ]
             |> within
                 [ image CloseIcon
@@ -116,83 +123,83 @@ headerView { closePath, device } info =
 mainContentView : { config | device : Device } -> SL.BaselineInfo -> Element MainStyles Variations Msg
 mainContentView { device } info =
     column NoStyle
-        [ scrollbars, height (px <| mainHeight device) ]
+        [ scrollbars ]
         [ row NoStyle
-            [ padding 32, spacing 32 ]
+            [ ]
             [ column (Baseline BaselineInfoText)
-                [ width (percent 50), spacingXY 0 25 ]
-                [ ModalImage.view NoStyle NoStyle info.imagePath
+                [ spacingXY 0 5, width fill, paddingXY 50 20 ]
+                [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "GENERAL INFO"
+                , infoRowView
+                    "Length of shoreline:"
+                    (formatDecimal 2 info.lengthMiles ++ " miles")
+                , infoRowView
+                    "Impervious surface area:"
+                    (formatDecimal 2 info.impervPercent ++ " %")
                 ]
-            , column (Baseline BaselineInfoText)
-                [ width (percent 50), spacingXY 0 25 ]
-                [ column NoStyle
-                    [ spacingXY 0 8 ]
-                    [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "GENERAL INFO"
-                    , infoRowView
-                        "Length of shoreline:"
-                        (formatDecimal 2 info.lengthMiles ++ " miles")
-                    , infoRowView
-                        "Impervious surface area:"
-                        (formatDecimal 2 info.impervPercent ++ " %")
-                    ]
-                , column NoStyle
-                    [ spacingXY 0 8 ]
-                    [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "PUBLIC INFRASTRUCTURE"
-                    , infoRowView
-                        "Critical facilities:"
-                        (toString info.criticalFacilitiesCount)
-                    , infoRowView
-                        "Coastal structures:"
-                        (toString info.coastalStructuresCount)
-                    , infoRowView
-                        "Public buildings:"
-                        (toString info.publicBuildingsCount)
-                    , infoRowView
-                        "Working harbor:"
-                        (formatBoolean info.workingHarbor)
-                    ]
-                , column NoStyle
-                    [ spacingXY 0 8 ]
-                    [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "HABITAT"
-                    , infoRowView
-                        "Acres of salt marsh:"
-                        (formatDecimal 2 info.saltMarshAcres)
-                    , infoRowView
-                        "Acres of eelgrass:"
-                        (formatDecimal 2 info.eelgrassAcres)
-                    , infoRowView
-                        "Acres of coastal dune:"
-                        (formatDecimal 2 info.coastalDuneAcres)
-                    , infoRowView
-                        "Acres of rare species habitat:"
-                        (formatDecimal 2 info.rareSpeciesAcres)
-                    ]
-                , column NoStyle
-                    [ spacingXY 0 8 ]
-                    [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "RECREATION"
-                    , infoRowView
-                        "Public beaches:"
-                        (toString info.publicBeachCount)
-                    , infoRowView
-                        "Acres of recreational open space:"
-                        (formatDecimal 2 info.recreationOpenSpaceAcres)
-                    , infoRowView
-                        "Town ways to water:"
-                        (toString info.townWaysToWater)
-                    , infoRowView
-                        "National seashore:"
-                        (formatBoolean info.nationalSeashore)
-                    ]
-                , column NoStyle
-                    [ spacingXY 0 8 ]
-                    [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "PRIVATE INFRASTRUCTURE"
-                    , infoRowView
-                        "Total assessed value:"
-                        ("$" ++ formatDecimal 2 info.totalAssessedValue)
-                    ]
+            , column (Baseline BaselineInfoText) 
+                [ spacingXY 0 5, width fill, paddingXY 50 20 ]
+                [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "PUBLIC INFRASTRUCTURE"
+                , infoRowView
+                    "Critical facilities:"
+                    (toString info.criticalFacilitiesCount)
+                , infoRowView
+                    "Coastal structures:"
+                    (toString info.coastalStructuresCount)
+                , infoRowView
+                    "Public buildings:"
+                    (toString info.publicBuildingsCount)
+                , infoRowView
+                    "Working harbor:"
+                    (formatBoolean info.workingHarbor)
+                ]
+                    
+            ]
+        , row NoStyle
+            [ ]
+            [ column (Baseline BaselineInfoText)
+                [ spacingXY 0 5, width fill, paddingXY 50 20 ]
+                [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "HABITAT"
+                , infoRowView
+                    "Acres of salt marsh:"
+                    (formatDecimal 2 info.saltMarshAcres)
+                , infoRowView
+                    "Acres of eelgrass:"
+                    (formatDecimal 2 info.eelgrassAcres)
+                , infoRowView
+                    "Acres of coastal dune:"
+                    (formatDecimal 2 info.coastalDuneAcres)
+                , infoRowView
+                    "Acres of rare species habitat:"
+                    (formatDecimal 2 info.rareSpeciesAcres)  
+                ]
+            , column (Baseline BaselineInfoText) 
+                [ spacingXY 0 5, width fill, paddingXY 50 20 ]
+                [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "RECREATION"
+                , infoRowView
+                    "Public beaches:"
+                    (toString info.publicBeachCount)
+                , infoRowView
+                    "Acres of recreational open space:"
+                    (formatDecimal 2 info.recreationOpenSpaceAcres)
+                , infoRowView
+                    "Town ways to water:"
+                    (toString info.townWaysToWater)
+                , infoRowView
+                    "National seashore:"
+                    (formatBoolean info.nationalSeashore)
                 ]
             ]
-        ]
+        , row NoStyle
+            [ paddingBottom 5 ]
+            [ column (Baseline BaselineInfoText) 
+                [ spacingXY 0 5, width fill, paddingXY 50 20 ]
+                [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "PRIVATE INFRASTRUCTURE"
+                , infoRowView
+                    "Total assessed value:"
+                    ("$" ++ formatDecimal 0 info.totalAssessedValue)
+                ]
+            ]
+        ]         
 
 
 infoRowView : String -> String -> Element MainStyles Variations Msg

@@ -91,12 +91,15 @@ type HeaderStyles
     | HeaderSubMenu
     | HeaderMenuItem
     | HeaderMenuError
+    | HeaderBackgroundRounded
+    | ScaleHeader
 
 
 type BaselineStyles
     = BaselineInfoBtn
     | BaselineInfoHeader
     | BaselineInfoText
+    | BaselineInfoBtnClicked
 
 
 type SidebarStyles
@@ -219,9 +222,22 @@ stylesheet device =
         , Style.style (Header HeaderBackground)
             [ Color.background palette.chambray
             ]
+        , Style.style (Header HeaderBackgroundRounded)
+            [ Color.background palette.chambray
+            , Border.rounded 20.0
+            , Color.border black
+            , Border.all 4
+            ]
         , Style.style (Header HeaderTitle)
             [ Color.text white
             , Font.size 24.0
+            , Font.bold
+            , Font.typeface fontstack
+            , Font.letterSpacing 1.0
+            ]
+        , Style.style (Header ScaleHeader)
+            [ Color.text white
+            , Font.size 18.0
             , Font.bold
             , Font.typeface fontstack
             , Font.letterSpacing 1.0
@@ -282,7 +298,6 @@ stylesheet device =
             , Color.border white
             , Font.size 22.0
             , Font.typeface fontstack
-            , Font.italic
             , Border.rounded 50.0
             , Border.all 2
             , Transition.all
@@ -291,7 +306,22 @@ stylesheet device =
                 , Color.border palette.mySin
                 , Transition.all
                 ]
-            ]        
+            ]    
+        , Style.style (Baseline BaselineInfoBtnClicked)
+            [ Color.background <| rgba 0 0 0 0
+            , Color.text orange
+            , Color.border orange
+            , Font.size 22.0
+            , Font.typeface fontstack
+            , Border.rounded 50.0
+            , Border.all 2
+            , Transition.all
+            , Style.hover
+                [ Color.text palette.mySin
+                , Color.border palette.mySin
+                , Transition.all
+                ]
+            ]      
         , Style.style (Baseline BaselineInfoHeader)
             [ Color.background palette.chambray
             , Color.text white
