@@ -1,4 +1,4 @@
-# Cape Cod Coastal planner
+# Cape Cod Coastal Planner
 
 > This project is designed and built for the Cape Cod Commission of Barnstable County, Massachusetts and provides a public portal for communities of Cape Cod to assess, compare, and plan various strategies in response to the three major coastal hazards: storm surges, erosion, and sea level rise. 
 
