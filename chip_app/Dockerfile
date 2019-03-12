@@ -4,6 +4,7 @@ COPY . /app
 RUN yarn upgrade
 RUN yarn global add elm elm-test
 RUN yarn
+#
 # MASTER
 EXPOSE 3000
 # DEV
