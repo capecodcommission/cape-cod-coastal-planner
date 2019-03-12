@@ -115,6 +115,7 @@ To view the CCC-AKS-DEV-01 Cluster:
 # Log in
 az login
 
-# Start local webapp to view CCC-AKS-DEV-01
+# Start local webapp to view CCC-AKS-DEV-01  
+#
 az aks browse --resource-group CCC-AKSGroup --name CCC-AKS-01
 ```
