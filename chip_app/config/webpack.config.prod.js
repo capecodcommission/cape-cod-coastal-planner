@@ -169,7 +169,8 @@ module.exports = {
                 {
                   loader: require.resolve('css-loader'),
                   options: {
-                    minimize: true
+                    minimize: true,
+                    url: false
                   }
                 },
                 {
