@@ -242,7 +242,7 @@ items:
 #     ports:
 #     - name: "3002"
 #       port: 3002
-#       targetPort: 3002
+#       targetPort: 80
 #     selector:
 #       io.kompose.service: cccpfrontdev
 #   status:
@@ -360,7 +360,7 @@ items:
 #     ports:
 #     - name: "3030"
 #       port: 3030
-#       targetPort: 3030
+#       targetPort: 80
 #     selector:
 #       io.kompose.service: cccpfrontuat
 #   status:
