@@ -10,7 +10,7 @@ services:
       - cccpdb
       - cccpapidev
     ports:
-      - 3002:3002
+      - 3002:80
     volumes:
       - ./chip_app/src:/app/src:rw
     
