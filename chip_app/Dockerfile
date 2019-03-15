@@ -1,14 +1,13 @@
-FROM node
-WORKDIR /app
-COPY . /app
+FROM node as build_deps
+WORKDIR /usr/src/app
+COPY . ./
 RUN yarn upgrade
 RUN yarn global add elm elm-test
 RUN yarn
-#
-# MASTER
-EXPOSE 3000
-# DEV
-# EXPOSE 3002
-# UAT
-# EXPOSE 3030
-CMD ["yarn", "start"]
+RUN yarn build
+
+FROM nginx
+COPY --from=build_deps /usr/src/app/build /usr/share/nginx/html
+COPY default.conf /etc/nginx/conf.d
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
