@@ -8,3 +8,4 @@
 /chip_app/elm-package.json merge=ours
 /chip_app/package.json merge=ours
 /chip_app/Dockerfile merge=ours
+/chip_app/default.conf merge=ours
