@@ -1,10 +1,7 @@
 FROM node as build_deps
 WORKDIR /usr/src/app
 COPY . ./
-RUN yarn upgrade
-RUN yarn global add elm elm-test
-RUN yarn
-RUN yarn build
+RUN yarn upgrade && yarn global add elm elm-test && yarn && yarn build
 
 FROM nginx
 COPY --from=build_deps /usr/src/app/build /usr/share/nginx/html
