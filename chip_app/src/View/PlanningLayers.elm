@@ -15,6 +15,7 @@ import View.Infrastructure as IF
 import View.FloodZone as FZ
 import View.Slosh as Slosh
 import View.Erosion as Erosion
+import View.VulnerabilityRibbon as Vuln
 
 
 textLayoutSpacing : Device -> Float
@@ -65,6 +66,10 @@ view :
         , fzToggleFx : Animation.State
         , sloshFx : Animation.State
         , sloshToggleFx : Animation.State
+        , shorelineSelected : Openness
+        , vulnRibbonClicked : Openness
+        , vulnFX : Animation.State
+        , vulnLegendFX : Animation.State
     } 
     -> Device 
     -> Paths 
@@ -72,7 +77,8 @@ view :
 view config device paths =
   column NoStyle
     [ height fill ]
-    [ SLR.view config device paths "Sea Level Rise" ToggleSLRSection 
+    [ Vuln.view config device paths "Vulnerability Ribbon" ToggleVulnRibbon
+    , SLR.view config device paths "Sea Level Rise" ToggleSLRSection 
     , IF.view config device paths "Infrastructure" ToggleInfraSection 
     , Erosion.view config device paths "Erosion" ToggleErosionSection
     , FZ.view config device paths "Flood Zone" ToggleFZLayer

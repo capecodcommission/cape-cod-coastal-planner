@@ -20,7 +20,6 @@ view :
       | shorelineSelected : Openness
       , paths : Paths
       , titleRibbonFX : Animation.State
-      , vulnRibbonClicked : Openness
   } 
   -> Element MainStyles Variations Msg
 view model =
@@ -32,18 +31,17 @@ view model =
             , width content
             ]
         )
-        ( centerRibbon model.paths model.vulnRibbonClicked ) 
+        ( centerRibbon model.paths ) 
     ]
 
 
 
 
-centerRibbon : Paths -> Openness -> Element MainStyles Variations Msg
-centerRibbon paths vulnClicked = 
+centerRibbon : Paths -> Element MainStyles Variations Msg
+centerRibbon paths = 
   row (Header HeaderBackgroundRounded)
     [paddingXY 0 10]
     [ zoomButtons
-    , scaleLegend paths vulnClicked
     , geoLocate
     ]
 
@@ -67,42 +65,6 @@ zoomButtons =
               (Element.text "-")
           ]
       ]
-    ]
-
-scaleLegend : Paths -> Openness -> Element MainStyles Variations Msg
-scaleLegend paths vulnClicked = 
-  column (Header ScaleHeader)
-    [verticalCenter, paddingXY 10 10, spacing 10]
-    [ Element.text "Low   "
-      |> onRight
-        [ button
-          (Rbn LessThanZero)
-          [height (px 20), width (px 20), moveLeft 10] 
-          (Element.text "")
-        ]
-    , Element.text "Medium   "
-        |> onRight
-          [ button
-              (Rbn OneToFive)
-              [height (px 20), width (px 20), moveLeft 10] 
-              (Element.text "")
-          ]
-    , Element.text "High"
-        |> onRight
-          [ button
-              (Rbn SixPlus)
-              [height (px 20), width (px 20), moveLeft 10] 
-              (Element.text "")
-          ] 
-    , button 
-        (case vulnClicked of
-          Open ->
-            (Baseline BaselineInfoBtnClicked)
-          Closed ->
-            (Baseline BaselineInfoBtn)
-        )
-        [height (px 42), onClick ToggleVulnRibbon]
-        (Element.text "~")
     ]
 
 geoLocate : Element MainStyles Variations Msg

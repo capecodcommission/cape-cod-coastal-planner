@@ -124,6 +124,8 @@ type alias Model =
     , vulnRibbonClicked : Openness
     , menuClicked : Openness
     , menuFX : Animation.State
+    , vulnFX : Animation.State
+    , vulnLegendFX : Animation.State
     }
 
 
@@ -254,6 +256,10 @@ initialModel flags =
         Closed
         -- menu FX
         (Animation.style <| .closed <| Animations.menuStates)
+        -- vulnerability ribbon FX
+        (Animation.style <| .rotate180 <| Animations.toggleStates)
+        -- vulnerability ribbon legend fx
+        (Animation.style <| .closed <| Animations.vulnLegendStates)
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -363,7 +369,6 @@ updateModel msg model =
             in
                 ( model
                     |> collapseRightSidebar
-                    |> collapseLeftSidebar
                     |> \m ->
                         { m
                             | shorelineLocationsDropdown = updatedLocationsDropdown 
@@ -443,6 +448,7 @@ updateModel msg model =
 
         LoadVulnerabilityRibbonResponse response ->
             ( model
+                |> expandLeftSidebar
                 |> \m ->
                     { m 
                         | shorelineSelected = Open
@@ -450,7 +456,16 @@ updateModel msg model =
                             Animation.interrupt
                                 [ Animation.to <| .open <| Animations.titleStates ]
                                 model.titleRibbonFX
+                        , vulnFX =
+                            Animation.interrupt
+                                [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotate90 <| Animations.toggleStates ]
+                                model.vulnFX
+                        , vulnLegendFX =
+                            Animation.interrupt
+                                [ Animation.to <| .open <| Animations.vulnLegendStates ]
+                                model.vulnLegendFX
                     }
+                
             , olCmd <| encodeOpenLayersCmd (RenderVulnerabilityRibbon response)
             )
 
@@ -669,6 +684,8 @@ updateModel msg model =
                 , sloshToggleFx = Animation.update animMsg model.sloshToggleFx
                 , titleRibbonFX = Animation.update animMsg model.titleRibbonFX
                 , menuFX = Animation.update animMsg model.menuFX
+                , vulnFX = Animation.update animMsg model.vulnFX
+                , vulnLegendFX = Animation.update animMsg model.vulnLegendFX
             }
             , Cmd.none
             )
@@ -1340,6 +1357,14 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | vulnRibbonClicked = Closed 
+                                , vulnFX =
+                                    Animation.interrupt
+                                        [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotate180 <| Animations.toggleStates ]
+                                        model.vulnFX
+                                , vulnLegendFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .closed <| Animations.vulnLegendStates ]
+                                        model.vulnLegendFX
                             }
                     , olCmd <| encodeOpenLayersCmd (DisableVulnOL) 
                     )
@@ -1348,6 +1373,14 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | vulnRibbonClicked = Open 
+                                , vulnFX =
+                                    Animation.interrupt
+                                        [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotate90 <| Animations.toggleStates ]
+                                        model.vulnFX
+                                , vulnLegendFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .open <| Animations.vulnLegendStates ]
+                                        model.vulnLegendFX
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderVulnOL) 
                     )
@@ -1945,6 +1978,7 @@ animations model =
     , model.sloshToggleFx
     , model.titleRibbonFX
     , model.menuFX
+    , model.vulnFX
     ]
     
 
