@@ -23,16 +23,14 @@ view :
   } 
   -> Element MainStyles Variations Msg
 view model =
-  column NoStyle
-    [ center, width fill, inlineStyle [("pointer-events","none")] ]
-    [ el NoStyle
-        ( renderAnimation model.titleRibbonFX
-            [ height fill
-            , width content
-            ]
-        )
-        ( centerRibbon model.paths ) 
-    ]
+  el NoStyle [alignBottom]
+    -- ( renderAnimation model.titleRibbonFX
+    --     [ height fill
+    --     , width content
+    --     ]
+    -- )
+    ( centerRibbon model.paths ) 
+    
 
 
 
@@ -51,10 +49,10 @@ centerRibbon paths =
 zoomButtons : Element MainStyles Variations Msg
 zoomButtons = 
   column (Header HeaderBackground)
-    [verticalCenter, paddingXY 0 10]
+    [verticalCenter, paddingXY 2 1]
     [ textLayout 
       (Header HeaderBackground)
-      [ verticalCenter, spacing 10, paddingXY 32 10 ]
+      [ verticalCenter, spacing 10, paddingXY 2 1 ]
       [ column NoStyle
           [spacing 10]
           [ button (Baseline BaselineInfoBtn)
@@ -70,10 +68,10 @@ zoomButtons =
 geoLocate : Element MainStyles Variations Msg
 geoLocate = 
   column (Header HeaderBackground)
-    [verticalCenter, paddingXY 0 10]
+    [verticalCenter, paddingXY 2 1]
     [ textLayout 
       (Header HeaderBackground)
-      [ verticalCenter, spacing 5, paddingXY 32 10 ]
+      [ verticalCenter, spacing 5, paddingXY 2 1 ]
       [ column NoStyle
           []
           [ button (Baseline BaselineInfoBtn)

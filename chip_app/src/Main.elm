@@ -1332,6 +1332,7 @@ updateModel msg model =
                     }
                 |> collapseFZSection
                 |> collapseSloshSection
+                |> collapseRightSidebar
             , olCmd <| encodeOpenLayersCmd (ResetAllOL)
             )
 
@@ -1849,13 +1850,8 @@ view app =
                         column NoStyle [ height fill ] <|
                             [ el NoStyle [ id "map", height (percent 100) ] empty
                                 |> within
-                                    [ case model.zoneOfImpact of 
-                                        Just zoi -> 
-                                            RSidebar.view model <| getRightSidebarChildViews model
-                                        Nothing ->
-                                            el NoStyle [] empty
+                                    [ RSidebar.view model <| getRightSidebarChildViews model
                                     , LSidebar.view model <| getLeftSidebarChildViews model
-                                    , Tray.view model
                                     , Menu.view model
                                     ]
                                     

@@ -10,6 +10,7 @@ import View.ToggleButton as Toggle exposing (..)
 import View.Helpers exposing (renderAnimation)
 import Message exposing (Msg(..))
 import Types exposing (..)
+import View.Tray as Tray
 
 
 view :
@@ -17,6 +18,9 @@ view :
         | trianglePath : String
         , rightSidebarFx : Animation.State
         , rightSidebarToggleFx : Animation.State
+        , shorelineSelected : Openness
+        , paths : Paths
+        , titleRibbonFX : Animation.State
     }
     -> (String, List (Element MainStyles Variations Msg))
     -> Element MainStyles Variations Msg
@@ -33,8 +37,11 @@ view config (titleText, childViews) =
             [ height fill, width (px 550) ]
             ( headerView titleText config.trianglePath config.rightSidebarToggleFx 
                 :: childViews
-            )
-        )
+            ) 
+        ) |> onLeft
+                [ Tray.view config
+
+                ]
 
 
 headerView : String -> String -> Animation.State -> Element MainStyles Variations Msg
