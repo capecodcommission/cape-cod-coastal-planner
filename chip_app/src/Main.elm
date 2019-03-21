@@ -1880,21 +1880,9 @@ headerView ({ device } as model) =
     header (Header HeaderBackground) [ width fill, height (px <| adjustOnHeight ( 60, 80 ) device) ] <|
         row NoStyle [ height fill, width fill, paddingXY 54 15, spacingXY 54 0 ] <|
             [ column NoStyle
-                [ verticalCenter, width fill ]
-                [ button 
-                    (case model.menuClicked of
-                        Open ->
-                            (Baseline BaselineInfoBtnClicked)
-                        Closed ->
-                            (Baseline BaselineInfoBtn)
-                    )
-                    [ height (px 42), width (px 42), title "Toggle Menu", onClick ToggleMenu ]
-                    (Element.text "☰")
-                ]
-            , column NoStyle
                 [ verticalCenter, center, width fill]
                 [ decorativeImage NoStyle
-                    [width (px 375), height (px 65)]
+                    [width (px 375), height (px 65), alignLeft]
                     { src = model.paths.logoPath } 
                 ]
             , column NoStyle
@@ -1914,6 +1902,15 @@ headerView ({ device } as model) =
                                 (Element.text "⟲")
                         Closed ->
                             el NoStyle [] empty
+                    ,   button 
+                            (case model.menuClicked of
+                                Open ->
+                                    (Baseline BaselineInfoBtnClicked)
+                                Closed ->
+                                    (Baseline BaselineInfoBtn)
+                            )
+                            [ height (px 42), width (px 42), title "Toggle Menu", onClick ToggleMenu ]
+                            (Element.text "☰")
                     ]
                 ]
             ]
