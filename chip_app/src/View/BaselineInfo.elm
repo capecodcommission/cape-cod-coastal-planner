@@ -198,6 +198,9 @@ mainContentView { device } info =
                     "Total assessed value:"
                     ("$" ++ formatDecimal 0 info.totalAssessedValue)
                 ]
+            , column (Baseline BaselineInfoText) 
+                [ spacingXY 0 5, width fill, paddingXY 50 20 ]
+                []
             ]
         ]         
 

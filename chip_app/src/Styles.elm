@@ -485,7 +485,7 @@ stylesheet device =
                 ]
             ]
         , Style.style (Zoi ZoiText)
-            [ Font.size <| adjustOnHeight ( 14, 22 ) device
+            [ Font.size <| adjustOnHeight ( 12, 20 ) device
             , Font.lineHeight <| adjustOnHeight ( 1.2, 2.0 ) device
             ]
         , Style.style (Zoi ZoiCallout)

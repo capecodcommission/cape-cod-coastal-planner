@@ -103,7 +103,7 @@ leftSidebarStates =
     { open =
         [ Animation.left (Animation.px 0.0) ]
     , closed =
-        [ Animation.left (Animation.px -550.0) ]    
+        [ Animation.left (Animation.px -400.0) ]    
     }
 
 slrStates : SLRStates

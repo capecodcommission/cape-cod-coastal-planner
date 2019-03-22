@@ -40,7 +40,7 @@ centerRibbon paths =
   row (Header HeaderBackgroundRounded)
     [paddingXY 0 10]
     [ zoomButtons
-    , geoLocate
+    -- , geoLocate
     ]
 
 
