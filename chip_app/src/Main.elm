@@ -46,6 +46,7 @@ import ChipApi.Scalar as Scalar
 import Ports exposing (..)
 import View.Tray as Tray
 import View.Menu as Menu
+import View.Intro as Intro
 
 
 ---- MODEL ----
@@ -126,6 +127,7 @@ type alias Model =
     , menuFX : Animation.State
     , vulnFX : Animation.State
     , vulnLegendFX : Animation.State
+    , introClicked : Openness
     }
 
 
@@ -260,6 +262,8 @@ initialModel flags =
         (Animation.style <| .rotate180 <| Animations.toggleStates)
         -- vulnerability ribbon legend fx
         (Animation.style <| .closed <| Animations.vulnLegendStates)
+        -- Intro clicked
+        Open
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -1412,6 +1416,24 @@ updateModel msg model =
                             }
                     , Cmd.none
                     )
+        ToggleIntro -> 
+            case model.introClicked of
+                Open ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | introClicked = Closed
+                            }
+                    , Cmd.none
+                    )
+                Closed ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | introClicked = Open
+                            }
+                    , Cmd.none
+                    )
 
 
         
@@ -1853,6 +1875,7 @@ view app =
                                     [ RSidebar.view model <| getRightSidebarChildViews model
                                     , LSidebar.view model <| getLeftSidebarChildViews model
                                     , Menu.view model
+                                    , Intro.view model
                                     ]
                                     
                                     
@@ -1905,9 +1928,9 @@ headerView ({ device } as model) =
                     ,   button 
                             (case model.menuClicked of
                                 Open ->
-                                    (Baseline BaselineInfoBtnClicked)
+                                    MenuButton
                                 Closed ->
-                                    (Baseline BaselineInfoBtn)
+                                    MenuButton
                             )
                             [ height (px 42), width (px 42), title "Toggle Menu", onClick ToggleMenu ]
                             (Element.text "☰")

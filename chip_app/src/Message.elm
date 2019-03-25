@@ -71,3 +71,4 @@ type Msg
     | GetLocation
     | ToggleVulnRibbon
     | ToggleMenu
+    | ToggleIntro

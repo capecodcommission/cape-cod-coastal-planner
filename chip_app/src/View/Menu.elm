@@ -36,13 +36,16 @@ view model =
 
 siteMenu : Paths -> Openness -> Element MainStyles Variations Msg
 siteMenu paths vulnClicked = 
-  column (Sidebar SidebarContainer)
+  column MenuContainer
     [verticalCenter, paddingXY 10 10, spacing 10, alignRight]
-    [ textLayout (Zoi ZoiText) [spacing 10, alignRight]
-      [ Element.text "About"
+    [ textLayout MenuContainer [spacing 10, alignRight]
+      [ button MenuContainer
+            [ onClick ToggleIntro ] <| Element.text "About"
       , hairline (PL Line)
-      , Element.text "Resources"
+      , button MenuContainer
+            [ onClick ToggleIntro ] <| Element.text "Resources"
       , hairline (PL Line)
-      , Element.text "Methods"
+      , button MenuContainer
+            [ onClick ToggleIntro ] <| Element.text "Methods"
       ]
     ]

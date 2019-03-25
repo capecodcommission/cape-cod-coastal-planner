@@ -68,11 +68,18 @@ type MainStyles
     | Test
     | PL PlanningLayerStyles
     | Rbn RibbonStyles
+    | SelectShorelineButton
+    | MenuButton
+    | MenuContainer
 
 
 type ModalStyles
     = ModalBackground
     | ModalContainer
+    | IntroHeader
+    | IntroBody
+    | IntroWelcome
+    | IntroDisclaimer
 
 
 type HeadingStyles
@@ -223,10 +230,10 @@ stylesheet device =
                 [ Style.cursor "default" ]
             ]
         , Style.style (Header HeaderBackground)
-            [ Color.background palette.chambray
+            [ Color.background <| rgba 25 52 70 1
             ]
         , Style.style (Header HeaderBackgroundRounded)
-            [ Color.background palette.chambray
+            [ Color.background <| rgba 25 52 70 1
             , Border.rounded 20.0
             , Color.border black
             , Border.all 4
@@ -309,6 +316,18 @@ stylesheet device =
                 , Color.border palette.mySin
                 , Transition.all
                 ]
+            ] 
+        , Style.style MenuButton
+            [ Color.background <| rgba 0 0 0 0
+            , Color.text white
+            , Font.size 30.0
+            , Font.typeface fontstack
+            , Transition.all
+            , Style.hover
+                [ Color.text palette.mySin
+                , Color.border palette.mySin
+                , Transition.all
+                ]
             ]    
         , Style.style (Baseline BaselineInfoBtnClicked)
             [ Color.background <| rgba 0 0 0 0
@@ -326,7 +345,7 @@ stylesheet device =
                 ]
             ]      
         , Style.style (Baseline BaselineInfoHeader)
-            [ Color.background palette.chambray
+            [ Color.background <| rgba 25 52 70 1
             , Color.text white
             , Font.typeface fontstack
             , Border.roundTopLeft 4
@@ -515,10 +534,10 @@ stylesheet device =
         , Style.style (ShowOutput OutputToggleLbl)
             [ Font.center
             , Font.letterSpacing 2.33
-            , Color.background palette.chambray
+            , Color.background <| rgba 25 52 70 1
             ]
         , Style.style (ShowOutput OutputHeader)
-            [ Color.background palette.chambray
+            [ Color.background <| rgba 25 52 70 1
             ]
         , Style.style (ShowOutput OutputDivider)
             [ Border.right 2
@@ -637,16 +656,40 @@ stylesheet device =
             [ Color.background <| rgba 0 0 0 0.9
             , Border.rounded 4
             ]
+        , Style.style (Modal IntroHeader)
+            [ Color.background <| rgba 41 84 112 1
+            , Border.rounded 4
+            ]
+        , Style.style (Modal IntroBody)
+            [ Color.background <| rgba 25 52 70 1
+            , Border.rounded 4     
+            ]
+        , Style.style (Modal IntroWelcome)
+            [ Color.text white
+            , Font.size 20
+            , Font.justify
+            ]
+        , Style.style (Modal IntroDisclaimer)
+            [ Color.text <| rgba 163 163 163 1
+            , Font.size 15
+            , Font.justify
+            ]
         , Style.style (Sidebar SidebarContainer)
             [ Color.background <| Color.rgba 0 0 0 0.9
             , Color.text white
             , Font.typeface fontstack
             ]
+        , Style.style MenuContainer
+            [ Color.background <| rgba 25 52 70 1
+            , Color.text white
+            , Font.typeface fontstack
+            , Font.size 25
+            ]
         , Style.style (Sidebar SidebarHeader)
-            [ Color.background palette.havelockBlue
+            [ Color.background <| rgba 25 52 70 1
             ]
         , Style.style (Sidebar SidebarToggle)
-            [ Color.background palette.havelockBlue
+            [ Color.background <| rgba 25 52 70 1
             , Border.roundTopLeft 36
             , Border.roundBottomLeft 36
             , Style.cursor "pointer"
@@ -656,7 +699,7 @@ stylesheet device =
             , Font.typeface fontstack
             ]
         , Style.style (Sidebar SidebarLeftToggle)
-            [ Color.background palette.havelockBlue
+            [ Color.background <| rgba 25 52 70 1
             , Border.roundTopRight 36
             , Border.roundBottomRight 36
             , Style.cursor "pointer"
@@ -692,6 +735,23 @@ stylesheet device =
             , variation Disabled
                 [ Color.background <| darken 0.15 palette.red
                 , Color.text <| lighten 0.15 palette.red
+                , Transition.all
+                ]
+            ]
+        , Style.style SelectShorelineButton
+            [ Font.typeface fontstack
+            , Font.uppercase
+            , Font.bold
+            , Font.size 14
+            , Font.lineHeight 1.4
+            , Font.letterSpacing 2.33
+            , Color.text white
+            , Color.background <| rgba 83 168 172 1
+            , Border.rounded 8
+            , Transition.all
+            , variation Disabled
+                [ Color.background <| darken 0.15 palette.mySin
+                , Color.text <| lighten 0.45 palette.walnut
                 , Transition.all
                 ]
             ]

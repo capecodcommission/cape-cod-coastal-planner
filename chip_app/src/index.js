@@ -10,6 +10,7 @@ import ssPath from "./img/storm-surge.png"
 import erosionPath from "./img/erosion.png"
 import logoPath from "./img/logo.png"
 import downArrow from "./img/downArrow.png"
+import welcome_lighthouse from "./img/welcome_lighthouse.png"
 import registerServiceWorker from './registerServiceWorker';
 
 window.chip = window.chip || {};
@@ -44,7 +45,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "zoiPath": zoiPath,
             "erosionPath": erosionPath,
             "logoPath": logoPath,
-            "downArrow": downArrow
+            "downArrow": downArrow,
+            "welcome_lighthouse": welcome_lighthouse
         }
     });
 
