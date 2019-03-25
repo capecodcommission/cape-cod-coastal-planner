@@ -39,12 +39,12 @@ palette =
 
 fontstack : List Font
 fontstack =
-    [ Font.font "Segoe UI", Font.font "Tahoma", Font.font "Verdana", Font.sansSerif ]
+    [ Font.font "Montserrat", Font.font "Open Sans", Font.font "Tahoma", Font.sansSerif ]
 
 
 fontstack2 : List Font
 fontstack2 =
-    [ Font.font "Tahoma" ]
+    [ Font.font "Montserrat" ]
 
 type MainStyles
     = NoStyle
@@ -218,7 +218,10 @@ stylesheet device =
         [ Style.style NoStyle []
         , Style.style Test [ Color.background palette.mySin ]
         , Style.style MainContent
-            [ Color.background palette.elephant ]
+            [ Color.background palette.elephant
+            , Style.hover
+                [ Style.cursor "default" ]
+            ]
         , Style.style (Header HeaderBackground)
             [ Color.background palette.chambray
             ]
@@ -348,6 +351,8 @@ stylesheet device =
             , Font.size 24
             , Font.center
             , Border.roundTopLeft 4
+            , Style.hover
+                [ Style.cursor "default" ]
             ]
         , Style.style (AddStrategies StrategiesHazardPicker)
             [ Style.cursor "pointer"
@@ -381,6 +386,8 @@ stylesheet device =
             [ Color.background palette.chambray
             , Color.text white
             , Border.roundTopRight 4
+            , Style.hover
+                [ Style.cursor "default" ]
             ]
         , Style.style (AddStrategies StrategiesSheetHeading)
             [ Font.typeface fontstack
@@ -398,7 +405,9 @@ stylesheet device =
             [ Font.typeface fontstack
             , Font.letterSpacing 2.6
             , Font.lineHeight 1.4
-            , Font.size 36
+            , Font.size 30
+            , Font.uppercase
+            , Font.bold
             ]
         , Style.style (AddStrategies StrategiesDetailsCategories)
             [ Color.text white
@@ -431,6 +440,8 @@ stylesheet device =
         , Style.style (AddStrategies StrategiesDetailsMain)
             [ Color.text white
             , Font.typeface fontstack
+            , Style.hover
+                [ Style.cursor "default" ]
             ]
         , Style.style (AddStrategies StrategiesDetailsHeading)
             [ Color.text palette.havelockBlue
@@ -466,7 +477,7 @@ stylesheet device =
         , Style.style (AddStrategies StrategiesDetailsDescription)
             [ Color.text white
             , Font.typeface fontstack
-            , Font.size 18
+            , Font.size 16
             , Font.lineHeight 1.4
             , variation Secondary
                 [ Color.text palette.havelockBlue
@@ -485,7 +496,7 @@ stylesheet device =
                 ]
             ]
         , Style.style (Zoi ZoiText)
-            [ Font.size <| adjustOnHeight ( 12, 20 ) device
+            [ Font.size <| adjustOnHeight ( 12, 18 ) device
             , Font.lineHeight <| adjustOnHeight ( 1.2, 2.0 ) device
             ]
         , Style.style (Zoi ZoiCallout)
@@ -493,7 +504,7 @@ stylesheet device =
             , Font.bold 
             ]
         , Style.style (Zoi ZoiStat)
-            [ Font.size 22
+            [ Font.size 20
             , Color.text palette.havelockBlue
             , Font.letterSpacing 1
             ]

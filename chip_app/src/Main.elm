@@ -79,7 +79,7 @@ type alias Model =
     , leftSidebarFx : Animation.State
     , leftSidebarToggleFx : Animation.State
     , slrPath : String
-    , wetPath : String
+    , ssPath : String
     , paths : Paths
     , slrOpenness : Openness
     , slrFx : Animation.State
@@ -172,8 +172,8 @@ initialModel flags =
         (Animation.style <| .rotateZero <| Animations.toggleStates)
         -- slr image
         flags.slrPath
-        -- wetlands image
-        flags.wetPath
+        -- storm surge image
+        flags.ssPath
         -- paths object
         flags.paths
         -- SLR Section

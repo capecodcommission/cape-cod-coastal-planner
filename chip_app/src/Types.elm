@@ -22,18 +22,18 @@ type alias Flags =
     , zoiPath : String
     , size : Window.Size
     , slrPath : String
-    , wetPath : String
+    , ssPath : String
     , paths : Paths
     }
 
 type alias Paths =
     {
         slrPath : String
-        , wetPath : String
+        , ssPath : String
         , closePath : String
         , trianglePath : String
         , zoiPath : String
-        , shorePath : String
+        , erosionPath : String
         , logoPath : String
         , downArrow : String
     }
@@ -57,7 +57,7 @@ decodeFlags =
         (D.field "zoiPath" D.string)
         (D.field "size" decodeWindowSize)
         (D.field "slrPath" D.string)
-        (D.field "wetPath" D.string)
+        (D.field "ssPath" D.string)
         (D.field "paths" decodeFlags2)
 
 
@@ -65,11 +65,11 @@ decodeFlags2 : Decoder Paths
 decodeFlags2 =
     D.map8 Paths
         (D.field "slrPath" D.string)
-        (D.field "wetPath" D.string)
+        (D.field "ssPath" D.string)
         (D.field "closePath" D.string)
         (D.field "trianglePath" D.string)
         (D.field "zoiPath" D.string)
-        (D.field "shorePath" D.string)
+        (D.field "erosionPath" D.string)
         (D.field "logoPath" D.string)
         (D.field "downArrow" D.string)
 
