@@ -235,8 +235,7 @@ stylesheet device =
         , Style.style (Header HeaderBackgroundRounded)
             [ Color.background <| rgba 25 52 70 1
             , Border.rounded 20.0
-            , Color.border black
-            , Border.all 4
+            -- , Border.all 4
             ]
         , Style.style (Header HeaderTitle)
             [ Color.text white

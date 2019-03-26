@@ -40,7 +40,6 @@ centerRibbon paths =
   row (Header HeaderBackgroundRounded)
     [paddingXY 0 10]
     [ zoomButtons
-    , geoLocate
     ]
 
 
@@ -61,22 +60,6 @@ zoomButtons =
           , button (Baseline BaselineInfoBtn)
               [height (px 42), width (px 42), onClick ZoomOut]
               (Element.text "-")
-          ]
-      ]
-    ]
-
-geoLocate : Element MainStyles Variations Msg
-geoLocate = 
-  column (Header HeaderBackground)
-    [verticalCenter, paddingXY 2 1]
-    [ textLayout 
-      (Header HeaderBackground)
-      [ verticalCenter, spacing 5, paddingXY 2 1 ]
-      [ column NoStyle
-          []
-          [ button (Baseline BaselineInfoBtn)
-              [height (px 42), width (px 42), onClick GetLocation]
-              (Element.text "⌖")
           ]
       ]
     ]
