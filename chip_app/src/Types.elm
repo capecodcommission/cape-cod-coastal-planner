@@ -66,11 +66,11 @@ decodeFlags2 : Decoder Paths
 decodeFlags2 =
     decode Paths
         |> required "slrPath" D.string
-        |> required "wetPath" D.string
+        |> required "ssPath" D.string
         |> required "closePath" D.string
         |> required "trianglePath" D.string
         |> required "zoiPath" D.string
-        |> required "shorePath" D.string
+        |> required "erosionPath" D.string
         |> required "logoPath" D.string
         |> required "downArrow" D.string
         |> required "welcome_lighthouse" D.string
