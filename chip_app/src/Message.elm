@@ -72,3 +72,5 @@ type Msg
     | ToggleVulnRibbon
     | ToggleMenu
     | ToggleIntro
+    | ToggleMethods
+    | ToggleResources

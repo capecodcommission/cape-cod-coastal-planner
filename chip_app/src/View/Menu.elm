@@ -43,9 +43,9 @@ siteMenu paths vulnClicked =
             [ onClick ToggleIntro ] <| Element.text "About"
       , hairline (PL Line)
       , button MenuContainer
-            [ onClick ToggleIntro ] <| Element.text "Resources"
+            [ onClick ToggleResources ] <| Element.text "Resources"
       , hairline (PL Line)
       , button MenuContainer
-            [ onClick ToggleIntro ] <| Element.text "Methods"
+            [ onClick ToggleMethods ] <| Element.text "Methods"
       ]
     ]

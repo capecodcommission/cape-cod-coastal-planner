@@ -47,6 +47,8 @@ import Ports exposing (..)
 import View.Tray as Tray
 import View.Menu as Menu
 import View.Intro as Intro
+import View.Methods as Methods
+import View.Resources as Resources
 
 
 ---- MODEL ----
@@ -129,6 +131,8 @@ type alias Model =
     , vulnLegendFX : Animation.State
     , introClicked : Openness
     , shorelineButtonClicked : Openness
+    , methodsClicked : Openness
+    , resourcesClicked : Openness
     }
 
 
@@ -265,8 +269,15 @@ initialModel flags =
         (Animation.style <| .closed <| Animations.vulnLegendStates)
         -- Intro clicked
         Open
+<<<<<<< HEAD
         -- Shoreline button clicked
         Open
+=======
+        -- Methods clicked
+        Closed
+        -- Resources clicked
+        Closed
+>>>>>>> 9342efc... added 'Methods.elm' & 'Resources.elm' which 'Menu.elm' now routes to from respective dropdown buttons.
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -1438,7 +1449,42 @@ updateModel msg model =
                             }
                     , Cmd.none
                     )
-
+        ToggleMethods -> 
+            case model.methodsClicked of
+                Open ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | methodsClicked = Closed
+                            }
+                    , Cmd.none
+                    )
+                Closed ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | methodsClicked = Open
+                            }
+                    , Cmd.none
+                    )
+        ToggleResources -> 
+            case model.resourcesClicked of
+                Open ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | resourcesClicked = Closed
+                            }
+                    , Cmd.none
+                    )
+                Closed ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | resourcesClicked = Open
+                            }
+                    , Cmd.none
+                    )
 
         
 
@@ -1880,6 +1926,8 @@ view app =
                                     , LSidebar.view model <| getLeftSidebarChildViews model
                                     , Menu.view model
                                     , Intro.view model
+                                    , Methods.view model
+                                    , Resources.view model
                                     ]
                                     
                                     
