@@ -269,15 +269,12 @@ initialModel flags =
         (Animation.style <| .closed <| Animations.vulnLegendStates)
         -- Intro clicked
         Open
-<<<<<<< HEAD
         -- Shoreline button clicked
         Open
-=======
         -- Methods clicked
         Closed
         -- Resources clicked
         Closed
->>>>>>> 9342efc... added 'Methods.elm' & 'Resources.elm' which 'Menu.elm' now routes to from respective dropdown buttons.
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
