@@ -128,6 +128,7 @@ type alias Model =
     , vulnFX : Animation.State
     , vulnLegendFX : Animation.State
     , introClicked : Openness
+    , shorelineButtonClicked : Openness
     }
 
 
@@ -263,6 +264,8 @@ initialModel flags =
         -- vulnerability ribbon legend fx
         (Animation.style <| .closed <| Animations.vulnLegendStates)
         -- Intro clicked
+        Open
+        -- Shoreline button clicked
         Open
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -1423,6 +1426,7 @@ updateModel msg model =
                         |> \m ->
                             { m
                                 | introClicked = Closed
+                                , shorelineButtonClicked = Closed
                             }
                     , Cmd.none
                     )

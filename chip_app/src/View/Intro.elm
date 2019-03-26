@@ -35,6 +35,7 @@ view :
         , closePath : String
         , introClicked : Openness
         , paths : Paths
+        , shorelineButtonClicked : Openness
     } 
     -> Element MainStyles Variations Msg
 view config =
@@ -76,6 +77,16 @@ headerView config =
         [ decorativeImage NoStyle
             [width fill, height (px 200), alignLeft]
             { src = config.paths.welcome_lighthouse } 
+        , decorativeImage CloseIcon 
+            [ alignRight
+            , height (px 22)
+            , width (px 22)
+            , moveDown 15
+            , moveLeft 15
+            , title "Close strategy selection"
+            , onClick ToggleIntro
+            ]
+            { src = config.paths.closePath }
         ]     
 
 
@@ -83,6 +94,7 @@ mainView :
     { config 
         | device : Device 
         , paths : Paths
+        , shorelineButtonClicked : Openness
     } 
     -> Element MainStyles Variations Msg
 mainView config =
@@ -99,8 +111,12 @@ mainView config =
                 , text "The Cape Cod Coastal Planner is a communication and decision support tool intended to educate users on the climate change hazards impacting Cape Cod's coastline, the adaptation strategies available to address them, and implications for local infrastructure and ecosystems. Choose your location and zone of impact to begin planning. View planning layers and test adaptation strategies for three coastal hazards."
                 ]
             ]
-        , button SelectShorelineButton 
-            [ onClick ToggleIntro , width fill, height (px 42) ] <| text "select a shoreline location to start planning"
+        , case config.shorelineButtonClicked of
+            Open ->
+                button SelectShorelineButton 
+                [ onClick ToggleIntro , width fill, height (px 42) ] <| text "select a shoreline location to start planning"
+            Closed ->
+                el NoStyle [] empty
         , textLayout (Modal IntroDisclaimer)
             [center]
             [ paragraph NoStyle

@@ -534,10 +534,10 @@ stylesheet device =
         , Style.style (ShowOutput OutputToggleLbl)
             [ Font.center
             , Font.letterSpacing 2.33
-            , Color.background <| rgba 25 52 70 1
+            , Color.background <| rgba 19 39 52 1
             ]
         , Style.style (ShowOutput OutputHeader)
-            [ Color.background <| rgba 25 52 70 1
+            [ Color.background <| rgba 19 39 52 1
             ]
         , Style.style (ShowOutput OutputDivider)
             [ Border.right 2
