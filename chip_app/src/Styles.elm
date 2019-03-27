@@ -370,7 +370,8 @@ stylesheet device =
             , Font.lineHeight 1.4
             ]
         , Style.style (AddStrategies StrategiesSidebarHeader)
-            [ Color.background palette.havelockBlue
+            [ Color.background <| rgba 83 168 172 1
+            -- Color.background palette.havelockBlue
             , Font.size 24
             , Font.center
             , Border.roundTopLeft 4
@@ -406,7 +407,8 @@ stylesheet device =
             , Border.roundBottomLeft 4
             ]
         , Style.style (AddStrategies StrategiesDetailsHeader)
-            [ Color.background palette.chambray
+            [ Color.background <| rgba 25 52 70 1
+            -- Color.background palette.chambray
             , Color.text white
             , Border.roundTopRight 4
             , Style.hover
