@@ -8,6 +8,7 @@ import Style.Border as Border
 import Style.Font as Font
 import Style.Transition as Transition
 import Style.Scale as Scale
+import Style.Background as Background
 import Element.Input as Input exposing (ChoiceState)
 import Element exposing (Device)
 import View.Helpers exposing (adjustOnHeight, adjustOnWidth)
@@ -107,6 +108,7 @@ type BaselineStyles
     | BaselineInfoHeader
     | BaselineInfoText
     | BaselineInfoBtnClicked
+    | BaselineInfoImage
 
 
 type SidebarStyles
@@ -355,6 +357,9 @@ stylesheet device =
             , Font.size 16
             , Font.typeface fontstack
             , Font.lineHeight 1.29
+            ]
+        , Style.style (Baseline BaselineInfoImage)
+            [ Background.gradientRight [Background.step white, Background.step black]
             ]
         , Style.style (AddStrategies StrategiesSidebar)
             [ Color.text white

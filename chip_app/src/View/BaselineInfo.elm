@@ -94,29 +94,29 @@ headerView { closePath, device } info =
             [ verticalCenter
             , height fill
             , width fill
-            , paddingXY 40 5
+            , paddingXY 0 5
             , spacingXY 0 5
             ]
             [ column (Baseline BaselineInfoText)
-                []
+                [ paddingXY 40 5]
                 [ h6 (Headings H6) [ width fill ] <| Element.text "BASELINE LOCATION INFORMATION"
                 , h3 (Headings H3) [ width fill, moveLeft 2 ] <| Element.text info.name
                 ]
             , column (Baseline BaselineInfoText)
-                [ alignRight, paddingXY 75 10 ]
-                [ ModalImage.view NoStyle NoStyle info.imagePath
+                [ alignRight, paddingRight 0, paddingLeft 75 ]
+                [ ModalImage.view NoStyle (Baseline BaselineInfoImage) info.imagePath
                 ]
-            ]
-            |> within
-                [ image CloseIcon
-                    [ alignRight
-                    , moveDown 15
-                    , moveLeft 15
-                    , title "Close baseline information"
-                    , onClick CloseBaselineInfo
+                |> within
+                    [ image CloseIcon
+                        [ alignRight
+                        , moveDown 15
+                        , moveLeft 15
+                        , title "Close baseline information"
+                        , onClick CloseBaselineInfo
+                        ]
+                        { src = closePath, caption = "Close Modal" }
                     ]
-                    { src = closePath, caption = "Close Modal" }
-                ]
+            ]
         )
 
 
