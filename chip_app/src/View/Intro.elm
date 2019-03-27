@@ -1,17 +1,12 @@
 module View.Intro exposing (..)
 
-import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick)
-import RemoteData exposing (RemoteData(..))
 import Message exposing (..)
 import Types exposing (..)
-import ShorelineLocation as SL
 import Styles exposing (..)
-import View.ModalImage as ModalImage
 import View.Helpers exposing (..)
-import View.ZoneOfImpact exposing (textLayoutSpacing)
 
 
 modalHeight : Device -> Float

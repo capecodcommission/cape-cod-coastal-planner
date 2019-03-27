@@ -34,7 +34,6 @@ view :
         , closePath : String
         , methodsClicked : Openness
         , paths : Paths
-        , shorelineButtonClicked : Openness
     } 
     -> Element MainStyles Variations Msg
 view config =
@@ -87,7 +86,7 @@ headerView config =
                 [ alignRight
                 , moveDown 15
                 , moveLeft 15
-                , title "Close baseline information"
+                , title "Close methods"
                 , onClick ToggleMethods
                 ]
                 { src = config.paths.closePath, caption = "Close Modal" }
@@ -99,17 +98,19 @@ mainView :
     { config 
         | device : Device 
         , paths : Paths
-        , shorelineButtonClicked : Openness
     } 
     -> Element MainStyles Variations Msg
 mainView config =
-    row (Modal IntroBody)
-        [ spacingXY 0 5, width fill, paddingTop 10 ]
-        [ decorativeImage NoStyle
-            [ width (percent 20), verticalCenter, alignRight, paddingLeft 10, paddingBottom 20 ]
-            { src = config.paths.erosionPath }
-        , paragraph (Modal IntroWelcome)
-            [ paddingXY 20 0, paddingBottom 20, verticalCenter, alignRight ]
-            [ text "To learn more about the methods used in the Cape Cod Coastal Planner application, click on the icon to the left." 
+    column (Modal IntroBody)
+        [ ]
+        [ row (Modal IntroWelcome)
+            [ spacingXY 0 5, width fill, paddingXY 20 20 ]
+            [ decorativeImage NoStyle
+                [ width (percent 20), verticalCenter, alignLeft ]
+                { src = config.paths.erosionPath }
+            , paragraph (Modal IntroWelcome)
+                [ paddingLeft 20, verticalCenter, alignRight ]
+                [ text "To learn more about the methods used in the Cape Cod Coastal Planner application, click on the icon to the left." 
+                ]
             ]
         ]
