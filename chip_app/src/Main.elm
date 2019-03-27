@@ -1443,6 +1443,11 @@ updateModel msg model =
                         |> \m ->
                             { m
                                 | introClicked = Open
+                                , menuFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .closed <| Animations.menuStates ]
+                                        model.menuFX
+                                , menuClicked = Closed
                             }
                     , Cmd.none
                     )
@@ -1461,6 +1466,11 @@ updateModel msg model =
                         |> \m ->
                             { m
                                 | methodsClicked = Open
+                                , menuFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .closed <| Animations.menuStates ]
+                                        model.menuFX
+                                , menuClicked = Closed
                             }
                     , Cmd.none
                     )
@@ -1479,6 +1489,11 @@ updateModel msg model =
                         |> \m ->
                             { m
                                 | resourcesClicked = Open
+                                , menuFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .closed <| Animations.menuStates ]
+                                        model.menuFX
+                                , menuClicked = Closed
                             }
                     , Cmd.none
                     )
