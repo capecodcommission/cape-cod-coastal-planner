@@ -121,7 +121,6 @@ az aks browse --resource-group CCC-AKSGroup --name CCC-AKS-01
 ```
 
 ### Starting from Scratch on Kubes
-    * Then rebuild, tag, and push the Front and API containers with our latest code to ACR
 1. Set up database and persistent volume claim (cccpdb)
 2. Set up API (cccpapi) (NOTE: this step is necessary to seed (a.k.a. build) the database)
 3. Seed database from API (exec mix ecto.setup)
@@ -135,3 +134,4 @@ az aks browse --resource-group CCC-AKSGroup --name CCC-AKS-01
 11. Create cluster issuer (letsencrypt-prod & specific namespace)
 12. Create a certificate object w/ secrets (namespace specific - www, uat & dev)
 13. Create ingress w/ hosts & secrets
+14. Then rebuild, tag, and push the Front and API containers with our latest code to ACR

@@ -71,22 +71,28 @@ headerView :
     } 
     -> Element MainStyles Variations Msg
 headerView config =
-    row (Modal IntroHeader)
-        [ spacingXY 0 5, width fill]
-        [ decorativeImage NoStyle
-            [width fill, height (px 200), alignLeft]
-            { src = config.paths.welcome_lighthouse } 
-        , decorativeImage CloseIcon 
-            [ alignRight
-            , height (px 22)
-            , width (px 22)
-            , moveDown 15
-            , moveLeft 15
-            , title "Close methods modal"
-            , onClick ToggleMethods
+    (row (Baseline BaselineInfoHeader)
+        [ verticalCenter
+        , height (px 100)
+        , width fill
+        , paddingXY 20 0
+        ]
+        [ column (ShowOutput ScenarioBold) 
+            []
+            [ h6 (Headings H3) [ width fill ] <| Element.text "Methods"
             ]
-            { src = config.paths.closePath }
-        ]   
+        ]
+        |> within
+            [ image CloseIcon
+                [ alignRight
+                , moveDown 15
+                , moveLeft 15
+                , title "Close baseline information"
+                , onClick ToggleMethods
+                ]
+                { src = config.paths.closePath, caption = "Close Modal" }
+            ]
+    )
 
 
 mainView : 
@@ -97,50 +103,13 @@ mainView :
     } 
     -> Element MainStyles Variations Msg
 mainView config =
-    column (Modal IntroBody)
-        [ spacingXY 0 5, width fill, paddingXY 50 0]
-        [ h6 (Headings H3) [ width fill ] <| Element.text "Methods"
-        , textLayout (Modal IntroWelcome)
-            [paddingTop 25, paddingBottom 10] 
-            [ paragraph NoStyle
-                []
-                [ el (ShowOutput ScenarioBold) [] <| text "Welcome! " 
-                , text "The Cape Cod Coastal Planner is a communication and decision support tool intended to educate users on the climate change hazards impacting Cape Cod's coastline, the adaptation strategies available to address them, and implications for local infrastructure and ecosystems. Choose your location and zone of impact to begin planning. View planning layers and test adaptation strategies for three coastal hazards."
-                ]
+    row (Modal IntroBody)
+        [ spacingXY 0 5, width fill, paddingTop 10 ]
+        [ decorativeImage NoStyle
+            [ width (percent 20), verticalCenter, alignRight, paddingLeft 10, paddingBottom 20 ]
+            { src = config.paths.erosionPath }
+        , paragraph (Modal IntroWelcome)
+            [ paddingXY 20 0, paddingBottom 20, verticalCenter, alignRight ]
+            [ text "To learn more about the methods used in the Cape Cod Coastal Planner application, click on the icon to the left." 
             ]
-        , case config.shorelineButtonClicked of
-            Open ->
-                button SelectShorelineButton 
-                [ onClick ToggleMethods , width fill, height (px 42) ] <| text "select a shoreline location to start planning"
-            Closed ->
-                el NoStyle [] empty
-        , textLayout (Modal IntroDisclaimer)
-            [center]
-            [ paragraph NoStyle
-                []
-                [ text "First time user? Follow the "
-                , link "https://dev.capecodcoast.org" <| el (Zoi ZoiCallout) [] (text "tutorial wizard")
-                , text " first."
-                ]
-            ]
-        , el NoStyle 
-            [paddingTop 25, paddingBottom 10] <| hairline (PL Line) 
-        , textLayout (Modal IntroDisclaimer)
-            [spacing 5] 
-            [ paragraph NoStyle
-                []
-                [ el (ShowOutput ScenarioBold) [] <| text "Disclaimer: " 
-                , text "The Cape Cod Commission developed the Cape Cod Coastal Planner to improve understanding of the coastal hazards facing Cape Cod, including erosion, sea level rise, and storm surge, and to aid in local coastal planning processes. The application is an informational resource intended to provide high-level anticipated impacts for planning purposes. The output panel provides estimates of change to the shoreline location, and are not intended to be used in an engineering context or to indicate support for any particular Adaptation Strategy."
-                ]
-            , paragraph NoStyle
-                []
-                [ text "Funded by a NOAA Coastal Resilience Grant awarded to the Cape Cod Commission and its partner agencies. "
-                ]
-            , paragraph NoStyle
-                []
-                [ text "Learn more at capecodcommission.org/resilientcapecod"
-                ]
-            ]
-        , el NoStyle 
-            [paddingXY 0 10] <| hairline (PL Line) 
-        ] 
+        ]
