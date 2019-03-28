@@ -29,12 +29,13 @@ palette =
     , persimmon = rgb 255 85 85
     , walnut = rgb 108 67 26
     , red = rgb 255 18 18
-    , jaffa = rgb 237 127 52
-    , ming = rgb 59 130 132
+    , hippieBlue = rgb 83 168 172
     , mediumRedViolet = rgb 165 56 165
     , apple = rgb 112 173 71
-    , silver = rgb 191 191 191
     , cadetBlue = rgb 155 166 191
+    , white = rgb 255 255 255
+    , blueStone = rgb 25 52 70
+    , alto = rgb 218 218 218
     }
 
 
@@ -232,12 +233,11 @@ stylesheet device =
                 [ Style.cursor "default" ]
             ]
         , Style.style (Header HeaderBackground)
-            [ Color.background <| rgba 25 52 70 1
+            [ Color.background palette.blueStone
             ]
         , Style.style (Header HeaderBackgroundRounded)
-            [ Color.background <| rgba 25 52 70 1
+            [ Color.background palette.blueStone
             , Border.rounded 20.0
-            -- , Border.all 4
             ]
         , Style.style (Header HeaderTitle)
             [ Color.text white
@@ -346,7 +346,7 @@ stylesheet device =
                 ]
             ]      
         , Style.style (Baseline BaselineInfoHeader)
-            [ Color.background <| rgba 25 52 70 1
+            [ Color.background palette.blueStone
             , Color.text white
             , Font.typeface fontstack
             , Border.roundTopLeft 4
@@ -370,8 +370,7 @@ stylesheet device =
             , Font.lineHeight 1.4
             ]
         , Style.style (AddStrategies StrategiesSidebarHeader)
-            [ Color.background <| rgba 83 168 172 1
-            -- Color.background palette.havelockBlue
+            [ Color.background palette.hippieBlue
             , Font.size 24
             , Font.center
             , Border.roundTopLeft 4
@@ -407,8 +406,7 @@ stylesheet device =
             , Border.roundBottomLeft 4
             ]
         , Style.style (AddStrategies StrategiesDetailsHeader)
-            [ Color.background <| rgba 25 52 70 1
-            -- Color.background palette.chambray
+            [ Color.background palette.blueStone
             , Color.text white
             , Border.roundTopRight 4
             , Style.hover
@@ -444,22 +442,23 @@ stylesheet device =
                 [ Color.text palette.malibu
                 ]
             ]
+        -- Updated these colors, but this does not style the types of selected adaptation strategy icons on the 'StrategiesModal' as they are hard-coded
         , Style.style (AddStrategies StrategiesDetailsCategoryCircle)
-            [ Color.background palette.jaffa
-            , Color.border palette.jaffa
+            [ Color.background white
+            , Color.border white
             , Border.all 1.5
             , Border.solid
             , variation Secondary
-                [ Color.background palette.ming
-                , Color.border palette.ming
+                [ Color.background white
+                , Color.border white
                 ]
             , variation Tertiary
-                [ Color.background palette.mediumRedViolet
-                , Color.border palette.mediumRedViolet
+                [ Color.background white
+                , Color.border white
                 ]
             , variation Disabled
                 [ Color.background <| rgba 0 0 0 0
-                , Color.border palette.malibu
+                , Color.border palette.alto
                 ]
             ]
         , Style.style (AddStrategies StrategiesDetailsMain)
@@ -469,10 +468,10 @@ stylesheet device =
                 [ Style.cursor "default" ]
             ]
         , Style.style (AddStrategies StrategiesDetailsHeading)
-            [ Color.text palette.havelockBlue
+            [ Color.text palette.hippieBlue
             , Font.typeface fontstack
             , Font.size (scaled 1)
-            , Font.weight 500
+            , Font.weight 800
             , Font.lineHeight 1.4
             ]
         , Style.style (AddStrategies StrategiesDetailsHazards)
@@ -535,7 +534,7 @@ stylesheet device =
             ]
         , Style.style (ShowOutput OutputToggleBtn)
             [ Font.letterSpacing 2.33
-            , Color.background palette.silver
+            , Color.background palette.alto
             ]
         , Style.style (ShowOutput OutputToggleLbl)
             [ Font.center
@@ -562,16 +561,18 @@ stylesheet device =
             [ Font.size 12
             , Font.lineHeight 1.4
             , Font.center
-            , Color.background palette.jaffa
+            , Color.text white
+            , Font.weight 600
+            , Color.background palette.hippieBlue
             , variation Secondary
-                [ Color.background palette.apple ]
+                [ Color.background palette.hippieBlue ]
             ]
         , Style.style (ShowOutput OutputMultiImpact)
             [ Font.size 11
             , Font.lineHeight 1.4
             , Font.center
             , Color.text palette.chambray
-            , Color.background <| rgb 255 255 255
+            , Color.background palette.white
             , Border.solid
             , Color.border palette.chambray
             , Border.right 1
@@ -587,7 +588,7 @@ stylesheet device =
                 , Border.bottom 0
                 ]
             , variation Disabled
-                [ Color.background palette.silver
+                [ Color.background palette.alto
                 ]
             ]
         , Style.style (ShowOutput OutputAddresses)
@@ -667,7 +668,7 @@ stylesheet device =
             , Border.rounded 4
             ]
         , Style.style (Modal IntroBody)
-            [ Color.background <| rgba 25 52 70 1
+            [ Color.background palette.blueStone
             , Border.rounded 4     
             ]
         , Style.style (Modal IntroWelcome)
@@ -686,16 +687,16 @@ stylesheet device =
             , Font.typeface fontstack
             ]
         , Style.style MenuContainer
-            [ Color.background <| rgba 25 52 70 1
+            [ Color.background palette.blueStone
             , Color.text white
             , Font.typeface fontstack
             , Font.size 25
             ]
         , Style.style (Sidebar SidebarHeader)
-            [ Color.background <| rgba 25 52 70 1
+            [ Color.background palette.blueStone
             ]
         , Style.style (Sidebar SidebarToggle)
-            [ Color.background <| rgba 25 52 70 1
+            [ Color.background palette.blueStone
             , Border.roundTopLeft 36
             , Border.roundBottomLeft 36
             , Style.cursor "pointer"
@@ -705,7 +706,7 @@ stylesheet device =
             , Font.typeface fontstack
             ]
         , Style.style (Sidebar SidebarLeftToggle)
-            [ Color.background <| rgba 25 52 70 1
+            [ Color.background palette.blueStone
             , Border.roundTopRight 36
             , Border.roundBottomRight 36
             , Style.cursor "pointer"

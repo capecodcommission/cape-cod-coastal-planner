@@ -538,76 +538,82 @@ mainDetailsView device benefits hazards strategy details outputDetails =
                 , verticalCenter
                 ]
                 [  el NoStyle [] <|
-            row NoStyle [ width fill, paddingXY 4 10, verticalCenter ]
-                [ column NoStyle [ center ]
-                [ el (ShowOutput OutputImpact)
-                    [ minWidth (px 115) ] <| text theOutputDetails.cost.name
-                    , el NoStyle [ moveDown 3 ] (text "COST")
-                        |> within [ infoIconView (Just "...") ]
-                    ]
-                , column NoStyle [ center ]
-                    [ el (ShowOutput OutputImpact)
-                        [ moveRight 20, minWidth (px 115), vary Secondary True ] <| text theOutputDetails.lifespan.name
-                    , el NoStyle [ moveRight 13, moveDown 3 ] (text "LIFESPAN")
-                        |> within [ infoIconView (Just "...") ]
-                    ]
-                , column NoStyle [center]                    
-                    [ column NoStyle [ ]
-                        [ row NoStyle [ moveRight 10, center, minWidth (px 115) ]
-                            [ el (ShowOutput OutputMultiImpact) 
-                                [ moveRight 10
-                                , scaleDisabled "Site"
-                                ] <| text "Site"
-                            , el (ShowOutput OutputMultiImpact) 
-                                [ moveRight 12
-                                , vary Secondary True 
-                                , scaleDisabled "Neighborhood"
-                                ] <| text "Neighborhood"
-                            ]
-                        , row NoStyle [ minWidth (px 115) ]
-                            [ el (ShowOutput OutputMultiImpact) 
-                                [ moveRight 32
-                                , vary Tertiary True 
-                                , scaleDisabled "Community"
-                                ] <| text "Community"
-                            , el (ShowOutput OutputMultiImpact) 
-                                [  moveRight 34
-                                , vary Quaternary True
-                                , scaleDisabled "Region"
-                                ] <| text "Region"
+                row NoStyle [ width fill, paddingXY 4 0, paddingBottom 15, verticalCenter ]
+                    [ column NoStyle [ center ]
+                        [ el (AddStrategies StrategiesDetailsHeading) [] (text "COST")
+                            |> within [ infoIconView (Just "Costs of an Adaptation Strategy includes construction, implementation, and long-term project maintenance. For Strategies with a lifespan shorter than the planning horizon, costs also account for replacement and replenishment costs.") ]
+                        , el (ShowOutput OutputImpact)
+                            [ minWidth (px 115), moveDown 3 ] <| text theOutputDetails.cost.name
+                        ]
+                    , column NoStyle [ center ]
+                        [ el (AddStrategies StrategiesDetailsHeading) [ moveRight 13 ] (text "LIFESPAN")
+                            |> within [ infoIconView (Just "The lifespan of an Adaptation Strategy may be short, medium, long, or permanent/indefinite, and is relative to all other strategy options. While lifespans are often project-specific, based on local research, short lifespans are less than five years; medium represents five to seven years; long represents seven to ten years, and indefinite is longer than ten years.") ]
+                        , el (ShowOutput OutputImpact)
+                            [ moveRight 20, minWidth (px 115), moveDown 3, vary Secondary True ] <| text theOutputDetails.lifespan.name
+                        ]
+                    , column NoStyle [center]                    
+                        [ column NoStyle [ center ]
+                        [ el (AddStrategies StrategiesDetailsHeading) [ moveRight 13, moveDown 3 ] (text "SCALE")
+                                |> within [ infoIconView (Just "The scale of an Adaptation Strategy is the size extent that is appropriate for implementation: Site, Neighborhood, Community, and/or Regional.") ]
+                            ]  
+                        , column NoStyle [ ]
+                            [ row NoStyle [ moveRight 10, center, minWidth (px 115), moveDown 5 ]
+                                [ el (ShowOutput OutputMultiImpact) 
+                                    [ moveRight 10
+                                    , scaleDisabled "Site"
+                                    ] <| text "Site"
+                                , el (ShowOutput OutputMultiImpact) 
+                                    [ moveRight 12
+                                    , vary Secondary True 
+                                    , scaleDisabled "Neighborhood"
+                                    ] <| text "Neighborhood"
+                                ]
+                            , row NoStyle [ minWidth (px 115) ]
+                                [ el (ShowOutput OutputMultiImpact) 
+                                    [ moveRight 32
+                                    , vary Tertiary True 
+                                    , scaleDisabled "Community"
+                                    ] <| text "Community"
+                                , el (ShowOutput OutputMultiImpact) 
+                                    [  moveRight 34
+                                    , vary Quaternary True
+                                    , scaleDisabled "Region"
+                                    ] <| text "Region"
+                                ]
                             ]
                         ]
-                , column NoStyle [ center ]
-                    [ el NoStyle [ moveRight 13, moveDown 3 ] (text "SCALE")
-                        |> within [ infoIconView (Just "...") ]
                     ]
-                    ]
+                    , el NoStyle 
+                        [ ] <| hairline (Hairline)
+                    , el NoStyle [ paddingTop 15 ] <|
+                        column (AddStrategies StrategiesDetailsHeading) [ paddingBottom 10 ]
+                            [ el (AddStrategies StrategiesDetailsHeading) [ center ] (text "ECOSYSTEM SERVICES")
+                            |> within [ infoIconView (Just "The scale of an Adaptation Strategy is the size extent that is appropriate for implementation: Site, Neighborhood, Community, and/or Regional.") ] 
+                            ]
+                    , benefitsProvidedView benefits details
+                    , el NoStyle 
+                        [ paddingTop 15 ] <| hairline (Hairline)
                 ]
-                , hairline Hairline
-                , el NoStyle [ ] <|
-                    column (AddStrategies StrategiesDetailsHeading) []
-                        [ h6 NoStyle [center, paddingTop 15] <| text "ECOSYSTEM SERVICES" ]
-                , benefitsProvidedView benefits details
-                , hairline Hairline
-                ]
-            ]
-        , column NoStyle
-            [ paddingXY 32 0, paddingTop 15, paddingBottom 15 ]
-            [ paragraph (AddStrategies StrategiesDetailsDescription) []
-                [ el (AddStrategies StrategiesDetailsDescription) 
-                    [ vary Secondary True ] <| text "Description: "
-                , text <| Maybe.withDefault "n/a" details.description
-                ]
-            , hairline Hairline
             ]
         , column NoStyle
             [ paddingXY 32 0, paddingTop 15 ]
-            [ paragraph (AddStrategies StrategiesDetailsDescription) []
-                    [ el (AddStrategies StrategiesDetailsDescription) 
-                        [ vary Secondary True ] <| text "Applicability: "
+            [ paragraph (AddStrategies StrategiesDetailsDescription) [ paddingBottom 15 ]
+                [ el (AddStrategies StrategiesDetailsHeading) 
+                    [ vary Secondary True ] <| text "DESCRIPTION "
+                , text <| Maybe.withDefault "n/a" details.description
+                ]
+                , el NoStyle 
+                    [ ] <| hairline (Hairline)
+            ]
+        , column NoStyle
+            [ paddingXY 32 0, paddingTop 15 ]
+            [ paragraph (AddStrategies StrategiesDetailsDescription) [ paddingBottom 15 ]
+                    [ el (AddStrategies StrategiesDetailsHeading) 
+                        [ vary Secondary True ] <| text "APPLICABILITY "
                     , text <| Maybe.withDefault "This will be filled in the future with adaptation strategy-specific applicability content." details.currentlyPermittable
                     ]
-            , hairline Hairline
+                , el NoStyle 
+                    [ ] <| hairline (Hairline)
             ]
         ]
 
