@@ -110,7 +110,7 @@ mainView config =
                 { src = config.paths.erosionPath }
             , paragraph (Modal IntroWelcome)
                 [ paddingLeft 20, verticalCenter, alignRight ]
-                [ text "To learn more about the methods used in the Cape Cod Coastal Planner application, click on the icon to the left." 
+                [ text "Description of how the tool works, including features, data sources, and background calculations." 
                 ]
             ]
         ]

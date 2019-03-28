@@ -98,63 +98,132 @@ mainView config =
     row (Modal IntroBody)
         [ ]
         [ column (Modal IntroWelcome)
-            [ spacingXY 0 5, width fill, paddingXY 20 20 ]
+            [ width (percent 50), height (percent 33), paddingXY 20 0, paddingBottom 20 ]
             [ row NoStyle
-                [height fill]
+                [height fill, paddingBottom 10]
                 [ decorativeImage NoStyle 
                     [ width (percent 20), verticalCenter, alignLeft ]
                     { src = config.paths.erosionPath }
-                , paragraph (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter, alignRight ]
-                    [ text "These are the resources of the 1st column and 1st row." ]
+                , 
+                textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20, verticalCenter ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "ADAPTATION STRATEGIES MATRIX" ]
+                    ]
+                , textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20 ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "Excel spreadsheet describing in detail possible adaptation strategies, including siting and permitting considerations and process."
+                        ]
+                    ]
                 ]
+            , el NoStyle 
+                [ ] <| hairline (Hairline) 
             , row NoStyle
-                [height fill]
-                [ decorativeImage NoStyle
+                [height fill, paddingXY 0 10]
+                [ decorativeImage NoStyle 
                     [ width (percent 20), verticalCenter, alignLeft ]
                     { src = config.paths.erosionPath }
-                , paragraph (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter, alignRight ]
-                    [ text "These are the resources of the 1st column and 2nd row." ]
+                , 
+                textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20, verticalCenter ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "ADAPTATION STRATEGIES FACT SHEETS" ]
+                    ]
+                , textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20 ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "Educational handouts on a subset of Adaptation Strategies found in the Cape Cod Coastal Planner." ]
+                    ] 
                 ]
+            , el NoStyle 
+                [ ] <| hairline (Hairline) 
             , row NoStyle
-                [height fill]
-                [ decorativeImage NoStyle
+                [height fill, paddingTop 10]
+                [ decorativeImage NoStyle 
                     [ width (percent 20), verticalCenter, alignLeft ]
                     { src = config.paths.erosionPath }
-                , paragraph (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter, alignRight ]
-                    [ text "These are the resources of the 1st column and 3rd row." ]
+                , 
+                textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20, verticalCenter ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "RESILIENT CAPE COD SPARK PAGE" ]
+                    ]
+                , textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20 ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "Website describing the 3-year Resilient Cape Cod project." ]
+                    ] 
                 ]
             ]
         , column (Modal IntroWelcome)
-            [ spacingXY 0 5, width fill, paddingXY 20 20 ]
+            [ width (percent 50), paddingXY 20 0, paddingBottom 20 ]
             [ row NoStyle
-                [height fill]
-                [ decorativeImage NoStyle
+                [height fill, paddingBottom 10]
+                [ decorativeImage NoStyle 
                     [ width (percent 20), verticalCenter, alignLeft ]
                     { src = config.paths.erosionPath }
-                , paragraph (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter, alignRight ]
-                    [ text "These are the resources of the 2nd column and 1st row." ]
+                , 
+                textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20, verticalCenter ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "LOCAL STORIES OF COASTAL IMPACTS" ]
+                    ]
+                , textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20 ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "ESRI Storymap of stakeholder-sourced case studies of coastal impacts due to sea level rise, erosion, and storm surge." ]
+                    ] 
                 ]
+            , el NoStyle 
+                [ ] <| hairline (Hairline)
             , row NoStyle
-                [height fill]
-                [ decorativeImage NoStyle
+                [height fill, paddingXY 0 10]
+                [ decorativeImage NoStyle 
                     [ width (percent 20), verticalCenter, alignLeft ]
                     { src = config.paths.erosionPath }
-                , paragraph (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter, alignRight ]
-                    [ text "These are the resources of the 2nd column and 2nd row." ]
+                , 
+                textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20, verticalCenter ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "ECOSYSTEM SERVICES HANDOUT" ]
+                    ]
+                , textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20 ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "Educational handout describing ecosystem services used during the Resilient Cape Cod stakeholder process." ]
+                    ] 
                 ]
+            , el NoStyle 
+                [ ] <| hairline (Hairline)
             , row NoStyle
-                [height fill]
-                [ decorativeImage NoStyle
+                [height fill, paddingTop 10]
+                [ decorativeImage NoStyle 
                     [ width (percent 20), verticalCenter, alignLeft ]
                     { src = config.paths.erosionPath }
-                , paragraph (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter, alignRight ]
-                    [ text "These are the resources of the 2nd column and 3nd row." ]
+                , 
+                textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20, verticalCenter ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "RESILIENT CAPE COD HOME PAGE" ]
+                    ]
+                , textLayout (Modal IntroWelcome)
+                    [ paddingLeft 20 ] 
+                    [ paragraph NoStyle
+                        [ ]
+                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "Link to Cape Cod Commission’s project homepage." ]
+                    ] 
                 ]
             ]
         ]
