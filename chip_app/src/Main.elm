@@ -46,6 +46,9 @@ import ChipApi.Scalar as Scalar
 import Ports exposing (..)
 import View.Tray as Tray
 import View.Menu as Menu
+import View.Intro as Intro
+import View.Methods as Methods
+import View.Resources as Resources
 
 
 ---- MODEL ----
@@ -79,7 +82,7 @@ type alias Model =
     , leftSidebarFx : Animation.State
     , leftSidebarToggleFx : Animation.State
     , slrPath : String
-    , wetPath : String
+    , ssPath : String
     , paths : Paths
     , slrOpenness : Openness
     , slrFx : Animation.State
@@ -124,6 +127,12 @@ type alias Model =
     , vulnRibbonClicked : Openness
     , menuClicked : Openness
     , menuFX : Animation.State
+    , vulnFX : Animation.State
+    , vulnLegendFX : Animation.State
+    , introClicked : Openness
+    , shorelineButtonClicked : Openness
+    , methodsClicked : Openness
+    , resourcesClicked : Openness
     }
 
 
@@ -170,8 +179,8 @@ initialModel flags =
         (Animation.style <| .rotateZero <| Animations.toggleStates)
         -- slr image
         flags.slrPath
-        -- wetlands image
-        flags.wetPath
+        -- storm surge image
+        flags.ssPath
         -- paths object
         flags.paths
         -- SLR Section
@@ -254,6 +263,18 @@ initialModel flags =
         Closed
         -- menu FX
         (Animation.style <| .closed <| Animations.menuStates)
+        -- vulnerability ribbon FX
+        (Animation.style <| .rotate180 <| Animations.toggleStates)
+        -- vulnerability ribbon legend fx
+        (Animation.style <| .closed <| Animations.vulnLegendStates)
+        -- Intro clicked
+        Open
+        -- Shoreline button clicked
+        Open
+        -- Methods clicked
+        Closed
+        -- Resources clicked
+        Closed
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
 init flags location =
@@ -363,7 +384,6 @@ updateModel msg model =
             in
                 ( model
                     |> collapseRightSidebar
-                    |> collapseLeftSidebar
                     |> \m ->
                         { m
                             | shorelineLocationsDropdown = updatedLocationsDropdown 
@@ -443,6 +463,7 @@ updateModel msg model =
 
         LoadVulnerabilityRibbonResponse response ->
             ( model
+                |> expandLeftSidebar
                 |> \m ->
                     { m 
                         | shorelineSelected = Open
@@ -450,7 +471,16 @@ updateModel msg model =
                             Animation.interrupt
                                 [ Animation.to <| .open <| Animations.titleStates ]
                                 model.titleRibbonFX
+                        , vulnFX =
+                            Animation.interrupt
+                                [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotate90 <| Animations.toggleStates ]
+                                model.vulnFX
+                        , vulnLegendFX =
+                            Animation.interrupt
+                                [ Animation.to <| .open <| Animations.vulnLegendStates ]
+                                model.vulnLegendFX
                     }
+                
             , olCmd <| encodeOpenLayersCmd (RenderVulnerabilityRibbon response)
             )
 
@@ -669,6 +699,8 @@ updateModel msg model =
                 , sloshToggleFx = Animation.update animMsg model.sloshToggleFx
                 , titleRibbonFX = Animation.update animMsg model.titleRibbonFX
                 , menuFX = Animation.update animMsg model.menuFX
+                , vulnFX = Animation.update animMsg model.vulnFX
+                , vulnLegendFX = Animation.update animMsg model.vulnLegendFX
             }
             , Cmd.none
             )
@@ -1315,6 +1347,7 @@ updateModel msg model =
                     }
                 |> collapseFZSection
                 |> collapseSloshSection
+                |> collapseRightSidebar
             , olCmd <| encodeOpenLayersCmd (ResetAllOL)
             )
 
@@ -1340,6 +1373,14 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | vulnRibbonClicked = Closed 
+                                , vulnFX =
+                                    Animation.interrupt
+                                        [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotate180 <| Animations.toggleStates ]
+                                        model.vulnFX
+                                , vulnLegendFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .closed <| Animations.vulnLegendStates ]
+                                        model.vulnLegendFX
                             }
                     , olCmd <| encodeOpenLayersCmd (DisableVulnOL) 
                     )
@@ -1348,6 +1389,14 @@ updateModel msg model =
                         |> \m -> 
                             { m 
                                 | vulnRibbonClicked = Open 
+                                , vulnFX =
+                                    Animation.interrupt
+                                        [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotate90 <| Animations.toggleStates ]
+                                        model.vulnFX
+                                , vulnLegendFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .open <| Animations.vulnLegendStates ]
+                                        model.vulnLegendFX
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderVulnOL) 
                     )
@@ -1378,7 +1427,76 @@ updateModel msg model =
                             }
                     , Cmd.none
                     )
-
+        ToggleIntro -> 
+            case model.introClicked of
+                Open ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | introClicked = Closed
+                                , shorelineButtonClicked = Closed
+                            }
+                    , Cmd.none
+                    )
+                Closed ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | introClicked = Open
+                                , menuFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .closed <| Animations.menuStates ]
+                                        model.menuFX
+                                , menuClicked = Closed
+                            }
+                    , Cmd.none
+                    )
+        ToggleMethods -> 
+            case model.methodsClicked of
+                Open ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | methodsClicked = Closed
+                            }
+                    , Cmd.none
+                    )
+                Closed ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | methodsClicked = Open
+                                , menuFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .closed <| Animations.menuStates ]
+                                        model.menuFX
+                                , menuClicked = Closed
+                            }
+                    , Cmd.none
+                    )
+        ToggleResources -> 
+            case model.resourcesClicked of
+                Open ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | resourcesClicked = Closed
+                            }
+                    , Cmd.none
+                    )
+                Closed ->
+                    ( model
+                        |> \m ->
+                            { m
+                                | resourcesClicked = Open
+                                , menuFX =
+                                    Animation.interrupt
+                                        [ Animation.to <| .closed <| Animations.menuStates ]
+                                        model.menuFX
+                                , menuClicked = Closed
+                            }
+                    , Cmd.none
+                    )
 
         
 
@@ -1816,14 +1934,12 @@ view app =
                         column NoStyle [ height fill ] <|
                             [ el NoStyle [ id "map", height (percent 100) ] empty
                                 |> within
-                                    [ case model.zoneOfImpact of 
-                                        Just zoi -> 
-                                            RSidebar.view model <| getRightSidebarChildViews model
-                                        Nothing ->
-                                            el NoStyle [] empty
+                                    [ RSidebar.view model <| getRightSidebarChildViews model
                                     , LSidebar.view model <| getLeftSidebarChildViews model
-                                    , Tray.view model
                                     , Menu.view model
+                                    , Intro.view model
+                                    , Methods.view model
+                                    , Resources.view model
                                     ]
                                     
                                     
@@ -1831,8 +1947,7 @@ view app =
                             -- ie: modal should never be open when zone of impact is Nothing (make impossible states impossible)
                             , case ( model.zoneOfImpact, model.strategiesModalOpenness ) of
                                 ( Just zoi, Open ) ->
-                                    StrategiesModal.view model model.adaptationInfo zoi model.outputDetails
-
+                                    StrategiesModal.view model model.adaptationInfo zoi
                                 ( _, _ ) ->
                                     el NoStyle [] empty
                             ]
@@ -1851,21 +1966,9 @@ headerView ({ device } as model) =
     header (Header HeaderBackground) [ width fill, height (px <| adjustOnHeight ( 60, 80 ) device) ] <|
         row NoStyle [ height fill, width fill, paddingXY 54 15, spacingXY 54 0 ] <|
             [ column NoStyle
-                [ verticalCenter, width fill ]
-                [ button 
-                    (case model.menuClicked of
-                        Open ->
-                            (Baseline BaselineInfoBtnClicked)
-                        Closed ->
-                            (Baseline BaselineInfoBtn)
-                    )
-                    [ height (px 42), width (px 42), title "Toggle Menu", onClick ToggleMenu ]
-                    (Element.text "☰")
-                ]
-            , column NoStyle
                 [ verticalCenter, center, width fill]
                 [ decorativeImage NoStyle
-                    [width (px 375), height (px 65)]
+                    [width (px 375), height (px 65), alignLeft]
                     { src = model.paths.logoPath } 
                 ]
             , column NoStyle
@@ -1885,6 +1988,15 @@ headerView ({ device } as model) =
                                 (Element.text "⟲")
                         Closed ->
                             el NoStyle [] empty
+                    ,   button 
+                            (case model.menuClicked of
+                                Open ->
+                                    MenuButton
+                                Closed ->
+                                    MenuButton
+                            )
+                            [ height (px 42), width (px 42), title "Toggle Menu", onClick ToggleMenu ]
+                            (Element.text "☰")
                     ]
                 ]
             ]
@@ -1945,6 +2057,7 @@ animations model =
     , model.sloshToggleFx
     , model.titleRibbonFX
     , model.menuFX
+    , model.vulnFX
     ]
     
 

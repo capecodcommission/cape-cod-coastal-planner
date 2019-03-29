@@ -5,11 +5,12 @@ import { logError } from "./js/misc";
 import closePath from "./img/close.png";
 import trianglePath from "./img/triangle.png";
 import zoiPath from "./img/zoi.png";
-import slrPath from "./img/SeaLevelRise.png"
-import wetPath from "./img/wetlands.png"
-import shorePath from "./img/shoreline.png"
+import slrPath from "./img/sea-level-rise.png"
+import ssPath from "./img/storm-surge.png"
+import erosionPath from "./img/erosion.png"
 import logoPath from "./img/logo.png"
 import downArrow from "./img/downArrow.png"
+import welcome_lighthouse from "./img/welcome_lighthouse.png"
 import registerServiceWorker from './registerServiceWorker';
 
 window.chip = window.chip || {};
@@ -35,16 +36,17 @@ document.addEventListener("DOMContentLoaded", () => {
             height: window.innerHeight
         },
         "slrPath": slrPath,
-        "wetPath": wetPath,
+        "ssPath": ssPath,
         "paths": {
             "slrPath": slrPath,
-            "wetPath": wetPath,
+            "ssPath": ssPath,
             "closePath": closePath,
             "trianglePath": trianglePath,
             "zoiPath": zoiPath,
-            "shorePath": shorePath,
+            "erosionPath": erosionPath,
             "logoPath": logoPath,
-            "downArrow": downArrow
+            "downArrow": downArrow,
+            "welcome_lighthouse": welcome_lighthouse
         }
     });
 

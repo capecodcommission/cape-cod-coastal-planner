@@ -53,9 +53,7 @@ type Msg
     | ToggleInfraSection
     | ToggleErosionSection
     | ToggleDR String
-    -- | LoadDRResponse (Result Http.Error D.Value)
     | ToggleSLRLayer String
-    -- | LoadSLRResponse (Result Http.Error D.Value)
     | ToggleMOPLayer
     | LoadMOPResponse (Result Http.Error D.Value)
     | TogglePPRLayer
@@ -73,3 +71,6 @@ type Msg
     | GetLocation
     | ToggleVulnRibbon
     | ToggleMenu
+    | ToggleIntro
+    | ToggleMethods
+    | ToggleResources

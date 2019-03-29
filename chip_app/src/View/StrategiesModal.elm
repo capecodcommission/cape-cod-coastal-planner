@@ -28,6 +28,7 @@ import Json.Decode as D
 import List.Zipper as Zipper exposing (Zipper)
 import AdaptationOutput exposing (..)
 import AdaptationStrategy.Impacts as Impacts
+import Debug exposing (log)
 
 
 modalHeight : Device -> Float
@@ -37,7 +38,7 @@ modalHeight device =
 
 detailsHeaderHeight : Device -> Float
 detailsHeaderHeight device =
-    adjustOnHeight ( 70, 120 ) device
+    sidebarHeaderHeight
 
 mainHeight : Device -> Float
 mainHeight device =
@@ -48,7 +49,7 @@ sidebarHeaderHeight : Float
 sidebarHeaderHeight = 120
 
 sidebarFooterHeight : Float
-sidebarFooterHeight = 89
+sidebarFooterHeight = 90
 
 
 activeStrategiesHeight : Device -> Float
@@ -61,13 +62,12 @@ view :
         | device : Device
         , closePath : String
         , trianglePath : String
-        , slrPath : String
+        , paths : Paths
     }
     -> GqlData AdaptationInfo
     -> ZoneOfImpact
-    -> AdaptationOutput
     -> Element MainStyles Variations Msg
-view config adaptationInfo zoneOfImpact outputDetails =
+view config adaptationInfo zoneOfImpact =
     column NoStyle
         []
         [ modal (Modal ModalBackground)
@@ -84,7 +84,7 @@ view config adaptationInfo zoneOfImpact outputDetails =
                 row NoStyle 
                     [ height fill ]
                     [ sidebarView config adaptationInfo zoneOfImpact 
-                    , mainContentView config adaptationInfo outputDetails
+                    , mainContentView config adaptationInfo
                     ]
         ]
 
@@ -93,12 +93,12 @@ sidebarView :
     { config
         | device : Device
         , trianglePath : String
-        , slrPath :String
+        , paths : Paths
     }
     -> GqlData AdaptationInfo
     -> ZoneOfImpact
     -> Element MainStyles Variations Msg
-sidebarView { device, trianglePath, slrPath } adaptationInfo zoneOfImpact =
+sidebarView { device, trianglePath, paths } adaptationInfo zoneOfImpact =
     let
         currentHazard =
             adaptationInfo
@@ -117,7 +117,7 @@ sidebarView { device, trianglePath, slrPath } adaptationInfo zoneOfImpact =
         ]
         [ header (AddStrategies StrategiesSidebarHeader)
             [ height ( px sidebarHeaderHeight ) ] <| 
-                hazardPickerView device trianglePath currentHazard slrPath
+                hazardPickerView device trianglePath currentHazard paths.slrPath paths.erosionPath paths.ssPath
         , column (AddStrategies StrategiesSidebarList)
             [ height ( px <| activeStrategiesHeight device ) ] <| 
                 strategiesView zoneOfImpact adaptationInfo
@@ -129,8 +129,8 @@ sidebarView { device, trianglePath, slrPath } adaptationInfo zoneOfImpact =
         ]
 
 
-hazardPickerView : Device -> String -> Maybe CoastalHazard -> String -> Element MainStyles Variations Msg
-hazardPickerView device trianglePath currentHazard slrPath = 
+hazardPickerView : Device -> String -> Maybe CoastalHazard -> String -> String -> String -> Element MainStyles Variations Msg
+hazardPickerView device trianglePath currentHazard slrPath erosionPath ssPath = 
     h5 (Headings H5) 
         [ height fill, width fill ] <| 
             case currentHazard of
@@ -161,13 +161,26 @@ hazardPickerView device trianglePath currentHazard slrPath =
                                 [ image (AddStrategies StrategiesHazardPicker) 
                                     [ center
                                     , width (percent 20)
+                                    , title hazard.name
                                     ] 
-                                    { src = slrPath, caption = "selected hazard" }
+                                    { 
+                                        src =
+                                        if hazard.name == "Erosion" then
+                                            erosionPath
+                                        
+                                        else if hazard.name == "Storm Surge" then
+                                            ssPath
+                                        
+                                        else slrPath
+                                        
+                                        , caption = hazard.name
+                                    }
                             , column NoStyle
                                 [
                                 width fill
                                 , height (percent 50)
                                 , center
+                                , title hazard.name
                                 ]
                                 [ el NoStyle [ width fill ] <| Element.text hazard.name ]
                                 ]
@@ -265,7 +278,7 @@ strategyView maybeStrategy =
 selectedStrategyView : Maybe ApplicableStrategy -> Maybe (Element MainStyles Variations Msg)
 selectedStrategyView maybeStrategy =
     maybeStrategy
-        |> Maybe.map 
+        |> Maybe.map
             (\strategy ->
                 button (AddStrategies StrategiesSidebarListBtnSelected) 
                     [ height content
@@ -313,9 +326,8 @@ mainContentView :
         , closePath : String
     }
     -> GqlData AdaptationInfo
-    -> AdaptationOutput
     -> Element MainStyles Variations Msg
-mainContentView { device, closePath } adaptationInfo outputDetails =
+mainContentView { device, closePath } adaptationInfo =
     case adaptationInfo of
         Success info ->
             let
@@ -336,8 +348,8 @@ mainContentView { device, closePath } adaptationInfo outputDetails =
                     ]
                 , currentStrategy
                     |> Maybe.map3
-                        (\hazards details strategy -> 
-                            mainDetailsView device info.benefits hazards strategy details outputDetails
+                        (\hazards details strategy ->
+                            mainDetailsView device info.benefits hazards strategy details
                         )
                         info.hazards
                         currentDetails
@@ -370,10 +382,10 @@ headerDetailsView device lbl viewsWithin =
         , height (px <| detailsHeaderHeight device)
         ]
         (column NoStyle
-            [ height fill, width fill, paddingLeft 40, verticalCenter ]
+            [ height fill, width fill, paddingLeft 40, verticalCenter, title "Type(s) of selected adaptation strategy" ]
             [ el NoStyle [ width fill, height (percent 40) ] 
                 <| el (AddStrategies StrategiesSheetHeading) [ verticalCenter ] <| 
-            column NoStyle [ ]
+            column NoStyle [ title "Selected adaptation strategy" ]
                 [ el (AddStrategies StrategiesSubHeading) [] <| 
                  el (AddStrategies StrategiesMainHeading) [] <| 
                     Element.text lbl
@@ -501,96 +513,104 @@ mainDetailsView :
     -> Zipper CoastalHazard 
     -> Strategy 
     -> StrategyDetails
-    -> AdaptationOutput
     -> Element MainStyles Variations Msg
-mainDetailsView device benefits hazards strategy details outputDetails =
+mainDetailsView device benefits hazards strategy details =
     let
-        theOutputDetails : OutputDetails
-        theOutputDetails = defaultOutput
-        scaleDisabled a = vary Disabled (not <| Impacts.hasScale a theOutputDetails.scales)
+        
+        scaleDisabled a = vary Disabled (not <| Impacts.hasScale a details.scales)
     
     in
     column (AddStrategies StrategiesDetailsMain)
         [ height (px <| mainHeight device) ]
         [ row NoStyle
-            [ paddingXY 32 1, spacing 0 ]
+            [ paddingXY 32 4, spacing 50 ]
             [ column NoStyle
-                [ width fill, paddingXY 2 0 ]
+                [ width (percent (50))
+                , paddingTop 10
+                ]
                 [ ModalImage.view NoStyle NoStyle details.imagePath
                 ]
             , column NoStyle
-                [ ]
+                [ paddingXY 20 0
+                , verticalCenter
+                ]
                 [  el NoStyle [] <|
-            row NoStyle [ width fill, spread, paddingXY 4 10, verticalCenter ]
-                [ column NoStyle [center]
-                [ el (ShowOutput OutputImpact)
-                    [ paddingXY 4 2, minWidth (px 115) ] <| text theOutputDetails.cost.name
-                    , el NoStyle [ moveDown 3 ] (text "COST")
-                        |> within [ infoIconView (Just "...") ]
-                    ]
-                , column NoStyle [center]
-                    [ el (ShowOutput OutputImpact) 
-                        [ paddingXY 4 2, minWidth (px 115), vary Secondary True ] <| text theOutputDetails.lifespan.name
-                    , el NoStyle [ moveDown 3 ] (text "LIFESPAN")
-                        |> within [ infoIconView (Just "...") ]
-                    ]
-                , column NoStyle [center]                    
-                    [ column NoStyle []
-                        [ row NoStyle [ minWidth (px 115) ]
-                            [ el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0 
-                                , scaleDisabled "Site"
-                                ] <| text "Site"
-                            , el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0
-                                , vary Secondary True 
-                                , scaleDisabled "Neighborhood"
-                                ] <| text "Neighborhood"
-                            ]
-                        , row NoStyle [ minWidth (px 115) ]
-                            [ el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0
-                                , vary Tertiary True 
-                                , scaleDisabled "Community"
-                                ] <| text "Community"
-                            , el (ShowOutput OutputMultiImpact) 
-                                [ paddingXY 4 0
-                                , vary Quaternary True
-                                , scaleDisabled "Region"
-                                ] <| text "Region"
+                row NoStyle [ width fill, paddingXY 4 0, paddingBottom 15, verticalCenter ]
+                    [ column NoStyle [ center ]
+                        [ el (AddStrategies StrategiesDetailsHeading) [] (text "COST")
+                            |> within [ infoIconView (Just "Costs of an Adaptation Strategy includes construction, implementation, and long-term project maintenance. For Strategies with a lifespan shorter than the planning horizon, costs also account for replacement and replenishment costs.") ]
+                        , el (ShowOutput OutputImpact)
+                            [ minWidth (px 115), moveDown 3 ] <| handleImpactCostName details.costs
+                        ]
+                    , column NoStyle [ center ]
+                        [ el (AddStrategies StrategiesDetailsHeading) [ moveRight 13 ] (text "LIFESPAN")
+                            |> within [ infoIconView (Just "The lifespan of an Adaptation Strategy may be short, medium, long, or permanent/indefinite, and is relative to all other strategy options. While lifespans are often project-specific, based on local research, short lifespans are less than five years; medium represents five to seven years; long represents seven to ten years, and indefinite is longer than ten years.") ]
+                        , el (ShowOutput OutputImpact)
+                            [ moveRight 20, minWidth (px 115), moveDown 3, vary Secondary True ] <| handleImpactLifespanName details.lifeSpans
+                        ]
+                    , column NoStyle [center]                    
+                        [ column NoStyle [ center ]
+                        [ el (AddStrategies StrategiesDetailsHeading) [ moveRight 13, moveDown 3 ] (text "SCALE")
+                                |> within [ infoIconView (Just "The scale of an Adaptation Strategy is the size extent that is appropriate for implementation: Site, Neighborhood, Community, and/or Regional.") ]
+                            ]  
+                        , column NoStyle [ ]
+                            [ row NoStyle [ moveRight 10, center, minWidth (px 115), moveDown 5 ]
+                                [ el (ShowOutput OutputMultiImpact) 
+                                    [ moveRight 10
+                                    , scaleDisabled "Site"
+                                    ] <| text "Site"
+                                , el (ShowOutput OutputMultiImpact) 
+                                    [ moveRight 12
+                                    , vary Secondary True 
+                                    , scaleDisabled "Neighborhood"
+                                    ] <| text "Neighborhood"
+                                ]
+                            , row NoStyle [ minWidth (px 115) ]
+                                [ el (ShowOutput OutputMultiImpact) 
+                                    [ moveRight 32
+                                    , vary Tertiary True 
+                                    , scaleDisabled "Community"
+                                    ] <| text "Community"
+                                , el (ShowOutput OutputMultiImpact) 
+                                    [  moveRight 34
+                                    , vary Quaternary True
+                                    , scaleDisabled "Region"
+                                    ] <| text "Region"
+                                ]
                             ]
                         ]
-                , column NoStyle [alignRight]
-                    [ el NoStyle [ moveDown 3 ] (text "SCALE")
-                        |> within [ infoIconView (Just "...") ]
                     ]
-                    ]
-                ]
-                , hairline Hairline
-                , el NoStyle [ ] <|
-                    column (AddStrategies StrategiesDetailsHeading) []
-                        [ h6 NoStyle [center] <| text "ECOSYSTEM SERVICES" ]
-                , benefitsProvidedView benefits details
-                , hairline Hairline
+                    , el NoStyle 
+                        [ ] <| hairline (Hairline)
+                    , el NoStyle [ paddingTop 15 ] <|
+                        column (AddStrategies StrategiesDetailsHeading) [ paddingBottom 10 ]
+                            [ el (AddStrategies StrategiesDetailsHeading) [ center ] (text "ECOSYSTEM SERVICES")
+                            |> within [ infoIconView (Just "The scale of an Adaptation Strategy is the size extent that is appropriate for implementation: Site, Neighborhood, Community, and/or Regional.") ] 
+                            ]
+                    , benefitsProvidedView benefits details
+                    , el NoStyle 
+                        [ paddingTop 15 ] <| hairline (Hairline)
                 ]
             ]
         , column NoStyle
-            [ paddingXY 32 10 ]
-            [ paragraph (AddStrategies StrategiesDetailsDescription) []
-                [ el (AddStrategies StrategiesDetailsDescription) 
-                    [ vary Secondary True ] <| text "Description: "
+            [ paddingXY 32 0, paddingTop 15 ]
+            [ paragraph (AddStrategies StrategiesDetailsDescription) [ paddingBottom 15 ]
+                [ el (AddStrategies StrategiesDetailsHeading) 
+                    [ vary Secondary True ] <| text "DESCRIPTION "
                 , text <| Maybe.withDefault "n/a" details.description
                 ]
-            , hairline Hairline
+                , el NoStyle 
+                    [ ] <| hairline (Hairline)
             ]
         , column NoStyle
-            [ paddingXY 32 0 ]
-            [ paragraph (AddStrategies StrategiesDetailsDescription) []
-                    [ el (AddStrategies StrategiesDetailsDescription) 
-                        [ vary Secondary True ] <| text "Applicability: "
+            [ paddingXY 32 0, paddingTop 15 ]
+            [ paragraph (AddStrategies StrategiesDetailsDescription) [ paddingBottom 15 ]
+                    [ el (AddStrategies StrategiesDetailsHeading) 
+                        [ vary Secondary True ] <| text "APPLICABILITY "
                     , text <| Maybe.withDefault "This will be filled in the future with adaptation strategy-specific applicability content." details.currentlyPermittable
                     ]
-            , hairline Hairline
+                , el NoStyle 
+                    [ ] <| hairline (Hairline)
             ]
         ]
 
@@ -767,4 +787,30 @@ keySuffix matched =
     else 
         "inactive"
 
+handleImpactCostName : List Impacts.ImpactCost -> Element MainStyles Variations Msg
+handleImpactCostName costs =
+    let
+        names =
+            List.map
+                (\cost ->
+                    cost.name
+                )
+                costs
+        stringName = String.concat names
+        noActionString = if String.length stringName > 20 then "Low (<$200)" else stringName
+    in
+        text noActionString
 
+handleImpactLifespanName : List Impacts.ImpactLifeSpan -> Element MainStyles Variations Msg
+handleImpactLifespanName lifeSpans =
+    let
+        names =
+            List.map
+                (\lifeSpan ->
+                    lifeSpan.name
+                )
+                lifeSpans
+        stringName = String.concat names
+        noActionString = if String.length stringName > 10 then "Short" else stringName
+    in
+        text noActionString

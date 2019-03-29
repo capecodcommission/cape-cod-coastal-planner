@@ -53,7 +53,7 @@ view config (titleText, childViews) =
             ]
         )
         (sidebar (Sidebar SidebarContainer)
-            [ height fill, width (px 550) ]
+            [ height fill, width (px 400) ]
             ( headerView 
                 config
                 titleText 
@@ -94,7 +94,7 @@ headerView config titleText togglePath fx =
     ( header (Sidebar SidebarHeader) 
         [ height (px 72), width fill ]
         ( h5 (Headings H5) 
-            [ center, verticalCenter ] 
+            [ paddingXY 20 0, verticalCenter ] 
             ( text titleText
             ) |> onRight
                 [ if 
@@ -123,7 +123,7 @@ headerView config titleText togglePath fx =
                     ) 
                     then
                         button CancelButton
-                            [ onClick ClearAllLayers, width (px 75), height (px 42), moveRight 50 ]
+                            [ onClick ClearAllLayers, width (px 75), height (px 42), moveRight 25 ]
                             ( text "clear" ) 
                     else
                         el NoStyle [] empty  
