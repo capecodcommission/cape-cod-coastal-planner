@@ -1947,8 +1947,7 @@ view app =
                             -- ie: modal should never be open when zone of impact is Nothing (make impossible states impossible)
                             , case ( model.zoneOfImpact, model.strategiesModalOpenness ) of
                                 ( Just zoi, Open ) ->
-                                    StrategiesModal.view model model.adaptationInfo zoi model.outputDetails
-
+                                    StrategiesModal.view model model.adaptationInfo zoi
                                 ( _, _ ) ->
                                     el NoStyle [] empty
                             ]

@@ -28,6 +28,7 @@ import Json.Decode as D
 import List.Zipper as Zipper exposing (Zipper)
 import AdaptationOutput exposing (..)
 import AdaptationStrategy.Impacts as Impacts
+import Debug exposing (log)
 
 
 modalHeight : Device -> Float
@@ -65,9 +66,8 @@ view :
     }
     -> GqlData AdaptationInfo
     -> ZoneOfImpact
-    -> AdaptationOutput
     -> Element MainStyles Variations Msg
-view config adaptationInfo zoneOfImpact outputDetails =
+view config adaptationInfo zoneOfImpact =
     column NoStyle
         []
         [ modal (Modal ModalBackground)
@@ -84,7 +84,7 @@ view config adaptationInfo zoneOfImpact outputDetails =
                 row NoStyle 
                     [ height fill ]
                     [ sidebarView config adaptationInfo zoneOfImpact 
-                    , mainContentView config adaptationInfo outputDetails
+                    , mainContentView config adaptationInfo
                     ]
         ]
 
@@ -326,9 +326,8 @@ mainContentView :
         , closePath : String
     }
     -> GqlData AdaptationInfo
-    -> AdaptationOutput
     -> Element MainStyles Variations Msg
-mainContentView { device, closePath } adaptationInfo outputDetails =
+mainContentView { device, closePath } adaptationInfo =
     case adaptationInfo of
         Success info ->
             let
@@ -350,7 +349,7 @@ mainContentView { device, closePath } adaptationInfo outputDetails =
                 , currentStrategy
                     |> Maybe.map3
                         (\hazards details strategy ->
-                            mainDetailsView device info.benefits hazards strategy details outputDetails
+                            mainDetailsView device info.benefits hazards strategy details
                         )
                         info.hazards
                         currentDetails
@@ -514,13 +513,11 @@ mainDetailsView :
     -> Zipper CoastalHazard 
     -> Strategy 
     -> StrategyDetails
-    -> AdaptationOutput
     -> Element MainStyles Variations Msg
-mainDetailsView device benefits hazards strategy details outputDetails =
+mainDetailsView device benefits hazards strategy details =
     let
-        theOutputDetails : OutputDetails
-        theOutputDetails = defaultOutput
-        scaleDisabled a = vary Disabled (not <| Impacts.hasScale a theOutputDetails.scales)
+        
+        scaleDisabled a = vary Disabled (not <| Impacts.hasScale a details.scales)
     
     in
     column (AddStrategies StrategiesDetailsMain)
@@ -543,13 +540,13 @@ mainDetailsView device benefits hazards strategy details outputDetails =
                         [ el (AddStrategies StrategiesDetailsHeading) [] (text "COST")
                             |> within [ infoIconView (Just "Costs of an Adaptation Strategy includes construction, implementation, and long-term project maintenance. For Strategies with a lifespan shorter than the planning horizon, costs also account for replacement and replenishment costs.") ]
                         , el (ShowOutput OutputImpact)
-                            [ minWidth (px 115), moveDown 3 ] <| text theOutputDetails.cost.name
+                            [ minWidth (px 115), moveDown 3 ] <| handleImpactCostName details.costs
                         ]
                     , column NoStyle [ center ]
                         [ el (AddStrategies StrategiesDetailsHeading) [ moveRight 13 ] (text "LIFESPAN")
                             |> within [ infoIconView (Just "The lifespan of an Adaptation Strategy may be short, medium, long, or permanent/indefinite, and is relative to all other strategy options. While lifespans are often project-specific, based on local research, short lifespans are less than five years; medium represents five to seven years; long represents seven to ten years, and indefinite is longer than ten years.") ]
                         , el (ShowOutput OutputImpact)
-                            [ moveRight 20, minWidth (px 115), moveDown 3, vary Secondary True ] <| text theOutputDetails.lifespan.name
+                            [ moveRight 20, minWidth (px 115), moveDown 3, vary Secondary True ] <| handleImpactLifespanName details.lifeSpans
                         ]
                     , column NoStyle [center]                    
                         [ column NoStyle [ center ]
@@ -789,3 +786,31 @@ keySuffix matched =
         "active" 
     else 
         "inactive"
+
+handleImpactCostName : List Impacts.ImpactCost -> Element MainStyles Variations Msg
+handleImpactCostName costs =
+    let
+        names =
+            List.map
+                (\cost ->
+                    cost.name
+                )
+                costs
+        stringName = String.concat names
+        noActionString = if String.length stringName > 20 then "Low (<$200)" else stringName
+    in
+        text noActionString
+
+handleImpactLifespanName : List Impacts.ImpactLifeSpan -> Element MainStyles Variations Msg
+handleImpactLifespanName lifeSpans =
+    let
+        names =
+            List.map
+                (\lifeSpan ->
+                    lifeSpan.name
+                )
+                lifeSpans
+        stringName = String.concat names
+        noActionString = if String.length stringName > 10 then "Short" else stringName
+    in
+        text noActionString

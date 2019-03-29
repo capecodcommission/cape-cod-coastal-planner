@@ -36,6 +36,7 @@ palette =
     , white = rgb 255 255 255
     , blueStone = rgb 25 52 70
     , alto = rgb 218 218 218
+    , shadedScale = rgb 41 48 58
     }
 
 
@@ -588,7 +589,7 @@ stylesheet device =
                 , Border.bottom 0
                 ]
             , variation Disabled
-                [ Color.background palette.alto
+                [ Color.background palette.shadedScale
                 ]
             ]
         , Style.style (ShowOutput OutputAddresses)
