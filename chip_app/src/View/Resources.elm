@@ -39,7 +39,7 @@ view config =
                 [ modal (Modal ModalBackground)
                     [ height fill
                     , width fill
-                    , padding 90
+                    , padding 40
                     ] <|
                         el NoStyle
                             [ width (px 700)
@@ -95,135 +95,163 @@ mainView :
     } 
     -> Element MainStyles Variations Msg
 mainView config =
-    row (Modal IntroBody)
+    column NoStyle
         [ ]
-        [ column (Modal IntroWelcome)
-            [ width (percent 50), height (percent 33), paddingXY 20 0, paddingBottom 20 ]
-            [ row NoStyle
-                [height fill, paddingBottom 10]
-                [ decorativeImage NoStyle 
-                    [ width (percent 20), verticalCenter, alignLeft ]
-                    { src = config.paths.erosionPath }
-                , 
-                textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "ADAPTATION STRATEGIES MATRIX" ]
+        [ row (Modal MethodsResourcesBackground)
+            [ width fill, height (percent 33), paddingXY 10 10 ]
+            [ column NoStyle
+                [ width (percent 15), verticalCenter, paddingRight 20 ]
+                [ column NoStyle
+                    [ width fill, verticalCenter, alignLeft ]
+                    [ decorativeImage NoStyle 
+                        [ verticalCenter, center, width fill ]
+                        { src = config.paths.erosionPath }
                     ]
-                , textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20 ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "Excel spreadsheet describing in detail possible adaptation strategies, including siting and permitting considerations and process."
+                ]
+                , column NoStyle
+                    [ width (percent 35) ]
+                        [ textLayout NoStyle
+                            [ verticalCenter, width fill, paddingBottom 5 ] 
+                                [ paragraph NoStyle
+                                [ width fill ]
+                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "ADAPTATION STRATEGIES MATRIX" ]
+                                ]
+                        , textLayout NoStyle
+                            [ verticalCenter, width fill ] 
+                                [ paragraph NoStyle
+                                [ width fill ]
+                                    [ el (Modal MethodsResourcesModal) [] <| text "Excel spreadsheet describing in detail possible adaptation strategies, including siting and permitting considerations and process." ]
+                                ]
                         ]
+            , column NoStyle
+                [ width (percent 15), verticalCenter, paddingLeft 20]
+                [ column NoStyle
+                    [ width fill, verticalCenter, alignLeft ]
+                    [ decorativeImage NoStyle 
+                        [ verticalCenter, center, width fill ]
+                        { src = config.paths.erosionPath }
                     ]
                 ]
-            , el NoStyle 
-                [ ] <| hairline (Hairline) 
-            , row NoStyle
-                [height fill, paddingXY 0 10]
-                [ decorativeImage NoStyle 
-                    [ width (percent 20), verticalCenter, alignLeft ]
-                    { src = config.paths.erosionPath }
-                , 
-                textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "ADAPTATION STRATEGIES FACT SHEETS" ]
-                    ]
-                , textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20 ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "Educational handouts on a subset of Adaptation Strategies found in the Cape Cod Coastal Planner." ]
-                    ] 
-                ]
-            , el NoStyle 
-                [ ] <| hairline (Hairline) 
-            , row NoStyle
-                [height fill, paddingTop 10]
-                [ decorativeImage NoStyle 
-                    [ width (percent 20), verticalCenter, alignLeft ]
-                    { src = config.paths.erosionPath }
-                , 
-                textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "RESILIENT CAPE COD SPARK PAGE" ]
-                    ]
-                , textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20 ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "Website describing the 3-year Resilient Cape Cod project." ]
-                    ] 
-                ]
+                , column NoStyle
+                    [ width (percent 35), paddingLeft 20, paddingBottom 5 ]
+                        [ textLayout NoStyle
+                            [ verticalCenter ] 
+                                [ paragraph NoStyle
+                                [ ]
+                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "ADAPTATION STRATEGIES FACT SHEETS" ]
+                                ]
+                        , textLayout NoStyle
+                            [ verticalCenter ] 
+                                [ paragraph NoStyle
+                                [ ]
+                                    [ el (Modal MethodsResourcesModal) [] <| text "Educational handouts on a subset of Adaptation Strategies found in the Cape Cod Coastal Planner." ]
+                                ]
+                        ]
             ]
-        , column (Modal IntroWelcome)
-            [ width (percent 50), paddingXY 20 0, paddingBottom 20 ]
-            [ row NoStyle
-                [height fill, paddingBottom 10]
-                [ decorativeImage NoStyle 
-                    [ width (percent 20), verticalCenter, alignLeft ]
-                    { src = config.paths.erosionPath }
-                , 
-                textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "LOCAL STORIES OF COASTAL IMPACTS" ]
+        , el NoStyle 
+            [ paddingXY 5 0 ] <| hairline (MethodsResourcesBackgroundLine) 
+        , row (Modal MethodsResourcesBackground)
+            [ width fill, height (percent 33), paddingXY 10 10 ]
+            [ column NoStyle
+                [ width (percent 15), verticalCenter, paddingRight 20 ]
+                [ column NoStyle
+                    [ width fill, verticalCenter, alignLeft ]
+                    [ decorativeImage NoStyle 
+                        [ verticalCenter, center, width fill ]
+                        { src = config.paths.erosionPath }
                     ]
-                , textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20 ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "ESRI Storymap of stakeholder-sourced case studies of coastal impacts due to sea level rise, erosion, and storm surge." ]
-                    ] 
                 ]
-            , el NoStyle 
-                [ ] <| hairline (Hairline)
-            , row NoStyle
-                [height fill, paddingXY 0 10]
-                [ decorativeImage NoStyle 
-                    [ width (percent 20), verticalCenter, alignLeft ]
-                    { src = config.paths.erosionPath }
-                , 
-                textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "ECOSYSTEM SERVICES HANDOUT" ]
+                , column NoStyle
+                    [ width (percent 35) ]
+                        [ textLayout NoStyle
+                            [ verticalCenter, width fill, paddingBottom 5 ] 
+                                [ paragraph NoStyle
+                                [ width fill ]
+                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "RESILIENT CAPE COD SPARK PAGE" ]
+                                ]
+                        , textLayout NoStyle
+                            [ verticalCenter, width fill ] 
+                                [ paragraph NoStyle
+                                [ width fill ]
+                                    [ el (Modal MethodsResourcesModal) [] <| text "Website describing the 3-year Resilient Cape Cod project." ]
+                                ]
+                        ]
+            , column NoStyle
+                [ width (percent 15), verticalCenter, paddingLeft 20]
+                [ column NoStyle
+                    [ width fill, verticalCenter, alignLeft ]
+                    [ decorativeImage NoStyle 
+                        [ verticalCenter, center, width fill ]
+                        { src = config.paths.erosionPath }
                     ]
-                , textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20 ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "Educational handout describing ecosystem services used during the Resilient Cape Cod stakeholder process." ]
-                    ] 
                 ]
-            , el NoStyle 
-                [ ] <| hairline (Hairline)
-            , row NoStyle
-                [height fill, paddingTop 10]
-                [ decorativeImage NoStyle 
-                    [ width (percent 20), verticalCenter, alignLeft ]
-                    { src = config.paths.erosionPath }
-                , 
-                textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20, verticalCenter ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "RESILIENT CAPE COD HOME PAGE" ]
+                , column NoStyle
+                    [ width (percent 35), paddingLeft 20, paddingBottom 5 ]
+                        [ textLayout NoStyle
+                            [ verticalCenter ] 
+                                [ paragraph NoStyle
+                                [ ]
+                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "LOCAL STORIES OF COASTAL IMPACTS" ]
+                                ]
+                        , textLayout NoStyle
+                            [ verticalCenter ] 
+                                [ paragraph NoStyle
+                                [ ]
+                                    [ el (Modal MethodsResourcesModal) [] <| text "ESRI Storymap of stakeholder-sourced case studies of coastal impacts due to sea level rise, erosion, and storm surge." ]
+                                ]
+                        ]
+            ]
+        , el NoStyle 
+            [ paddingXY 5 0 ] <| hairline (MethodsResourcesBackgroundLine)
+        , row (Modal MethodsResourcesBackground)
+            [ width fill, height (percent 33), paddingXY 10 10 ]
+            [ column NoStyle
+                [ width (percent 15), verticalCenter, paddingRight 20 ]
+                [ column NoStyle
+                    [ width fill, verticalCenter, alignLeft ]
+                    [ decorativeImage NoStyle 
+                        [ verticalCenter, center, width fill ]
+                        { src = config.paths.erosionPath }
                     ]
-                , textLayout (Modal IntroWelcome)
-                    [ paddingLeft 20 ] 
-                    [ paragraph NoStyle
-                        [ ]
-                        [ el (AddStrategies StrategiesDetailsCategories) [] <| text "Link to Cape Cod Commission’s project homepage." ]
-                    ] 
                 ]
+                , column NoStyle
+                    [ width (percent 35) ]
+                        [ textLayout NoStyle
+                            [ verticalCenter, width fill, paddingBottom 5 ] 
+                                [ paragraph NoStyle
+                                [ width fill ]
+                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "ECOSYSTEM SERVICES HANDOUT" ]
+                                ]
+                        , textLayout NoStyle
+                            [ verticalCenter, width fill ] 
+                                [ paragraph NoStyle
+                                [ width fill ]
+                                    [ el (Modal MethodsResourcesModal) [] <| text "Educational handout describing ecosystem services used during the Resilient Cape Cod stakeholder process." ]
+                                ]
+                        ]
+            , column NoStyle
+                [ width (percent 15), verticalCenter, paddingLeft 20]
+                [ column NoStyle
+                    [ width fill, verticalCenter, alignLeft ]
+                    [ decorativeImage NoStyle 
+                        [ verticalCenter, center, width fill ]
+                        { src = config.paths.erosionPath }
+                    ]
+                ]
+                , column NoStyle
+                    [ width (percent 35), paddingLeft 20, paddingBottom 5 ]
+                        [ textLayout NoStyle
+                            [ verticalCenter ] 
+                                [ paragraph NoStyle
+                                [ ]
+                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "RESILIENT CAPE COD HOME PAGE" ]
+                                ]
+                        , textLayout NoStyle
+                            [ verticalCenter ] 
+                                [ paragraph NoStyle
+                                [ ]
+                                    [ el (Modal MethodsResourcesModal) [] <| text "Link to Cape Cod Commission’s project homepage." ]
+                                ]
+                        ]
             ]
         ]

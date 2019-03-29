@@ -67,6 +67,7 @@ type MainStyles
     | FontLeft
     | FontRight
     | Hairline
+    | MethodsResourcesBackgroundLine
     | CircleBullet
     | Test
     | PL PlanningLayerStyles
@@ -83,6 +84,9 @@ type ModalStyles
     | IntroBody
     | IntroWelcome
     | IntroDisclaimer
+    | MethodsResourcesBackground
+    | MethodsResourcesModal
+    | MethodsResourcesModalHeading
 
 
 type HeadingStyles
@@ -660,6 +664,8 @@ stylesheet device =
             ]
         , Style.style (Modal ModalBackground)
             [ Color.background <| rgba 0 0 0 0.59 ]
+        , Style.style (Modal MethodsResourcesBackground)
+            [ Color.background <| rgba 25 52 70 0.75 ]
         , Style.style (Modal ModalContainer)
             [ Color.background <| rgba 0 0 0 0.9
             , Border.rounded 4
@@ -676,11 +682,25 @@ stylesheet device =
             [ Color.text white
             , Font.size 20
             , Font.justify
+            , Font.typeface fontstack
             ]
         , Style.style (Modal IntroDisclaimer)
             [ Color.text <| rgba 163 163 163 1
             , Font.size 15
             , Font.justify
+            ]
+        , Style.style (Modal MethodsResourcesModal)
+            [ Color.text white
+            , Font.size 14
+            , Font.typeface fontstack
+            , Font.justify
+            ]
+        , Style.style (Modal MethodsResourcesModalHeading)
+            [ Color.text palette.hippieBlue
+            , Font.size 18
+            , Font.center
+            , Font.weight 800
+            , Font.typeface fontstack
             ]
         , Style.style (Sidebar SidebarContainer)
             [ Color.background <| Color.rgba 0 0 0 0.9
@@ -768,6 +788,7 @@ stylesheet device =
         , Style.style FontLeft [ Font.alignLeft ]
         , Style.style FontRight [ Font.alignRight ]
         , Style.style Hairline [ Color.background palette.chambray ]
+        , Style.style MethodsResourcesBackgroundLine [ Color.background <| rgba 54 77 127 0.75 ]
         , Style.style CircleBullet
             [ Color.background white
             , Color.border white

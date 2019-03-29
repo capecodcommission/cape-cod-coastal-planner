@@ -103,14 +103,14 @@ headerView { closePath, device } info =
                 , h3 (Headings H3) [ width fill, moveLeft 2 ] <| Element.text info.name
                 ]
             , column (Baseline BaselineInfoText)
-                [ alignRight, paddingRight 0, paddingLeft 75 ]
+                [ alignRight, paddingRight 40, paddingLeft 75 ]
                 [ ModalImage.view NoStyle (Baseline BaselineInfoImage) info.imagePath
                 ]
                 |> within
                     [ image CloseIcon
                         [ alignRight
-                        , moveDown 15
-                        , moveLeft 15
+                        , moveDown 3
+                        , moveLeft 6
                         , title "Close baseline information"
                         , onClick CloseBaselineInfo
                         ]

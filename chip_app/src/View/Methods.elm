@@ -78,7 +78,8 @@ headerView config =
         ]
         [ column (ShowOutput ScenarioBold) 
             []
-            [ h6 (Headings H3) [ width fill ] <| Element.text "Methods"
+            [ h6 (Headings H3) 
+                [ width fill ] <| Element.text "Methods"
             ]
         ]
         |> within
@@ -101,9 +102,9 @@ mainView :
     } 
     -> Element MainStyles Variations Msg
 mainView config =
-    column (Modal IntroBody)
+    column (Modal MethodsResourcesBackground)
         [ ]
-        [ row (Modal IntroWelcome)
+        [ row NoStyle
             [ spacingXY 0 5, width fill, paddingXY 20 20 ]
             [ decorativeImage NoStyle
                 [ width (percent 20), verticalCenter, alignLeft ]
