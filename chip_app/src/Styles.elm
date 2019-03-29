@@ -8,6 +8,7 @@ import Style.Border as Border
 import Style.Font as Font
 import Style.Transition as Transition
 import Style.Scale as Scale
+import Style.Background as Background
 import Element.Input as Input exposing (ChoiceState)
 import Element exposing (Device)
 import View.Helpers exposing (adjustOnHeight, adjustOnWidth)
@@ -28,23 +29,25 @@ palette =
     , persimmon = rgb 255 85 85
     , walnut = rgb 108 67 26
     , red = rgb 255 18 18
-    , jaffa = rgb 237 127 52
-    , ming = rgb 59 130 132
+    , hippieBlue = rgb 83 168 172
     , mediumRedViolet = rgb 165 56 165
     , apple = rgb 112 173 71
-    , silver = rgb 191 191 191
     , cadetBlue = rgb 155 166 191
+    , white = rgb 255 255 255
+    , blueStone = rgb 25 52 70
+    , alto = rgb 218 218 218
+    , shadedScale = rgb 41 48 58
     }
 
 
 fontstack : List Font
 fontstack =
-    [ Font.font "Segoe UI", Font.font "Tahoma", Font.font "Verdana", Font.sansSerif ]
+    [ Font.font "Montserrat", Font.font "Open Sans", Font.font "Tahoma", Font.sansSerif ]
 
 
 fontstack2 : List Font
 fontstack2 =
-    [ Font.font "Tahoma" ]
+    [ Font.font "Montserrat" ]
 
 type MainStyles
     = NoStyle
@@ -64,15 +67,26 @@ type MainStyles
     | FontLeft
     | FontRight
     | Hairline
+    | MethodsResourcesBackgroundLine
     | CircleBullet
     | Test
     | PL PlanningLayerStyles
     | Rbn RibbonStyles
+    | SelectShorelineButton
+    | MenuButton
+    | MenuContainer
 
 
 type ModalStyles
     = ModalBackground
     | ModalContainer
+    | IntroHeader
+    | IntroBody
+    | IntroWelcome
+    | IntroDisclaimer
+    | MethodsResourcesBackground
+    | MethodsResourcesModal
+    | MethodsResourcesModalHeading
 
 
 type HeadingStyles
@@ -100,6 +114,7 @@ type BaselineStyles
     | BaselineInfoHeader
     | BaselineInfoText
     | BaselineInfoBtnClicked
+    | BaselineInfoImage
 
 
 type SidebarStyles
@@ -218,15 +233,16 @@ stylesheet device =
         [ Style.style NoStyle []
         , Style.style Test [ Color.background palette.mySin ]
         , Style.style MainContent
-            [ Color.background palette.elephant ]
+            [ Color.background palette.elephant
+            , Style.hover
+                [ Style.cursor "default" ]
+            ]
         , Style.style (Header HeaderBackground)
-            [ Color.background palette.chambray
+            [ Color.background palette.blueStone
             ]
         , Style.style (Header HeaderBackgroundRounded)
-            [ Color.background palette.chambray
+            [ Color.background palette.blueStone
             , Border.rounded 20.0
-            , Color.border black
-            , Border.all 4
             ]
         , Style.style (Header HeaderTitle)
             [ Color.text white
@@ -306,6 +322,18 @@ stylesheet device =
                 , Color.border palette.mySin
                 , Transition.all
                 ]
+            ] 
+        , Style.style MenuButton
+            [ Color.background <| rgba 0 0 0 0
+            , Color.text white
+            , Font.size 30.0
+            , Font.typeface fontstack
+            , Transition.all
+            , Style.hover
+                [ Color.text palette.mySin
+                , Color.border palette.mySin
+                , Transition.all
+                ]
             ]    
         , Style.style (Baseline BaselineInfoBtnClicked)
             [ Color.background <| rgba 0 0 0 0
@@ -323,7 +351,7 @@ stylesheet device =
                 ]
             ]      
         , Style.style (Baseline BaselineInfoHeader)
-            [ Color.background palette.chambray
+            [ Color.background palette.blueStone
             , Color.text white
             , Font.typeface fontstack
             , Border.roundTopLeft 4
@@ -335,6 +363,9 @@ stylesheet device =
             , Font.typeface fontstack
             , Font.lineHeight 1.29
             ]
+        , Style.style (Baseline BaselineInfoImage)
+            [ Background.gradientRight [Background.step white, Background.step black]
+            ]
         , Style.style (AddStrategies StrategiesSidebar)
             [ Color.text white
             , Color.border white
@@ -344,10 +375,12 @@ stylesheet device =
             , Font.lineHeight 1.4
             ]
         , Style.style (AddStrategies StrategiesSidebarHeader)
-            [ Color.background palette.havelockBlue
+            [ Color.background palette.hippieBlue
             , Font.size 24
             , Font.center
             , Border.roundTopLeft 4
+            , Style.hover
+                [ Style.cursor "default" ]
             ]
         , Style.style (AddStrategies StrategiesHazardPicker)
             [ Style.cursor "pointer"
@@ -378,9 +411,11 @@ stylesheet device =
             , Border.roundBottomLeft 4
             ]
         , Style.style (AddStrategies StrategiesDetailsHeader)
-            [ Color.background palette.chambray
+            [ Color.background palette.blueStone
             , Color.text white
             , Border.roundTopRight 4
+            , Style.hover
+                [ Style.cursor "default" ]
             ]
         , Style.style (AddStrategies StrategiesSheetHeading)
             [ Font.typeface fontstack
@@ -398,7 +433,9 @@ stylesheet device =
             [ Font.typeface fontstack
             , Font.letterSpacing 2.6
             , Font.lineHeight 1.4
-            , Font.size 36
+            , Font.size 30
+            , Font.uppercase
+            , Font.bold
             ]
         , Style.style (AddStrategies StrategiesDetailsCategories)
             [ Color.text white
@@ -410,33 +447,36 @@ stylesheet device =
                 [ Color.text palette.malibu
                 ]
             ]
+        -- Updated these colors, but this does not style the types of selected adaptation strategy icons on the 'StrategiesModal' as they are hard-coded
         , Style.style (AddStrategies StrategiesDetailsCategoryCircle)
-            [ Color.background palette.jaffa
-            , Color.border palette.jaffa
+            [ Color.background white
+            , Color.border white
             , Border.all 1.5
             , Border.solid
             , variation Secondary
-                [ Color.background palette.ming
-                , Color.border palette.ming
+                [ Color.background white
+                , Color.border white
                 ]
             , variation Tertiary
-                [ Color.background palette.mediumRedViolet
-                , Color.border palette.mediumRedViolet
+                [ Color.background white
+                , Color.border white
                 ]
             , variation Disabled
                 [ Color.background <| rgba 0 0 0 0
-                , Color.border palette.malibu
+                , Color.border palette.alto
                 ]
             ]
         , Style.style (AddStrategies StrategiesDetailsMain)
             [ Color.text white
             , Font.typeface fontstack
+            , Style.hover
+                [ Style.cursor "default" ]
             ]
         , Style.style (AddStrategies StrategiesDetailsHeading)
-            [ Color.text palette.havelockBlue
+            [ Color.text palette.hippieBlue
             , Font.typeface fontstack
             , Font.size (scaled 1)
-            , Font.weight 500
+            , Font.weight 800
             , Font.lineHeight 1.4
             ]
         , Style.style (AddStrategies StrategiesDetailsHazards)
@@ -466,7 +506,7 @@ stylesheet device =
         , Style.style (AddStrategies StrategiesDetailsDescription)
             [ Color.text white
             , Font.typeface fontstack
-            , Font.size 18
+            , Font.size 16
             , Font.lineHeight 1.4
             , variation Secondary
                 [ Color.text palette.havelockBlue
@@ -485,7 +525,7 @@ stylesheet device =
                 ]
             ]
         , Style.style (Zoi ZoiText)
-            [ Font.size <| adjustOnHeight ( 14, 22 ) device
+            [ Font.size <| adjustOnHeight ( 12, 18 ) device
             , Font.lineHeight <| adjustOnHeight ( 1.2, 2.0 ) device
             ]
         , Style.style (Zoi ZoiCallout)
@@ -493,21 +533,21 @@ stylesheet device =
             , Font.bold 
             ]
         , Style.style (Zoi ZoiStat)
-            [ Font.size 22
+            [ Font.size 20
             , Color.text palette.havelockBlue
             , Font.letterSpacing 1
             ]
         , Style.style (ShowOutput OutputToggleBtn)
             [ Font.letterSpacing 2.33
-            , Color.background palette.silver
+            , Color.background palette.alto
             ]
         , Style.style (ShowOutput OutputToggleLbl)
             [ Font.center
             , Font.letterSpacing 2.33
-            , Color.background palette.chambray
+            , Color.background <| rgba 19 39 52 1
             ]
         , Style.style (ShowOutput OutputHeader)
-            [ Color.background palette.chambray
+            [ Color.background <| rgba 19 39 52 1
             ]
         , Style.style (ShowOutput OutputDivider)
             [ Border.right 2
@@ -526,16 +566,18 @@ stylesheet device =
             [ Font.size 12
             , Font.lineHeight 1.4
             , Font.center
-            , Color.background palette.jaffa
+            , Color.text white
+            , Font.weight 600
+            , Color.background palette.hippieBlue
             , variation Secondary
-                [ Color.background palette.apple ]
+                [ Color.background palette.hippieBlue ]
             ]
         , Style.style (ShowOutput OutputMultiImpact)
             [ Font.size 11
             , Font.lineHeight 1.4
             , Font.center
             , Color.text palette.chambray
-            , Color.background <| rgb 255 255 255
+            , Color.background palette.white
             , Border.solid
             , Color.border palette.chambray
             , Border.right 1
@@ -551,7 +593,7 @@ stylesheet device =
                 , Border.bottom 0
                 ]
             , variation Disabled
-                [ Color.background palette.silver
+                [ Color.background palette.shadedScale
                 ]
             ]
         , Style.style (ShowOutput OutputAddresses)
@@ -622,20 +664,60 @@ stylesheet device =
             ]
         , Style.style (Modal ModalBackground)
             [ Color.background <| rgba 0 0 0 0.59 ]
+        , Style.style (Modal MethodsResourcesBackground)
+            [ Color.background <| rgba 25 52 70 0.75 ]
         , Style.style (Modal ModalContainer)
             [ Color.background <| rgba 0 0 0 0.9
             , Border.rounded 4
+            ]
+        , Style.style (Modal IntroHeader)
+            [ Color.background <| rgba 41 84 112 1
+            , Border.rounded 4
+            ]
+        , Style.style (Modal IntroBody)
+            [ Color.background palette.blueStone
+            , Border.rounded 4     
+            ]
+        , Style.style (Modal IntroWelcome)
+            [ Color.text white
+            , Font.size 20
+            , Font.justify
+            , Font.typeface fontstack
+            ]
+        , Style.style (Modal IntroDisclaimer)
+            [ Color.text <| rgba 163 163 163 1
+            , Font.size 15
+            , Font.justify
+            ]
+        , Style.style (Modal MethodsResourcesModal)
+            [ Color.text white
+            , Font.size 14
+            , Font.typeface fontstack
+            , Font.justify
+            ]
+        , Style.style (Modal MethodsResourcesModalHeading)
+            [ Color.text palette.hippieBlue
+            , Font.size 18
+            , Font.center
+            , Font.weight 800
+            , Font.typeface fontstack
             ]
         , Style.style (Sidebar SidebarContainer)
             [ Color.background <| Color.rgba 0 0 0 0.9
             , Color.text white
             , Font.typeface fontstack
             ]
+        , Style.style MenuContainer
+            [ Color.background palette.blueStone
+            , Color.text white
+            , Font.typeface fontstack
+            , Font.size 25
+            ]
         , Style.style (Sidebar SidebarHeader)
-            [ Color.background palette.havelockBlue
+            [ Color.background palette.blueStone
             ]
         , Style.style (Sidebar SidebarToggle)
-            [ Color.background palette.havelockBlue
+            [ Color.background palette.blueStone
             , Border.roundTopLeft 36
             , Border.roundBottomLeft 36
             , Style.cursor "pointer"
@@ -645,7 +727,7 @@ stylesheet device =
             , Font.typeface fontstack
             ]
         , Style.style (Sidebar SidebarLeftToggle)
-            [ Color.background palette.havelockBlue
+            [ Color.background palette.blueStone
             , Border.roundTopRight 36
             , Border.roundBottomRight 36
             , Style.cursor "pointer"
@@ -684,11 +766,29 @@ stylesheet device =
                 , Transition.all
                 ]
             ]
+        , Style.style SelectShorelineButton
+            [ Font.typeface fontstack
+            , Font.uppercase
+            , Font.bold
+            , Font.size 14
+            , Font.lineHeight 1.4
+            , Font.letterSpacing 2.33
+            , Color.text white
+            , Color.background <| rgba 83 168 172 1
+            , Border.rounded 8
+            , Transition.all
+            , variation Disabled
+                [ Color.background <| darken 0.15 palette.mySin
+                , Color.text <| lighten 0.45 palette.walnut
+                , Transition.all
+                ]
+            ]
         , Style.style CloseIcon
             [ Style.cursor "pointer" ]
         , Style.style FontLeft [ Font.alignLeft ]
         , Style.style FontRight [ Font.alignRight ]
         , Style.style Hairline [ Color.background palette.chambray ]
+        , Style.style MethodsResourcesBackgroundLine [ Color.background <| rgba 54 77 127 0.75 ]
         , Style.style CircleBullet
             [ Color.background white
             , Color.border white

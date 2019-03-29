@@ -119,3 +119,19 @@ az login
 #
 az aks browse --resource-group CCC-AKSGroup --name CCC-AKS-01
 ```
+
+### Starting from Scratch on Kubes
+1. Set up database and persistent volume claim (cccpdb)
+2. Set up API (cccpapi) (NOTE: this step is necessary to seed (a.k.a. build) the database)
+3. Seed database from API (exec mix ecto.setup)
+4. Delete API [NOTE: steps 4 & 5 are necessary because you need a database for the API to properly f(x), otherwise you have a dysfunctional API]
+5. Re-build API
+6. Build front-end (cccpfront)
+7. Set up cccpapi dev & uat
+8. Set up cccpfrontdev, then uat 1 @ a time
+9. Install ingress
+10. Install cert-manager (delete purge if existing prior)
+11. Create cluster issuer (letsencrypt-prod & specific namespace)
+12. Create a certificate object w/ secrets (namespace specific - www, uat & dev)
+13. Create ingress w/ hosts & secrets
+14. Then rebuild, tag, and push the Front and API containers with our latest code to ACR

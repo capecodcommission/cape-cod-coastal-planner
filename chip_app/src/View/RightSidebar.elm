@@ -10,6 +10,7 @@ import View.ToggleButton as Toggle exposing (..)
 import View.Helpers exposing (renderAnimation)
 import Message exposing (Msg(..))
 import Types exposing (..)
+import View.Tray as Tray
 
 
 view :
@@ -17,6 +18,10 @@ view :
         | trianglePath : String
         , rightSidebarFx : Animation.State
         , rightSidebarToggleFx : Animation.State
+        , shorelineSelected : Openness
+        , paths : Paths
+        , titleRibbonFX : Animation.State
+        , zoneOfImpact : Maybe ZoneOfImpact
     }
     -> (String, List (Element MainStyles Variations Msg))
     -> Element MainStyles Variations Msg
@@ -31,14 +36,17 @@ view config (titleText, childViews) =
         )
         (sidebar (Sidebar SidebarContainer)
             [ height fill, width (px 550) ]
-            ( headerView titleText config.trianglePath config.rightSidebarToggleFx 
+            ( headerView titleText config.trianglePath config.rightSidebarToggleFx config.zoneOfImpact
                 :: childViews
-            )
-        )
+            ) 
+        ) |> onLeft
+                [ Tray.view config
+
+                ]
 
 
-headerView : String -> String -> Animation.State -> Element MainStyles Variations Msg
-headerView titleText togglePath fx = 
+headerView : String -> String -> Animation.State -> Maybe ZoneOfImpact -> Element MainStyles Variations Msg
+headerView titleText togglePath fx zoi = 
     ( header (Sidebar SidebarHeader) 
         [ height (px 72), width fill ] 
         ( h5 (Headings H5) 
@@ -55,10 +63,14 @@ headerView titleText togglePath fx =
                 ]
         )
     ) |> onLeft
-        [ el (Sidebar SidebarToggle) 
-            [ height (px 72), width (px 70), onClick ToggleRightSidebar ] 
-            ( el NoStyle 
-                [ center, verticalCenter, height fill, width fill, moveRight 18 ]
-                ( Toggle.view togglePath fx )
-            )
+        [ case zoi of
+            Just zoi ->
+                el (Sidebar SidebarToggle) 
+                    [ height (px 72), width (px 70), onClick ToggleRightSidebar ] 
+                    ( el NoStyle 
+                        [ center, verticalCenter, height fill, width fill, moveRight 18 ]
+                        ( Toggle.view togglePath fx )
+                    )
+            Nothing ->
+                el NoStyle [] empty
         ]

@@ -13,7 +13,7 @@ view wrapperStyle imageStyle imagePath =
         Just path ->
             column wrapperStyle []
                 [ decorativeImage imageStyle 
-                    [ width fill ] 
+                    [ width fill, height (px 200) ] 
                     { src = path }
                 ]
 

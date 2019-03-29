@@ -25,36 +25,27 @@ view :
   -> Element MainStyles Variations Msg
 view model =
   column NoStyle
-    [ height fill, width fill, inlineStyle [("pointer-events","none")] ]
+    [ height fill, width fill, inlineStyle [("pointer-events","none")], alignRight ]
     [ el NoStyle 
-      -- [height fill, width (percent 15)]
       ( renderAnimation model.menuFX
           [ height fill
-          , width (percent 15)
           ]
       )
-      ( centerRibbon model.paths model.vulnRibbonClicked ) 
+      ( siteMenu model.paths model.vulnRibbonClicked ) 
     ]
 
-
-
-
-centerRibbon : Paths -> Openness -> Element MainStyles Variations Msg
-centerRibbon paths vulnClicked = 
-  row (Sidebar SidebarContainer)
-    [paddingXY 0 10, center]
-    [ scaleLegend paths vulnClicked
-    ]
-
-scaleLegend : Paths -> Openness -> Element MainStyles Variations Msg
-scaleLegend paths vulnClicked = 
-  column (Sidebar SidebarContainer)
-    [verticalCenter, center, paddingXY 10 10, spacing 10]
-    [ textLayout (Zoi ZoiText) [center, spacing 10]
-      [ Element.text "About"
+siteMenu : Paths -> Openness -> Element MainStyles Variations Msg
+siteMenu paths vulnClicked = 
+  column MenuContainer
+    [verticalCenter, paddingXY 10 10, spacing 10, alignRight]
+    [ textLayout MenuContainer [spacing 10, alignRight]
+      [ button MenuContainer
+            [ onClick ToggleIntro ] <| Element.text "About"
       , hairline (PL Line)
-      , Element.text "Resources"
+      , button MenuContainer
+            [ onClick ToggleResources ] <| Element.text "Resources"
       , hairline (PL Line)
-      , Element.text "Methods"
+      , button MenuContainer
+            [ onClick ToggleMethods ] <| Element.text "Methods"
       ]
     ]
