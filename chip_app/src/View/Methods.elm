@@ -47,7 +47,7 @@ view config =
                     , padding 90
                     ] <|
                         el NoStyle
-                            [ width (px 700)
+                            [ width (px 500)
                             , maxHeight (px <| modalHeight config.device)
                             , center
                             , verticalCenter
@@ -102,16 +102,21 @@ mainView :
     } 
     -> Element MainStyles Variations Msg
 mainView config =
-    column (Modal MethodsResourcesBackground)
+    column NoStyle
         [ ]
-        [ row NoStyle
-            [ spacingXY 0 5, width fill, paddingXY 20 20 ]
-            [ decorativeImage NoStyle
-                [ width (percent 20), verticalCenter, alignLeft ]
-                { src = config.paths.erosionPath }
-            , paragraph (Modal IntroWelcome)
-                [ paddingLeft 20, verticalCenter, alignRight ]
-                [ text "Description of how the tool works, including features, data sources, and background calculations." 
+        [ row (Modal MethodsResourcesBackground)
+            [ spacingXY 0 5, width fill, paddingXY 10 10 ]
+            [ column NoStyle
+                [  verticalCenter, center, width (percent 20) ]
+                [ paragraph NoStyle
+                    []
+                    [ newTab "https://google.com" <| image NoStyle [width (percent 100), alignLeft, verticalCenter] {caption = "Go to Methods", src = config.paths.erosionPath}  ]
+                ]
+            , column NoStyle
+                [ width fill, verticalCenter, center ]
+                [ paragraph NoStyle
+                    [verticalCenter]
+                    [ el (Modal IntroWelcome) [paddingLeft 10, verticalCenter, alignLeft] <| text "Description of how the tool works, including features, data sources, and background calculations."]
                 ]
             ]
         ]
