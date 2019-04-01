@@ -116,10 +116,8 @@ type alias Model =
     , erosionOpenness : Openness
     , fourtyYearClicked : Openness
     , stiClicked : Openness
-    , fzFx : Animation.State
-    , fzToggleFx : Animation.State
-    , sloshFx : Animation.State
-    , sloshToggleFx : Animation.State
+    , inundationFx : Animation.State
+    , inundationToggleFx : Animation.State
     , shorelineSelected : Openness
     , layerClicked : Openness
     , titleRibbonFX : Animation.State
@@ -133,6 +131,7 @@ type alias Model =
     , shorelineButtonClicked : Openness
     , methodsClicked : Openness
     , resourcesClicked : Openness
+    , inundationClicked : Openness
     }
 
 
@@ -245,10 +244,6 @@ initialModel flags =
         (Animation.style <| .closed <| Animations.fzStates)
         -- Flood zone legend button toggle fx
         (Animation.style <| .rotate180 <| Animations.toggleStates)
-        -- Slosh legend fx
-        (Animation.style <| .closed <| Animations.sloshStates)
-        -- Slosh legend button toggle fx
-        (Animation.style <| .rotate180 <| Animations.toggleStates)
         -- Shoreline Dropdown item selected
         Closed
         -- Any layer activated
@@ -274,6 +269,8 @@ initialModel flags =
         -- Methods clicked
         Closed
         -- Resources clicked
+        Closed
+        -- Inundation clied
         Closed
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -693,10 +690,8 @@ updateModel msg model =
                 , infraToggleFx = Animation.update animMsg model.infraToggleFx
                 , erosionFx = Animation.update animMsg model.erosionFx
                 , erosionToggleFx = Animation.update animMsg model.erosionToggleFx
-                , fzFx = Animation.update animMsg model.fzFx
-                , fzToggleFx = Animation.update animMsg model.fzToggleFx
-                , sloshFx = Animation.update animMsg model.sloshFx
-                , sloshToggleFx = Animation.update animMsg model.sloshToggleFx
+                , inundationFx = Animation.update animMsg model.inundationFx
+                , inundationToggleFx = Animation.update animMsg model.inundationToggleFx
                 , titleRibbonFX = Animation.update animMsg model.titleRibbonFX
                 , menuFX = Animation.update animMsg model.menuFX
                 , vulnFX = Animation.update animMsg model.vulnFX
@@ -1179,15 +1174,18 @@ updateModel msg model =
             case model.fzClicked of 
                 Open ->
                     ( model 
-                        |> collapseFZSection 
+                        |> \m ->
+                            { m
+                                | fzClicked = Closed
+                            }
                     , olCmd <| encodeOpenLayersCmd (DisableFZ) 
                     )
                 Closed ->
                     ( model 
-                        |> expandFZSection
                         |> \m ->
                             { m
                                 | layerClicked = Open
+                                , fzClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderFZ) 
                     )
@@ -1195,15 +1193,19 @@ updateModel msg model =
         ToggleSloshLayer ->
             case model.sloshClicked of 
                 Open ->
-                    ( model |> collapseSloshSection
+                    ( model 
+                        |> \m ->
+                            { m
+                                | sloshClicked = Closed
+                            }
                     , olCmd <| encodeOpenLayersCmd (DisableSlosh) 
                     )
                 Closed ->
                     ( model 
-                        |> expandSloshSection
                         |> \m ->
                             { m
                                 | layerClicked = Open
+                                , sloshClicked = Open
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderSlosh) 
                     )
@@ -1297,8 +1299,6 @@ updateModel msg model =
                         , critFacClicked = Closed
                         , structuresClicked = Closed 
                     }
-                |> collapseFZSection
-                |> collapseSloshSection
             , olCmd <| encodeOpenLayersCmd (ClearLayers)
             )
 
@@ -1345,8 +1345,6 @@ updateModel msg model =
                                 [ Animation.to <| .closed <| Animations.titleStates ]
                                 model.titleRibbonFX
                     }
-                |> collapseFZSection
-                |> collapseSloshSection
                 |> collapseRightSidebar
             , olCmd <| encodeOpenLayersCmd (ResetAllOL)
             )
@@ -1497,6 +1495,14 @@ updateModel msg model =
                             }
                     , Cmd.none
                     )
+
+        ToggleInundationSection ->
+            case model.inundationClicked of
+                Open ->
+                    ( model |> collapseInundationSection, Cmd.none )
+
+                Closed ->
+                    ( model |> expandInundationSection, Cmd.none )
 
         
 
@@ -1785,60 +1791,32 @@ collapseErosionSection model =
                 model.erosionToggleFx
     }
 
-expandFZSection : Model -> Model
-expandFZSection model =
+expandInundationSection : Model -> Model
+expandInundationSection model =
     { model
-        | fzClicked = Open
-        , fzFx =
+        | inundationClicked = Open
+        , inundationFx =
             Animation.interrupt
                 [ Animation.to <| .open <| Animations.fzStates ]
-                model.fzFx
-        , fzToggleFx =
+                model.inundationFx
+        , inundationToggleFx =
             Animation.interrupt
                 [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
-                model.fzToggleFx
+                model.inundationToggleFx
     }
 
-collapseFZSection : Model -> Model
-collapseFZSection model =
+collapseInundationSection : Model -> Model
+collapseInundationSection model =
     { model
-        | fzClicked = Closed
-        , fzFx =
+        | inundationClicked = Closed
+        , inundationFx =
             Animation.interrupt
                 [ Animation.to <| .closed <| Animations.fzStates ]
-                model.fzFx
-        , fzToggleFx =
+                model.inundationFx
+        , inundationToggleFx =
             Animation.interrupt
                 [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
-                model.fzToggleFx
-    }
-
-expandSloshSection : Model -> Model
-expandSloshSection model =
-    { model
-        | sloshClicked = Open
-        , sloshFx =
-            Animation.interrupt
-                [ Animation.to <| .open <| Animations.sloshStates ]
-                model.sloshFx
-        , sloshToggleFx =
-            Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
-                model.sloshToggleFx
-    }
-
-collapseSloshSection : Model -> Model
-collapseSloshSection model =
-    { model
-        | sloshClicked = Closed
-        , sloshFx =
-            Animation.interrupt
-                [ Animation.to <| .closed <| Animations.sloshStates ]
-                model.sloshFx
-        , sloshToggleFx =
-            Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
-                model.sloshToggleFx
+                model.inundationToggleFx
     }
 
 getCachedBaselineInfo : Model -> Maybe BaselineInfo
@@ -2051,10 +2029,8 @@ animations model =
     , model.infraToggleFx
     , model.erosionFx
     , model.erosionToggleFx
-    , model.fzFx
-    , model.fzToggleFx
-    , model.sloshFx
-    , model.sloshToggleFx
+    , model.inundationFx
+    , model.inundationToggleFx
     , model.titleRibbonFX
     , model.menuFX
     , model.vulnFX
