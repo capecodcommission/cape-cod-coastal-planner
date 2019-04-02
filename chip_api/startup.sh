@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 set -ex
-mix ecto.reset
+# ONLY FOR DATABASE UPDATES
+# mix ecto.reset
 mix phx.server
