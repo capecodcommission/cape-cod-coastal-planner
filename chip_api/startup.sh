@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -ex
-# mix ecto.setup # ACTIVATE ONLY FOR LOCAL BUILDS
-# mix phx.server
+# COMMENT 'mix phx.server' WHEN UPDATING DB FROM 'dev' BRANCH
+mix phx.server
