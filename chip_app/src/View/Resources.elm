@@ -95,23 +95,20 @@ mainView :
     } 
     -> Element MainStyles Variations Msg
 mainView config =
-    column NoStyle
+    column (Modal MethodsResourcesBackground)
         [ ]
-        [ row (Modal MethodsResourcesBackground)
+        [ row NoStyle
             [ width fill, height (percent 33), paddingXY 10 10 ]
-            [ column NoStyle
-                [ width (percent 15), verticalCenter, paddingRight 20 ]
                 [ column NoStyle
-                    [ width fill, verticalCenter, alignLeft ]
-                    [ decorativeImage NoStyle 
-                        [ verticalCenter, center, width fill ]
-                        { src = config.paths.erosionPath }
+                    [  verticalCenter, center, width (percent 13) ]
+                    [ paragraph NoStyle
+                        []
+                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Adpatation Strategies Matrix."] {caption = "Navigate to the Adpatation Strategies Matrix.", src = config.paths.erosionPath}  ]
                     ]
-                ]
                 , column NoStyle
-                    [ width (percent 35) ]
+                    [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
-                            [ verticalCenter, width fill, paddingBottom 5 ] 
+                            [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
                                     [ el (Modal MethodsResourcesModalHeading) [] <| text "ADAPTATION STRATEGIES MATRIX" ]
@@ -123,48 +120,42 @@ mainView config =
                                     [ el (Modal MethodsResourcesModal) [] <| text "Excel spreadsheet describing in detail possible adaptation strategies, including siting and permitting considerations and process." ]
                                 ]
                         ]
-            , column NoStyle
-                [ width (percent 15), verticalCenter, paddingLeft 20]
-                [ column NoStyle
-                    [ width fill, verticalCenter, alignLeft ]
-                    [ decorativeImage NoStyle 
-                        [ verticalCenter, center, width fill ]
-                        { src = config.paths.erosionPath }
-                    ]
-                ]
                 , column NoStyle
-                    [ width (percent 35), paddingLeft 20, paddingBottom 5 ]
+                    [  verticalCenter, center, width (percent 13) ]
+                    [ paragraph NoStyle
+                        []
+                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Adaptation Strategies Fact Sheets."] {caption = "Navigate to the Adaptation Strategies Fact Sheets.", src = config.paths.erosionPath}  ]
+                    ]
+                , column NoStyle
+                    [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
-                            [ verticalCenter ] 
+                            [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
-                                [ ]
+                                [ width fill ]
                                     [ el (Modal MethodsResourcesModalHeading) [] <| text "ADAPTATION STRATEGIES FACT SHEETS" ]
                                 ]
                         , textLayout NoStyle
-                            [ verticalCenter ] 
+                            [ verticalCenter, width fill ] 
                                 [ paragraph NoStyle
-                                [ ]
+                                [ width fill ]
                                     [ el (Modal MethodsResourcesModal) [] <| text "Educational handouts on a subset of Adaptation Strategies found in the Cape Cod Coastal Planner." ]
                                 ]
                         ]
-            ]
-        , el NoStyle 
-            [ paddingXY 5 0 ] <| hairline (MethodsResourcesBackgroundLine) 
-        , row (Modal MethodsResourcesBackground)
-            [ width fill, height (percent 33), paddingXY 10 10 ]
-            [ column NoStyle
-                [ width (percent 15), verticalCenter, paddingRight 20 ]
-                [ column NoStyle
-                    [ width fill, verticalCenter, alignLeft ]
-                    [ decorativeImage NoStyle 
-                        [ verticalCenter, center, width fill ]
-                        { src = config.paths.erosionPath }
-                    ]
                 ]
+            , el NoStyle 
+                [ paddingXY 5 0 ] <| hairline (MethodsResourcesBackgroundLine)
+            , row NoStyle
+                [ width fill, height (percent 33), paddingXY 10 10 ]
+                [ column NoStyle
+                    [  verticalCenter, center, width (percent 13) ]
+                    [ paragraph NoStyle
+                        []
+                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Resilient Cape Cod Spark Page."] {caption = "Navigate to the Resilient Cape Cod Spark Page.", src = config.paths.erosionPath}  ]
+                    ]
                 , column NoStyle
-                    [ width (percent 35) ]
+                    [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
-                            [ verticalCenter, width fill, paddingBottom 5 ] 
+                            [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
                                     [ el (Modal MethodsResourcesModalHeading) [] <| text "RESILIENT CAPE COD SPARK PAGE" ]
@@ -176,48 +167,42 @@ mainView config =
                                     [ el (Modal MethodsResourcesModal) [] <| text "Website describing the 3-year Resilient Cape Cod project." ]
                                 ]
                         ]
-            , column NoStyle
-                [ width (percent 15), verticalCenter, paddingLeft 20]
-                [ column NoStyle
-                    [ width fill, verticalCenter, alignLeft ]
-                    [ decorativeImage NoStyle 
-                        [ verticalCenter, center, width fill ]
-                        { src = config.paths.erosionPath }
-                    ]
-                ]
                 , column NoStyle
-                    [ width (percent 35), paddingLeft 20, paddingBottom 5 ]
+                    [  verticalCenter, center, width (percent 13) ]
+                    [ paragraph NoStyle
+                        []
+                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Local Stories of Coastal Impacts Storymap."] {caption = "Navigate to the Local Stories of Coastal Impacts Storymap.", src = config.paths.erosionPath}  ]
+                    ]
+                , column NoStyle
+                    [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
-                            [ verticalCenter ] 
+                            [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
-                                [ ]
+                                [ width fill ]
                                     [ el (Modal MethodsResourcesModalHeading) [] <| text "LOCAL STORIES OF COASTAL IMPACTS" ]
                                 ]
                         , textLayout NoStyle
-                            [ verticalCenter ] 
+                            [ verticalCenter, width fill ] 
                                 [ paragraph NoStyle
-                                [ ]
+                                [ width fill ]
                                     [ el (Modal MethodsResourcesModal) [] <| text "ESRI Storymap of stakeholder-sourced case studies of coastal impacts due to sea level rise, erosion, and storm surge." ]
                                 ]
                         ]
-            ]
-        , el NoStyle 
-            [ paddingXY 5 0 ] <| hairline (MethodsResourcesBackgroundLine)
-        , row (Modal MethodsResourcesBackground)
-            [ width fill, height (percent 33), paddingXY 10 10 ]
-            [ column NoStyle
-                [ width (percent 15), verticalCenter, paddingRight 20 ]
-                [ column NoStyle
-                    [ width fill, verticalCenter, alignLeft ]
-                    [ decorativeImage NoStyle 
-                        [ verticalCenter, center, width fill ]
-                        { src = config.paths.erosionPath }
-                    ]
                 ]
+            , el NoStyle 
+                [ paddingXY 5 0 ] <| hairline (MethodsResourcesBackgroundLine)
+            , row NoStyle
+                [ width fill, height (percent 33), paddingXY 10 10 ]
+                [ column NoStyle
+                    [  verticalCenter, center, width (percent 13) ]
+                    [ paragraph NoStyle
+                        []
+                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Ecosystem Services Handout."] {caption = "Navigate to the Ecosystem Services Handout.", src = config.paths.erosionPath}  ]
+                    ]
                 , column NoStyle
-                    [ width (percent 35) ]
+                    [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
-                            [ verticalCenter, width fill, paddingBottom 5 ] 
+                            [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
                                     [ el (Modal MethodsResourcesModalHeading) [] <| text "ECOSYSTEM SERVICES HANDOUT" ]
@@ -229,29 +214,26 @@ mainView config =
                                     [ el (Modal MethodsResourcesModal) [] <| text "Educational handout describing ecosystem services used during the Resilient Cape Cod stakeholder process." ]
                                 ]
                         ]
-            , column NoStyle
-                [ width (percent 15), verticalCenter, paddingLeft 20]
-                [ column NoStyle
-                    [ width fill, verticalCenter, alignLeft ]
-                    [ decorativeImage NoStyle 
-                        [ verticalCenter, center, width fill ]
-                        { src = config.paths.erosionPath }
-                    ]
-                ]
                 , column NoStyle
-                    [ width (percent 35), paddingLeft 20, paddingBottom 5 ]
+                    [  verticalCenter, center, width (percent 13) ]
+                    [ paragraph NoStyle
+                        []
+                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Resilient Cape Cod Home Page."] {caption = "Navigate to the Resilient Cape Cod Home Page.", src = config.paths.erosionPath}  ]
+                    ]
+                , column NoStyle
+                    [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
-                            [ verticalCenter ] 
+                            [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
-                                [ ]
+                                [ width fill ]
                                     [ el (Modal MethodsResourcesModalHeading) [] <| text "RESILIENT CAPE COD HOME PAGE" ]
                                 ]
                         , textLayout NoStyle
-                            [ verticalCenter ] 
+                            [ verticalCenter, width fill ] 
                                 [ paragraph NoStyle
-                                [ ]
+                                [ width fill ]
                                     [ el (Modal MethodsResourcesModal) [] <| text "Link to Cape Cod Commission’s project homepage." ]
                                 ]
                         ]
-            ]
+                ]
         ]

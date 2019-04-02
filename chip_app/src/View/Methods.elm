@@ -110,7 +110,7 @@ mainView config =
                 [  verticalCenter, center, width (percent 20) ]
                 [ paragraph NoStyle
                     []
-                    [ newTab "https://google.com" <| image NoStyle [width (percent 100), alignLeft, verticalCenter] {caption = "Go to Methods", src = config.paths.erosionPath}  ]
+                    [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to Methods."] {caption = "Navigate to Methods.", src = config.paths.erosionPath}  ]
                 ]
             , column NoStyle
                 [ width fill, verticalCenter, center ]
