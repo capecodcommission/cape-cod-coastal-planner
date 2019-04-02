@@ -672,10 +672,16 @@ updateModel msg model =
         ToggleRightSidebar ->
             case model.rightSidebarOpenness of
                 Open ->
-                    ( model |> collapseRightSidebar, Cmd.none )
+                    ( model 
+                        |> collapseRightSidebar
+                        , Cmd.none
+                    )
 
                 Closed ->
-                    ( model |> expandRightSidebar, Cmd.none )
+                    ( model
+                        |> expandRightSidebar
+                    , Cmd.none
+                    )
 
 
         Animate animMsg ->
@@ -1691,6 +1697,11 @@ expandRightSidebar model =
             Animation.interrupt
                 [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotateZero <| Animations.toggleStates ]
                 model.rightSidebarToggleFx
+        ,  menuFX =
+            Animation.interrupt
+                [ Animation.to <| .closed <| Animations.menuStates ]
+                model.menuFX
+                , menuClicked = Closed
     }
 
 expandLeftSidebar : Model -> Model
