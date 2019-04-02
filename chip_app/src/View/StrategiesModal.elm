@@ -550,29 +550,30 @@ mainDetailsView device benefits hazards strategy details =
                         ]
                     , column NoStyle [center]                    
                         [ column NoStyle [ center ]
-                        [ el (AddStrategies StrategiesDetailsHeading) [ moveRight 13, moveDown 3 ] (text "SCALE")
+                        [ el (AddStrategies StrategiesDetailsHeading) [ moveRight 13 ] (text "SCALE")
                                 |> within [ infoIconView (Just "The scale of an Adaptation Strategy is the size extent that is appropriate for implementation: Site, Neighborhood, Community, and/or Regional.") ]
                             ]  
-                        , column NoStyle [ ]
-                            [ row NoStyle [ moveRight 10, center, minWidth (px 115), moveDown 5 ]
+                        , column NoStyle 
+                            [ ]
+                            [ row NoStyle [ moveRight 10, center, minWidth (px 115) ]
                                 [ el (ShowOutput OutputMultiImpact) 
                                     [ moveRight 10
                                     , scaleDisabled "Site"
                                     ] <| text "Site"
                                 , el (ShowOutput OutputMultiImpact) 
-                                    [ moveRight 12
+                                    [ moveRight 14
                                     , vary Secondary True 
                                     , scaleDisabled "Neighborhood"
                                     ] <| text "Neighborhood"
                                 ]
-                            , row NoStyle [ minWidth (px 115) ]
+                            , row NoStyle [ minWidth (px 115), moveDown 5 ]
                                 [ el (ShowOutput OutputMultiImpact) 
                                     [ moveRight 32
                                     , vary Tertiary True 
                                     , scaleDisabled "Community"
                                     ] <| text "Community"
                                 , el (ShowOutput OutputMultiImpact) 
-                                    [  moveRight 34
+                                    [  moveRight 36
                                     , vary Quaternary True
                                     , scaleDisabled "Region"
                                     ] <| text "Region"

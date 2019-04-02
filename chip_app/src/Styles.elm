@@ -590,13 +590,14 @@ stylesheet device =
             , Font.center
             , Font.typeface fontstack
             , Color.text palette.chambray
-            , Color.background white
+            , Color.background <| rgba 255 255 255 0.9
             , Border.solid
             , Color.border palette.chambray
             , Border.right 1
             , Border.bottom 1
             , variation Secondary 
                 [ Border.right 0
+                , Border.bottom 0
                 ]
             , variation Tertiary
                 [ Border.bottom 0
@@ -606,7 +607,8 @@ stylesheet device =
                 , Border.bottom 0
                 ]
             , variation Disabled
-                [ Color.background palette.shadedScale
+                [ Color.background <| rgba 41 48 58 0.9
+                , Color.text <| rgba 255 255 255 0.5
                 ]
             ]
         , Style.style (ShowOutput OutputAddresses)
