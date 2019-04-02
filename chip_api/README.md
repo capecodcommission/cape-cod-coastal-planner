@@ -4,6 +4,7 @@
 
 > This API serves coastal strategy information from a PostgreSQL database to a front-end 
 
+
 ## Getting started
 
 Create  `/config/dev.secret.exs` and `/config/test.secret.exs` containing the PostgreSQL server password.
@@ -21,9 +22,41 @@ Now you can visit [`localhost:4000/graphiql`](http://localhost:4000/graphiql) fr
 
 Ready to run in production? Please [check our deployment guides](http://www.phoenixframework.org/docs/deployment).
 
-## Making Changes (FROM Timmons)
-so there's a manual step right now, dependent on developer (though it could be set up to run automatically with git pre-commit hook) whenever you modify seeds or migrations. from chip_api/ you'll want to run `mix dump` which will generate a new migration file (sounds like this one probably won't change since migrations weren't added) and then to change seeds you'll want to run `dev\support\dump_seeds.bat` and it will prompt you for your db password (edited) 
-that will generate new seeds.sql file
+
+## Back-end Development
+
+### Migrations
+```bash
+# Adding a migration to /priv/repo/migrations/
+mix ecto.gen.migration name_of_migration
+
+# Modify new migration within /priv/repo/migrations/
+
+# Once new migration is modified, generate new migrations.sql file
+mix dump
+```
+
+### Seeders
+Modify seed files at `/dev/support/seeds.ex` and `/prod/support/seeds.ex`
+Uncomment mix ecto.reset in `Dockerfile` to dump and rebuild DB schema
+```bash
+# Generate new seeds.sql file with new seed changes
+# Prompt should appear for Postgres password
+dev/support/dump_seeds.bat
+
+# Replace existing seeds.sql with new privreposeeds.sql
+```
+
+### GraphQL
+If new migrations and seeders create queryable properties, those properties must be added to the GraphQL schema in order to be queryable.
+For example: 
+  * Adding a migration to add a column to `adaptation_strategies` table and seeding it with data
+    * Requires new property to be added to `/lib/chip_api/adaptation/strategy.ex` as well as `/lib/chip_api_web/schema/strategy_types.ex`
+
+### GraphQL -> Front-end
+Any new queryable property must be added to front-end data types in order to be used by front-end
+For example:
+  * New `adapatation_strategies` property in GraphQL requires exposing new property in front-end in `chip_app/src/AdaptationStrategy/`
 
 ## Learn more
 
