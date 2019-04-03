@@ -110,7 +110,7 @@ resultsHeader output =
     let
         scaleDisabled a = vary Disabled (not <| Impacts.hasScale a output.scales)
     in
-    header (ShowOutput OutputHeader) [ height (px 125) ] <|
+    header (ShowOutput OutputHeader) [ height (px 60) ] <|
         column NoStyle [ height fill, width fill, paddingLeft 25, paddingRight 25, paddingTop 15, paddingBottom 10 ]
             [ row NoStyle 
                 [ height (percent 45), width fill, spacingXY 15 0 ]
@@ -121,49 +121,6 @@ resultsHeader output =
                         |> within [ infoIconView output.description ]
                     )
                 ]
-            -- , row NoStyle [ height (percent 55), width fill, spread, alignBottom ]
-            --     [ column NoStyle [center ]
-            --         [ el (ShowOutput OutputImpact) 
-            --             [ moveUp 2, paddingXY 4 2, minWidth (px 115) ] <| text output.cost.name
-            --         , el NoStyle [ moveDown 3 ] (text "COST")
-            --             |> within [ infoIconView (Just "...") ]
-            --         ]
-            --     , column NoStyle [center]
-            --         [ el (ShowOutput OutputImpact) 
-            --             [ moveUp 2, paddingXY 4 2, minWidth (px 115), vary Secondary True ] <| text output.lifespan.name
-            --         , el NoStyle [ moveDown 3 ] (text "LIFESPAN")
-            --             |> within [ infoIconView (Just "...") ]
-            --         ]
-            --     , column NoStyle [center]                    
-            --         [ column NoStyle []
-            --             [ row NoStyle [ minWidth (px 115) ]
-            --                 [ el (ShowOutput OutputMultiImpact) 
-            --                     [ paddingXY 4 0 
-            --                     , scaleDisabled "Site"
-            --                     ] <| text "Site"
-            --                 , el (ShowOutput OutputMultiImpact) 
-            --                     [ paddingXY 4 0
-            --                     , vary Secondary True 
-            --                     , scaleDisabled "Neighborhood"
-            --                     ] <| text "Neighborhood"
-            --                 ]
-            --             , row NoStyle [ minWidth (px 115) ]
-            --                 [ el (ShowOutput OutputMultiImpact) 
-            --                     [ paddingXY 4 0
-            --                     , vary Tertiary True 
-            --                     , scaleDisabled "Community"
-            --                     ] <| text "Community"
-            --                 , el (ShowOutput OutputMultiImpact) 
-            --                     [ paddingXY 4 0
-            --                     , vary Quaternary True
-            --                     , scaleDisabled "Region"
-            --                     ] <| text "Region"
-            --                 ]
-            --             ]
-            --         , el NoStyle [ moveDown 3 ] (text "SCALE")
-            --             |> within [ infoIconView (Just "...") ]
-            --         ]
-            --     ]
             ]
 
 

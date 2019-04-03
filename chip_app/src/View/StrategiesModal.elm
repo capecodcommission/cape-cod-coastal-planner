@@ -586,7 +586,7 @@ mainDetailsView device benefits hazards strategy details =
                     , el NoStyle [ paddingTop 15 ] <|
                         column (AddStrategies StrategiesDetailsHeading) [ paddingBottom 10 ]
                             [ el (AddStrategies StrategiesDetailsHeading) [ center ] (text "ECOSYSTEM SERVICES")
-                            |> within [ infoIconView (Just "The scale of an Adaptation Strategy is the size extent that is appropriate for implementation: Site, Neighborhood, Community, and/or Regional.") ] 
+                            |> within [ infoIconView (Just "Ecosystem services are benefits provided by the environment to humans. Adaptation Strategies may affect the ability of an ecosystem to deliver these services. The indicator arrows note whether the anticipated impacts of Strategy implementation may positively or negatively impact the select ecosystem services.") ] 
                             ]
                     , benefitsProvidedView benefits details
                     , el NoStyle 
