@@ -74,3 +74,4 @@ type Msg
     | ToggleIntro
     | ToggleMethods
     | ToggleResources
+    | ToggleInundationSection

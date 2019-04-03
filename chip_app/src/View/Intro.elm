@@ -117,7 +117,7 @@ mainView config =
             [ paragraph NoStyle
                 []
                 [ text "First time user? Follow the "
-                , link "https://dev.capecodcoast.org" <| el (Zoi ZoiCallout) [] (text "tutorial wizard")
+                , newTab "https://dev.capecodcoast.org" <| el (Zoi ZoiCallout) [] (text "tutorial wizard")
                 , text " first."
                 ]
             ]
@@ -136,7 +136,9 @@ mainView config =
                 ]
             , paragraph NoStyle
                 []
-                [ text "Learn more at capecodcommission.org/resilientcapecod"
+                [ text "Learn more at "
+                , newTab "http://capecodcommission.org/resilientcapecod" <| el (Zoi ZoiCallout) [] (text "The Resilient Cape Cod Site")
+                , text "."
                 ]
             ]
         , el NoStyle 
