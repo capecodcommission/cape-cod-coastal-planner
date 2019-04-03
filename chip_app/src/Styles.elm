@@ -33,7 +33,6 @@ palette =
     , mediumRedViolet = rgb 165 56 165
     , apple = rgb 112 173 71
     , cadetBlue = rgb 155 166 191
-    , white = rgb 255 255 255
     , blueStone = rgb 25 52 70
     , alto = rgb 218 218 218
     , shadedScale = rgb 41 48 58
@@ -378,6 +377,7 @@ stylesheet device =
             [ Color.background palette.hippieBlue
             , Font.size 24
             , Font.center
+            , Font.typeface fontstack
             , Border.roundTopLeft 4
             , Style.hover
                 [ Style.cursor "default" ]
@@ -390,21 +390,25 @@ stylesheet device =
             ]
         , Style.style (AddStrategies StrategiesSidebarList)
             [ Font.size 20
+            , Font.typeface fontstack
             ]
         , Style.style (AddStrategies StrategiesSidebarListBtn)
             [ Color.background <| rgba 0 0 0 0
             , Color.text white
             , Font.alignLeft
+            , Font.typeface fontstack
             ]
         , Style.style (AddStrategies StrategiesSidebarListBtnDisabled)
             [ Color.background <| rgba 0 0 0 0
             , Color.text <| rgba 255 255 255 0.5
             , Font.alignLeft
+            , Font.typeface fontstack
             ]
         , Style.style (AddStrategies StrategiesSidebarListBtnSelected)
             [ Color.background <| fadeOut 0.7 palette.havelockBlue
             , Color.text white
             , Font.alignLeft
+            , Font.typeface fontstack
             ]
         , Style.style (AddStrategies StrategiesSidebarFooter)
             [ Color.background black
@@ -527,23 +531,28 @@ stylesheet device =
         , Style.style (Zoi ZoiText)
             [ Font.size <| adjustOnHeight ( 12, 18 ) device
             , Font.lineHeight <| adjustOnHeight ( 1.2, 2.0 ) device
+            , Font.typeface fontstack
             ]
         , Style.style (Zoi ZoiCallout)
             [ Color.text palette.havelockBlue
-            , Font.bold 
+            , Font.bold
+            , Font.typeface fontstack
             ]
         , Style.style (Zoi ZoiStat)
             [ Font.size 20
             , Color.text palette.havelockBlue
             , Font.letterSpacing 1
+            , Font.typeface fontstack
             ]
         , Style.style (ShowOutput OutputToggleBtn)
             [ Font.letterSpacing 2.33
             , Color.background palette.alto
+            , Font.typeface fontstack
             ]
         , Style.style (ShowOutput OutputToggleLbl)
             [ Font.center
             , Font.letterSpacing 2.33
+            , Font.typeface fontstack
             , Color.background <| rgba 19 39 52 1
             ]
         , Style.style (ShowOutput OutputHeader)
@@ -557,15 +566,18 @@ stylesheet device =
         , Style.style (ShowOutput OutputH6Bold)
             [ Font.size <| scaled 1
             , Font.weight 500
+            , Font.typeface fontstack
             ]
         , Style.style (ShowOutput OutputSmallItalic)
             [ Font.size 14
             , Font.italic
+            , Font.typeface fontstack
             ]
         , Style.style (ShowOutput OutputImpact)
             [ Font.size 12
             , Font.lineHeight 1.4
             , Font.center
+            , Font.typeface fontstack
             , Color.text white
             , Font.weight 600
             , Color.background palette.hippieBlue
@@ -576,14 +588,16 @@ stylesheet device =
             [ Font.size 11
             , Font.lineHeight 1.4
             , Font.center
+            , Font.typeface fontstack
             , Color.text palette.chambray
-            , Color.background palette.white
+            , Color.background <| rgba 255 255 255 0.9
             , Border.solid
             , Color.border palette.chambray
             , Border.right 1
             , Border.bottom 1
             , variation Secondary 
                 [ Border.right 0
+                , Border.bottom 0
                 ]
             , variation Tertiary
                 [ Border.bottom 0
@@ -593,22 +607,31 @@ stylesheet device =
                 , Border.bottom 0
                 ]
             , variation Disabled
-                [ Color.background palette.shadedScale
+                [ Color.background <| rgba 41 48 58 0.9
+                , Color.text <| rgba 255 255 255 0.5
                 ]
             ]
         , Style.style (ShowOutput OutputAddresses)
-            [ Font.size 13 ]
+            [ Font.size 13
+            , Font.typeface fontstack
+            ]
         , Style.style (ShowOutput OutputHazard)
             [ Font.size 16
             , Font.bold
+            , Font.typeface fontstack
             ]
         , Style.style (ShowOutput ScenarioLabel)
-            [ Font.size 14 ]
+            [ Font.size 14
+            , Font.typeface fontstack
+            ]
         , Style.style (ShowOutput ScenarioBold)
-            [ Font.bold ]
+            [ Font.bold
+            , Font.typeface fontstack
+            ]
         , Style.style (ShowOutput OutputValue)
             [ Font.size 22
             , Font.weight 500
+            , Font.typeface fontstack
             , Color.text <| rgba 255 255 255 0.5
             , variation Secondary
                 [ Color.text palette.mySin ]
@@ -618,6 +641,7 @@ stylesheet device =
         , Style.style (ShowOutput OutputValueLbl)
             [ Font.size 12
             , Font.letterSpacing 2.33
+            , Font.typeface fontstack
             , Color.text <| rgba 255 255 255 0.5
             , variation Secondary
                 [ Color.text palette.mySin ]
@@ -631,6 +655,7 @@ stylesheet device =
             , Color.border <| rgba 255 255 255 0.5
             , Color.background <| rgba 0 0 0 0
             , Font.weight 500
+            , Font.typeface fontstack
             , variation Secondary
                 [ Color.background palette.mySin 
                 , Color.border palette.mySin
@@ -649,6 +674,7 @@ stylesheet device =
             , Font.center
             , Font.weight 500
             , Font.italic
+            , Font.typeface fontstack
             , Style.hover
                 [ Style.cursor "pointer" ]
             ]
@@ -685,9 +711,10 @@ stylesheet device =
             , Font.typeface fontstack
             ]
         , Style.style (Modal IntroDisclaimer)
-            [ Color.text <| rgba 163 163 163 1
+            [ Color.text palette.alto
             , Font.size 15
             , Font.justify
+            , Font.typeface fontstack
             ]
         , Style.style (Modal MethodsResourcesModal)
             [ Color.text white

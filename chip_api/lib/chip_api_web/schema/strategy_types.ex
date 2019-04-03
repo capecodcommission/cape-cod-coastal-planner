@@ -101,6 +101,9 @@ defmodule ChipApiWeb.Schema.StrategyTypes do
         @desc "The impact in meters on beach width this strategy generally has"
         field :beach_width_impact_m, :float
 
+        @desc "Applicability description"
+        field :applicability, :string
+
         @desc "The adaptation categories that are associated with the strategy"
         field :categories, non_null(list_of(non_null(:adaptation_category))) do
             resolve &Resolvers.Strategies.categories_for_strategy/3

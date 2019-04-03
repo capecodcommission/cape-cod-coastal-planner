@@ -11,6 +11,7 @@ defmodule ChipApi.Adaptation.Strategy do
     field :currently_permittable, :string
     field :strategy_placement, :string
     field :beach_width_impact_m, :float
+    field :applicability, :string
 
     many_to_many :adaptation_categories, ChipApi.Adaptation.Category,
       join_through: "strategies_categories",
@@ -48,7 +49,7 @@ defmodule ChipApi.Adaptation.Strategy do
   @doc false
   def changeset(strategy, attrs) do
     strategy
-    |> cast(attrs, [:name, :description, :display_order, :is_active, :currently_permittable, :strategy_placement, :beach_width_impact_m])
+    |> cast(attrs, [:name, :description, :display_order, :is_active, :currently_permittable, :strategy_placement, :beach_width_impact_m, :applicability])
     |> validate_required([:name, :is_active])
     |> unique_constraint(:name)
   end

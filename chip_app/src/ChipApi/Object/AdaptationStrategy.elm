@@ -135,3 +135,9 @@ scales object =
 strategyPlacement : Field (Maybe String) ChipApi.Object.AdaptationStrategy
 strategyPlacement =
     Object.fieldDecoder "strategyPlacement" [] (Decode.string |> Decode.nullable)
+
+{-| The applicability of the strategy
+-}
+applicability : Field (Maybe String) ChipApi.Object.AdaptationStrategy
+applicability =
+    Object.fieldDecoder "applicability" [] (Decode.string |> Decode.nullable)

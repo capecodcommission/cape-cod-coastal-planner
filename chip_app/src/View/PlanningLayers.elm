@@ -12,8 +12,7 @@ import Styles exposing (..)
 import ShorelineLocation as SL
 import View.SeaLevelRise as SLR
 import View.Infrastructure as IF
-import View.FloodZone as FZ
-import View.Slosh as Slosh
+import View.Inundation as Inundation
 import View.Erosion as Erosion
 import View.VulnerabilityRibbon as Vuln
 
@@ -62,14 +61,13 @@ view :
         , erosionToggleFx : Animation.State
         , fourtyYearClicked : Openness
         , stiClicked : Openness
-        , fzFx : Animation.State
-        , fzToggleFx : Animation.State
-        , sloshFx : Animation.State
-        , sloshToggleFx : Animation.State
+        , inundationFx : Animation.State
+        , inundationToggleFx : Animation.State
         , shorelineSelected : Openness
         , vulnRibbonClicked : Openness
         , vulnFX : Animation.State
         , vulnLegendFX : Animation.State
+        , inundationClicked : Openness
     } 
     -> Device 
     -> Paths 
@@ -81,6 +79,5 @@ view config device paths =
     , SLR.view config device paths "Sea Level Rise" ToggleSLRSection 
     , IF.view config device paths "Infrastructure" ToggleInfraSection 
     , Erosion.view config device paths "Erosion" ToggleErosionSection
-    , FZ.view config device paths "Flood Zone" ToggleFZLayer
-    , Slosh.view config device paths "SLOSH" ToggleSloshLayer
+    , Inundation.view config device paths "Inundation" ToggleInundationSection
     ]

@@ -18,6 +18,7 @@ type alias StrategyDetails =
     , benefits : Benefits
     , advantages : Advantages
     , disadvantages : Disadvantages
+    , applicability : Maybe String
     }
 
 

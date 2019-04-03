@@ -98,6 +98,7 @@ selectStrategyDetails =
         |> with (AS.benefits selectBenefit)
         |> with (AS.advantages selectAdvantage)
         |> with (AS.disadvantages selectDisadvantage)
+        |> with AS.applicability
 
 
 selectCategoryId : SelectionSet Scalar.Id ChipApi.Object.AdaptationCategory

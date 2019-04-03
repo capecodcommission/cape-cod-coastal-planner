@@ -164,7 +164,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Cost to maintain existing infrastructure that may be threatened by hazards.", display_order: 2}
             ],
             is_active: true,
-            beach_width_impact_m: nil
+            beach_width_impact_m: nil,
+            applicability: "N/A"
         }
         |> Repo.insert!
         
@@ -198,7 +199,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "May create the need to build new inland coastal defense structures.", display_order: 6}
             ],
             is_active: true,
-            beach_width_impact_m: 9.144
+            beach_width_impact_m: 9.144,
+            applicability: "Undevelopment removes revetments and buildings, if present; and allows natural forces to act on the land. Salt marsh, beach area, and habitat will be gained and building values will be lost"
         }
         |> Repo.insert!
 
@@ -224,7 +226,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Loss of coastal property values.", display_order: 2}
             ],
             is_active: false,
-            beach_width_impact_m: nil
+            beach_width_impact_m: nil,
+            applicability: "TBD"
         }
         |> Repo.insert!
 
@@ -249,7 +252,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Limits development along coastline where higher returns on investment are possible.", display_order: 2}
             ],
             is_active: false,
-            beach_width_impact_m: nil
+            beach_width_impact_m: nil,
+            applicability: "TBD"
         }
         |> Repo.insert!
 
@@ -277,7 +281,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Potential impacts on coastal public access to water. Potentially higher cost than hard engineering structures.", display_order: 2}
             ],
             is_active: false,
-            beach_width_impact_m: nil
+            beach_width_impact_m: nil,
+            applicability: "TBD"
         }
         |> Repo.insert!
 
@@ -302,7 +307,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Limits ability of property owner to make changes on land.", display_order: 2}
             ],
             is_active: false,
-            beach_width_impact_m: nil
+            beach_width_impact_m: nil,
+            applicability: "TBD"
         }
         |> Repo.insert!
 
@@ -328,7 +334,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Reduces sediment and nutrient input into estuary.", display_order: 3}
             ],
             is_active: false,
-            beach_width_impact_m: nil
+            beach_width_impact_m: nil,
+            applicability: "TBD"
         }
         |> Repo.insert!
 
@@ -352,7 +359,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Long term annual costs to construct and maintain system.", display_order: 2}
             ],
             is_active: false,
-            beach_width_impact_m: nil
+            beach_width_impact_m: nil,
+            applicability: "TBD"
         }
         |> Repo.insert!
 
@@ -384,7 +392,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "May encourage the development of previously undeveloped inland lands, instead of encouraging more dense development in previously-developed inland lands.", display_order: 4},
             ],
             is_active: true,
-            beach_width_impact_m: 1.0
+            beach_width_impact_m: 1.0,
+            applicability: "Open Space Protection protects existing open space to allow the land to protect the area against the hazard. Buildings and habitat will be maintained, and natural forces will act upon the land."
         }
         |> Repo.insert!
 
@@ -412,7 +421,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Potential impacts on coastal public access to water. Potentially higher cost than hard engineering structures.", display_order: 2},
             ],
             is_active: true,
-            beach_width_impact_m: 9.144
+            beach_width_impact_m: 9.144,
+            applicability: "Expect this strategy to protect buildings and land and increase salt marsh acreage; sometimes at the expense of beach area."
         }
         |> Repo.insert!
 
@@ -442,7 +452,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Can eliminate dry beach over time if beach nourishment is not required.", display_order: 5}
             ],
             is_active: true,
-            beach_width_impact_m: 3.048
+            beach_width_impact_m: 3.048,
+            applicability: "Expect this strategy to protect buildings and infrastructure but at the expense of losing habitat and beach area."
         }
         |> Repo.insert!
 
@@ -456,7 +467,8 @@ defmodule ChipApi.Seeds do
             impact_costs: [very_high],
             impact_life_spans: [long],
             is_active: false,
-            beach_width_impact_m: 3.048
+            beach_width_impact_m: 3.048,
+            applicability: "TBD"
         }
         |> Repo.insert!
 
@@ -479,7 +491,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "May have limited recreational value due to limited access.", display_order: 1}
             ],
             is_active: true,
-            beach_width_impact_m: 9.144
+            beach_width_impact_m: 9.144,
+            applicability: "Expect this strategy to protect buildings and infrastructure and increase beach area and habitat but at the expense of salt marsh."
         }
         |> Repo.insert!
 
@@ -521,7 +534,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Reduces available sediment source for down-drift beaches.", display_order: 2}
             ],
             is_active: true,
-            beach_width_impact_m: 3.048
+            beach_width_impact_m: 3.048,
+            applicability: "Expect this strategy to protect buildings and infrastructure but natural forces will still act on the land."
         }
         |> Repo.insert!
 
@@ -535,7 +549,8 @@ defmodule ChipApi.Seeds do
             impact_costs: [],
             impact_life_spans: [],
             is_active: false,
-            beach_width_impact_m: 3.048
+            beach_width_impact_m: 3.048,
+            applicability: "TBD"
         }
         |> Repo.insert!
 
@@ -549,7 +564,8 @@ defmodule ChipApi.Seeds do
             impact_costs: [],
             impact_life_spans: [],
             is_active: false,
-            beach_width_impact_m: 9.144
+            beach_width_impact_m: 9.144,
+            applicability: "TBD"
         }
         |> Repo.insert!
 
@@ -591,7 +607,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "May be more difficult to permit than more conventional strategies.", display_order: 2}
             ],
             is_active: true,
-            beach_width_impact_m: 9.144
+            beach_width_impact_m: 9.144,
+            applicability: "Expect this strategy to protect buildings and infrastructure and increase saltmarsh and habitat at the expense of beach area."
         }
         |> Repo.insert!
 
@@ -606,7 +623,8 @@ defmodule ChipApi.Seeds do
             impact_costs: [],
             impact_life_spans: [],
             is_active: false,
-            beach_width_impact_m: 9.144
+            beach_width_impact_m: 9.144,
+            applicability: "TBD"
         }
         |> Repo.insert!
 
@@ -635,7 +653,8 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Sediment sources, whether from inland mining, nearshore dredging, or offshore mining, may have adverse environmental effects.", display_order: 4}
             ],
             is_active: true,
-            beach_width_impact_m: 9.144
+            beach_width_impact_m: 9.144,
+            applicability: "Expect this strategy to protect buildings, infrastructure, and habitat and increase beach area. Impacts from hazard may still apply."
         }
         |> Repo.insert!
 
