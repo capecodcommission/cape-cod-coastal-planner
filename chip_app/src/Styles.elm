@@ -601,6 +601,7 @@ stylesheet device =
                 ]
             , variation Tertiary
                 [ Border.bottom 0
+                , Border.right 0
                 ]
             , variation Quaternary
                 [ Border.right 0
