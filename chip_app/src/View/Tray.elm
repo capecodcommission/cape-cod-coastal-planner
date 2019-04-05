@@ -24,11 +24,6 @@ view :
   -> Element MainStyles Variations Msg
 view model =
   el NoStyle [alignBottom]
-    -- ( renderAnimation model.titleRibbonFX
-    --     [ height fill
-    --     , width content
-    --     ]
-    -- )
     ( centerRibbon model.paths ) 
     
 

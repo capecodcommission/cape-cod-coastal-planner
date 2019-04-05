@@ -1057,16 +1057,6 @@ updateModel msg model =
             , olCmd <| encodeOpenLayersCmd (RenderCritFac)
             )
 
-        -- LoadDRResponse response ->
-        --     ( model
-        --     , olCmd <| encodeOpenLayersCmd (RenderDR)
-        --     )
-
-        -- LoadSLRResponse response ->
-        --     ( model
-        --     , olCmd <| encodeOpenLayersCmd (RenderSLR)
-        --     )
-
         LoadMOPResponse response ->
             ( model
             , olCmd <| encodeOpenLayersCmd (RenderMOP)

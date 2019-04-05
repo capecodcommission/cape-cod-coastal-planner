@@ -135,9 +135,9 @@ export function getFYEColors(feature) {
 };
 
 export function getSTIRotation(feature) {
-    if (!feature || !(typeof feature.get === 'function')) return 0;
+    // if (!feature || !(typeof feature.get === 'function')) return 0;
     
     let vector = feature.get("Vector");
     
-    return vector
+    return vector * (3.14/180)
 };
