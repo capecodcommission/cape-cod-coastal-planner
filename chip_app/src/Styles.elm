@@ -801,8 +801,9 @@ stylesheet device =
             , Font.size 14
             , Font.lineHeight 1.4
             , Font.letterSpacing 2.33
+            , Font.center
             , Color.text white
-            , Color.background <| rgba 83 168 172 1
+            , Color.background <| palette.hippieBlue
             , Border.rounded 8
             , Transition.all
             , variation Disabled
