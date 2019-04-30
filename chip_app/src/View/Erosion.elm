@@ -107,7 +107,7 @@ erosionDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "40-yr Erosion" |> within [ infoIconView (Just "This layer displays shoreline accretion and erosion based on a forty year estimate of sediment transport") ]
+            , text "40-yr Erosion" |> within [ infoIconView (Just "This layer displays shoreline accretion and erosion based on a 40-year estimate of sediment transport from the MA Shoreline Change Project.") ]
             ]
         , case config.fourtyYearClicked of 
             Open ->
@@ -124,7 +124,7 @@ erosionDetails config paths =
                 )
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Sediment Transport Indicators" |> within [ infoIconView (Just "This layer displays the flow of sediment along Barnstable County shorelines") ]
+            , text "Sediment Transport Indicators" |> within [ infoIconView (Just "This layer displays the flow of sediment along the Barnstable County shoreline based on research from Woods Hole Sea Grant and Cape Cod Cooperative Extension.") ]
             ]
         ]
 
