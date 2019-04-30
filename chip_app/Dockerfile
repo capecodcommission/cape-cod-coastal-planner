@@ -9,7 +9,7 @@
 # EXPOSE 80
 # CMD ["nginx", "-g", "daemon off;"]
 
-FROM node
+FROM node:11
 WORKDIR /app
 COPY . ./
 RUN yarn upgrade && yarn global add elm elm-test && yarn
