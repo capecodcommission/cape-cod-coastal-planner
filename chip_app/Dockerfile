@@ -1,4 +1,4 @@
-FROM node as build_deps
+FROM node:11 as build_deps
 WORKDIR /usr/src/app
 COPY . ./
 RUN yarn upgrade && yarn global add elm elm-test && yarn && yarn build
