@@ -15,6 +15,7 @@ defmodule ChipApi.Fakes do
     @costrange2 %CostRange{name: "costrange2", cost: 2}
     @costrange3 %CostRange{name: "costrange3", cost: 3, display_order: 2}
     @costrange4 %CostRange{name: "costrange4", cost: 4, display_order: 3}
+    @costrange5 %CostRange{name: "costrange5", cost: 5, display_order: 4}
     @lifespanrange1 %LifeSpanRange{name: "lifespanrange1", life_span: 1, display_order: 1}
     @lifespanrange2 %LifeSpanRange{name: "lifespanrange2", life_span: 2}
     @lifespanrange3 %LifeSpanRange{name: "lifespanrange3", life_span: 3, display_order: 2}
@@ -144,13 +145,14 @@ defmodule ChipApi.Fakes do
         costrange2 = @costrange2 |> Repo.insert!
         costrange3 = @costrange3 |> Repo.insert!
         costrange4 = @costrange4 |> Repo.insert!
+        costrange5 = @costrange5 |> Repo.insert!
 
         strat1 = @strat1
-        |> Map.merge(%{cost_ranges: [costrange1, costrange2, costrange3, costrange4]})
+        |> Map.merge(%{cost_ranges: [costrange1, costrange2, costrange3, costrange4, costrange5]})
         |> Repo.insert!
 
         strat2 = @strat2
-        |> Map.merge(%{cost_ranges: [costrange1, costrange2, costrange3, costrange4]})
+        |> Map.merge(%{cost_ranges: [costrange1, costrange2, costrange3, costrange4, costrange5]})
         |> Repo.insert!
 
         {:ok, data: %{
@@ -158,6 +160,7 @@ defmodule ChipApi.Fakes do
             costrange2: costrange2,
             costrange3: costrange3,
             costrange4: costrange4,
+            costrange5: costrange5,
             strat1: strat1,
             strat2: strat2
         }}
@@ -228,6 +231,7 @@ defmodule ChipApi.Fakes do
         costrange2 = @costrange2 |> Repo.insert!
         costrange3 = @costrange3 |> Repo.insert!
         costrange4 = @costrange4 |> Repo.insert!
+        costrange5 = @costrange5 |> Repo.insert!
         lifespanrange1 = @lifespanrange1 |> Repo.insert!
         lifespanrange2 = @lifespanrange2 |> Repo.insert!
         lifespanrange3 = @lifespanrange3 |> Repo.insert!
@@ -274,6 +278,7 @@ defmodule ChipApi.Fakes do
             costrange2: costrange2,
             costrange3: costrange3,
             costrange4: costrange4,
+            costrange5: costrange5,
             lifespanrange1: lifespanrange1,
             lifespanrange2: lifespanrange2,
             lifespanrange3: lifespanrange3,

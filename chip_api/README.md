@@ -38,7 +38,7 @@ mix dump
 
 ### Seeders
 Modify seed files at `/dev/support/seeds.ex` and `/prod/support/seeds.ex`
-Uncomment mix ecto.reset in `Dockerfile` to dump and rebuild DB schema
+Uncomment mix ecto.reset in `/chip_api/startup.sh` to dump and rebuild DB schema
 ```bash
 # Generate new seeds.sql file with new seed changes
 # Prompt should appear for Postgres password

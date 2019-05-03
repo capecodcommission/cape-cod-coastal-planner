@@ -35,6 +35,9 @@ defmodule ChipApi.Seeds do
 
         very_high = %Adaptation.CostRange{name: "Very High (>$1,001)", cost: 4}
         |> Repo.insert!
+
+        na = %Adaptation.CostRange{name: "N/A", cost: 5}
+        |> Repo.insert!
                 
         #
         # LIFE SPAN RANGES
@@ -148,7 +151,7 @@ defmodule ChipApi.Seeds do
             adaptation_categories: [retreat],
             coastal_hazards: [ erosion, storm_surge, sea_level_rise ],
             impact_scales: [site, community, neighborhood, regional],
-            impact_costs: [low, medium_cost, high, very_high],
+            impact_costs: [na],
             impact_life_spans: [short, medium_life_span, long, permanent],
             strategy_placement: anywhere,
             adaptation_benefits: [habitat, aesthetics, recreation_tourism],
@@ -404,7 +407,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             strategy_placement: anywhere,
             impact_scales: [site, neighborhood],
-            impact_costs: [medium_cost],
+            impact_costs: [high],
             impact_life_spans: [long],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
             currently_permittable: "Various local, state, and federal permits required depending on scope and location of project.",
@@ -433,7 +436,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion],
             impact_scales: [site, neighborhood],
             strategy_placement: coastal_bank_only,
-            impact_costs: [very_high],
+            impact_costs: [high],
             impact_life_spans: [long],
             adaptation_benefits: [habitat, flood_management],
             currently_permittable: "Various local, state, and federal permits required.",
@@ -464,7 +467,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion],
             impact_scales: [site, neighborhood],
             strategy_placement: coastal_bank_only,
-            impact_costs: [very_high],
+            impact_costs: [high],
             impact_life_spans: [long],
             is_active: false,
             beach_width_impact_m: 3.048,
@@ -479,7 +482,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
             impact_scales: [site],
             strategy_placement: anywhere_but_salt_marsh,
-            impact_costs: [low],
+            impact_costs: [medium_cost],
             impact_life_spans: [medium_life_span],
             adaptation_benefits: [habitat, aesthetics, flood_management],
             currently_permittable: "Various local and state permits may be required.",
@@ -519,7 +522,7 @@ defmodule ChipApi.Seeds do
             coastal_hazards: [erosion, storm_surge],
             impact_scales: [site, neighborhood],
             strategy_placement: coastal_bank_only,
-            impact_costs: [high],
+            impact_costs: [medium_cost],
             impact_life_spans: [short],
             adaptation_benefits: [habitat, carbon_storage, flood_management],
             currently_permittable: "Local and state permits required, potentially federal permits depending on location.",
