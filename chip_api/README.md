@@ -37,8 +37,22 @@ mix dump
 ```
 
 ### Seeders
+## Kubernetes
+In both uat and master branches, disable API server instantiation by commenting out `mix phx.server` in `/chip_api/startup.sh`
+```bash
+# exec into postgres container
+kubectl exec -it cccpdb-1234567 -- /bin/bash
+
+# Change to user postgres
+su - postgres
+
+# Stop all current connections to dev db
+psql -U postgres -d chip_api_dev -c "select pg_terminate_backend(pid) from pg_stat_activity where datname='chip_api_dev';"
+
+```
 Modify seed files at `/dev/support/seeds.ex` and `/prod/support/seeds.ex`
 Uncomment mix ecto.reset in `/chip_api/startup.sh` to dump and rebuild DB schema
+
 ```bash
 # Generate new seeds.sql file with new seed changes
 # Prompt should appear for Postgres password
