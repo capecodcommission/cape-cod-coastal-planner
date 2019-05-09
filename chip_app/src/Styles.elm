@@ -451,7 +451,6 @@ stylesheet device =
                 [ Color.text palette.malibu
                 ]
             ]
-        -- Updated these colors, but this does not style the types of selected adaptation strategy icons on the 'StrategiesModal' as they are hard-coded
         , Style.style (AddStrategies StrategiesDetailsCategoryCircle)
             [ Color.background white
             , Color.border white
@@ -482,6 +481,9 @@ stylesheet device =
             , Font.size (scaled 1)
             , Font.weight 800
             , Font.lineHeight 1.4
+            , variation Secondary
+                [ Color.text palette.hippieBlue
+                ]
             ]
         , Style.style (AddStrategies StrategiesDetailsHazards)
             [ Font.size 14

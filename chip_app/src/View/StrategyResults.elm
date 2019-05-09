@@ -148,18 +148,28 @@ resultsMainContent output =
                 , monetaryResultView "Private Shoreline" "Land Value" output.privateLandValue (Just "Private Shoreline Land Value is the anticipated gain or loss in private shoreline land value that occurs due to adaptation strategy implementation.")
                 , monetaryResultView "Private Building" "Value" output.privateBuildingValue (Just "Private Shoreline Building Value is the anticipated gain or loss in private shoreline building value (within 100 feet of the coast) that occurs due to adaptation strategy implementation.")
                 ]
-        , row NoStyle [ paddingXY 40 20, width fill, height fill ]
-            [ acreageResultView "Salt Marsh Change" output.saltMarshChange "SM"
-            , acreageResultView "Beach Area Change" output.beachAreaChange "B"
-            ]
-        , row NoStyle [spread, height fill, width fill]
-            [ if output.name == "No Action"
-                then
-                criticalFacilitiesView output.criticalFacilities "NA"
-                else
-                criticalFacilitiesView output.criticalFacilities "ST"
-            , rareSpeciesHabitatView output.rareSpeciesHabitat
-            ]
+        , if output.name == "No Action" 
+            then
+            row NoStyle [ spread, height fill, width fill ]
+                [ acreageResultView "Salt Marsh Change" output.saltMarshChange "SMNA"
+                , acreageResultView "Beach Area Change" output.beachAreaChange "BNA"
+                ]
+            else
+            row NoStyle [ spread, height fill, width fill ]
+                [ acreageResultView "Salt Marsh Change" output.saltMarshChange "SM"
+                , acreageResultView "Beach Area Change" output.beachAreaChange "B"
+                ]
+        , if output.name == "No Action" 
+            then
+            row NoStyle [ spread, height fill, width fill ]
+                [ criticalFacilitiesView output.criticalFacilities "NA"
+                , rareSpeciesHabitatView output.rareSpeciesHabitat "NA"
+                ]
+            else
+            row NoStyle [ spread, height fill, width fill ]
+                [ criticalFacilitiesView output.criticalFacilities "ST"
+                , rareSpeciesHabitatView output.rareSpeciesHabitat "ST"
+                ]
         ]
 
 
@@ -272,6 +282,23 @@ acreageResultView lbl result metric =
         (AcreageGained gain, "B") ->
             render (abbreviateAcreageValue gain) ( "ACRES GAINED", Just "Relative to No Action, there is an anticipated gain in beach acres due to strategy implementation and/or avoiding loss caused by the hazard." ) lbl (vary Tertiary True)
 
+        (AcreageUnchanged, "SMNA") ->
+            render "--" ( "NO CHANGE", Just "There is no change in salt marsh acres due to the strategy implementation or hazard." ) lbl (vary Secondary False)
+        
+        (AcreageUnchanged, "BNA") ->
+            render "--" ( "NO CHANGE", Just "There is no change in beach acres to strategy implementation or hazard." ) lbl (vary Secondary False)
+
+        (AcreageLost loss, "SMNA") ->
+            render (abbreviateAcreageValue loss) ( "ACRES LOST", Just "In the No Action scenario, there is an anticipated loss in salt marsh acres due to the hazard and/or loss related to strategy implementation." ) lbl (vary Secondary True)
+
+        (AcreageLost loss, "BNA") ->
+            render (abbreviateAcreageValue loss) ( "ACRES LOST", Just "In the No Action scenario, there is an anticipated loss in beach acres due to loss caused by the hazard." ) lbl (vary Secondary True)
+
+        (AcreageGained gain, "SMNA") ->
+            render (abbreviateAcreageValue gain) ( "ACRES GAINED", Just "In the No Action scenario, there is an anticipated gain in salt marsh acres due to avoiding loss caused by the hazard." ) lbl (vary Tertiary True)
+
+        (AcreageGained gain, "BNA") ->
+            render (abbreviateAcreageValue gain) ( "ACRES GAINED", Just "In the No Action scenario, there is an anticipated gain in beach acres due to avoiding loss caused by the hazard." ) lbl (vary Tertiary True)
         (_, _) ->
             render "--" ( "NO CHANGE", Just "..." ) lbl (vary Secondary False)
 
@@ -336,8 +363,8 @@ criticalFacilitiesView facilities strat =
         ]
 
 
-rareSpeciesHabitatView : RareSpeciesHabitat -> Element MainStyles Variations Msg
-rareSpeciesHabitatView habitat =
+rareSpeciesHabitatView : RareSpeciesHabitat -> String -> Element MainStyles Variations Msg
+rareSpeciesHabitatView habitat strat =
     let
         render a b c =
             column (ShowOutput OutputValueBox) 
@@ -355,15 +382,27 @@ rareSpeciesHabitatView habitat =
             [ el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Rare Species"
             , el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Habitat"
             ]
-        , ( case habitat of
-            HabitatUnchanged ->
+        , ( case (habitat, strat) of
+            (HabitatUnchanged, "ST") ->
                 render "--" (vary Secondary False) "Rare Species Habitat is protected under Massachusetts law, and provides habitat to plant or animal species listed as Endangered, Threatened, or Special Concern. This output indicates if Rare Species Habitat may be gained or maintained (check sign) or negatively impacted (minus sign) once a strategy is implemented. "
 
-            HabitatLost ->
+            (HabitatLost, "ST") ->
                 render "LOSS" (vary Secondary True) "Relative to No Action, there is an anticipated loss in Rare Species Habitat due to strategy implementation and/or loss caused by the hazard."
 
-            HabitatGained ->
+            (HabitatGained, "ST") ->
                 render "GAIN" (vary Tertiary True) "Relative to No Action, there is an anticipated gain in Rare Species Habitat due to strategy implementation and/or avoiding loss caused by the hazard."
+            
+            (HabitatUnchanged, "NA") ->
+                render "--" (vary Secondary False) "Rare Species Habitat is protected under Massachusetts law, and provides habitat to plant or animal species listed as Endangered, Threatened, or Special Concern. This output indicates if Rare Species Habitat may be gained or maintained (check sign) or negatively impacted (minus sign) once a strategy is implemented. "
+
+            (HabitatLost, "NA") ->
+                render "LOSS" (vary Secondary True) "In the No Action scenario, there is an anticipated loss in Rare Species Habitat due to loss caused by the hazard."
+
+            (HabitatGained, "NA") ->
+                render "GAIN" (vary Tertiary True) "In the No Action scenario, there is an anticipated gain in Rare Species Habitat due to avoiding loss caused by the hazard."
+
+            (_, _) ->
+                render "Test" (vary Secondary True) "..."
           )
         ]
 
@@ -391,12 +430,6 @@ footerView =
                 , height (px 42)
                 , title "Back to strategy selection"
                 ] <| text "back"
-            -- , button CancelButton
-            --     [ onClick CancelPickStrategy
-            --     , width (px 175) 
-            --     , height (px 42)
-            --     , title "Clear strategy selection"
-            --     ] <| text "clear"
             ]
     
 

@@ -175,13 +175,11 @@ pprLegend paths =
             [ button
                 (PL RoadsPrivate)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                -- {src = paths.downArrow} 
                 (Element.text "")
             , text "Private   "
             , button
                 (PL RoadsPublic)
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                -- {src = paths.downArrow} 
                 (Element.text "")
             , text "Public"
             ]
@@ -197,20 +195,17 @@ cdsLegend paths =
             []
             [ button
                 (PL Groins)
-                [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                -- {src = paths.downArrow} 
+                [height (px 20), width (px 20), moveDown 5, spacing 5]
                 (Element.text "")
             , text "Groins   "
             , button
                 (PL Revetment)
-                [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                -- {src = paths.downArrow} 
+                [height (px 20), width (px 20), moveDown 5, spacing 5]
                 (Element.text "")
             , text "Revetment   "
             , button
                 (PL Jetty)
-                [height (px 20), width (px 20), moveDown 5, spacing 5] 
-                -- {src = paths.downArrow} 
+                [height (px 20), width (px 20), moveDown 5, spacing 5]
                 (Element.text "")
             , text "Jetty"
             ]

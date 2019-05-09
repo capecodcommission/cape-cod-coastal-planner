@@ -608,7 +608,7 @@ mainDetailsView device benefits hazards strategy details =
             [ paragraph (AddStrategies StrategiesDetailsDescription) [ paddingBottom 15 ]
                     [ el (AddStrategies StrategiesDetailsHeading) 
                         [ vary Secondary True ] <| text "APPLICABILITY "
-                    , text <| Maybe.withDefault "This will be filled in the future with adaptation strategy-specific applicability content." details.applicability
+                    , text <| Maybe.withDefault "The applicability of a strategy." details.applicability
                     ]
                 , el NoStyle 
                     [ ] <| hairline (Hairline)
