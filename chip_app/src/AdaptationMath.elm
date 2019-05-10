@@ -756,7 +756,6 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
 
                 ( Ok Strategies.BeachNourishment, True ) ->
                     output
-                        -- SWITCHED THE CRITICAL FACILITIES, PUBLIC BUILDING & PRIVATE BUILDING VALUES TO '..unchanged'
                         |> (getCriticalFacilityCount >> setCriticalFacilitiesUnchanged) noActionOutput
                             |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> setPublicBldgValueUnchanged) noActionOutput)
                             |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> setPrivateBldgValueUnchanged) noActionOutput)
@@ -1012,7 +1011,6 @@ protectPrivateBldgValue value output =
         Ok { output | privateBuildingValue = ValueProtected <| abs value }
 
 
--- CLEARED UP UNCHANGED MATH
 setPrivateBldgValueUnchanged : MonetaryValue -> OutputDetails -> Result OutputError OutputDetails
 setPrivateBldgValueUnchanged value output =
     Ok { output | privateBuildingValue = ValueUnchanged }

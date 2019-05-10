@@ -42,7 +42,7 @@ view config =
                     , padding 40
                     ] <|
                         el NoStyle
-                            [ width (px 700)
+                            [ width (px 800)
                             , maxHeight (px <| modalHeight config.device)
                             , center
                             , verticalCenter
@@ -100,18 +100,12 @@ mainView config =
         [ row NoStyle
             [ width fill, height (percent 33), paddingXY 10 10 ]
                 [ column NoStyle
-                    [  verticalCenter, center, width (percent 13) ]
-                    [ paragraph NoStyle
-                        []
-                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Adpatation Strategies Matrix."] {caption = "Navigate to the Adpatation Strategies Matrix.", src = config.paths.erosionPath}  ]
-                    ]
-                , column NoStyle
                     [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "ADAPTATION STRATEGIES MATRIX" ]
+                                    [ newTab "http://www.capecodcommission.org/" <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES MATRIX") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 
@@ -121,18 +115,12 @@ mainView config =
                                 ]
                         ]
                 , column NoStyle
-                    [  verticalCenter, center, width (percent 13) ]
-                    [ paragraph NoStyle
-                        []
-                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Adaptation Strategies Fact Sheets."] {caption = "Navigate to the Adaptation Strategies Fact Sheets.", src = config.paths.erosionPath}  ]
-                    ]
-                , column NoStyle
                     [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "ADAPTATION STRATEGIES FACT SHEETS" ]
+                                    [ newTab "https://spark.adobe.com/page/UmFTo4lYXSUVb/" <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES FACT SHEETS") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 
@@ -147,18 +135,12 @@ mainView config =
             , row NoStyle
                 [ width fill, height (percent 33), paddingXY 10 10 ]
                 [ column NoStyle
-                    [  verticalCenter, center, width (percent 13) ]
-                    [ paragraph NoStyle
-                        []
-                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Resilient Cape Cod Spark Page."] {caption = "Navigate to the Resilient Cape Cod Spark Page.", src = config.paths.erosionPath}  ]
-                    ]
-                , column NoStyle
                     [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "RESILIENT CAPE COD SPARK PAGE" ]
+                                    [ newTab "https://spark.adobe.com/page/H3TgtzULGkbjH/" <| el (Modal MethodsResourcesModalHeading) [] (text "RESILIENT CAPE COD SPARK PAGE") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 
@@ -168,18 +150,12 @@ mainView config =
                                 ]
                         ]
                 , column NoStyle
-                    [  verticalCenter, center, width (percent 13) ]
-                    [ paragraph NoStyle
-                        []
-                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Local Stories of Coastal Impacts Storymap."] {caption = "Navigate to the Local Stories of Coastal Impacts Storymap.", src = config.paths.erosionPath}  ]
-                    ]
-                , column NoStyle
                     [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "LOCAL STORIES OF COASTAL IMPACTS" ]
+                                    [ newTab "https://gcc01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcccommission.maps.arcgis.com%2Fapps%2FMapJournal%2Findex.html%3Fappid%3D49b16395cc114c32ab548a5ac167ec5d&data=02%7C01%7Csgoulet%40capecodcommission.org%7C4a8598e5c01f410e271b08d6b93f122d%7C84475217b42348dbb766ed4bbbea74f1%7C0%7C0%7C636900077868969463&sdata=l0DX4gjiDt4eFDZbH1iaIADjl%2FTv3AJcE2Th%2BzzxiWI%3D&reserved=0" <| el (Modal MethodsResourcesModalHeading) [] (text "LOCAL STORIES OF COASTAL IMPACTS") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 
@@ -194,18 +170,12 @@ mainView config =
             , row NoStyle
                 [ width fill, height (percent 33), paddingXY 10 10 ]
                 [ column NoStyle
-                    [  verticalCenter, center, width (percent 13) ]
-                    [ paragraph NoStyle
-                        []
-                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Ecosystem Services Handout."] {caption = "Navigate to the Ecosystem Services Handout.", src = config.paths.erosionPath}  ]
-                    ]
-                , column NoStyle
                     [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "ECOSYSTEM SERVICES HANDOUT" ]
+                                    [ newTab "https://barnstablecounty-my.sharepoint.com/:b:/g/personal/danielle_donahue_capecodcommission_org/EQG_lIZF7jRIpP4PZVrgx18BfhEY-lAasg7lMGiPvCipSg?e=yQgdiN" <| el (Modal MethodsResourcesModalHeading) [] (text "ECOSYSTEM SERVICES HANDOUT") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 
@@ -215,18 +185,12 @@ mainView config =
                                 ]
                         ]
                 , column NoStyle
-                    [  verticalCenter, center, width (percent 13) ]
-                    [ paragraph NoStyle
-                        []
-                        [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to the Resilient Cape Cod Home Page."] {caption = "Navigate to the Resilient Cape Cod Home Page.", src = config.paths.erosionPath}  ]
-                    ]
-                , column NoStyle
                     [ width fill, paddingXY 10 0 ]
                         [ textLayout NoStyle
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ el (Modal MethodsResourcesModalHeading) [] <| text "RESILIENT CAPE COD HOME PAGE" ]
+                                    [ newTab "http://www.capecodcommission.org/index.php?id=631" <| el (Modal MethodsResourcesModalHeading) [] (text "RESILIENT CAPE COD HOME PAGE") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 

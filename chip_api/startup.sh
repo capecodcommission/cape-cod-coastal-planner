@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
 set -ex
-# COMMENT 'mix phx.server' WHEN UPDATING DB FROM 'dev' BRANCH
+# ONLY FOR DATABASE UPDATES
+# mix ecto.reset
+# ONLY IF BLANK DATABASE (e.g. PRUNED DOCKER SYSTEM)
+# mix ecto.setup
 mix phx.server

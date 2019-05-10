@@ -131,7 +131,7 @@ erosionDetails config paths =
                 ) 
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "Flood Zone" |> within [ infoIconView (Just "This layer displays flood zone areas denoted by 2013 data from FEMA") ]
+            , text "Flood Zone" |> within [ infoIconView (Just "This layer displays flood zone areas denoted by 2013 data from FEMA.") ]
             ]
         , case config.fzClicked of 
             Open ->
@@ -148,7 +148,7 @@ erosionDetails config paths =
                 )
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
-            , text "SLOSH" |> within [ infoIconView (Just "Worst case Hurricane Surge Inundation areas for category 1 through 4 hurricanes striking the coast of Massachusetts. Hurricane surge values were developed by the National Hurricane Center using the PV2 basin SLOSH (Sea Lake and Overland Surge from Hurricanes) Model data. This Surge Inundation layer was created by the U.S. Army Corps of Engineers, New England District. Using ArcInfo's Grid extension, LiDAR bare earth elevation data USGS was subtracted from the worst-case hurricane surge values to determine which areas could be expected to be inundated. ") ]
+            , text "SLOSH" |> within [ infoIconView (Just "SLOSH mapping represents potential flooding from worst-case combinations of hurricane direction, forward speed, landfall point, and high astronomical tide, developed by the National Weather Service.") ]
             ]
         , case config.sloshClicked of 
             Open ->

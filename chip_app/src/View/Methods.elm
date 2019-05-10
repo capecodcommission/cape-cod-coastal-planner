@@ -101,22 +101,20 @@ mainView :
         , paths : Paths
     } 
     -> Element MainStyles Variations Msg
+
 mainView config =
     column NoStyle
         [ ]
-        [ row (Modal MethodsResourcesBackground)
-            [ spacingXY 0 5, width fill, paddingXY 10 10 ]
-            [ column NoStyle
-                [  verticalCenter, center, width (percent 20) ]
-                [ paragraph NoStyle
-                    []
-                    [ newTab "http://www.capecodcommission.org/" <| image NoStyle [width (percent 100), alignLeft, verticalCenter, title "Navigate to Methods."] {caption = "Navigate to Methods.", src = config.paths.erosionPath}  ]
+        [ column (Modal MethodsResourcesBackground)
+            [width fill]
+                [ row NoStyle
+                    [width fill]
+                        [ paragraph NoStyle
+                            [verticalCenter]
+                            [ el (Modal IntroWelcome) [paddingXY 10 10, verticalCenter, alignLeft] <| text "Description of how the tool works, including features, data sources, and background calculations."]
+                        ]
+                , row NoStyle
+                    [width fill, center, paddingBottom 10]
+                        [ newTab "http://www.capecodcommission.org/" <| el SelectShorelineButton [ width fill, height (px 26),paddingXY 6 3 ] (text "Download methods") ]
                 ]
-            , column NoStyle
-                [ width fill, verticalCenter, center ]
-                [ paragraph NoStyle
-                    [verticalCenter]
-                    [ el (Modal IntroWelcome) [paddingLeft 10, verticalCenter, alignLeft] <| text "Description of how the tool works, including features, data sources, and background calculations."]
-                ]
-            ]
         ]
