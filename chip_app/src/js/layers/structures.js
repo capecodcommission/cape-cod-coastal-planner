@@ -8,8 +8,8 @@ export function layer(map) {
 
     let layer = new TileLayer({
         visible: false,
-        preload: 4,
-        opacity: 0.5,
+        preload: 0,
+        opacity: 1,
         source: source
     });
     layer.set("name", "structures");
@@ -35,11 +35,8 @@ function _source() {
         url: process.env.ELM_APP_AGS_STRUCTURES_URL,
         maxZoom: 16,
         minZoom: 3,
-        opaque: false,
-        transition: 4,
-        tileLoadFunction: (imageTile, src) => {
-            imageTile.getImage().src = src;
-        }
+        opaque: true,
+        transition: 0
     });
     return source;
 }

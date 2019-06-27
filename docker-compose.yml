@@ -13,6 +13,7 @@ services:
       - 3002:80
     volumes:
       - ./chip_app/src:/app/src:rw
+      - ./chip_app/.env:/app/.env:rw
     
   cccpapidev:
     container_name: cccpapidev
