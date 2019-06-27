@@ -53,6 +53,7 @@ export function init(onInit) {
         loadTilesWhileAnimating: true,
         controls: []
     });
+
     map.addLayer(fz(map))
     map.addLayer(fourty_years(map))
     map.addLayer(slr6ft(map))
