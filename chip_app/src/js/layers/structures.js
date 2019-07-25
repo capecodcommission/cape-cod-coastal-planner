@@ -8,7 +8,7 @@ export function layer(map) {
 
     let layer = new TileLayer({
         visible: false,
-        preload: 0,
+        preload: 4,
         opacity: 1,
         source: source
     });
@@ -36,7 +36,7 @@ function _source() {
         maxZoom: 16,
         minZoom: 3,
         opaque: true,
-        transition: 0
+        transition: 4
     });
     return source;
 }
