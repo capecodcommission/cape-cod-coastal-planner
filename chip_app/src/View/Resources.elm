@@ -105,7 +105,7 @@ mainView config =
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ newTab "http://www.capecodcommission.org/" <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES MATRIX") ]
+                                    [ newTab "http://ww2.capecodcommission.org/coastal/" <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES MATRIX") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 
