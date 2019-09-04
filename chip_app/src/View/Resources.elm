@@ -105,7 +105,7 @@ mainView config =
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ newTab "http://ww2.capecodcommission.org/coastal/" <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES MATRIX") ]
+                                    [ newTab "https://barnstablecounty.sharepoint.com/:x:/g/dept/commission/team/EbU6Sj-gMzxLmWSlU2hQW8wBPzz4Zx4JipShNa_2WGsFoA?e=NsC8uw" <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES MATRIX") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 
@@ -120,7 +120,7 @@ mainView config =
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ newTab "https://spark.adobe.com/page/UmFTo4lYXSUVb/" <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES FACT SHEETS") ]
+                                    [ newTab "https://gcc02.safelinks.protection.outlook.com/?url=http%3A%2F%2Fww2.capecodcommission.org%2Fcoastal%2F&data=02%7C01%7Csgoulet%40capecodcommission.org%7Ca763fe821bcf4c4274a908d7314f92ca%7C84475217b42348dbb766ed4bbbea74f1%7C0%7C0%7C637032090136269375&sdata=b4O2KLVJbVU25Xzllt%2BXbHVOJcwiSe3zlRXNI9dbh2Q%3D&reserved=0" <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES FACT SHEETS") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 
