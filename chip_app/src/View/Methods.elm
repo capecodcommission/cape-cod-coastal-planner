@@ -115,6 +115,6 @@ mainView config =
                         ]
                 , row NoStyle
                     [width fill, center, paddingBottom 10]
-                        [ newTab "https://barnstablecounty.sharepoint.com/:w:/g/dept/commission/team/Ef07YrVI4BdEq-j-NT4hMPgBQkVA3hE4sZMZ1cpklNzTHg?e=eaMAh3" <| el SelectShorelineButton [ width fill, height (px 26),paddingXY 6 3 ] (text "Download methods") ]
+                        [ newTab "https://barnstablecounty.sharepoint.com/:b:/g/dept/commission/team/EYXGq3UkHN9DgSR3Stb-GSUBskhVMducaNuUrwPDtYIpyg?e=KWgZ2d" <| el SelectShorelineButton [ width fill, height (px 26),paddingXY 6 3 ] (text "Download methods") ]
                 ]
         ]
