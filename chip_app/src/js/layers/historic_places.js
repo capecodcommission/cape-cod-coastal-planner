@@ -30,7 +30,7 @@ export function layer(map) {
                     fill: new Fill({color: [153, 216, 201]}),
                     stroke: new Stroke({
                         color: [0, 0, 0],
-                        width: 2
+                        width: 1
                     })
                 })
             });

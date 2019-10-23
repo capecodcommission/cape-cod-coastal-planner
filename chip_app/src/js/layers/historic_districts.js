@@ -31,11 +31,11 @@ export function layer(map) {
     });
     layer.set("name", "historic_districts");
 
-    map.on("render_hd", ({data}) => {
+    map.on("render_historic_districts", ({data}) => {
         layer.setVisible(true)
     });
 
-    map.on("disable_hd", () => {
+    map.on("disable_historic_districts", () => {
         layer.setVisible(false)
     });
 
