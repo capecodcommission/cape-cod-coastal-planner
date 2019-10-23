@@ -75,3 +75,5 @@ type Msg
     | ToggleMethods
     | ToggleResources
     | ToggleInundationSection
+    | ToggleHistDistLayer
+    | ToggleHistPlacesLayer

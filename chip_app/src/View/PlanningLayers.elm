@@ -68,6 +68,8 @@ view :
         , vulnFX : Animation.State
         , vulnLegendFX : Animation.State
         , inundationClicked : Openness
+        , histDistClicked : Openness
+        , histPlacesClicked : Openness
     } 
     -> Device 
     -> Paths 

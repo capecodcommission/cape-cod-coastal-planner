@@ -27,6 +27,8 @@ view :
         , spClicked : Openness
         , cdsClicked : Openness
         , structuresClicked : Openness
+        , histDistClicked : Openness
+        , histPlacesClicked : Openness
     } 
     -> Device 
     -> Paths 
@@ -84,6 +86,8 @@ infraDetails :
         , spClicked : Openness
         , cdsClicked : Openness
         , structuresClicked : Openness
+        , histDistClicked : Openness
+        , histPlacesClicked : Openness
     } 
     -> Paths 
     -> Element MainStyles Variations Msg
@@ -161,6 +165,34 @@ infraDetails config paths =
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
             , text "Structures" |> within [ infoIconView (Just "Roofprints of buildings larger than 150 square feet are derived from ortho images continually collected through 2015.") ]
+            ]
+        , paragraph 
+            CloseIcon 
+            [onClick ToggleHistDistLayer] 
+            [ decorativeImage
+                ( case config.histDistClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed ->
+                        (NoStyle)
+                ) 
+                [height (px 20), width (px 20), moveDown 5, spacing 5] 
+                {src = paths.downArrow}
+            , text "Historic Districts" |> within [ infoIconView (Just "Cape Cod has 22 local and regional historic districts.") ]
+            ]
+        , paragraph 
+            CloseIcon 
+            [onClick ToggleHistPlacesLayer] 
+            [ decorativeImage
+                ( case config.histPlacesClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed ->
+                        (NoStyle)
+                ) 
+                [height (px 20), width (px 20), moveDown 5, spacing 5] 
+                {src = paths.downArrow}
+            , text "Historic Places" |> within [ infoIconView (Just "Cape Cod has a wealth of historic resources, from its buildings and historic villages to its cultural landscapes and archaeological sites.") ]
             ]
         ]
 

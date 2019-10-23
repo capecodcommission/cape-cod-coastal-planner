@@ -40,6 +40,8 @@ view :
         , dr1ftClicked : Openness
         , critFacClicked : Openness
         , structuresClicked : Openness
+        , histDistClicked : Openness
+        , histPlacesClicked : Openness
     }
     -> (String, List (Element MainStyles Variations Msg))
     -> Element MainStyles Variations Msg
@@ -89,6 +91,8 @@ headerView : {
         , dr1ftClicked : Openness
         , critFacClicked : Openness
         , structuresClicked : Openness
+        , histDistClicked : Openness
+        , histPlacesClicked : Openness
     } -> String -> String -> Animation.State -> Element MainStyles Variations Msg
 headerView config titleText togglePath fx =
     ( header (Sidebar SidebarHeader) 
@@ -120,6 +124,8 @@ headerView config titleText togglePath fx =
                     || config.dr1ftClicked == Open 
                     || config.critFacClicked == Open 
                     || config.structuresClicked == Open
+                    || config.histDistClicked == Open
+                    || config.histPlacesClicked == Open
                     ) 
                     then
                         button CancelButton
