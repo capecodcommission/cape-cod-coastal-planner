@@ -105,7 +105,7 @@ mainView config =
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ newTab "https://barnstablecounty.sharepoint.com/:x:/g/dept/commission/team/EbU6Sj-gMzxLmWSlU2hQW8wBPzz4Zx4JipShNa_2WGsFoA?e=NsC8uw" <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES MATRIX") ]
+                                    [ newTab "https://barnstablecounty.sharepoint.com/:x:/g/dept/commission/team/EbU6Sj-gMzxLmWSlU2hQW8wB6ozqMsIM7MnpwsiNpCyitQ?e=UcmtRe" <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES MATRIX") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 
@@ -190,7 +190,7 @@ mainView config =
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ newTab "http://www.capecodcommission.org/index.php?id=631" <| el (Modal MethodsResourcesModalHeading) [] (text "RESILIENT CAPE COD HOME PAGE") ]
+                                    [ newTab "https://www.capecodcommission.org/our-work/resilient-cape-cod" <| el (Modal MethodsResourcesModalHeading) [] (text "RESILIENT CAPE COD HOME PAGE") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 

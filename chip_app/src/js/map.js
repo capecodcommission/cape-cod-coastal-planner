@@ -30,6 +30,8 @@ import {layer as slosh} from "./layers/slosh"
 import {layer as fourty_years} from "./layers/fourty_years"
 import {layer as sti} from "./layers/sediment_transport_indicators"
 import {layer as struct} from "./layers/structures"
+import {layer as histDist} from "./layers/historic_districts" 
+import {layer as histPlaces} from "./layers/historic_places" 
 import LayerGroup from 'ol/layer/Group'
 //import {layer as locHexes} from "./layers/location_hexes";
 import {
@@ -54,31 +56,32 @@ export function init(onInit) {
         controls: []
     });
 
-    map.addLayer(fz(map))
-    map.addLayer(fourty_years(map))
-    map.addLayer(slr6ft(map))
-    map.addLayer(slr5ft(map))
-    map.addLayer(slr4ft(map))
-    map.addLayer(slr3ft(map))
-    map.addLayer(slr2ft(map))
-    map.addLayer(slr1ft(map))
-    map.addLayer(slosh(map))
-    map.addLayer(struct(map))
-    map.addLayer(mop(map))
-    map.addLayer(sp(map))
-    map.addLayer(ppr(map))
-    map.addLayer(cds(map))
-    map.addLayer(dr6ft(map))
-    map.addLayer(dr5ft(map))
-    map.addLayer(dr4ft(map))
-    map.addLayer(dr3ft(map))
-    map.addLayer(dr2ft(map))
-    map.addLayer(dr1ft(map))
-    map.addLayer(sti(map))
-    map.addLayer(critFac(map))
+    map.addLayer(fz(map));
+    map.addLayer(fourty_years(map));
+    map.addLayer(slr6ft(map));
+    map.addLayer(slr5ft(map));
+    map.addLayer(slr4ft(map));
+    map.addLayer(slr3ft(map));
+    map.addLayer(slr2ft(map));
+    map.addLayer(slr1ft(map));
+    map.addLayer(slosh(map));
+    map.addLayer(struct(map));
+    map.addLayer(mop(map));
+    map.addLayer(sp(map));
+    map.addLayer(ppr(map));
+    map.addLayer(cds(map));
+    map.addLayer(dr6ft(map));
+    map.addLayer(dr5ft(map));
+    map.addLayer(dr4ft(map));
+    map.addLayer(dr3ft(map));
+    map.addLayer(dr2ft(map));
+    map.addLayer(dr1ft(map));
+    map.addLayer(sti(map));
+    map.addLayer(critFac(map));
     map.addLayer(vulnRibbon(map));
     map.addLayer(littoralCells(map));
-
+    map.addLayer(histDist(map));
+    map.addLayer(histPlaces(map));
 
     // hide all layers except base-layers
     map.on("clear_ol_layers", () => {

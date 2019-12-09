@@ -155,6 +155,22 @@ class MapHandler {
                     this.disableStructures(data);
                     break;
 
+                case "render_historic_districts":
+                    this.renderHistoricDistricts(data);
+                    break;
+    
+                case "disable_historic_districts":
+                    this.disableHistoricDistricts(data);
+                    break;
+                    
+                case "render_historic_places":
+                    this.renderHistoricPlaces(data);
+                    break;
+            
+                case "disable_historic_places":
+                    this.disableHistoricPlaces(data);
+                    break;
+
                 case "reset_all":
                     this.clearLayers()
                     this.clearVulnerabilityRibbon()
@@ -553,6 +569,30 @@ class MapHandler {
     disableSTI(data) {
         this.map.dispatchEvent({
             "type": "disable_sti"
+        });
+    }
+
+    renderHistoricDistricts(data) {
+        this.map.dispatchEvent({
+            "type": "render_historic_districts"
+        });
+    }
+
+    disableHistoricDistricts(data) {
+        this.map.dispatchEvent({
+            "type": "disable_historic_districts"
+        });
+    }
+
+    renderHistoricPlaces(data) {
+        this.map.dispatchEvent({
+            "type": "render_historic_places"
+        });
+    }
+
+    disableHistoricPlaces(data) {
+        this.map.dispatchEvent({
+            "type": "disable_historic_places"
         });
     }
 
