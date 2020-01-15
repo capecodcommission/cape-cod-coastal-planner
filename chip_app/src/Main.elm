@@ -132,6 +132,8 @@ type alias Model =
     , methodsClicked : Openness
     , resourcesClicked : Openness
     , inundationClicked : Openness
+    , histDistClicked : Openness
+    , histPlacesClicked : Openness
     }
 
 
@@ -270,7 +272,11 @@ initialModel flags =
         Closed
         -- Resources clicked
         Closed
-        -- Inundation clied
+        -- Inundation clicked
+        Closed
+        -- Historic Districts clicked
+        Closed
+        -- Historic Places clicked
         Closed
 
 init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
@@ -1266,6 +1272,46 @@ updateModel msg model =
                     , olCmd <| encodeOpenLayersCmd (RenderStructures) 
                     )
 
+        ToggleHistDistLayer ->
+            case model.histDistClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | histDistClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableHistDist) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | histDistClicked = Open 
+                                , layerClicked = Open
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderHistDist) 
+                    )
+
+        ToggleHistPlacesLayer ->
+            case model.histPlacesClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | histPlacesClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableHistPlaces) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | histPlacesClicked = Open 
+                                , layerClicked = Open
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderHistPlaces) 
+                    )
+
 
         ClearAllLayers ->
             ( model 
@@ -1294,6 +1340,8 @@ updateModel msg model =
                         , dr1ftClicked = Closed
                         , critFacClicked = Closed
                         , structuresClicked = Closed 
+                        , histDistClicked = Closed
+                        , histPlacesClicked = Closed
                     }
             , olCmd <| encodeOpenLayersCmd (ClearLayers)
             )
@@ -1331,6 +1379,8 @@ updateModel msg model =
                         , dr1ftClicked = Closed
                         , critFacClicked = Closed
                         , structuresClicked = Closed 
+                        , histDistClicked = Closed
+                        , histPlacesClicked = Closed
                         , strategiesModalOpenness = Closed
                         , calculationOutput = Nothing
                         , zoneOfImpact = Nothing

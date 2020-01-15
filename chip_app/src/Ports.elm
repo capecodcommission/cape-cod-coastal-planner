@@ -56,6 +56,10 @@ type OpenLayersCmd
     | GetLocOL
     | DisableVulnOL
     | RenderVulnOL
+    | RenderHistDist
+    | DisableHistDist
+    | RenderHistPlaces
+    | DisableHistPlaces
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -258,6 +262,30 @@ encodeOpenLayersCmd cmd =
         RenderVulnOL -> 
             E.object
                 [ ( "cmd", E.string "render_vuln_ribbon" )
+
+                ]
+            
+        RenderHistDist -> 
+            E.object
+                [ ( "cmd", E.string "render_historic_districts" )
+
+                ]
+
+        DisableHistDist -> 
+            E.object
+                [ ( "cmd", E.string "disable_historic_districts" )
+
+                ]
+
+        RenderHistPlaces -> 
+            E.object
+                [ ( "cmd", E.string "render_historic_places" )
+
+                ]
+
+        DisableHistPlaces -> 
+            E.object
+                [ ( "cmd", E.string "disable_historic_places" )
 
                 ]
             

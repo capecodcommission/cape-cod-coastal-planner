@@ -107,58 +107,58 @@ slrDetails config paths =
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
             , text "Sea Level Rise" |> within [ infoIconView (Just "Sea level rise data was derived from Digital Elevation Model data collected through LiDAR in 2011, and is shown as a simple representation of a change in elevation - a 'bathtub' model.") ]
-            , paragraph 
-                CloseIcon 
-                [ paddingXY 35 0 ]
-                [ el 
-                    ( case config.slr1ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "1") ] <| text " 1ft -"
-                , el 
-                    ( case config.slr2ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "2") ] <| text " 2ft -"
-                , el 
-                    ( case config.slr3ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "3") ] <| text " 3ft -"
-                , el 
-                    ( case config.slr4ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "4") ] <| text " 4ft -"
-                , el 
-                    ( case config.slr5ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "5") ] <| text " 5ft -"
-                , el 
-                    ( case config.slr6ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "6") ] <| text " 6ft"
-                ]
+            ]
+        , paragraph 
+            CloseIcon 
+            [ paddingXY 35 0 ]
+            [ el 
+                ( case config.slr1ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "1") ] <| text " 1ft -"
+            , el 
+                ( case config.slr2ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "2") ] <| text " 2ft -"
+            , el 
+                ( case config.slr3ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "3") ] <| text " 3ft -"
+            , el 
+                ( case config.slr4ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "4") ] <| text " 4ft -"
+            , el 
+                ( case config.slr5ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "5") ] <| text " 5ft -"
+            , el 
+                ( case config.slr6ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "6") ] <| text " 6ft"
             ]
         , hairline (PL Line)
         , paragraph 
@@ -169,58 +169,58 @@ slrDetails config paths =
                 [height (px 20), width (px 20), moveDown 5, spacing 5] 
                 {src = paths.downArrow}
             , text "Disconnected Roads" |> within [ infoIconView (Just "ESRI Network Analyst was used to determine which roads are disconnected from the network at each increment of sea level rise.") ]
-            , paragraph 
-                CloseIcon 
-                [ paddingXY 30 0 ]
-                [ el 
-                    ( case config.dr1ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "1") ] <| text " 1ft -"
-                , el 
-                    ( case config.dr2ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "2") ] <| text " 2ft -"
-                , el 
-                    ( case config.dr3ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "3") ] <| text " 3ft -"
-                , el 
-                    ( case config.dr4ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "4") ] <| text " 4ft -"
-                , el 
-                    ( case config.dr5ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "5") ] <| text " 5ft -"
-                , el 
-                    ( case config.dr6ftClicked of 
-                        Open -> 
-                            (PL Clicked)
-                        Closed -> 
-                            (NoStyle)
-                    )  
-                    [ onClick (ToggleSLRLayer "6") ] <| text " 6ft"
-                ]
+            ]
+        , paragraph 
+            CloseIcon 
+            [ paddingXY 30 0 ]
+            [ el 
+                ( case config.dr1ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "1") ] <| text " 1ft -"
+            , el 
+                ( case config.dr2ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "2") ] <| text " 2ft -"
+            , el 
+                ( case config.dr3ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "3") ] <| text " 3ft -"
+            , el 
+                ( case config.dr4ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "4") ] <| text " 4ft -"
+            , el 
+                ( case config.dr5ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "5") ] <| text " 5ft -"
+            , el 
+                ( case config.dr6ftClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed -> 
+                        (NoStyle)
+                )  
+                [ onClick (ToggleSLRLayer "6") ] <| text " 6ft"
             ]
         , hairline (PL Line)
         , paragraph CloseIcon [onClick ToggleCritFac] 
