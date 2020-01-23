@@ -116,7 +116,7 @@ mainView config =
             [center]
             [ paragraph NoStyle
                 []
-                [ text "First time user? Follow the tutorial wizard first."
+                [ text "First time user? Tutorial wizard coming soon."
                 ]
             ]
         , el NoStyle 
