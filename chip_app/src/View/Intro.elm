@@ -116,9 +116,7 @@ mainView config =
             [center]
             [ paragraph NoStyle
                 []
-                [ text "First time user? Follow the "
-                , newTab "https://dev.capecodcoast.org" <| el (Zoi ZoiCallout) [] (text "tutorial wizard")
-                , text " first."
+                [ text "First time user? Follow the tutorial wizard first."
                 ]
             ]
         , el NoStyle 

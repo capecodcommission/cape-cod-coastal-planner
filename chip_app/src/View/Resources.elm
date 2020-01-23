@@ -105,7 +105,7 @@ mainView config =
                             [ verticalCenter, paddingBottom 5 ] 
                                 [ paragraph NoStyle
                                 [ width fill ]
-                                    [ newTab "https://cccom.link/adaptation"  <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES MATRIX") ]
+                                    [ newTab "https://cccom.link/adaptation" <| el (Modal MethodsResourcesModalHeading) [] (text "ADAPTATION STRATEGIES MATRIX") ]
                                 ]
                         , textLayout NoStyle
                             [ verticalCenter, width fill ] 
