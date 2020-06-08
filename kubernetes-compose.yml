@@ -137,7 +137,7 @@ items:
 #         - env:
 #           - name: POSTGRES_PASSWORD
 #             value: chip_dev
-#           image: postgres
+#           image: postgres:11
 #           name: cccpdb
 #           resources: {}
 #           volumeMounts:
