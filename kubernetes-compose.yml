@@ -102,6 +102,7 @@ items:
           - name: POSTGRES_PASSWORD
             value: chip_dev
           image: postgres:11
+          imagePullPolicy: IfNotPresent
           name: cccpdb
           resources: {}
           volumeMounts:
