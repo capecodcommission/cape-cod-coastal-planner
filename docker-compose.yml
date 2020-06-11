@@ -27,6 +27,7 @@ services:
   cccpdb:
     container_name: cccpdb
     image: postgres:11
+    imagePullPolicy: IfNotPresent
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
