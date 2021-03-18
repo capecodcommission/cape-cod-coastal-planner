@@ -1,4 +1,4 @@
-git cloo## https://barnstablecounty.sharepoint.com/sites/CCCDevTeam/kubernetes-deployment.yaml 
+## https://barnstablecounty.sharepoint.com/sites/CCCDevTeam/kubernetes-deployment.yaml 
 apiVersion: v1
 items:
 
@@ -1127,5 +1127,5 @@ items:
   #         ingressClass: nginx
   #       domains:
   #        - 'dev.watershedmvp.org'
-kind: List
-metadata: {}
+  #  kind: List
+  #  metadata: {}
