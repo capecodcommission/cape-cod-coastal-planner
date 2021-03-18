@@ -2,93 +2,93 @@
 apiVersion: v1
 items:
 
-# Persistent volume for postgres db
-- apiVersion: v1
-  kind: PersistentVolume
-  metadata:
-    name: cccpdev-pg
-    namespace: ccc
-    labels:
-      name: cccpdev-pg
-      type: local
-  spec:
-    capacity:
-      storage: 100Mi
-    accessModes:
-      - ReadWriteOnce
-    hostPath:
-      path: "/var/lib/postgresql/data"
-  status: {}
+# # Persistent volume for postgres db
+# - apiVersion: v1
+#   kind: PersistentVolume
+#   metadata:
+#     name: cccpdev-pg
+#     namespace: ccc
+#     labels:
+#       name: cccpdev-pg
+#       type: local
+#   spec:
+#     capacity:
+#       storage: 100Mi
+#     accessModes:
+#       - ReadWriteOnce
+#     hostPath:
+#       path: "/var/lib/postgresql/data"
+#   status: {}
 
-# Volume claim for postgres db
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    name: cccpdev-pg-claim
-    namespace: ccc
-    labels:
-      name: cccpdev-pg-claim
-  spec:
-    accessModes:
-    - ReadWriteOnce
-    volumeMode: Filesystem
-    resources:
-      requests:
-        storage: 100Mi
-  status: {}
+# # Volume claim for postgres db
+# - apiVersion: v1
+#   kind: PersistentVolumeClaim
+#   metadata:
+#     name: cccpdev-pg-claim
+#     namespace: ccc
+#     labels:
+#       name: cccpdev-pg-claim
+#   spec:
+#     accessModes:
+#     - ReadWriteOnce
+#     volumeMode: Filesystem
+#     resources:
+#       requests:
+#         storage: 100Mi
+#   status: {}
 
-# db deployment
-- apiVersion: extensions/v1beta1
-  kind: Deployment
-  metadata:
-    labels:
-      app: cccpdb
-    name: cccpdb
-    namespace: ccc
-  spec:
-    replicas: 1
-    strategy:
-      type: Recreate
-    template:
-      metadata:
-        labels:
-          app: cccpdb
-      spec:
-        containers:
-        - env:
-          - name: POSTGRES_PASSWORD
-            value: chip_dev
-          image: postgres:11
-          name: cccpdb
-          resources: {}
-          volumeMounts:
-          - mountPath: /var/lib/postgresql/data
-            name: cccpdev-pg
-            subPath: postgres
-        restartPolicy: Always
-        volumes:
-        - name: cccpdev-pg
-          persistentVolumeClaim:
-            claimName: cccpdev-pg-claim
-  status: {}
+# # db deployment
+# - apiVersion: extensions/v1beta1
+  # kind: Deployment
+  # metadata:
+  #   labels:
+  #     app: cccpdb
+  #   name: cccpdb
+  #   namespace: ccc
+  # spec:
+  #   replicas: 1
+  #   strategy:
+  #     type: Recreate
+  #   template:
+  #     metadata:
+  #       labels:
+  #         app: cccpdb
+  #     spec:
+  #       containers:
+  #       - env:
+  #         - name: POSTGRES_PASSWORD
+  #           value: chip_dev
+  #         image: postgres:11
+  #         name: cccpdb
+  #         resources: {}
+  #         volumeMounts:
+  #         - mountPath: /var/lib/postgresql/data
+  #           name: cccpdev-pg
+  #           subPath: postgres
+  #       restartPolicy: Always
+  #       volumes:
+  #       - name: cccpdev-pg
+  #         persistentVolumeClaim:
+  #           claimName: cccpdev-pg-claim
+  # status: {}
 
-# db service
-- apiVersion: v1
-  kind: Service
-  metadata:
-    labels:
-      app: cccpdb
-    name: cccpdb
-    namespace: ccc
-  spec:
-    ports:
-    - name: "5432"
-      port: 5432
-      targetPort: 5432
-    selector:
-      app: cccpdb
-  status:
-    loadBalancer: {}
+# # db service
+# - apiVersion: v1
+#   kind: Service
+#   metadata:
+#     labels:
+#       app: cccpdb
+#     name: cccpdb
+#     namespace: ccc
+#   spec:
+#     ports:
+#     - name: "5432"
+#       port: 5432
+#       targetPort: 5432
+#     selector:
+#       app: cccpdb
+#   status:
+#     loadBalancer: {}
 
 # # cccpfront deployment
 # - apiVersion: apps/v1
@@ -140,56 +140,56 @@ items:
 #         targetPort: 80
 #         protocol: TCP
 
-# cccpapi deployment
-- apiVersion: extensions/v1beta1
-  kind: Deployment
-  metadata:
-    labels:
-      app: cccpapi
-      keel.sh/policy: force
-      keel.sh/match-tag: "true"
-    name: cccpapi
-    namespace: ccc
-  spec:
-    replicas: 1
-    revisionHistoryLimit: 1
-    selector:
-      matchLabels:
-        app: cccpapi
-    strategy: {}
-    template:
-      metadata:
-        labels:
-          app: cccpapi
-      spec:
-        containers:
-        - image: ccccontainers.azurecr.io/cccp-api:latest
-          imagePullPolicy: Always
-          name: cccpapi
-          ports:
-          - containerPort: 4000
-          resources: {}
-        restartPolicy: Always
-  status: {}
+# # cccpapi deployment
+# - apiVersion: extensions/v1beta1
+#   kind: Deployment
+#   metadata:
+#     labels:
+#       app: cccpapi
+#       keel.sh/policy: force
+#       keel.sh/match-tag: "true"
+#     name: cccpapi
+#     namespace: ccc
+#   spec:
+#     replicas: 1
+#     revisionHistoryLimit: 1
+#     selector:
+#       matchLabels:
+#         app: cccpapi
+#     strategy: {}
+#     template:
+#       metadata:
+#         labels:
+#           app: cccpapi
+#       spec:
+#         containers:
+#         - image: ccccontainers.azurecr.io/cccp-api:latest
+#           imagePullPolicy: Always
+#           name: cccpapi
+#           ports:
+#           - containerPort: 4000
+#           resources: {}
+#         restartPolicy: Always
+#   status: {}
 
-# cccpapi service
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-    labels:
-      app: cccpapi
-    name: cccpapi
-    namespace: ccc
-  spec:
-    ports:
-    - name: "4000"
-      port: 4000
-      targetPort: 4000
-    selector:
-      app: cccpapi
-  status:
-    loadBalancer: {}
+# # cccpapi service
+# - apiVersion: v1
+#   kind: Service
+#   metadata:
+#     annotations:
+#     labels:
+#       app: cccpapi
+#     name: cccpapi
+#     namespace: ccc
+#   spec:
+#     ports:
+#     - name: "4000"
+#       port: 4000
+#       targetPort: 4000
+#     selector:
+#       app: cccpapi
+#   status:
+#     loadBalancer: {}
 
 # # cccpfrontuat deployment
 # - apiVersion: apps/v1
@@ -241,105 +241,105 @@ items:
 #         targetPort: 80
 #         protocol: TCP
 
-# cccpapiuat deployment
-- apiVersion: extensions/v1beta1
-  kind: Deployment
-  metadata:
-    labels:
-      app: cccpapiuat
-      keel.sh/policy: force
-      keel.sh/match-tag: "true"
-    name: cccpapiuat
-    namespace: ccc
-  spec:
-    replicas: 1
-    revisionHistoryLimit: 5
-    selector:
-      matchLabels:
-        app: cccpapiuat
-    strategy: {}
-    template:
-      metadata:
-        labels:
-          app: cccpapiuat
-      spec:
-        containers:
-        - image: ccccontainers.azurecr.io/cccp-api:uat
-          imagePullPolicy: Always
-          name: cccpapiuat
-          ports:
-          - containerPort: 9001
-          resources: {}
-        restartPolicy: Always
-  status: {}
-
-# cccpapiuat service
-- apiVersion: v1
-  kind: Service
-  metadata:
-    labels:
-      app: cccpapiuat
-    name: cccpapiuat
-    namespace: ccc
-  spec:
-    ports:
-    - name: "9001"
-      port: 9001
-      targetPort: 9001
-    selector:
-      app: cccpapiuat
-  status:
-    loadBalancer: {}
-
-# # cccpfrontdev deployment
-# - apiVersion: apps/v1
+# # cccpapiuat deployment
+# - apiVersion: extensions/v1beta1
 #   kind: Deployment
 #   metadata:
-#     name: cccpdevdeploy
-#     namespace: ccc
 #     labels:
+#       app: cccpapiuat
 #       keel.sh/policy: force
 #       keel.sh/match-tag: "true"
-#       app: cccpfrontdev
+#     name: cccpapiuat
+#     namespace: ccc
 #   spec:
+#     replicas: 1
+#     revisionHistoryLimit: 5
 #     selector:
 #       matchLabels:
-#         app: cccpfrontdev
-#     replicas: 1 # tells deployment to run 3 pods matching the template
-#     revisionHistoryLimit: 1
+#         app: cccpapiuat
 #     strategy: {}
 #     template:
 #       metadata:
 #         labels:
-#           app: cccpfrontdev
+#           app: cccpapiuat
 #       spec:
 #         containers:
-#         - name: cccp-dev
-#           image: ccccontainers.azurecr.io/cccp-front:dev
+#         - image: ccccontainers.azurecr.io/cccp-api:uat
 #           imagePullPolicy: Always
+#           name: cccpapiuat
 #           ports:
-#           - name: "cccp-dev-port"
-#             containerPort: 80
-#             protocol: TCP
+#           - containerPort: 9001
 #           resources: {}
 #         restartPolicy: Always
 #   status: {}
 
-# # cccpfrontdev service
-# - apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+# # cccpapiuat service
+# - apiVersion: v1
 #   kind: Service
 #   metadata:
-#       name: cccpdevsvc
-#       namespace: ccc
+#     labels:
+#       app: cccpapiuat
+#     name: cccpapiuat
+#     namespace: ccc
 #   spec:
-#     type: LoadBalancer
-#     selector:
-#         app: cccpfrontdev
 #     ports:
-#       - name: "cccp-dev-80"
-#         port: 80
-#         targetPort: 80
-#         protocol: TCP
+#     - name: "9001"
+#       port: 9001
+#       targetPort: 9001
+#     selector:
+#       app: cccpapiuat
+#   status:
+#     loadBalancer: {}
+
+# cccpfrontdev deployment
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: cccpdevdeploy
+    namespace: ccc
+    labels:
+      keel.sh/policy: force
+      keel.sh/match-tag: "true"
+      app: cccpfrontdev
+  spec:
+    selector:
+      matchLabels:
+        app: cccpfrontdev
+    replicas: 1 # tells deployment to run 3 pods matching the template
+    revisionHistoryLimit: 1
+    strategy: {}
+    template:
+      metadata:
+        labels:
+          app: cccpfrontdev
+      spec:
+        containers:
+        - name: cccp-dev
+          image: ccccontainers.azurecr.io/cccp-front:dev
+          imagePullPolicy: Always
+          ports:
+          - name: "cccp-dev-port"
+            containerPort: 80
+            protocol: TCP
+          resources: {}
+        restartPolicy: Always
+  status: {}
+
+# cccpfrontdev service
+- apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+  kind: Service
+  metadata:
+      name: cccpdevsvc
+      namespace: ccc
+  spec:
+    type: LoadBalancer
+    selector:
+        app: cccpfrontdev
+    ports:
+      - name: "cccp-dev-80"
+        port: 80
+        targetPort: 80
+        protocol: TCP
 
 # cccpapidev deployment
 - apiVersion: extensions/v1beta1
@@ -641,33 +641,33 @@ items:
 #         targetPort: 80
 #         protocol: TCP
 
-# # STAGING CLUSTER ISSUER
-# ---
-# apiVersion: certmanager.k8s.io/v1alpha1
-# kind: ClusterIssuer
-# metadata:
-#   name: letsencrypt-staging
-# spec:
-#   acme:
-#     server: https://acme-staging-v02.api.letsencrypt.org/directory # staging
-#     email: info@capecodcommission.org
-#     privateKeySecretRef:
-#       name: letsencrypt-staging
-#     http01: {}
+# STAGING CLUSTER ISSUER
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory # staging
+    email: info@capecodcommission.org
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    http01: {}
 
-# # PRODUCTION CLUSTER ISSUER
-# ---
-# apiVersion: certmanager.k8s.io/v1alpha1
-# kind: ClusterIssuer
-# metadata:
-#   name: letsencrypt-prod
-# spec:
-#   acme:
-#     server: https://acme-v02.api.letsencrypt.org/directory
-#     email: info@capecodcommission.org
-#     privateKeySecretRef:
-#       name: letsencrypt-prod
-#     http01: {}
+# PRODUCTION CLUSTER ISSUER
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: info@capecodcommission.org
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    http01: {}
 
 # # cccpsvc staging cert
 # - apiVersion: certmanager.k8s.io/v1alpha1
@@ -1127,5 +1127,5 @@ items:
   #         ingressClass: nginx
   #       domains:
   #        - 'dev.watershedmvp.org'
-  #  kind: List
-  #  metadata: {}
+  kind: List
+  metadata: {}
