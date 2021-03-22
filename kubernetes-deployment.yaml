@@ -1,0 +1,1131 @@
+## https://barnstablecounty.sharepoint.com/sites/CCCDevTeam/kubernetes-deployment.yaml 
+apiVersion: v1
+items:
+
+# # Persistent volume for postgres db
+# - apiVersion: v1
+#   kind: PersistentVolume
+#   metadata:
+#     name: cccpdev-pg
+#     namespace: ccc
+#     labels:
+#       name: cccpdev-pg
+#       type: local
+#   spec:
+#     capacity:
+#       storage: 100Mi
+#     accessModes:
+#       - ReadWriteOnce
+#     hostPath:
+#       path: "/var/lib/postgresql/data"
+#   status: {}
+
+# # Volume claim for postgres db
+# - apiVersion: v1
+#   kind: PersistentVolumeClaim
+#   metadata:
+#     name: cccpdev-pg-claim
+#     namespace: ccc
+#     labels:
+#       name: cccpdev-pg-claim
+#   spec:
+#     accessModes:
+#     - ReadWriteOnce
+#     volumeMode: Filesystem
+#     resources:
+#       requests:
+#         storage: 100Mi
+#   status: {}
+
+# # db deployment
+# - apiVersion: extensions/v1beta1
+  # kind: Deployment
+  # metadata:
+  #   labels:
+  #     app: cccpdb
+  #   name: cccpdb
+  #   namespace: ccc
+  # spec:
+  #   replicas: 1
+  #   strategy:
+  #     type: Recreate
+  #   template:
+  #     metadata:
+  #       labels:
+  #         app: cccpdb
+  #     spec:
+  #       containers:
+  #       - env:
+  #         - name: POSTGRES_PASSWORD
+  #           value: chip_dev
+  #         image: postgres:11
+  #         name: cccpdb
+  #         resources: {}
+  #         volumeMounts:
+  #         - mountPath: /var/lib/postgresql/data
+  #           name: cccpdev-pg
+  #           subPath: postgres
+  #       restartPolicy: Always
+  #       volumes:
+  #       - name: cccpdev-pg
+  #         persistentVolumeClaim:
+  #           claimName: cccpdev-pg-claim
+  # status: {}
+
+# # db service
+# - apiVersion: v1
+#   kind: Service
+#   metadata:
+#     labels:
+#       app: cccpdb
+#     name: cccpdb
+#     namespace: ccc
+#   spec:
+#     ports:
+#     - name: "5432"
+#       port: 5432
+#       targetPort: 5432
+#     selector:
+#       app: cccpdb
+#   status:
+#     loadBalancer: {}
+
+# # cccpfront deployment
+# - apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: cccpdeploy
+#     namespace: ccc
+#     labels:
+#       keel.sh/policy: force
+#       keel.sh/match-tag: "true"
+#       app: cccpfrontlatest
+#   spec:
+#     selector:
+#       matchLabels:
+#         app: cccpfrontlatest
+#     replicas: 1 # tells deployment to run 3 pods matching the template
+#     revisionHistoryLimit: 1
+#     strategy: {}
+#     template:
+#       metadata:
+#         labels:
+#           app: cccpfrontlatest
+#       spec:
+#         containers:
+#         - name: cccp-latest
+#           image: ccccontainers.azurecr.io/cccp-front:latest
+#           imagePullPolicy: Always
+#           ports:
+#           - name: "cccp-deploy-80"
+#             containerPort: 80
+#             protocol: TCP
+#           resources: {}
+#         restartPolicy: Always
+#   status: {}
+
+# # cccpfront service
+# - apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+#   kind: Service
+#   metadata:
+#       name: cccpsvc
+#       namespace: ccc
+#   spec:
+#     type: LoadBalancer
+#     selector:
+#         app: cccpfrontlatest
+#     ports:
+#       - name: "cccp-latest-80"
+#         port: 80
+#         targetPort: 80
+#         protocol: TCP
+
+# # cccpapi deployment
+# - apiVersion: extensions/v1beta1
+#   kind: Deployment
+#   metadata:
+#     labels:
+#       app: cccpapi
+#       keel.sh/policy: force
+#       keel.sh/match-tag: "true"
+#     name: cccpapi
+#     namespace: ccc
+#   spec:
+#     replicas: 1
+#     revisionHistoryLimit: 1
+#     selector:
+#       matchLabels:
+#         app: cccpapi
+#     strategy: {}
+#     template:
+#       metadata:
+#         labels:
+#           app: cccpapi
+#       spec:
+#         containers:
+#         - image: ccccontainers.azurecr.io/cccp-api:latest
+#           imagePullPolicy: Always
+#           name: cccpapi
+#           ports:
+#           - containerPort: 4000
+#           resources: {}
+#         restartPolicy: Always
+#   status: {}
+
+# # cccpapi service
+# - apiVersion: v1
+#   kind: Service
+#   metadata:
+#     annotations:
+#     labels:
+#       app: cccpapi
+#     name: cccpapi
+#     namespace: ccc
+#   spec:
+#     ports:
+#     - name: "4000"
+#       port: 4000
+#       targetPort: 4000
+#     selector:
+#       app: cccpapi
+#   status:
+#     loadBalancer: {}
+
+# # cccpfrontuat deployment
+# - apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: cccpuatdeploy
+#     namespace: ccc
+#     labels:
+#       keel.sh/policy: force
+#       keel.sh/match-tag: "true"
+#       app: cccpfrontuat
+#   spec:
+#     selector:
+#       matchLabels:
+#         app: cccpfrontuat
+#     replicas: 1 # tells deployment to run 3 pods matching the template
+#     revisionHistoryLimit: 1
+#     strategy: {}
+#     template:
+#       metadata:
+#         labels:
+#           app: cccpfrontuat
+#       spec:
+#         containers:
+#         - name: cccp-uat
+#           image: ccccontainers.azurecr.io/cccp-front:uat
+#           imagePullPolicy: Always
+#           ports:
+#           - name: "cccpdeploy-uat"
+#             containerPort: 80
+#             protocol: TCP
+#           resources: {}
+#         restartPolicy: Always
+#   status: {}
+
+# # cccpfrontuat service
+# - apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+#   kind: Service
+#   metadata:
+#       name: cccpuatsvc
+#       namespace: ccc
+#   spec:
+#     type: LoadBalancer
+#     selector:
+#         app: cccpfrontuat
+#     ports:
+#       - name: "cccp-uat-80"
+#         port: 80
+#         targetPort: 80
+#         protocol: TCP
+
+# # cccpapiuat deployment
+# - apiVersion: extensions/v1beta1
+#   kind: Deployment
+#   metadata:
+#     labels:
+#       app: cccpapiuat
+#       keel.sh/policy: force
+#       keel.sh/match-tag: "true"
+#     name: cccpapiuat
+#     namespace: ccc
+#   spec:
+#     replicas: 1
+#     revisionHistoryLimit: 5
+#     selector:
+#       matchLabels:
+#         app: cccpapiuat
+#     strategy: {}
+#     template:
+#       metadata:
+#         labels:
+#           app: cccpapiuat
+#       spec:
+#         containers:
+#         - image: ccccontainers.azurecr.io/cccp-api:uat
+#           imagePullPolicy: Always
+#           name: cccpapiuat
+#           ports:
+#           - containerPort: 9001
+#           resources: {}
+#         restartPolicy: Always
+#   status: {}
+
+# # cccpapiuat service
+# - apiVersion: v1
+#   kind: Service
+#   metadata:
+#     labels:
+#       app: cccpapiuat
+#     name: cccpapiuat
+#     namespace: ccc
+#   spec:
+#     ports:
+#     - name: "9001"
+#       port: 9001
+#       targetPort: 9001
+#     selector:
+#       app: cccpapiuat
+#   status:
+#     loadBalancer: {}
+
+# cccpfrontdev deployment
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: cccpdevdeploy
+    namespace: ccc
+    labels:
+      keel.sh/policy: force
+      keel.sh/match-tag: "true"
+      app: cccpfrontdev
+  spec:
+    selector:
+      matchLabels:
+        app: cccpfrontdev
+    replicas: 1 # tells deployment to run 3 pods matching the template
+    revisionHistoryLimit: 1
+    strategy: {}
+    template:
+      metadata:
+        labels:
+          app: cccpfrontdev
+      spec:
+        containers:
+        - name: cccp-dev
+          image: ccccontainers.azurecr.io/cccp-front:dev
+          imagePullPolicy: Always
+          ports:
+          - name: "cccp-dev-port"
+            containerPort: 80
+            protocol: TCP
+          resources: {}
+        restartPolicy: Always
+  status: {}
+
+# cccpfrontdev service
+- apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+  kind: Service
+  metadata:
+      name: cccpdevsvc
+      namespace: ccc
+  spec:
+    type: LoadBalancer
+    selector:
+        app: cccpfrontdev
+    ports:
+      - name: "cccp-dev-80"
+        port: 80
+        targetPort: 80
+        protocol: TCP
+
+# cccpapidev deployment
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    labels:
+      app: cccpapidev
+      keel.sh/policy: force
+      keel.sh/match-tag: "true"
+    name: cccpapidev
+    namespace: ccc
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 5
+    selector:
+      matchLabels:
+        app: cccpapidev
+    strategy: {}
+    template:
+      metadata:
+        labels:
+          app: cccpapidev
+      spec:
+        containers:
+        - image: ccccontainers.azurecr.io/cccp-api:dev
+          imagePullPolicy: Always
+          name: cccpapidev
+          ports:
+          - containerPort: 9000
+          resources: {}
+        restartPolicy: Always
+  status: {}
+
+# cccpapidev service
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: cccpapidev
+    name: cccpapidev
+    namespace: ccc
+  spec:
+    ports:
+    - name: "9000"
+      port: 9000
+      targetPort: 9000
+    selector:
+      app: cccpapidev
+  status:
+    loadBalancer: {}
+
+# # wmvp prod deployment
+# - apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: wmvpdeploy
+#     namespace: ccc
+#     labels:
+#       keel.sh/policy: force
+#       keel.sh/match-tag: "true"
+#       app: wmvpfront
+#   spec:
+#     selector:
+#       matchLabels:
+#         app: wmvpfront
+#     replicas: 3 # tells deployment to run 3 pods matching the template
+#     revisionHistoryLimit: 1
+#     strategy: {}
+#     template:
+#       metadata:
+#         labels:
+#           app: wmvpfront
+#       spec:
+#         containers:
+#         - name: wmvpfront
+#           image: ccccontainers.azurecr.io/wmvp:latest
+#           imagePullPolicy: Always
+#           ports:
+#           - name: "wmvp-port"
+#             containerPort: 80
+#             protocol: TCP
+#           resources: {}
+#         restartPolicy: Always
+#   status: {}
+
+# # wmvp prod service
+# - apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+#   kind: Service
+#   metadata:
+#       name: wmvpsvc
+#       namespace: ccc
+#   spec:
+#     type: LoadBalancer
+#     selector:
+#         app: wmvpfront
+#     ports:
+#       - name: "wmvp-latest-80"
+#         port: 80
+#         targetPort: 80
+#         protocol: TCP
+
+# # wmvp dev deployment
+# - apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: wmvpdevdeploy
+#     namespace: ccc
+#     labels:
+#       keel.sh/policy: force
+#       keel.sh/match-tag: "true"
+#       app: wmvpfrontdev
+#   spec:
+#     selector:
+#       matchLabels:
+#         app: wmvpfrontdev
+#     replicas: 1 # tells deployment to run 3 pods matching the template
+#     revisionHistoryLimit: 1
+#     strategy: {}
+#     template:
+#       metadata:
+#         labels:
+#           app: wmvpfrontdev
+#       spec:
+#         containers:
+#         - name: wmvp-dev
+#           image: ccccontainers.azurecr.io/wmvp:dev
+#           imagePullPolicy: Always
+#           ports:
+#           - name: "wmvp-dev-port"
+#             containerPort: 80
+#             protocol: TCP
+#           resources: {}
+#         restartPolicy: Always
+#   status: {}
+
+# # wmvp dev service
+# - apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+#   kind: Service
+#   metadata:
+#       name: wmvpdevsvc
+#       namespace: ccc
+#   spec:
+#     type: LoadBalancer
+#     selector:
+#         app: wmvpfrontdev
+#     ports:
+#       - name: "wmvp-dev-80"
+#         port: 80
+#         targetPort: 80
+#         protocol: TCP
+
+# slrvfront deployment
+# - apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: slrvdeploy
+#     namespace: ccc
+#     labels:
+#       keel.sh/policy: force
+#       keel.sh/match-tag: "true"
+#       app: slrvfrontlatest
+#   spec:
+#     selector:
+#       matchLabels:
+#         app: slrvfrontlatest
+#     replicas: 1 # tells deployment to run 3 pods matching the template
+#     revisionHistoryLimit: 1
+#     strategy: {}
+#     template:
+#       metadata:
+#         labels:
+#           app: slrvfrontlatest
+#       spec:
+#         containers:
+#         - name: sea-level-rise-viewer-latest
+#           image: ccccontainers.azurecr.io/slr-front:latest
+#           imagePullPolicy: Always
+#           ports:
+#           - name: "slrv-deploy-80"
+#             containerPort: 80
+#             protocol: TCP
+#           resources: {}
+#         restartPolicy: Always
+#   status: {}
+
+#   # slrvfront service
+# - apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+#   kind: Service
+#   metadata:
+#       name: slrvsvc
+#       namespace: ccc
+#   spec:
+#     type: LoadBalancer
+#     selector:
+#         app: slrvfrontlatest
+#     ports:
+#       - name: "slrv-latest-80"
+#         port: 80
+#         targetPort: 80
+#         protocol: TCP
+
+# # SLRV uat deployment
+# - apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: slrvuatdeploy
+#     namespace: ccc
+#     labels:
+#       keel.sh/policy: force
+#       keel.sh/match-tag: "true"
+#       app: slrvfrontuat
+#   spec:
+#     selector:
+#       matchLabels:
+#         app: slrvfrontuat
+#     replicas: 1 # tells deployment to run 3 pods matching the template
+#     revisionHistoryLimit: 1
+#     strategy: {}
+#     template:
+#       metadata:
+#         labels:
+#           app: slrvfrontuat
+#       spec:
+#         containers:
+#         - name: slrv-uat
+#           image: ccccontainers.azurecr.io/slr-front:uat
+#           imagePullPolicy: Always
+#           ports:
+#           - name: "slrv-uat-port"
+#             containerPort: 80
+#             protocol: TCP
+#           resources: {}
+#         restartPolicy: Always
+#   status: {}
+
+# # SLRV uat service
+# - apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+#   kind: Service
+#   metadata:
+#       name: slrvuatsvc
+#       namespace: ccc
+#   spec:
+#     type: LoadBalancer
+#     selector:
+#         app: slrvfrontuat
+#     ports:
+#       - name: "slrv-uat-80"
+#         port: 80
+#         targetPort: 80
+#         protocol: TCP
+
+# # SLRV dev deployment
+# - apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: slrvdevdeploy
+#     namespace: ccc
+#     labels:
+#       keel.sh/policy: force
+#       keel.sh/match-tag: "true"
+#       app: slrvfrontdev
+#   spec:
+#     selector:
+#       matchLabels:
+#         app: slrvfrontdev
+#     replicas: 1 # tells deployment to run 3 pods matching the template
+#     revisionHistoryLimit: 1
+#     strategy: {}
+#     template:
+#       metadata:
+#         labels:
+#           app: slrvfrontdev
+#       spec:
+#         containers:
+#         - name: slrv-dev
+#           image: ccccontainers.azurecr.io/slr-front:dev
+#           imagePullPolicy: Always
+#           ports:
+#           - name: "slrv-dev-port"
+#             containerPort: 80
+#             protocol: TCP
+#           resources: {}
+#         restartPolicy: Always
+#   status: {}
+
+# # SLRV dev service
+# - apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+#   kind: Service
+#   metadata:
+#       name: slrvdevsvc
+#       namespace: ccc
+#   spec:
+#     type: LoadBalancer
+#     selector:
+#         app: slrvfrontdev
+#     ports:
+#       - name: "slrv-dev-80"
+#         port: 80
+#         targetPort: 80
+#         protocol: TCP
+
+# STAGING CLUSTER ISSUER
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory # staging
+    email: info@capecodcommission.org
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    http01: {}
+
+# PRODUCTION CLUSTER ISSUER
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: info@capecodcommission.org
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    http01: {}
+
+# # cccpsvc staging cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: cccpsvc-staging-cert
+#     namespace: ccc
+#   spec:
+#     secretName: cccpsvc-staging-cert
+#     dnsNames:
+#     - www.capecodcoast.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - www.capecodcoast.org
+#     issuerRef:
+#       name: letsencrypt-staging
+#       kind: ClusterIssuer 
+
+# # cccpsvc prod cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: cccpsvc-prod-cert
+#     namespace: ccc
+#   spec:
+#     secretName: cccpsvc-prod-cert
+#     renewBefore: 360h #15 days
+#     dnsNames:
+#     - www.capecodcoast.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - www.capecodcoast.org
+#     issuerRef:
+#       name: letsencrypt-prod
+#       kind: ClusterIssuer 
+
+# # cccpdevsvc staging cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: cccpdevsvc-staging-cert
+#     namespace: ccc
+#   spec:
+#     secretName: cccpdevsvc-staging-cert
+#     dnsNames:
+#     - dev.capecodcoast.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - dev.capecodcoast.org
+#     issuerRef:
+#       name: letsencrypt-staging
+#       kind: ClusterIssuer 
+
+# # cccpdevsvc prod cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: cccpdevsvc-prod-cert
+#     namespace: ccc
+#   spec:
+#     secretName: cccpdevsvc-prod-cert
+#     renewBefore: 360h #15 days
+#     dnsNames:
+#     - dev.capecodcoast.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - dev.capecodcoast.org
+#     issuerRef:
+#       name: letsencrypt-prod
+#       kind: ClusterIssuer 
+
+# # cccpuatsvc staging cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: cccpuatsvc-staging-cert
+#     namespace: ccc
+#   spec:
+#     secretName: cccpuatsvc-staging-cert
+#     dnsNames:
+#     - uat.capecodcoast.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - uat.capecodcoast.org
+#     issuerRef:
+#       name: letsencrypt-staging
+#       kind: ClusterIssuer 
+
+# # cccpuatsvc prod cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: cccpuatsvc-prod-cert
+#     namespace: ccc
+#   spec:
+#     secretName: cccpuatsvc-prod-cert
+#     renewBefore: 360h #15 days
+#     dnsNames:
+#     - uat.capecodcoast.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - uat.capecodcoast.org
+#     issuerRef:
+#       name: letsencrypt-prod
+#       kind: ClusterIssuer 
+
+# # wmvpdevsvc staging cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: wmvpdevsvc-staging-cert
+#     namespace: ccc
+#   spec:
+#     secretName: wmvpdevsvc-staging-cert
+#     dnsNames:
+#     - dev.watershedmvp.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - dev.watershedmvp.org
+#     issuerRef:
+#       name: letsencrypt-staging
+#       kind: ClusterIssuer 
+
+# # wmvpdevsvc prod cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: wmvpdevsvc-prod-cert
+#     namespace: ccc
+#   spec:
+#     secretName: wmvpdevsvc-prod-cert
+#     renewBefore: 360h #15 days
+#     dnsNames:
+#     - dev.watershedmvp.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - dev.watershedmvp.org
+#     issuerRef:
+#       name: letsencrypt-prod
+#       kind: ClusterIssuer 
+
+# # slrvsvc staging cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: slrvsvc-staging-cert
+#     namespace: ccc
+#   spec:
+#     secretName: slrvsvc-staging-cert
+#     dnsNames:
+#     - www.slrv.apps.capecodcommission.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - www.slrv.apps.capecodcommission.org
+#     issuerRef:
+#       name: letsencrypt-staging
+#       kind: ClusterIssuer 
+
+# slrvsvc prod cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: slrvsvc-prod-cert
+#     namespace: ccc
+#   spec:
+#     secretName: slrvsvc-prod-cert
+#     renewBefore: 360h #15 days
+#     dnsNames:
+#     - slrv.apps.capecodcommission.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - slrv.apps.capecodcommission.org
+#     issuerRef:
+#       name: letsencrypt-prod
+#       kind: ClusterIssuer 
+
+# # slrvuatsvc staging cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: slrvuatsvc-staging-cert
+#     namespace: ccc
+#   spec:
+#     secretName: slrvuatsvc-staging-cert
+#     dnsNames:
+#     - uat.slrv.apps.capecodcommission.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - uat.slrv.apps.capecodcommission.org
+#     issuerRef:
+#       name: letsencrypt-staging
+#       kind: ClusterIssuer 
+
+# # slrvuatsvc prod cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: slrvuatsvc-prod-cert
+#     namespace: ccc
+#   spec:
+#     secretName: slrvuatsvc-prod-cert
+#     renewBefore: 360h #15 days
+#     dnsNames:
+#     - uat.slrv.apps.capecodcommission.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - uat.slrv.apps.capecodcommission.org
+#     issuerRef:
+#       name: letsencrypt-prod
+#       kind: ClusterIssuer 
+
+# # slrvdevsvc staging cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: slrvdevsvc-staging-cert
+#     namespace: ccc
+#   spec:
+#     secretName: slrvdevsvc-staging-cert
+#     dnsNames:
+#     - dev.slrv.apps.capecodcommission.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - dev.slrv.apps.capecodcommission.org
+#     issuerRef:
+#       name: letsencrypt-staging
+#       kind: ClusterIssuer 
+
+# # slrvdevsvc prod cert
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: slrvdevsvc-prod-cert
+#     namespace: ccc
+#   spec:
+#     secretName: slrvdevsvc-prod-cert
+#     renewBefore: 360h #15 days
+#     dnsNames:
+#     - dev.slrv.apps.capecodcommission.org
+#     acme:
+#       config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+#         - dev.slrv.apps.capecodcommission.org
+#     issuerRef:
+#       name: letsencrypt-prod
+#       kind: ClusterIssuer 
+
+# # CCC INGRESS RESOURCE
+# - apiVersion: extensions/v1beta1
+#   kind: Ingress
+#   metadata:
+#     name: ccc-ingress
+#     namespace: ccc
+#     annotations:
+#       kubernetes.io/ingress.class: nginx
+#       # certmanager.k8s.io/cluster-issuer: letsencrypt-staging
+#       certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+#       nginx.ingress.kubernetes.io/rewrite-target: /
+#   spec:
+#     tls:
+#     - hosts:
+#       - www.capecodcoast.org
+#       # secretName: cccpsvc-staging-cert
+#       secretName: cccpsvc-prod-cert
+#     - hosts:
+#       - uat.capecodcoast.org
+#       # secretName: cccpuatsvc-staging-cert
+#       secretName: cccpuatsvc-prod-cert
+#     - hosts:
+#       - dev.capecodcoast.org
+#       # secretName: cccpdevsvc-staging-cert
+#       secretName: cccpdevsvc-prod-cert
+#     - hosts:
+#       - dev.watershedmvp.org
+#       # secretName: wmvpdevsvc-staging-cert
+#       secretName: wmvpdevsvc-prod-cert
+#     - hosts:
+#       - slrv.apps.capecodcommission.org
+#       # secretName: slrvsvc-staging-cert
+#       secretName: slrvsvc-prod-cert
+#     - hosts:
+#       - uat.slrv.apps.capecodcommission.org
+#       # secretName: slrvuatsvc-staging-cert
+#       secretName: slrvuatsvc-prod-cert
+#     - hosts:
+#       - dev.slrv.apps.capecodcommission.org
+#       # secretName: slrvdevsvc-staging-cert
+#       secretName: slrvdevsvc-prod-cert
+#     rules:
+#     - host: www.capecodcoast.org
+#       http:
+#         paths:
+#         - path: /
+#           backend:
+#             serviceName: cccpsvc
+#             servicePort: 80
+#     - host: uat.capecodcoast.org
+#       http:
+#         paths:
+#         - path: /
+#           backend:
+#             serviceName: cccpuatsvc
+#             servicePort: 80
+#     - host: dev.capecodcoast.org
+#       http:
+#         paths:
+#         - path: /
+#           backend:
+#             serviceName: cccpdevsvc
+#             servicePort: 80
+#     - host: dev.watershedmvp.org
+#       http:
+#         paths:
+#         - path: /
+#           backend:
+#             serviceName: wmvpdevsvc
+#             servicePort: 80
+#     - host: slrv.apps.capecodcommission.org
+#       http:
+#         paths:
+#         - path: /
+#           backend:
+#             serviceName: slrvsvc
+#             servicePort: 80
+#     - host: uat.slrv.apps.capecodcommission.org
+#       http:
+#         paths:
+#         - path: /
+#           backend:
+#             serviceName: slrvuatsvc
+#             servicePort: 80
+#     - host: dev.slrv.apps.capecodcommission.org
+#       http:
+#         paths:
+#         - path: /
+#           backend:
+#             serviceName: slrvdevsvc
+#             servicePort: 80
+
+# # https://docs.cert-manager.io/en/latest/tutorials/acme/http-validation.html
+# # CLUSTERISSUER = CLUSTER-SCOPED (ANY NAMESPACE)
+# # YOU MUST DECIDE BETWEEN STAGING OR PRODUCTION WHEN ISSUING CERTS
+# #  ---
+# - apiVersion: certmanager.k8s.io/v1alpha1
+#   kind: Certificate
+#   metadata:
+#     name: ccc-tls-secret
+#     namespace: ccc
+#   spec:
+#     secretName: ccc-tls-secret
+#     renewBefore: 360h #15 days
+#     dnsNames:
+    # CCCP
+    # - 'capecodcoast.org'
+    # - 'www.capecodcoast.org'
+    # - 'uat.capecodcoast.org'
+    # - 'dev.capecodcoast.org'
+    # # SLRV
+    # - 'slrv.apps.capecodcommission.org'
+    # - 'slrv.apps.capecodcommission.org/uat'
+    # - 'slrv.apps.capecodcommission.org/dev'
+    # # wMVP
+    # - 'watershedmvp.org'
+    # - 'www.watershedmvp.org'
+    # - 'watershedmvp.org/uat'
+    # - 'www.watershedmvp.org/uat'
+    # - 'watershedmvp.org/dev'
+    # - 'www.watershedmvp.org/dev'
+    # issuerRef:
+    #   name: letsencrypt-staging
+    # # name: letsencrypt-prod
+    #   kind: ClusterIssuer
+    # acme:
+    #   config:
+    #   - http01:
+    #       ingressClass: nginx
+    #     domains:
+    #     - 'capecodcoast.org'
+    #   - http01:
+    #       ingressClass: nginx
+    #     domains:
+    #     - 'www.capecodcoast.org'
+    #   - http01:
+    #       ingressClass: nginx
+    #     domains:
+    #     - 'uat.capecodcoast.org'
+    #   - http01:
+    #       ingressClass: nginx
+    #     domains:
+    #     - 'dev.capecodcoast.org'
+  #     - http01:
+  #         ingressClass: nginx
+  #       domains:
+  #        - 'slrv.apps.capecodcommission.org'
+  #     - http01:
+  #         ingressClass: nginx
+  #       domains:
+  #        - 'slrv.apps.capecodcommission.org/uat'
+  #     - http01:
+  #         ingressClass: nginx
+  #       domains:
+  #        - 'slrv.apps.capecodcommission.org/dev'
+  #     - http01:
+  #         ingressClass: nginx
+  #       domains:
+  #        - 'watershedmvp.org'
+  #     - http01:
+  #         ingressClass: nginx
+  #       domains:
+  #        - 'www.watershedmvp.org'
+  #     - http01:
+  #         ingressClass: nginx
+  #       domains:
+  #        - 'uat.watershedmvp.org'
+  #     - http01:
+  #         ingressClass: nginx
+  #       domains:
+  #        - 'dev.watershedmvp.org'
+  kind: List
+  metadata: {}

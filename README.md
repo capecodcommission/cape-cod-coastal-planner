@@ -89,12 +89,11 @@ kubectl get pods
 kubectl get services
 kubectl get deployments
 
-# Convert the Docker Compose file into a Kubernetes config file
-kompose convert -f docker-compose.yml -o kubernetes-compose.yml
+
 
 # Deploy new Kubernetes config to AKS Cluster
-# Please note: Run only when kubernetes-compose.yml file changes
-kubectl apply -f kubernetes-compose.yml
+# This is in Sharepoint
+kubectl apply -f kubernetes-deployment.yml
 
 # Enter an interactive terminal into a pod id
 kubectl exec -it cccpapi-1234567 -- /bin/bash

@@ -121,6 +121,8 @@ mix ecto.reset --env=prod
 
 cd ~/Projects/ccc/chip_app
 
+yarn set version berry
+
 rm -f package-lock.json
 rm -f yarn.lock
 
