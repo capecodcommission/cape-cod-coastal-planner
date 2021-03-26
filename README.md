@@ -16,6 +16,7 @@ Architecture Decision Records can be found in `ccc/docs/architecture` and docume
 cd cape-cod-coastal-planner/
 
 # Checkout the dev branch
+git checkout -b xxxXXXX dev
 
 # Create a feature branch off the dev branch
 naming convention of feature branch `this-feature`
