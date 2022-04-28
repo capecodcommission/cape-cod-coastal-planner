@@ -63,16 +63,17 @@ sudo su - postgres -c "psql -c \"CREATE USER ${CHIP_DB_USERNAME} PASSWORD '${CHI
 sudo su - postgres -c "psql -c \"ALTER USER ${CHIP_DB_USERNAME} CREATEDB\""
 
 # Install Node.js
-wget https://nodejs.org/dist/latest-v8.x/node-v8.12.0-linux-x64.tar.gz
-gunzip node-v8.12.0-linux-x64.tar.gz 
+#wget https://nodejs.org/dist/latest-v8.x/node-v8.12.0-linux-x64.tar.gz
+wget https://nodejs.org/dist/latest-v16.x/node-v16.14.2-linux-x64.tar.gz
+gunzip node-v16.14.2-linux-x64.tar.gz 
 cd /opt
 mkdir node
 cd node
-tar xf ~/node-v8.12.0-linux-x64.tar
+tar xf ~/node-v16.14.2-linux-x64.tar
 
 # Update PATH to include Node
-echo "export PATH=\$PATH:/opt/node/node-v8.12.0-linux-x64/bin" >> /etc/profile.d/chip.sh
-export PATH=$PATH:/opt/node/node-v8.12.0-linux-x64/bin
+echo "export PATH=\$PATH:/opt/node/node-v16.14.2-linux-x64/bin" >> /etc/profile.d/chip.sh
+export PATH=$PATH:/opt/node/node-v16.14.2-linux-x64/bin
 
 # Add user 'chipdev' to build app components
 useradd chipdev

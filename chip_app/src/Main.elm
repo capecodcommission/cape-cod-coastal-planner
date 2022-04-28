@@ -1,6 +1,7 @@
 module Main exposing (..)
 
-import Navigation
+import Browser.Navigation as Nav
+import Browser exposing (Document)
 import Element.Events exposing (onClick)
 import Html exposing (Html)
 import Element exposing (..)
@@ -8,19 +9,19 @@ import Element.Attributes exposing (..)
 import Element.Input as Input exposing (..)
 import RemoteData exposing (WebData)
 import Animation
+import Browser.Events exposing (onResize)
 import Animations
-import Window
 import RemoteData as Remote exposing (RemoteData(..))
 import Json.Decode as D exposing (..)
 import Dict exposing (Dict)
 import Maybe
 import Maybe.Extra as MEx
-import Dom
+import Browser.Dom as Dom
 import Task
 import List.Extra as LEx
 import List.Zipper as Zipper
 import ZipperHelpers as ZipHelp
-import Keyboard.Key exposing (Key(Up, Down, Left, Right, Enter, Escape))
+import Keyboard.Key exposing (Key(..))
 import Types exposing (..)
 import AdaptationStrategy.AdaptationInfo as Info exposing (AdaptationInfo)
 import AdaptationStrategy.CoastalHazards as Hazards exposing (CoastalHazards, CoastalHazard)
@@ -49,6 +50,12 @@ import View.Menu as Menu
 import View.Intro as Intro
 import View.Methods as Methods
 import View.Resources as Resources
+import Types exposing (WindowSize)
+import Browser
+import Url
+import Json.Decode exposing (Error(..))
+import Element.Input exposing (SelectMsg)
+import Element.Input exposing (SelectMsg)
 
 
 ---- MODEL ----
@@ -62,6 +69,7 @@ type App
 type alias Model =
     { env : Env
     , urlState : Maybe Route
+    , key : Nav.Key
     , device : Device
     , closePath : String
     , trianglePath : String
@@ -137,13 +145,14 @@ type alias Model =
     }
 
 
-initialModel : Flags -> Model
-initialModel flags =
+initialModel : Flags -> Nav.Key -> Model
+initialModel flags key =
     Model
         -- Environment variables
         flags.env
         -- Initial Route State
         (Just Blank)
+        key
         -- initial Device
         (classifyDevice flags.size)
         -- image paths
@@ -279,16 +288,15 @@ initialModel flags =
         -- Historic Places clicked
         Closed
 
-init : D.Value -> Navigation.Location -> ( App, Cmd Msg )
-init flags location =
+init : D.Value -> Url.Url -> Nav.Key -> ( App, Cmd Msg )
+init flags url key =
     case D.decodeValue decodeFlags flags of
         Ok flagData ->
             let
                 ( updatedApp, routeFx ) =
-                    flagData
-                        |> initialModel
+                        initialModel flagData key
                         |> Loaded
-                        |> update (UrlChange location)
+                        |> update (UrlChange url)
 
                 msgs =
                     Cmd.batch
@@ -303,7 +311,7 @@ init flags location =
                 )
 
         Err err ->
-            ( Failed err, Cmd.none )
+            ( Failed (D.errorToString err), Cmd.none )
 
 
 
@@ -315,7 +323,7 @@ update msg app =
     case app of
         Loaded model ->
             updateModel msg model
-                |> (\( model, cmds ) -> ( Loaded model, cmds ))
+                |> (\( newModel, cmds ) -> ( Loaded newModel, cmds ))
 
         Failed err ->
             ( Failed err, Cmd.none )
@@ -335,7 +343,18 @@ updateModel msg model =
                 ( { model | urlState = newState }
                 , Cmd.none
                 )
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    case url.fragment of
+                        Nothing ->
+                            ( model, Cmd.none )
 
+                        Just _ ->
+                            ( model, Nav.pushUrl model.key (Url.toString url) )
+
+                Browser.External href ->
+                    ( model, Nav.load href ) 
         GotAdaptationInfo response ->
             ( { model | adaptationInfo = response }, Cmd.none )
 
@@ -346,15 +365,15 @@ updateModel msg model =
                 |> \newLocations ->
                     ({ model | shorelineLocations = newLocations }, Cmd.none)
 
-        SelectLocationInput msg ->
+        SelectLocationInput locMsg ->
             let
                 updatedMenu =
-                    Input.updateSelection msg model.shorelineLocationsDropdown.menu
+                    Input.updateSelection locMsg model.shorelineLocationsDropdown.menu
 
                 updatedLocationsDropdown =
                     model.shorelineLocationsDropdown
                         |> \dd ->
-                                case parseMenuOpeningOrClosing msg of
+                                case parseMenuOpeningOrClosing locMsg of
                                     Just val ->
                                         { dd | menu = updatedMenu, isOpen = val }
 
@@ -373,7 +392,7 @@ updateModel msg model =
                                             model.shorelineLocations
 
                                     nc2 =
-                                        if shouldLocationMenuChangeTriggerZoomTo msg then
+                                        if shouldLocationMenuChangeTriggerZoomTo locMsg then
                                             Cmd.batch 
                                                 [ olCmd <| encodeOpenLayersCmd (ZoomToShorelineLocation selection)
                                                 , sendGetVulnRibbonRequest model.env selection
@@ -551,7 +570,7 @@ updateModel msg model =
                         , cmds
                         )
 
-                Failure err ->
+                Remote.Failure err ->
                     ( model
                         |> collapseRightSidebar
                         |> collapseLeftSidebar
@@ -1382,7 +1401,6 @@ updateModel msg model =
                         , histDistClicked = Closed
                         , histPlacesClicked = Closed
                         , strategiesModalOpenness = Closed
-                        , calculationOutput = Nothing
                         , zoneOfImpact = Nothing
                         , calculationOutput = Nothing
                         , adaptationHexes = NotAsked
@@ -1560,15 +1578,15 @@ applyStrategy model =
             let
                 output = runCalculations model
             in
-            ( model
-                |> expandRightSidebar
-                |> \m -> 
-                    { m 
-                        | strategiesModalOpenness = Closed
-                        , calculationOutput = Just output 
-                    }
-            , Cmd.none 
-            )
+                ( model
+                    |> expandRightSidebar
+                    |> \m -> 
+                        { m 
+                            | strategiesModalOpenness = Closed
+                            , calculationOutput = Just output 
+                        }
+                , Cmd.none 
+                )
         False ->
             ( model
                 |> expandRightSidebar
@@ -1635,11 +1653,11 @@ updateHazardsWith :
     -> ( GqlData AdaptationInfo, Cmd Msg )
 updateHazardsWith zipMapFn info =
     Remote.update
-        (\info ->
+        (\locInfo ->
             let
-                newHazards = zipMapFn info.hazards
+                newHazards = zipMapFn locInfo.hazards
 
-                newInfo = { info | hazards = newHazards }
+                newInfo = { locInfo | hazards = newHazards }
             in
             ( newInfo, changeStrategyCmds newInfo )
         )
@@ -1910,18 +1928,15 @@ getLocationByName name data =
 {-| This is sort of a hack to get around the opaque implementations of
 Input.SelectMsg and Input.SelectMenu.
 -}
-parseMenuOpeningOrClosing : Input.SelectMsg a -> Maybe Bool
-parseMenuOpeningOrClosing message =
-    let
-        msg =
-            toString message
-    in
-        if String.contains "OpenMenu" msg then
-            Just True
-        else if String.contains "CloseMenu" msg then
-            Just False
-        else
-            Nothing
+parseMenuOpeningOrClosing : SelectMsg a -> Maybe Bool
+parseMenuOpeningOrClosing message = 
+    if String.contains "OpenMenu" (Debug.toString message) then
+        Just True
+    else if String.contains "CloseMenu" (Debug.toString message) then
+        Just False
+    else
+        Nothing
+    
 
 
 {-| This is sort of a hack to get around the opaque implementations of
@@ -1929,11 +1944,7 @@ Input.SelectMsg and Input.SelectMenu.
 -}
 shouldLocationMenuChangeTriggerZoomTo : Input.SelectMsg a -> Bool
 shouldLocationMenuChangeTriggerZoomTo message =
-    let
-        msg =
-            toString message
-    in
-        String.contains "SelectValue" msg
+    String.contains "SelectValue" (Debug.toString message)
 
 
 focus : String -> Cmd Msg
@@ -1951,8 +1962,16 @@ blur elementId =
 ---- VIEW ----
 
 
-view : App -> Html Msg
+view : App -> Document Msg
 view app =
+    { title = "Cape Cod Commission | Cape Cod Coastal Planner"
+    , body =
+        [ viewBody app
+        ]
+    }
+
+viewBody : App -> Html Msg
+viewBody app =
     case app of
         Loaded model ->
             Element.viewport (stylesheet model.device) <|
@@ -2060,7 +2079,7 @@ subscriptions app =
         Loaded model ->
             Sub.batch
                 [ Animation.subscription Animate (animations model)
-                , Window.resizes Resize
+                , onResize (\w h -> Resize <| WindowSize w h)
                 , olSub decodeOpenLayersSub
                 ]
 
@@ -2095,9 +2114,11 @@ animations model =
 
 main : Program D.Value App Msg
 main =
-    Navigation.programWithFlags UrlChange
+    Browser.application
         { view = view
         , init = init
         , update = update
         , subscriptions = subscriptions
+        , onUrlRequest = LinkClicked
+        , onUrlChange = UrlChange
         }

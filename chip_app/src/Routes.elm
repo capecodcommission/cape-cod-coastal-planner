@@ -1,20 +1,41 @@
 module Routes exposing (..)
 
-import Navigation exposing (Location)
-import UrlParser as Url exposing ((</>))
+import Url exposing (Url)
+import Url.Parser as P exposing ((</>))
+import List.Extra as LEx
 
 
 type Route
     = Blank
 
 
-route : Url.Parser (Route -> a) a
+route : P.Parser (Route -> a) a
 route =
-    Url.oneOf
-        [ Url.map Blank Url.top            
+    P.oneOf
+        [ P.map Blank P.top            
         ]
 
 
-parseRoute : Location -> Maybe Route
-parseRoute loc =
-    Url.parseHash route loc
+
+parseRoute : Url -> Maybe Route
+parseRoute url =
+    let
+        parts =
+            url.fragment
+                |> Maybe.withDefault ""
+                |> String.split "?"
+                |> LEx.filterNot String.isEmpty
+
+        ( path, query ) =
+            case parts of
+                [] ->
+                    ( "", Nothing )
+
+                p :: [] ->
+                    ( p, Nothing )
+
+                p :: q :: _ ->
+                    ( p, Just q )
+    in
+    { url | path = path, query = query, fragment = Nothing }
+        |> P.parse route

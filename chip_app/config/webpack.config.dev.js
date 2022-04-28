@@ -53,6 +53,7 @@ module.exports = {
     // served by WebpackDevServer in development. This is the JS bundle
     // containing code from all our entry points, and the Webpack runtime.
     filename: 'static/js/bundle.js',
+    clean: true,
 
     publicPath: publicPath,
 
@@ -63,7 +64,14 @@ module.exports = {
 
   resolve: {
     modules: ['node_modules'],
-    extensions: ['.js', '.elm']
+    extensions: ['.js', '.elm'],
+    fallback: {
+        dgram: false,
+        fs: false,
+        net: false,
+        tls: false,
+        child_process: false
+      }
   },
 
   module: {
@@ -74,32 +82,33 @@ module.exports = {
         test: /\.js$/,
         exclude: [/elm-stuff/, /node_modules/],
         loader: require.resolve('babel-loader'),
-        query: {
+        options: {
           // Latest stable ECMAScript features
           presets: [
             [
-              require.resolve('babel-preset-env'),
+              require.resolve('@babel/preset-env'),
               {
                 targets: {
                   // React parses on ie 9, so we should too
                   ie: 9,
                   // We currently minify with uglify
                   // Remove after https://github.com/mishoo/UglifyJS2/issues/448
-                  uglify: true
+                  //uglify: true
                 },
                 // Disable polyfill transforms
                 useBuiltIns: false,
                 // Do not transform modules to CJS
-                modules: false
+                modules: false,
+                forceAllTransforms: true
               }
             ]
           ],
           plugins: [
             [
-              require.resolve('babel-plugin-transform-runtime'),
+              require.resolve('@babel/plugin-transform-runtime'),
               {
                 helpers: false,
-                polyfill: false,
+                //polyfill: false,
                 regenerator: true
               }
             ]
@@ -120,7 +129,7 @@ module.exports = {
           // module system.
           {
             loader: require.resolve('string-replace-loader'),
-            query: {
+            options: {
               search: '%PUBLIC_URL%',
               replace: publicUrl,
               flags: 'g'
@@ -134,7 +143,8 @@ module.exports = {
               // If ELM_DEBUGGER was set to "false", disable it. Otherwise
               // for invalid values, "true" and as a default, enable it
               debug: process.env.ELM_DEBUGGER === 'false' ? false : true,
-              pathToMake: paths.elmMake,
+              //pathToMake: paths.elmMake,
+              pathToElm: 'node_modules/.bin/elm',
               forceWatch: true
             }
           }
@@ -198,8 +208,8 @@ module.exports = {
   plugins: [
     new DefinePlugin(env.stringified),
 
-    new InterpolateHtmlPlugin(env.raw),
-
+    //new InterpolateHtmlPlugin(env.raw),
+    new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.appHtml
@@ -212,11 +222,11 @@ module.exports = {
 
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
-  node: {
+  /*node: {
     dgram: 'empty',
     fs: 'empty',
     net: 'empty',
     tls: 'empty',
     child_process: 'empty'
-  }
+  }*/
 };

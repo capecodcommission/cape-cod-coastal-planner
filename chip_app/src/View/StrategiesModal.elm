@@ -435,7 +435,7 @@ categoryView index ( category, matched ) =
             else 
                 category.imagePathInactive
     in
-    ( "category_view_" ++ (toString <| getId category.id)
+    ( "category_view_" ++ (getId category.id)
     , Keyed.column NoStyle
         [ width (px 84), height (px 100) ]
         [ case srcPath of
@@ -637,7 +637,7 @@ coastalHazardsRowView views =
 
 coastalHazardView : CoastalHazard -> Bool -> ( String, Element MainStyles Variations Msg) 
 coastalHazardView hazard matched =
-    ("coastal_hazard_view_" ++ (toString <| getId hazard.id)
+    ("coastal_hazard_view_" ++ (getId hazard.id)
     , Keyed.column NoStyle
         [ width (percent (1/3 * 100)), center, verticalCenter ]
         [ case (Hazards.toType hazard, matched) of

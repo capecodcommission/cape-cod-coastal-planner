@@ -2,11 +2,10 @@ module Request exposing (..)
 
 import Maybe
 import Http
-import Graphqelm.Http exposing (..)
-import Graphqelm.Operation exposing (RootQuery)
-import Graphqelm.SelectionSet exposing (SelectionSet, with)
-import RemoteData as Remote exposing (RemoteData, fromResult, sendRequest)
-import QueryString as QS
+import Graphql.Http exposing (..)
+import Graphql.Operation exposing (RootQuery)
+import Graphql.SelectionSet as SelectionSet exposing (..)
+import RemoteData as Remote exposing (RemoteData, fromResult, WebData)
 import Json.Decode as D
 import ChipApi.Object
 import ChipApi.Object.ShorelineLocation as SL
@@ -22,6 +21,8 @@ import AdaptationStrategy.Query
         )
 import AdaptationHexes as AH
     exposing ( AdaptationHexes, adaptationHexesDecoder )
+import Url.Builder exposing (..)
+import ChipApi.Enum.SortOrder exposing (decoder)
 
 --
 -- ADAPTATION INFO
@@ -53,13 +54,13 @@ getStrategyDetailsById strategyId =
 
 queryShorelineExtents : SelectionSet (GqlList ShorelineExtent) RootQuery
 queryShorelineExtents =
-    Query.selection GqlList
+    SelectionSet.succeed GqlList
         |> with (Query.shorelineLocations identity shorelineLocations)
 
 
 shorelineLocations : SelectionSet ShorelineExtent ChipApi.Object.ShorelineLocation
 shorelineLocations =
-    SL.selection ShorelineExtent
+    SelectionSet.succeed ShorelineExtent
         |> with SL.id
         |> with SL.name
         |> with SL.minX
@@ -84,13 +85,13 @@ getShorelineExtents =
 
 queryBaselineInfo : Scalar.Id -> SelectionSet (Maybe BaselineInfo) RootQuery
 queryBaselineInfo id =
-    Query.selection identity
+    SelectionSet.succeed identity
         |> with (Query.shorelineLocation { id = id } baselineInfo)
 
 
 baselineInfo : SelectionSet BaselineInfo ChipApi.Object.ShorelineLocation
 baselineInfo =
-    SL.selection BaselineInfo
+    SelectionSet.succeed BaselineInfo
         |> with SL.id
         |> with SL.name
         |> with SL.imagePath
@@ -126,29 +127,40 @@ getBaselineInfo id =
 
 sendGetLittoralCellsRequest : Env -> Extent -> Cmd Msg
 sendGetLittoralCellsRequest env extent =
-    Http.send LoadLittoralCellsResponse <|
         getLittoralCells env extent
-
-
-getLittoralCells : Env -> Extent -> Http.Request D.Value
+getLittoralCells : Env -> Extent -> Cmd Msg
 getLittoralCells env extent =
     let
         qs =
-            QS.empty
-                |> QS.add "f" "pjson"
-                |> QS.add "returnGeometry" "true"
-                |> QS.add "spatialRel" "esriSpatialRelIntersects"
-                |> QS.add "geometryType" "esriGeometryEnvelope"
-                |> QS.add "outFields" "Id,Littoral_Cell_Name"
-                |> QS.add "inSR" "3857"
-                |> QS.add "outSR" "3857"
-                |> QS.add "geometry" (extentToString extent)
-
+            [ string "f" "pjson"
+            , string "returnGeometry" "true"
+            , string "spatialRel" "esriSpatialRelIntersects"
+            , string "geometryType" "esriGeometryEnvelope"
+            , string "outFields" "Id,Littoral_Cell_Name"
+            , string "inSR" "3857"
+            , string "outSR" "3857"
+            , string "geometry" (extentToString extent)
+            ]
         getUrl =
-            env.agsLittoralCellUrl ++ QS.render qs
-    in
-        Http.get getUrl D.value
-
+            env.agsLittoralCellUrl ++ toQuery qs
+ in
+    Http.riskyRequest
+         { method = "GET"
+         , headers = [ Http.header "Accept" "application/json, text/javascript, */*; q=0.01" ]
+         , url = getUrl
+         , body = Http.emptyBody
+         , expect = Http.expectJson handleGetLittoralCellsResponse D.value
+         , timeout = Nothing
+         , tracker = Nothing
+         }
+    
+handleGetLittoralCellsResponse : Result Http.Error D.Value -> Msg
+handleGetLittoralCellsResponse result =
+    case result of
+        Ok _ ->
+            LoadLittoralCellsResponse result
+        Err err ->
+            Noop
 
 
 --
@@ -158,34 +170,41 @@ getLittoralCells env extent =
 
 sendGetVulnRibbonRequest : Env -> ShorelineExtent -> Cmd Msg
 sendGetVulnRibbonRequest env { littoralCellId } =
-    littoralCellId
-        |> getVulnRibbonForLocation env
-        |> Http.send LoadVulnerabilityRibbonResponse
+    getVulnRibbonForLocation env littoralCellId
 
 
-getVulnRibbonForLocation : Env -> Int -> Http.Request D.Value
+getVulnRibbonForLocation : Env -> Int -> Cmd Msg
 getVulnRibbonForLocation env id =
     let
         qs =
-            QS.empty
-                |> QS.add "f" "pjson"
-                |> QS.add "returnGeometry" "true"
-                |> QS.add "spatialRel" "esriSpatialRelIntersects"
-                |> QS.add "geometryType" "esriGeometryEnvelope"
-                |> QS.add "outFields" "OBJECTID,SaltMarsh,CoastalBank,Undeveloped,RibbonScore,LittoralID,BeachOwner"
-                |> QS.add "inSR" "4326"
-                |> QS.add "outSR" "3857"
-                |> QS.add "where" ("LittoralID=" ++ toString id)
+            [ string "f" "pjson"
+            , string "returnGeometry" "true"
+            , string "spatialRel" "esriSpatialRelIntersects"
+            , string "geometryType" "esriGeometryEnvelope"
+            , string "outFields" "OBJECTID,SaltMarsh,CoastalBank,Undeveloped,RibbonScore,LittoralID,BeachOwner"
+            , string "inSR" "4326"
+            , string "outSR" "3857"
+            , string "where" ("LittoralID=" ++ String.fromInt id)
+            ]
         getUrl =
-            env.agsVulnerabilityRibbonUrl ++ QS.render qs
+            env.agsVulnerabilityRibbonUrl ++ toQuery qs
     in
-        Http.get getUrl D.value
-
-
-
---
--- HEX LAYER (FEATURE SERVICE)
---
+        Http.request
+            { method = "GET"
+            , headers = [ Http.header "Accept" "application/json, text/javascript, */*; q=0.01" ]
+            , url = getUrl
+            , body = Http.emptyBody
+            , expect = Http.expectJson handleGetVulnRibbonForLocationResponse D.value
+            , timeout = Nothing
+            , tracker = Nothing
+            }
+handleGetVulnRibbonForLocationResponse : Result Http.Error D.Value -> Msg
+handleGetVulnRibbonForLocationResponse result =
+    case result of
+        Ok _ ->
+            LoadVulnerabilityRibbonResponse result
+        Err err ->
+            Noop
 
 
 sendGetHexesRequest : Env -> Maybe ZoneOfImpact -> Cmd Msg
@@ -193,13 +212,11 @@ sendGetHexesRequest env zoneOfImpact =
     zoneOfImpact
         |> Maybe.andThen .geometry
         |> Maybe.map (getHexesForZoneOfImpact env)
-        |> Maybe.map Remote.sendRequest
-        |> Maybe.map (Cmd.map GotHexesResponse)
         |> Maybe.withDefault Cmd.none
 
 
-getHexesForZoneOfImpact : Env -> String -> Http.Request AdaptationHexes
-getHexesForZoneOfImpact env geometry =
+getHexesForZoneOfImpact : Env -> String -> Cmd Msg
+getHexesForZoneOfImpact env geometry  =
     let
         body =
             Http.multipartBody
@@ -213,14 +230,14 @@ getHexesForZoneOfImpact env geometry =
                 , Http.stringPart "geometry" geometry
                 ]
     in
-        Http.request
+        Http.riskyRequest
             { method = "POST"
             , headers = [ Http.header "Accept" "application/json, text/javascript, */*; q=0.01" ]
             , url = env.agsHexUrl
             , body = body
-            , expect = Http.expectJson adaptationHexesDecoder
+            , expect = Http.expectJson (Remote.fromResult >> GotHexesResponse) adaptationHexesDecoder
             , timeout = Nothing
-            , withCredentials = True
+            , tracker = Nothing
             }
 
 --
@@ -229,25 +246,39 @@ getHexesForZoneOfImpact env geometry =
 
 sendGetCritFacRequest : Env -> Cmd Msg
 sendGetCritFacRequest env =
-    getCritFac env 
-    |> Http.send LoadCritFacResponse
+    getCritFac env
 
-getCritFac : Env -> Http.Request D.Value
+getCritFac : Env -> Cmd Msg
 getCritFac env =
     let
         qs =
-            QS.empty
-                |> QS.add "f" "pjson"
-                |> QS.add "returnGeometry" "true"
-                |> QS.add "geometryType" "esriGeometryPoint"
-                |> QS.add "spatialRel" "esriSpatialRelIntersects"
-                |> QS.add "outFields" "*"
-                |> QS.add "outSR" "3857"
-                |> QS.add "where" "1=1"
+            [ string "f" "pjson"
+            , string "returnGeometry" "true"
+            , string "spatialRel" "esriSpatialRelIntersects"
+            , string "geometryType" "esriGeometryPoint"
+            , string "outFields" "*"
+            , string "outSR" "3857"
+            , string "where" "1=1"
+            ]
         getUrl =
-            env.agsCritUrl ++ QS.render qs
+            env.agsCritUrl ++ toQuery qs
     in
-        Http.get getUrl D.value
+        Http.request
+         { method = "GET"
+         , headers = [ Http.header "Accept" "application/json, text/javascript, */*; q=0.01" ]
+         , url = getUrl
+         , body = Http.emptyBody
+         , expect = Http.expectJson handleGetCritFacResponse D.value
+         , timeout = Nothing
+         , tracker = Nothing
+         }
+handleGetCritFacResponse : Result Http.Error D.Value -> Msg
+handleGetCritFacResponse result =
+    case result of
+        Ok _ ->
+            LoadCritFacResponse result
+        Err err ->
+            Noop
 
 --
 -- DISCONNECTED ROADS (FEATURE SERVICE)

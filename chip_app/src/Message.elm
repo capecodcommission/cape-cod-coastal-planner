@@ -1,9 +1,8 @@
 module Message exposing (..)
 
-import Navigation
+import Browser.Navigation as Nav
 import Element.Input as Input
 import Animation
-import Window
 import Types exposing (..)
 import AdaptationStrategy.AdaptationInfo exposing (AdaptationInfo)
 import AdaptationStrategy.StrategyDetails exposing (StrategyDetails)
@@ -15,11 +14,14 @@ import Http
 import RemoteData as Remote exposing (WebData)
 import Keyboard.Event exposing (KeyboardEvent)
 import ChipApi.Scalar as Scalar
+import Url
+import Browser
 
 
 type Msg
     = Noop
-    | UrlChange Navigation.Location
+    | UrlChange Url.Url
+    | LinkClicked Browser.UrlRequest
     | GotAdaptationInfo (GqlData AdaptationInfo)
     | GotShorelineExtents (GqlData (GqlList SL.ShorelineExtent))
     | SelectLocationInput (Input.SelectMsg SL.ShorelineExtent)
@@ -45,7 +47,7 @@ type Msg
     | ShowNoActionOutput (OutputDetails, OutputDetails)
     | ToggleRightSidebar
     | Animate Animation.Msg
-    | Resize Window.Size
+    | Resize WindowSize
     | ToggleLeftSidebar
     | ToggleCritFac
     | LoadCritFacResponse (Result Http.Error D.Value)

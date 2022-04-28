@@ -7,6 +7,7 @@ import Message exposing (..)
 import Types exposing (..)
 import Styles exposing (..)
 import View.Helpers exposing (..)
+import Browser exposing (Document)
 
 modalHeight : Device -> Float
 modalHeight device =
