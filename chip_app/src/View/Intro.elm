@@ -116,7 +116,9 @@ mainView config =
             [center]
             [ paragraph NoStyle
                 []
-                [ text "First time user? Tutorial wizard is up to jay."
+                [ text "First time user? Tutorial Video "
+                , newTab "https://www.youtube.com/watch?v=mqsXjOeDAZg" <| el (Zoi ZoiCallout) [] (text "Here")
+                , text "."
                 ]
             ]
         , el NoStyle 
