@@ -3,10 +3,9 @@ module AdaptationStrategy.Query exposing (..)
 
 import List.Zipper as Zipper
 import RemoteData as Remote exposing (..)
-import Graphqelm.Operation exposing (RootQuery)
-import Graphqelm.SelectionSet exposing (..)
-import Graphqelm.Field as Field
-import Graphqelm.OptionalArgument exposing (..)
+import Graphql.Operation exposing (RootQuery)
+import Graphql.SelectionSet as SelectionSet exposing (..)
+import Graphql.OptionalArgument exposing (..)
 import ChipApi.Object
 import ChipApi.Object.AdaptationStrategy as AS
 import ChipApi.Object.AdaptationCategory as AC
@@ -34,16 +33,16 @@ import AdaptationStrategy.Impacts as Impacts exposing (..)
 
 queryAdaptationInfo : SelectionSet AdaptationInfo RootQuery
 queryAdaptationInfo =
-    Query.selection AdaptationInfo
+    SelectionSet.succeed AdaptationInfo
         |> with
             (Query.adaptationBenefits identity selectBenefit)
         |> with 
             (Query.adaptationCategories identity selectCategory
-                |> Field.map Categories.fromList
+                |> SelectionSet.map Categories.fromList
             )
         |> with 
             (Query.coastalHazards identity selectCoastalHazardWithStrategyIds
-                |> Field.map Hazards.fromList
+                |> SelectionSet.map Hazards.fromList
             )
         |> with 
             (Query.adaptationStrategies
@@ -59,13 +58,13 @@ queryAdaptationInfo =
                     { optionals | filter = strategyFilter }
                 )
                 selectActiveAdaptationStrategies
-                    |> Field.map Strategies.fromList
+                    |> SelectionSet.map Strategies.fromList
             )
 
 
 queryAdaptationStrategyDetailsById : Scalar.Id -> SelectionSet (Maybe StrategyDetails) RootQuery
 queryAdaptationStrategyDetailsById id =
-    Query.selection identity
+    SelectionSet.succeed identity
         |> with (Query.adaptationStrategy { id = id } selectStrategyDetails)
 
 
@@ -76,7 +75,7 @@ queryAdaptationStrategyDetailsById id =
 
 selectActiveAdaptationStrategies : SelectionSet Strategy ChipApi.Object.AdaptationStrategy
 selectActiveAdaptationStrategies =
-    AS.selection Strategy
+    SelectionSet.succeed Strategy
         |> with AS.id
         |> with AS.name
         |> with AS.strategyPlacement
@@ -85,13 +84,13 @@ selectActiveAdaptationStrategies =
 
 selectStrategyDetails : SelectionSet StrategyDetails ChipApi.Object.AdaptationStrategy
 selectStrategyDetails =
-    AS.selection StrategyDetails
+    SelectionSet.succeed StrategyDetails
         |> with AS.description
         |> with AS.currentlyPermittable
         |> with AS.beachWidthImpactM
         |> with AS.imagePath
-        |> with (AS.categories <| fieldSelection AC.id)
-        |> with (AS.hazards <| fieldSelection CH.id)
+        |> with (AS.categories AC.id)
+        |> with (AS.hazards CH.id)
         |> with (AS.scales selectImpactScale)
         |> with (AS.lifeSpans selectImpactLifeSpans)
         |> with (AS.costs selectImpactCosts)
@@ -103,12 +102,12 @@ selectStrategyDetails =
 
 selectCategoryId : SelectionSet Scalar.Id ChipApi.Object.AdaptationCategory
 selectCategoryId =
-    fieldSelection AC.id
+    AC.id
 
 
 selectCategory : SelectionSet Category ChipApi.Object.AdaptationCategory
 selectCategory =
-    AC.selection Category
+    SelectionSet.succeed Category
         |> with AC.id
         |> with AC.name
         |> with AC.description
@@ -118,26 +117,25 @@ selectCategory =
 
 selectCoastalHazard : SelectionSet Scalar.Id ChipApi.Object.CoastalHazard
 selectCoastalHazard =
-    fieldSelection CH.id
-
+    CH.id
 
 selectCoastalHazardWithStrategyIds : SelectionSet CoastalHazard ChipApi.Object.CoastalHazard
 selectCoastalHazardWithStrategyIds =
-    CH.selection CoastalHazard
+    SelectionSet.succeed CoastalHazard
         |> with CH.id
         |> with CH.name
         |> with CH.description
         |> with CH.duration
         |> with 
-            ( fieldSelection AS.id
+            ( AS.id
                 |> CH.strategies (\optionals -> { optionals | isActive = Present True })
-                |> Field.map Zipper.fromList
+                |> SelectionSet.map Zipper.fromList
             )
 
 
 selectImpactScale : SelectionSet ImpactScale ChipApi.Object.ImpactScale
 selectImpactScale =
-    IS.selection ImpactScale
+    SelectionSet.succeed ImpactScale
         |> with IS.name
         |> with IS.impact
         |> with IS.description
@@ -145,7 +143,7 @@ selectImpactScale =
 
 selectImpactCosts : SelectionSet ImpactCost ChipApi.Object.ImpactCost
 selectImpactCosts =
-    IC.selection ImpactCost
+    SelectionSet.succeed ImpactCost
         |> with IC.name
         |> with IC.cost
         |> with IC.description
@@ -153,7 +151,7 @@ selectImpactCosts =
 
 selectImpactLifeSpans : SelectionSet ImpactLifeSpan ChipApi.Object.ImpactLifeSpan
 selectImpactLifeSpans =
-    ILS.selection ImpactLifeSpan
+    SelectionSet.succeed ImpactLifeSpan
         |> with ILS.name
         |> with ILS.lifeSpan
         |> with ILS.description
@@ -161,22 +159,22 @@ selectImpactLifeSpans =
 
 selectBenefit : SelectionSet Benefit ChipApi.Object.AdaptationBenefit
 selectBenefit =
-    AB.selection identity
+    SelectionSet.succeed identity
         |> with AB.name
 
 
 selectAdvantage : SelectionSet Advantage ChipApi.Object.AdaptationAdvantages
 selectAdvantage =
-    AA.selection identity
+    SelectionSet.succeed identity
         |> with AA.name
 
 
 selectDisadvantage : SelectionSet Disadvantage ChipApi.Object.AdaptationDisadvantages
 selectDisadvantage =
-    AD.selection identity
+    SelectionSet.succeed identity
         |> with AD.name
 
 
 selectStrategyId : SelectionSet Scalar.Id ChipApi.Object.AdaptationStrategy
 selectStrategyId =
-    fieldSelection AS.id
+    AS.id

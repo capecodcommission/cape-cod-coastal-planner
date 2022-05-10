@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module ChipApi.Interface exposing (..)
+module ChipApi.VerifyScalarCodecs exposing (..)
 
 
 placeholder : String

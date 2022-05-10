@@ -1,5 +1,5 @@
 defmodule ChipApi.Repo do
-  use Ecto.Repo, otp_app: :chip_api
+  use Ecto.Repo, otp_app: :chip_api, adapter: Ecto.Adapters.Postgres
 
   @doc """
   Dynamically loads the repository url from the

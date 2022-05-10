@@ -182,29 +182,29 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
             let
                 vulnerableToSurge = isVulnerableToStormSurge hexes
             in
-            case vulnerableToSurge of
-                True ->
-                let
-                    vulnerableToSS = withStormSurge hexes
-                in
-                    output
-                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
-                        |> Result.andThen
-                            ( (sumPublicBldgValue
-                                >> applyMultiplier stormSurgeBldgMultiplier
-                                >> losePublicBldgValue)
-                            vulnerableToSS
-                            )
-                        |> Result.andThen
-                            ( (sumPrivateBldgValue
-                                >> applyMultiplier stormSurgeBldgMultiplier
-                                >> losePrivateBldgValue)
-                              vulnerableToSS
-                            )
+                case vulnerableToSurge of
+                    True ->
+                        let
+                            vulnerableToSS = withStormSurge hexes
+                        in
+                            output
+                                |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
+                                |> Result.andThen
+                                    ( (sumPublicBldgValue
+                                        >> applyMultiplier stormSurgeBldgMultiplier
+                                        >> losePublicBldgValue)
+                                    vulnerableToSS
+                                    )
+                                |> Result.andThen
+                                    ( (sumPrivateBldgValue
+                                        >> applyMultiplier stormSurgeBldgMultiplier
+                                        >> losePrivateBldgValue)
+                                    vulnerableToSS
+                                    )
 
-                False ->
-                    output
-                        |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
+                    False ->
+                        output
+                            |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
 
         Err badHazard ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: '" ++ badHazard ++ "'")

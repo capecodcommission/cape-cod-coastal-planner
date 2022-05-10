@@ -64,7 +64,7 @@ headerView titleText togglePath fx zoi =
         )
     ) |> onLeft
         [ case zoi of
-            Just zoi ->
+            Just item ->
                 el (Sidebar SidebarToggle) 
                     [ height (px 72), width (px 70), onClick ToggleRightSidebar ] 
                     ( el NoStyle 

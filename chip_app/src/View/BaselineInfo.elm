@@ -141,13 +141,14 @@ mainContentView { device } info =
                 [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "PUBLIC INFRASTRUCTURE"
                 , infoRowView
                     "Critical facilities:"
-                    (toString info.criticalFacilitiesCount)
+                    --(toString info.criticalFacilitiesCount)
+                    (String.fromInt info.criticalFacilitiesCount)
                 , infoRowView
                     "Coastal structures:"
-                    (toString info.coastalStructuresCount)
+                    (String.fromInt info.coastalStructuresCount)
                 , infoRowView
                     "Public buildings:"
-                    (toString info.publicBuildingsCount)
+                    (String.fromInt info.publicBuildingsCount)
                 , infoRowView
                     "Working harbor:"
                     (formatBoolean info.workingHarbor)
@@ -177,13 +178,15 @@ mainContentView { device } info =
                 [ h5 (Headings H6) [ vary Secondary True ] <| Element.text "RECREATION"
                 , infoRowView
                     "Public beaches:"
-                    (toString info.publicBeachCount)
+                    --(toString info.publicBeachCount)
+                    (String.fromInt info.publicBeachCount)                    
                 , infoRowView
                     "Acres of recreational open space:"
                     (formatDecimal 2 info.recreationOpenSpaceAcres)
                 , infoRowView
                     "Town ways to water:"
-                    (toString info.townWaysToWater)
+                    --(toString info.townWaysToWater)
+                    (String.fromInt info.townWaysToWater)
                 , infoRowView
                     "National seashore:"
                     (formatBoolean info.nationalSeashore)

@@ -1,11 +1,11 @@
 module ShorelineLocation exposing (..)
 
 import List.Zipper as Zipper exposing (..)
-import Graphqelm.Operation exposing (RootQuery)
-import Graphqelm.SelectionSet exposing (SelectionSet, with)
+import Graphql.Operation exposing (RootQuery)
+import Graphql.SelectionSet exposing (SelectionSet, with)
 import RemoteData as Remote exposing (RemoteData(..))
 import ChipApi.Object
-import Graphqelm.OptionalArgument exposing (..)
+import Graphql.OptionalArgument exposing (..)
 import ChipApi.Query as Query
 import ChipApi.Scalar as Scalar
 import Types exposing (GqlData, GqlList, zipperFromGqlList, mapGqlError)
@@ -81,21 +81,16 @@ shorelineExtentToExtent { minX, minY, maxX, maxY } =
 
 encodeShorelineExtent : ShorelineExtent -> E.Value
 encodeShorelineExtent location =
-    let
-        extent =
-            [ location.minX, location.minY, location.maxX, location.maxY ]
-                |> List.map E.float
-    in
         E.object
             [ ( "name", E.string location.name )
-            , ( "extent", E.list extent )
+            , ( "extent", E.list E.float [location.minX, location.minY, location.maxX, location.maxY] )
             ]
 
 
 extentToString : Extent -> String
 extentToString extent =
     [ extent.minX, extent.minY, extent.maxX, extent.maxY ]
-        |> List.map toString
+        |> List.map String.fromFloat
         |> String.join ","
 
 

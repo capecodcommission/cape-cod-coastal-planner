@@ -5,7 +5,7 @@ import Element exposing (..)
 import Element.Attributes as Attr exposing (..)
 import Element.Events exposing (..)
 import FormatNumber exposing (format)
-import FormatNumber.Locales exposing (Locale, usLocale)
+import FormatNumber.Locales exposing (Decimals(..), Locale, usLocale)
 import Graphics.Erosion exposing (erosionIcon, erosionIconConfig)
 import Graphics.SeaLevelRise exposing (seaLevelRiseIcon, seaLevelRiseIconConfig)
 import Graphics.StormSurge exposing (stormSurgeIcon, stormSurgeIconConfig)
@@ -14,6 +14,7 @@ import Styles exposing (..)
 import AdaptationStrategy.CoastalHazards as Hazards
 import AdaptationStrategy.Impacts as Impacts
 import AdaptationOutput exposing (..)
+import FormatNumber.Locales exposing (System(..))
 
 
 view : Result OutputError AdaptationOutput -> Element MainStyles Variations Msg
@@ -218,7 +219,7 @@ scenarioGeneralInfoView output =
         , column NoStyle [ paddingLeft 15, spacingXY 0 4 ]
             [ renderDetails "LOCATION:" output.location (Just "area") Nothing
             , renderDetails "DURATION:" output.duration Nothing (Just "The Cape Cod Coastal Planner's planning horizon for sea level rise is 40 years, in alignment with the 2-feet of predicted sea level rise factored into the MA Municipal Vulnerability Planning Process. The horizon for erosion also reflects 40 years, using the long-term erosion rates calculated in the MA Shoreline Change project. Storm surge is considered a one-time, immediate-impact event.")
-            , renderDetails "SCENARIO SIZE:" (toString output.scenarioSize) (Just "linear ft.") (Just "The size of the scenario is the length of shoreline selected by the user, with Zones of Impact ranging from 500 to 4,000 contiguous feet.")
+            , renderDetails "SCENARIO SIZE:" (String.fromInt output.scenarioSize) (Just "linear ft.") (Just "The size of the scenario is the length of shoreline selected by the user, with Zones of Impact ranging from 500 to 4,000 contiguous feet.")
             ]
         ]
 
@@ -334,31 +335,31 @@ criticalFacilitiesView facilities strat =
                     "--" empty (vary Secondary False) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
 
             (FacilitiesLost num, "NA") ->
-                render (toString num) (text "LOST") (vary Secondary True) "Critical facilities threatened by coastal hazards are impacted in a No Action scenario."
+                render (String.fromInt num) (text "LOST") (vary Secondary True) "Critical facilities threatened by coastal hazards are impacted in a No Action scenario."
             
             (FacilitiesLost num, "ST") ->
-                render (toString num) (text "LOST") (vary Secondary True) "Critical facilities threatened by coastal hazards are impacted in a No Action scenario due to strategy implementation."
+                render (String.fromInt num) (text "LOST") (vary Secondary True) "Critical facilities threatened by coastal hazards are impacted in a No Action scenario due to strategy implementation."
 
             (FacilitiesProtected num, "NA") ->
-                render (toString num) (text "PROT.") (vary Tertiary True) "Critical facilities with anticipated hazard-induced impacts in a No Action scenario are now protected due to strategy implementation."
+                render (String.fromInt num) (text "PROT.") (vary Tertiary True) "Critical facilities with anticipated hazard-induced impacts in a No Action scenario are now protected due to strategy implementation."
 
             (FacilitiesProtected num, "ST") ->
-                render (toString num) (text "PROT.") (vary Tertiary True) "Critical facilities with anticipated hazard-induced impacts in a No Action scenario are now protected due to strategy implementation."    
+                render (String.fromInt num) (text "PROT.") (vary Tertiary True) "Critical facilities with anticipated hazard-induced impacts in a No Action scenario are now protected due to strategy implementation."    
 
             (FacilitiesPresent num, "NA") ->
-                render (toString num) empty (vary Secondary False) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
+                render (String.fromInt num) empty (vary Secondary False) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
 
             (FacilitiesPresent num, "ST") ->
-                render (toString num) empty (vary Secondary False) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
+                render (String.fromInt num) empty (vary Secondary False) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
 
             (FacilitiesRelocated num, "NA") ->
-                render (toString num) (text "RELOC.") (vary Tertiary True) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
+                render (String.fromInt num) (text "RELOC.") (vary Tertiary True) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
 
             (FacilitiesRelocated num, "ST") ->
-                render (toString num) (text "RELOC.") (vary Tertiary True) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
+                render (String.fromInt num) (text "RELOC.") (vary Tertiary True) "Critical facilities are identified by towns through their hazard mitigation planning process, and indicate facilities where even a slight chance of flooding is too great a threat (e.g. police stations and hospitals)."
 
             (_, _) ->
-                render (toString 0) (text "...") (vary Secondary True) "..."
+                render (String.fromInt 0) (text "...") (vary Secondary True) "..."
           )
         ]
 
@@ -465,7 +466,7 @@ formatMonetaryValue abbrs num =
     let
         result = abs num / 1000.0
 
-        fmt abbr n = format (Locale 1 "," "." "$" abbr "$" abbr) n
+        fmt abbr n = format (Locale (Exact 1) Western "," "." "$" abbr "$" abbr "$" abbr) n
     in
     case abbrs of
         [] ->

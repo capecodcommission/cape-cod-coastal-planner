@@ -1,7 +1,7 @@
 'use strict';
 
 var chalk = require('chalk');
-var ctx = new chalk.constructor({ enabled: true });
+var ctx = new chalk.Instance({ enabled: true });
 var error = ctx.bold.red;
 var filename = ctx.cyan;
 var isBrowser = typeof window === 'object';

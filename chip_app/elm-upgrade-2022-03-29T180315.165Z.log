@@ -1,0 +1,38 @@
+INFO: Found elm at node_modules\.bin\elm.CMD
+INFO: Found elm 0.19.1
+INFO: Found elm-format at node_modules\.bin\elm-format.CMD
+INFO: Found elm-format 0.8.5
+INFO: Cleaning ./elm-stuff before upgrading
+INFO: Converting elm-package.json -> elm.json
+INFO: Detected an application project (this project has no exposed modules)
+WARNING: Bogdanp/elm-querystring has not been upgraded to 0.19 yet!
+INFO: Installing latest version of Gizra/elm-keyboard-event
+WARNING: Failed to upgrade Gizra/elm-keyboard-event!
+INFO: Switching from NoRedInk/elm-decode-pipeline (deprecated) to NoRedInk/elm-json-decode-pipeline
+INFO: Installing latest version of NoRedInk/elm-json-decode-pipeline
+WARNING: Failed to upgrade NoRedInk/elm-json-decode-pipeline!
+WARNING: Skinney/elm-array-exploration has not been upgraded to 0.19 yet!
+INFO: Installing latest version of SwiftsNamesake/proper-keyboard
+WARNING: Failed to upgrade SwiftsNamesake/proper-keyboard!
+INFO: Installing latest version of cuducos/elm-format-number
+WARNING: Failed to upgrade cuducos/elm-format-number!
+INFO: Switching from dillonkearns/graphqelm (deprecated) to dillonkearns/elm-graphql
+INFO: Installing latest version of dillonkearns/elm-graphql
+WARNING: Failed to upgrade dillonkearns/elm-graphql!
+INFO: Installing latest version of elm-community/dict-extra
+WARNING: Failed to upgrade elm-community/dict-extra!
+INFO: Installing latest version of elm-community/json-extra
+WARNING: Failed to upgrade elm-community/json-extra!
+INFO: Installing latest version of elm-community/list-extra
+WARNING: Failed to upgrade elm-community/list-extra!
+INFO: Installing latest version of elm-community/maybe-extra
+WARNING: Failed to upgrade elm-community/maybe-extra!
+INFO: Installing latest version of elm-community/result-extra
+WARNING: Failed to upgrade elm-community/result-extra!
+INFO: Installing latest version of elm-community/string-extra
+WARNING: Failed to upgrade elm-community/string-extra!
+INFO: Installing latest version of elm-community/typed-svg
+WARNING: Failed to upgrade elm-community/typed-svg!
+INFO: Switching from elm-lang/core (deprecated) to elm/core
+INFO: Installing latest version of elm/core
+WARNING: Failed to upgrade elm/core!

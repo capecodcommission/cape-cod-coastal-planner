@@ -2,7 +2,7 @@ module AdaptationHexes exposing (..)
 
 
 import Json.Decode as D exposing (Decoder)
-import Json.Decode.Pipeline exposing (decode, required, custom)
+import Json.Decode.Pipeline exposing (required, custom)
 
 ---
 --- HEX
@@ -252,7 +252,7 @@ adaptationHexesDecoder =
 
 adaptationHexDecoder : Decoder AdaptationHex
 adaptationHexDecoder =
-    decode AdaptationHex
+    D.succeed AdaptationHex
         |> required "hexagonID" D.int
         |> required "CoastalBank" yesOrNullToBool
         |> required "Revetment" yesOrNullToBool

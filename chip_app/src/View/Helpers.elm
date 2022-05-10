@@ -2,14 +2,16 @@ module View.Helpers exposing (..)
 
 import Http
 import Animation
-import Graphqelm.Http exposing (Error(..))
-import Graphqelm.Http.GraphqlError exposing (GraphqlError)
+import Basics
+import Graphql.Http as Ghttp exposing (Error)
+import Graphql.Http.GraphqlError exposing (GraphqlError)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Message exposing (..)
 import ChipApi.Scalar as Scalar
 import FormatNumber exposing (format)
-import FormatNumber.Locales exposing (usLocale)
+import FormatNumber.Locales exposing (Decimals(..), usLocale)
+import Flip
 
 
 
@@ -19,15 +21,21 @@ renderAnimation animations otherAttrs =
     (List.map Element.Attributes.toAttr <| Animation.render animations) ++ otherAttrs
 
 
-parseErrors : Graphqelm.Http.Error a -> List ( String, String )
+parseErrors : Ghttp.Error a -> List ( String, String )
 parseErrors error =
     case error of
-        HttpError err ->
-            [ parseHttpError err ]
+        Ghttp.GraphqlError possiblyParsedData errors ->
+            (case possiblyParsedData of
+                Graphql.Http.GraphqlError.UnparsedData unparsed ->
+                    [("GraphQL errors:" ++ Debug.toString errors, "Unable to parse data, got: " ++ Debug.toString unparsed)]
 
-        GraphqlError _ errs ->
-            parseGraphqlErrors errs
+                Graphql.Http.GraphqlError.ParsedData parsedData ->
+                    [("Parsed error data", "Parsed error data, so I can extract the name from the structured data... ")]
+            
+            )
 
+        Ghttp.HttpError httpError ->
+            [("HttpError", "Http error " ++ Debug.toString httpError)]
 
 parseHttpError : Http.Error -> ( String, String )
 parseHttpError error =
@@ -41,11 +49,11 @@ parseHttpError error =
         Http.NetworkError ->
             ( "Network Error", "There is an error with the network" )
 
-        Http.BadStatus { status } ->
-            ( "Bad Status", status.message ++ " (" ++ toString status.code ++ ")" )
+        Http.BadStatus status ->
+            ( "Bad status" , String.fromInt status )
 
-        Http.BadPayload msg { status } ->
-            ( "Bad Payload", msg ++ " (" ++ toString status.code ++ ")" )
+        Http.BadBody err ->
+            ( "Bad body", err )
 
 
 parseGraphqlErrors : List GraphqlError -> List ( String, String )
@@ -76,11 +84,17 @@ formatDecimal : Int -> Scalar.Decimal -> String
 formatDecimal precision decimal =
     decimal
         |> parseDecimal precision
-        |> Result.map (format { usLocale | decimals = precision })
+        |> Result.map (format { usLocale | decimals = (Exact precision) })
         |> Result.toMaybe
         |> Maybe.withDefault "Err!"
 
-
+convertVal: Maybe Float -> (Result String Float)
+convertVal mFlt = 
+    case mFlt of 
+        Just flt ->
+            Ok flt
+        _ ->
+            Err "failed"
 parseDecimal : Int -> Scalar.Decimal -> Result String Float
 parseDecimal precision (Scalar.Decimal decimal) =
     let
@@ -90,15 +104,15 @@ parseDecimal precision (Scalar.Decimal decimal) =
     in
         decimal
             |> String.toFloat
+            |> convertVal
             |> Result.map
                 (\num ->
                     num
                         * multiplier
                         |> round
                         |> toFloat
-                        |> flip (/) multiplier
+                        |> Flip.flip (/) multiplier
                 )
-
 
 adjustOnHeight : ( Float, Float ) -> Device -> Float
 adjustOnHeight range device =
@@ -108,3 +122,4 @@ adjustOnHeight range device =
 adjustOnWidth : ( Float, Float ) -> Device -> Float
 adjustOnWidth range device =
     responsive (toFloat device.width) ( 1200, 1800 ) range
+

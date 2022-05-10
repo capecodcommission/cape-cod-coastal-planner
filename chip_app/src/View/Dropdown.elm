@@ -4,7 +4,7 @@ import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Input as Input exposing (..)
 import RemoteData exposing (RemoteData(..))
-import Graphqelm.Http as GHttp exposing (Error(..))
+import Graphql.Http as GHttp exposing (..)
 import String.Extra as SEx
 import List.Zipper as Zipper exposing (Zipper)
 import Message exposing (..)
@@ -185,8 +185,8 @@ forceTransparent width maxHeight =
             [ "pointer-events:auto"
             , "display:flex"
             , "flex-direction:column"
-            , "width:" ++ toString width ++ "px"
-            , "max-height:" ++ toString maxHeight ++ "px"
+            , "width:" ++ String.fromFloat width ++ "px"
+            , "max-height:" ++ String.fromFloat maxHeight ++ "px"
             , "overflow-y:auto"
             , "position:relative"
             , "top:calc(100% * 0px)"
