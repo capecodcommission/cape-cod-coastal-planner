@@ -5,6 +5,7 @@ jobs:
       - image: circleci/node
     steps:
       - setup_remote_docker
+          version: 19.03.13
       - checkout
       - run:
           name: Build and Push to ACR
@@ -23,6 +24,7 @@ jobs:
       - image: circleci/node
     steps:
       - setup_remote_docker
+          version: 19.03.13
       - checkout
       - run:
           name: Build and Push to ACR
