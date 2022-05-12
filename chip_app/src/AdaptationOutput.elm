@@ -39,6 +39,7 @@ type alias OutputDetails =
     , saltMarshChange : AcreageResult
     , beachAreaChange : AcreageResult
     , rareSpeciesHabitat : RareSpeciesHabitat
+    , historicalPlaces : HistoricalPlaces
     }
 
 
@@ -70,6 +71,13 @@ type RareSpeciesHabitat
     | HabitatUnchanged
 
 
+type HistoricalPlaces
+    = HistoricalPlacesLost Int
+    | HistoricalPlacesProtected Int
+    | HistoricalPlacesUnchanged Int
+    | HistoricalPlacesPresent Int
+    | HistoricalPlacesRelocated Int
+
 
 defaultOutput : OutputDetails
 defaultOutput =
@@ -89,6 +97,7 @@ defaultOutput =
     , saltMarshChange = AcreageUnchanged
     , beachAreaChange = AcreageUnchanged
     , rareSpeciesHabitat = HabitatUnchanged
+    , historicalPlaces = HistoricalPlacesUnchanged 0
     }
 
 

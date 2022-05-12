@@ -126,6 +126,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                     in
                         output
                             |> (countCriticalFacilities >> loseCriticalFacilities) vulnerableToErosion
+                            |> Result.andThen ((countHistoricalPlaces >> loseHistoricalPlaces) vulnerableToErosion)
                             |> Result.andThen ((sumPublicBldgValue >> losePublicBldgValue) vulnerableToErosion)
                             |> Result.andThen 
                                 ( (sumPrivateLandAcreage 
@@ -144,12 +145,14 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                     in
                         output
                             |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) vulnerableToAccretion
+                            |> Result.andThen ((countHistoricalPlaces >> flagHistoricalPlacesAsPresent) vulnerableToAccretion)
                             |> Result.andThen ((isRareSpeciesHabitatPresent >> gainRareSpeciesHabitat) vulnerableToAccretion)
                             |> Result.andThen ((zoiAcreageImpact width >> gainBeachArea) zoneOfImpact)
 
                 NoErosion -> 
                     output
                         |> (countCriticalFacilities >> setCriticalFacilitiesUnchanged) hexes
+                        |> Result.andThen ((countHistoricalPlaces >> setHistoricalPlacesUnchanged) hexes)
 
         Ok Hazards.SeaLevelRise ->
             let
@@ -162,6 +165,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                     in
                         output
                             |> (countCriticalFacilities >> loseCriticalFacilities) vulnerableToSLR
+                            |> Result.andThen ((countHistoricalPlaces >> loseHistoricalPlaces) vulnerableToSLR)
                             |> Result.andThen ((sumPublicBldgValue >> losePublicBldgValue) vulnerableToSLR)
                             |> Result.andThen
                                 ( (sumPrivateLandAcreage 
@@ -177,6 +181,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                 NoSeaRise ->
                     output
                         |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
+                        |> Result.andThen ((countHistoricalPlaces >> flagHistoricalPlacesAsPresent) hexes)
 
         Ok Hazards.StormSurge ->
             let
@@ -189,6 +194,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                         in
                             output
                                 |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
+                                |> Result.andThen ((countHistoricalPlaces >> flagHistoricalPlacesAsPresent) hexes)
                                 |> Result.andThen
                                     ( (sumPublicBldgValue
                                         >> applyMultiplier stormSurgeBldgMultiplier
@@ -205,6 +211,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                     False ->
                         output
                             |> (countCriticalFacilities >> flagCriticalFacilitiesAsPresent) hexes
+                            |> Result.andThen ((countHistoricalPlaces >> flagHistoricalPlacesAsPresent) hexes)
 
         Err badHazard ->
             Err <| BadInput ("Cannot calculate output for unknown or invalid coastal hazard type: '" ++ badHazard ++ "'")
@@ -912,6 +919,55 @@ relocateCriticalFacilities facilities output =
         abs facilities
             |> FacilitiesRelocated
             |> \result -> Ok { output | criticalFacilities = result }
+
+
+{-| Count the number of historical places being impacted as lost
+-}
+loseHistoricalPlaces : Count -> OutputDetails -> Result OutputError OutputDetails
+loseHistoricalPlaces hPlaces output =
+    if hPlaces == 0 then
+        Ok output
+    else 
+        abs hPlaces
+            |> HistoricalPlacesLost
+            |> \result -> Ok { output | historicalPlaces = result }
+
+
+{-| Protect historical places from No Action output 
+-}
+protectHistoricalPlaces : Count -> OutputDetails -> Result OutputError OutputDetails
+protectHistoricalPlaces hPlaces output =
+    if hPlaces == 0 then
+        Ok output
+    else
+        abs hPlaces
+            |> HistoricalPlacesProtected
+            |> \result -> Ok { output | historicalPlaces = result }
+
+
+setHistoricalPlacesUnchanged : Count -> OutputDetails -> Result OutputError OutputDetails
+setHistoricalPlacesUnchanged hPlaces output =
+    Ok { output | historicalPlaces = HistoricalPlacesUnchanged hPlaces }
+
+
+flagHistoricalPlacesAsPresent : Count -> OutputDetails -> Result OutputError OutputDetails
+flagHistoricalPlacesAsPresent hPlaces output =
+    if hPlaces == 0 then
+        Ok output
+    else
+        abs hPlaces
+            |> HistoricalPlacesPresent
+            |> \result -> Ok { output | historicalPlaces = result }
+
+
+relocateHistoricalPlaces : Count -> OutputDetails -> Result OutputError OutputDetails
+relocateHistoricalPlaces hPlaces output =
+    if hPlaces == 0 then
+        Ok output
+    else
+        abs hPlaces
+            |> HistoricalPlacesRelocated
+            |> \result -> Ok { output | historicalPlaces = result }
 
 
 copyPublicBldgValue : MonetaryResult -> OutputDetails -> Result OutputError OutputDetails

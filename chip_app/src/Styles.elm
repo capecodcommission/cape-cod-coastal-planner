@@ -175,6 +175,7 @@ type OutputStyles
     | OutputDivider
     | OutputSmallItalic
     | OutputH6Bold
+    | OutputSmall
     | OutputImpact
     | OutputMultiImpact
     | OutputAddresses
@@ -324,7 +325,7 @@ stylesheet device =
             , Font.letterSpacing 1.0
             ]
         , Style.style (Header HeaderMenu)
-            [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0.9
+            [ StyleColor.background <| createStyleColorWithAlpha 83 168 172 0.4
             , StyleColor.text styleWhite
             , Font.size 22.0
             , Font.typeface fontstack
@@ -343,13 +344,17 @@ stylesheet device =
             ]
         , Style.style (Header HeaderSubMenu)
             [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0.9
+            , Style.pseudo "before"
+                [ StyleColor.border styleWhite
+                ]
             ]
         , Style.style (Header HeaderMenuItem)
             [ StyleColor.text styleWhite
             , Font.size 18.0
             , Font.typeface fontstack
             , Style.hover
-                [ StyleColor.background <| fadeColor -0.7 colorPalette.havelockBlue ]
+                -- [ StyleColor.background <| fadeColor -0.7 colorPalette.havelockBlue ]
+                [ StyleColor.background <| createStyleColorWithAlpha 85 126 216 0.7 ]
             , variation InputIdle
                 [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0.7 ]
             , variation InputSelected
@@ -471,7 +476,8 @@ stylesheet device =
             , Font.typeface fontstack
             ]
         , Style.style (AddStrategies StrategiesSidebarListBtnSelected)
-            [ StyleColor.background <| fadeColor -0.7 colorPalette.havelockBlue
+            -- [ StyleColor.background <| fadeColor -0.7 colorPalette.havelockBlue
+            [ StyleColor.background <| createStyleColorWithAlpha 85 126 216 0.7 
             , StyleColor.text styleWhite
             , Font.alignLeft
             , Font.typeface fontstack
@@ -634,6 +640,11 @@ stylesheet device =
         , Style.style (ShowOutput OutputH6Bold)
             [ Font.size <| scaled 1
             , Font.weight 500
+            , Font.typeface fontstack
+            ]
+        , Style.style (ShowOutput OutputSmall)
+            [ Font.size 12
+            , Font.weight 100
             , Font.typeface fontstack
             ]
         , Style.style (ShowOutput OutputSmallItalic)

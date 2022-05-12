@@ -25,6 +25,7 @@ type alias AdaptationHex =
     , privateBldgValue : MonetaryValue
     , publicBldgValue : MonetaryValue
     , numCriticalFacilities : Count
+    , numHistoricalResources : Count
     }
 
 
@@ -194,6 +195,11 @@ isRareSpeciesHabitatPresent : AdaptationHexes -> Bool
 isRareSpeciesHabitatPresent hexes =
     hexes
         |> List.any (\hex -> hex.rareSpecies == True)
+countHistoricalPlaces : AdaptationHexes -> Int
+countHistoricalPlaces hexes =
+    hexes
+        |> List.foldl (\hex acc -> hex.numHistoricalResources + acc) 0
+
 
 
 isVulnerableToStormSurge : AdaptationHexes -> Bool
@@ -265,6 +271,7 @@ adaptationHexDecoder =
         |> required "SumBLDGValue" floatOrNullToFloat
         |> required "PublicBLDGValue" floatOrNullToFloat
         |> required "CritFacCount" D.int
+        |> required "HistPlaceCount" D.int
 
 
 erosionImpactDecoder : Decoder ErosionImpact

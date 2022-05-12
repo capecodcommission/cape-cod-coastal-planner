@@ -15,6 +15,7 @@ import AdaptationStrategy.CoastalHazards as Hazards
 import AdaptationStrategy.Impacts as Impacts
 import AdaptationOutput exposing (..)
 import FormatNumber.Locales exposing (System(..))
+import Animation exposing (marginRight)
 
 
 view : Result OutputError AdaptationOutput -> Element MainStyles Variations Msg
@@ -165,11 +166,13 @@ resultsMainContent output =
             row NoStyle [ spread, height fill, width fill ]
                 [ criticalFacilitiesView output.criticalFacilities "NA"
                 , rareSpeciesHabitatView output.rareSpeciesHabitat "NA"
+                , historicalPlacesView output.historicalPlaces "NA"
                 ]
             else
             row NoStyle [ spread, height fill, width fill ]
                 [ criticalFacilitiesView output.criticalFacilities "ST"
                 , rareSpeciesHabitatView output.rareSpeciesHabitat "ST"
+                , historicalPlacesView output.historicalPlaces "ST"
                 ]
         ]
 
@@ -310,14 +313,14 @@ criticalFacilitiesView facilities strat =
         render a b c d =
             column (ShowOutput OutputValueBox)
                 [ moveRight 15
-                , height (px 58)
-                , width (px 58) 
+                , height (px 40)
+                , width (px 40) 
                 , center
                 , verticalCenter
                 , c
                 ]
-                [ el NoStyle [] <| text a
-                , el NoStyle [] <| b
+                [ el (ShowOutput OutputSmall) [] <| text a
+                , el (ShowOutput OutputSmall) [] <| b
                 ] |> within [ infoIconView (Just d) ]
     in
     row NoStyle [ height fill, width fill, center, verticalCenter ]
@@ -370,8 +373,8 @@ rareSpeciesHabitatView habitat strat =
         render a b c =
             column (ShowOutput OutputValueBox) 
                 [ moveRight 15
-                , height (px 58)
-                , width (px 58) 
+                , height (px 40)
+                , width (px 40) 
                 , center
                 , verticalCenter
                 , b
@@ -380,7 +383,8 @@ rareSpeciesHabitatView habitat strat =
     in
     row NoStyle [ height fill, width fill, center, verticalCenter ]
         [ column (ShowOutput OutputDivider) [ spacing 5, paddingRight 15 ]
-            [ el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Rare Species"
+            [ el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Rare"
+            , el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Species"
             , el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Habitat"
             ]
         , ( case (habitat, strat) of
@@ -404,6 +408,66 @@ rareSpeciesHabitatView habitat strat =
 
             (_, _) ->
                 render "Test" (vary Secondary True) "..."
+          )
+        ]
+
+
+historicalPlacesView : HistoricalPlaces -> String -> Element MainStyles Variations Msg
+historicalPlacesView hPlaces strat =
+    let
+        render a b c d =
+            column (ShowOutput OutputValueBox)
+                [ moveRight 15
+                , height (px 40)
+                , width (px 40) 
+                , center
+                , verticalCenter
+                , c
+                ]
+                [ el NoStyle [] <| text a
+                , el NoStyle [] <| b
+                ] |> within [ infoIconView (Just d) ]
+    in
+    row NoStyle [ height fill, width fill, center, verticalCenter, Attr.paddingRight 12 ]
+        [ column (ShowOutput OutputDivider) [ spacing 5, paddingRight 15 ]
+            [ el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Historical"
+            , el (ShowOutput OutputH6Bold) [ alignRight ] <| text "Places"
+            ]
+        , ( case (hPlaces, strat) of
+            (HistoricalPlacesUnchanged num, "NA") ->
+                render 
+                    "--" empty (vary Secondary False) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+
+            (HistoricalPlacesUnchanged num, "ST") ->
+                render 
+                    "--" empty (vary Secondary False) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+
+            (HistoricalPlacesLost num, "NA") ->
+                render (String.fromInt num) (text "LOST") (vary Secondary True) "Historical places threatened by coastal hazards are impacted in a No Action scenario."
+            
+            (HistoricalPlacesLost num, "ST") ->
+                render (String.fromInt num) (text "LOST") (vary Secondary True) "Historical places threatened by coastal hazards are impacted in a No Action scenario due to strategy implementation."
+
+            (HistoricalPlacesProtected num, "NA") ->
+                render (String.fromInt num) (text "PROT.") (vary Tertiary True) "Historical places with anticipated hazard-induced impacts in a No Action scenario are now protected due to strategy implementation."
+
+            (HistoricalPlacesProtected num, "ST") ->
+                render (String.fromInt num) (text "PROT.") (vary Tertiary True) "Historical places with anticipated hazard-induced impacts in a No Action scenario are now protected due to strategy implementation."    
+
+            (HistoricalPlacesPresent num, "NA") ->
+                render (String.fromInt num) empty (vary Secondary False) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+
+            (HistoricalPlacesPresent num, "ST") ->
+                render (String.fromInt num) empty (vary Secondary False) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+
+            (HistoricalPlacesRelocated num, "NA") ->
+                render (String.fromInt num) (text "RELOC.") (vary Tertiary True) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+
+            (HistoricalPlacesRelocated num, "ST") ->
+                render (String.fromInt num) (text "RELOC.") (vary Tertiary True) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+
+            (_, _) ->
+                render (String.fromInt 0) (text "...") (vary Secondary True) "..."
           )
         ]
 
