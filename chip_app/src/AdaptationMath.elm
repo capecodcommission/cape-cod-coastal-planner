@@ -275,6 +275,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea)
                               noActionOutput
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.Undevelopment, Accreting _ ) ->
                     output
@@ -301,6 +302,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea)
                               noActionOutput
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> relocateHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.Undevelopment, NoErosion ) ->
                     output
@@ -324,6 +326,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                     0
                                 )
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> relocateHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.OpenSpaceProtection, Eroding _ ) ->
                     output
@@ -334,6 +337,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen ((.saltMarshChange >> copySaltMarshAcreage) noActionOutput)
                         |> Result.andThen ((.rareSpeciesHabitat >> copyRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen ((.beachAreaChange >> copyBeachArea) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> loseHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.OpenSpaceProtection, Accreting _ ) ->
                     output
@@ -361,6 +365,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea)
                               noActionOutput
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.SaltMarshRestoration, Accreting _ ) ->
                     output
@@ -393,6 +398,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea) 
                               noActionOutput
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.Revetment, Accreting _ ) ->
                     output
@@ -403,6 +409,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea) 
                               noActionOutput
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> setHistoricalPlacesUnchanged) noActionOutput)
 
                 ( Ok Strategies.Revetment, NoErosion ) ->
                     output
@@ -424,6 +431,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea)
                               noActionOutput
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.DuneCreation, Accreting _ ) ->
                     output
@@ -449,12 +457,14 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
                         |> Result.andThen ((.saltMarshChange >> copySaltMarshAcreage) noActionOutput)
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.BankStabilization, Accreting _ ) ->
                     output
                         |> (getCriticalFacilityCount >> setCriticalFacilitiesUnchanged) noActionOutput
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen ((.beachAreaChange >> copyBeachArea) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> setHistoricalPlacesUnchanged) noActionOutput)
 
                 ( Ok Strategies.BankStabilization, NoErosion ) ->
                     Ok output
@@ -478,6 +488,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea)
                               noActionOutput
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.LivingShoreline, Accreting _ ) ->
                     output
@@ -510,6 +521,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea)
                               noActionOutput
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.BeachNourishment, Accreting _ ) ->
                     output
@@ -566,6 +578,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea)
                               noActionOutput
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.Undevelopment, NoSeaRise ) ->
                     output
@@ -589,6 +602,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                     0
                                 )
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.OpenSpaceProtection, VulnSeaRise _ ) ->
                     Ok noActionOutput
@@ -615,6 +629,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea)
                               noActionOutput
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.SaltMarshRestoration, NoSeaRise ) ->
                     output
@@ -636,6 +651,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea)
                               noActionOutput
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.DuneCreation, NoSeaRise ) -> 
                     output
@@ -677,6 +693,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         --             0
                         --         )
                         --     )
+                        |> Result.andThen ((getHistoricalPlaceCount >> relocateHistoricalPlaces) noActionOutput)
                 
                 ( Ok Strategies.Undevelopment, False ) ->
                     output
@@ -700,6 +717,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                     0
                                 )
                             )
+                        |> Result.andThen ((getHistoricalPlaceCount >> relocateHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.OpenSpaceProtection, True ) ->
                     output
@@ -717,6 +735,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen (setSaltMarshAcreage <| Details.positiveAcreageImpact zoiTotal details)
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.SaltMarshRestoration, False ) ->
                     output
@@ -731,6 +750,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.DuneCreation, False ) ->
                     output
@@ -742,6 +762,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
                         |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
                         |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.BankStabilization, False ) ->
                     Ok output
@@ -754,6 +775,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen (setSaltMarshAcreage <| Details.positiveAcreageImpact (zoiTotal * livingShorelineSaltMarshMultiplier) details)
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen (setBeachArea <| Details.negativeAcreageImpact zoiTotal details)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.LivingShoreline, False ) ->
                     output
@@ -768,6 +790,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                             |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> setPrivateBldgValueUnchanged) noActionOutput)
                             |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
                             |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
+                            |> Result.andThen ((getHistoricalPlaceCount >> setHistoricalPlacesUnchanged) noActionOutput)
 
                 ( Ok Strategies.BeachNourishment, False ) ->
                     output

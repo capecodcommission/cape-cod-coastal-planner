@@ -44,6 +44,7 @@ type alias BaselineInfo =
     , lengthMiles : Scalar.Decimal
     , impervPercent : Scalar.Decimal
     , criticalFacilitiesCount : Int
+    , historicalPlacesCount : Int
     , coastalStructuresCount : Int
     , workingHarbor : Bool
     , publicBuildingsCount : Int

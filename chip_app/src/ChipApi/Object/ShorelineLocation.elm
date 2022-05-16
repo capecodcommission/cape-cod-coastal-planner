@@ -40,6 +40,12 @@ criticalFacilitiesCount : SelectionSet Int ChipApi.Object.ShorelineLocation
 criticalFacilitiesCount =
     Object.selectionForField "Int" "criticalFacilitiesCount" [] Decode.int
 
+{-| The number of historical places in the area
+-}
+historicalPlacesCount : SelectionSet Int ChipApi.Object.ShorelineLocation
+historicalPlacesCount =
+    Object.selectionForField "Int" "historicalPlacesCount" [] Decode.int
+
 
 {-| The total acreage of eelgrass in the area
 -}

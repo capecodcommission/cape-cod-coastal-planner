@@ -41,16 +41,18 @@ view config =
                 [ modal (Modal ModalBackground)
                     [ height fill
                     , width fill
-                    , padding 90
+                    , padding 45
                     ] <|
                         el NoStyle
                             [ width (px 700)
-                            , maxHeight (px <| modalHeight config.device)
+                            --, maxHeight (px <| modalHeight config.device)
+                            , height (percent <| 99)
                             , center
                             , verticalCenter
                             ] <|
                             column NoStyle
-                                []
+                                [ height (percent <| 100)
+                                , yScrollbar ]
                                 [ headerView config 
                                 , mainView config
                                 ]

@@ -121,6 +121,16 @@ getCriticalFacilityCount { criticalFacilities } =
         FacilitiesRelocated count -> count
 
 
+getHistoricalPlaceCount : OutputDetails -> Int
+getHistoricalPlaceCount { historicalPlaces } =
+    case historicalPlaces of
+        HistoricalPlacesLost count -> count
+        HistoricalPlacesProtected count -> count
+        HistoricalPlacesUnchanged count -> count
+        HistoricalPlacesPresent count -> count
+        HistoricalPlacesRelocated count -> count
+
+
 getMonetaryValue : MonetaryResult -> MonetaryValue
 getMonetaryValue result =
     case result of

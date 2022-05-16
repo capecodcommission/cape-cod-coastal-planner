@@ -424,8 +424,8 @@ historicalPlacesView hPlaces strat =
                 , verticalCenter
                 , c
                 ]
-                [ el NoStyle [] <| text a
-                , el NoStyle [] <| b
+                [ el (ShowOutput OutputSmall) [] <| text a
+                , el (ShowOutput OutputSmall) [] <| b
                 ] |> within [ infoIconView (Just d) ]
     in
     row NoStyle [ height fill, width fill, center, verticalCenter, Attr.paddingRight 12 ]
