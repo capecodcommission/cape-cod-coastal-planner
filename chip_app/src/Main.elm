@@ -515,15 +515,28 @@ updateModel msg model =
             )
 
         UpdateZoneOfImpact zoi ->
-            ( model
-                |> expandRightSidebar
-                |> \m -> 
-                    { m 
-                        | zoneOfImpact = Just zoi 
-                        , calculationOutput = Nothing
-                    }
-            , Cmd.none
-            )
+            case zoi.numSelected of
+                0 ->
+                        ( model
+                        |> collapseRightSidebar
+                        |> \m -> 
+                            { m 
+                                | zoneOfImpact = Nothing
+                                , calculationOutput = Nothing
+                                , adaptationHexes = NotAsked
+                            }
+                    , Cmd.none
+                    )
+                _ ->
+                    ( model
+                        |> expandRightSidebar
+                        |> \m -> 
+                            { m 
+                                | zoneOfImpact = Just zoi 
+                                , calculationOutput = Nothing
+                            }
+                    , Cmd.none
+                    )
 
         CancelZoneOfImpactSelection ->
             ( model
@@ -536,6 +549,19 @@ updateModel msg model =
                     }
             , olCmd <| encodeOpenLayersCmd ClearZoneOfImpact
             )
+
+        CancelZoneOfImpactSelectionFromDeselect _ ->
+            let
+                newModel = 
+                    { model | 
+                        zoneOfImpact = Nothing
+                        , calculationOutput = Nothing
+                        , adaptationHexes = NotAsked
+                    }
+            in
+            ( newModel
+                |> collapseRightSidebar
+            , olCmd <| encodeOpenLayersCmd ClearZoneOfImpact )
 
         PickStrategy ->
             case model.adaptationInfo of
@@ -1573,21 +1599,6 @@ updateModel msg model =
 
 applyStrategy : Model -> ( Model, Cmd Msg )
 applyStrategy model =
-    case Remote.isSuccess model.adaptationHexes of
-        True ->
-            let
-                output = runCalculations model
-            in
-                ( model
-                    |> expandRightSidebar
-                    |> \m -> 
-                        { m 
-                            | strategiesModalOpenness = Closed
-                            , calculationOutput = Just output 
-                        }
-                , Cmd.none 
-                )
-        False ->
             ( model
                 |> expandRightSidebar
                 |> \m -> 
@@ -2081,6 +2092,7 @@ subscriptions app =
                 [ Animation.subscription Animate (animations model)
                 , onResize (\w h -> Resize <| WindowSize w h)
                 , olSub decodeOpenLayersSub
+                , closeOutputPanelSub Message.CancelZoneOfImpactSelectionFromDeselect
                 ]
 
         Failed err ->

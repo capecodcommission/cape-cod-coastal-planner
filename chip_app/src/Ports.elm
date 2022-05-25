@@ -298,6 +298,8 @@ encodeOpenLayersCmd cmd =
 
 port olSub : (D.Value -> msg) -> Sub msg
 
+port closeOutputPanelSub : (D.Value -> msg) -> Sub msg
+
 
 decodeOpenLayersSub : D.Value -> Msg
 decodeOpenLayersSub value =

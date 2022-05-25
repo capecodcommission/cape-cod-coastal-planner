@@ -35,6 +35,7 @@ type Msg
     | GotHexesResponse (WebData AH.AdaptationHexes)
     | UpdateZoneOfImpact ZoneOfImpact
     | CancelZoneOfImpactSelection    
+    | CancelZoneOfImpactSelectionFromDeselect D.Value   
     | PickStrategy
     | CancelPickStrategy
     | SelectPreviousHazard

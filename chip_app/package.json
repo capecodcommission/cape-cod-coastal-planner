@@ -7,7 +7,7 @@
   "license": "ISC",
   "private": true,
   "dependencies": {
-    "@turf/turf": "^6.5.0",
+    "@turf/turf": "^5.1.6",
     "elm-phoenix-websocket-ports": "^1.0.1",
     "lodash.debounce": "^4.0.8",
     "normalize.css": "^8.0.0",
