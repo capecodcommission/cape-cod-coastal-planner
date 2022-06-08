@@ -60,6 +60,9 @@ type OpenLayersCmd
     | DisableHistDist
     | RenderHistPlaces
     | DisableHistPlaces
+    | RenderLLR
+    | DisableLLR
+
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -288,6 +291,17 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "disable_historic_places" )
 
                 ]
+
+        RenderLLR ->
+            E.object
+                [ ( "cmd", E.string "render_low_lying_roads" )
+                ]
+
+        DisableLLR ->
+            E.object
+                [ ( "cmd", E.string "disable_low_lying_roads" )
+                ]
+
             
 
 

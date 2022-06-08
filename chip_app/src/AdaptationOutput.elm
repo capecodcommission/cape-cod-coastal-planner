@@ -5,6 +5,7 @@ import Graphql.Http as GHttp
 import AdaptationStrategy.StrategyDetails exposing (StrategyDetails)
 import AdaptationStrategy.Impacts exposing (..)
 import AdaptationHexes exposing (..)
+import Json.Decode exposing (float)
 
 
 type AdaptationOutput 
@@ -40,6 +41,9 @@ type alias OutputDetails =
     , beachAreaChange : AcreageResult
     , rareSpeciesHabitat : RareSpeciesHabitat
     , historicalPlaces : HistoricalPlaces
+    , erosionRdTotMileChange : MileResult
+    , stormSurgeRdTotMileChange : MileResult
+    , sLRRdTotMileChange : MileResult
     }
 
 
@@ -79,6 +83,12 @@ type HistoricalPlaces
     | HistoricalPlacesRelocated Int
 
 
+type MileResult
+    = MileLost Mile
+    | MileProtected Mile
+    | MileUnchanged 
+
+
 defaultOutput : OutputDetails
 defaultOutput =
     { name = ""
@@ -98,6 +108,9 @@ defaultOutput =
     , beachAreaChange = AcreageUnchanged
     , rareSpeciesHabitat = HabitatUnchanged
     , historicalPlaces = HistoricalPlacesUnchanged 0
+    , erosionRdTotMileChange = MileUnchanged
+    , stormSurgeRdTotMileChange = MileUnchanged
+    , sLRRdTotMileChange = MileUnchanged
     }
 
 
@@ -172,3 +185,34 @@ getRareSpeciesPresence habitat =
         HabitatLost -> True
         HabitatGained -> True
         HabitatUnchanged -> False
+
+
+getErosionRdTotMile : OutputDetails -> Float
+getErosionRdTotMile {erosionRdTotMileChange } =
+    case erosionRdTotMileChange of
+        MileLost value -> value 
+
+        MileProtected value -> value
+
+        MileUnchanged -> 0
+
+
+getStormSurgeRdTotMile : OutputDetails -> Float
+getStormSurgeRdTotMile {stormSurgeRdTotMileChange } =
+    case stormSurgeRdTotMileChange of
+        MileLost value -> value 
+
+        MileProtected value -> value
+
+        MileUnchanged -> 0
+
+
+getSLRRdTotMile : OutputDetails -> Float
+getSLRRdTotMile {sLRRdTotMileChange } =
+    case sLRRdTotMileChange of
+        MileLost value -> value 
+
+        MileProtected value -> value
+
+        MileUnchanged -> 0
+

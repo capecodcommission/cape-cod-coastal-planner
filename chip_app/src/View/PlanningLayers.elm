@@ -70,6 +70,7 @@ view :
         , inundationClicked : Openness
         , histDistClicked : Openness
         , histPlacesClicked : Openness
+        , llrClicked : Openness
     } 
     -> Device 
     -> Paths 

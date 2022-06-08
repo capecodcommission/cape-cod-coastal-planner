@@ -142,6 +142,7 @@ type alias Model =
     , inundationClicked : Openness
     , histDistClicked : Openness
     , histPlacesClicked : Openness
+    , llrClicked : Openness
     }
 
 
@@ -286,6 +287,8 @@ initialModel flags key =
         -- Historic Districts clicked
         Closed
         -- Historic Places clicked
+        Closed
+        -- Low Lying Roads clicked
         Closed
 
 init : D.Value -> Url.Url -> Nav.Key -> ( App, Cmd Msg )
@@ -1358,6 +1361,27 @@ updateModel msg model =
                     )
 
 
+        ToggleLLRLayer ->
+            case model.llrClicked of 
+                Open ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | llrClicked = Closed 
+                            }
+                    , olCmd <| encodeOpenLayersCmd (DisableLLR) 
+                    )
+                Closed ->
+                    ( model 
+                        |> \m -> 
+                            { m 
+                                | llrClicked = Open 
+                                , layerClicked = Open
+                            }
+                    , olCmd <| encodeOpenLayersCmd (RenderLLR) 
+                    )
+
+
         ClearAllLayers ->
             ( model 
                 |> \m -> 
@@ -1387,6 +1411,7 @@ updateModel msg model =
                         , structuresClicked = Closed 
                         , histDistClicked = Closed
                         , histPlacesClicked = Closed
+                        , llrClicked = Closed
                     }
             , olCmd <| encodeOpenLayersCmd (ClearLayers)
             )

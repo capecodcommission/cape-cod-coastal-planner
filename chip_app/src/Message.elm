@@ -80,3 +80,4 @@ type Msg
     | ToggleInundationSection
     | ToggleHistDistLayer
     | ToggleHistPlacesLayer
+    | ToggleLLRLayer

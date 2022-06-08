@@ -138,6 +138,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                             |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) vulnerableToErosion)
                             |> Result.andThen ((isRareSpeciesHabitatPresent >> loseRareSpeciesHabitat) vulnerableToErosion)
                             |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
+                            |> Result.andThen ((sumErosionRdTotMile >> loseErosionRdTotMile) vulnerableToErosion)
 
                 Accreting width ->
                     let
@@ -177,6 +178,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                             |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) vulnerableToSLR)
                             |> Result.andThen ((isRareSpeciesHabitatPresent >> loseRareSpeciesHabitat) vulnerableToSLR)
                             |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
+                            |> Result.andThen ((sumSLRRdTotMile >> loseSLRRdTotMile) vulnerableToSLR)
 
                 NoSeaRise ->
                     output
@@ -207,6 +209,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                                         >> losePrivateBldgValue)
                                     vulnerableToSS
                                     )
+                                |> Result.andThen ((sumStormSurgeRdTotMile >> loseStormSurgeRdTotMile) vulnerableToSS)
 
                     False ->
                         output
@@ -276,6 +279,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                               noActionOutput
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getErosionRdTotMile >> setErosionRdTotMile) noActionOutput)
 
                 ( Ok Strategies.Undevelopment, Accreting _ ) ->
                     output
@@ -303,6 +307,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                               noActionOutput
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> relocateHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getErosionRdTotMile >> setErosionRdTotMile) noActionOutput)
 
                 ( Ok Strategies.Undevelopment, NoErosion ) ->
                     output
@@ -327,6 +332,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 )
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> relocateHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getErosionRdTotMile >> setErosionRdTotMile) noActionOutput)
 
                 ( Ok Strategies.OpenSpaceProtection, Eroding _ ) ->
                     output
@@ -338,6 +344,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen ((.rareSpeciesHabitat >> copyRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen ((.beachAreaChange >> copyBeachArea) noActionOutput)
                         |> Result.andThen ((getHistoricalPlaceCount >> loseHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getErosionRdTotMile >> setErosionRdTotMile) noActionOutput)
 
                 ( Ok Strategies.OpenSpaceProtection, Accreting _ ) ->
                     output
@@ -366,6 +373,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                               noActionOutput
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        -- |> Result.andThen ((getSLRRdTotMile >> protectHistoricalPlaces) noActionOutput)
 
                 ( Ok Strategies.SaltMarshRestoration, Accreting _ ) ->
                     output
@@ -579,6 +587,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                               noActionOutput
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getSLRRdTotMile >> setSLRRdTotMile) noActionOutput)
 
                 ( Ok Strategies.Undevelopment, NoSeaRise ) ->
                     output
@@ -603,9 +612,11 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 )
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getSLRRdTotMile >> setSLRRdTotMile) noActionOutput)
 
                 ( Ok Strategies.OpenSpaceProtection, VulnSeaRise _ ) ->
-                    Ok noActionOutput
+                    output
+                        |> (getSLRRdTotMile >> setSLRRdTotMile) noActionOutput
 
                 ( Ok Strategies.OpenSpaceProtection, NoSeaRise ) ->
                     Ok output
@@ -694,6 +705,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         --         )
                         --     )
                         |> Result.andThen ((getHistoricalPlaceCount >> relocateHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getStormSurgeRdTotMile >> setStormSurgeRdTotMile) noActionOutput)
                 
                 ( Ok Strategies.Undevelopment, False ) ->
                     output
@@ -718,6 +730,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 )
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> relocateHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getStormSurgeRdTotMile >> setStormSurgeRdTotMile) noActionOutput)
 
                 ( Ok Strategies.OpenSpaceProtection, True ) ->
                     output
@@ -1185,6 +1198,124 @@ copyRareSpeciesHabitat habitat output =
     Ok { output | rareSpeciesHabitat = habitat }
 
 
+
+--===================erosionRdTot================================
+loseErosionRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+loseErosionRdTotMile mile output =
+    if mile == 0 then
+        Ok { output | erosionRdTotMileChange = MileUnchanged }
+    else
+        Ok { output | erosionRdTotMileChange = MileLost <| abs mile }
+
+
+gainErosionRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+gainErosionRdTotMile mile output =
+    if mile == 0 then
+        Ok { output | erosionRdTotMileChange = MileUnchanged }
+    else
+        Ok { output | erosionRdTotMileChange = MileProtected <| abs mile }
+
+
+setErosionRdTotMileUnchanged : OutputDetails -> Result OutputError OutputDetails
+setErosionRdTotMileUnchanged output =
+    Ok { output | erosionRdTotMileChange  = MileUnchanged }
+
+
+
+setErosionRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+setErosionRdTotMile mile output =
+    if mile > 0 then
+        Ok { output | erosionRdTotMileChange = MileLost <| abs mile }
+    else if mile < 0 then
+        Ok { output | erosionRdTotMileChange = MileLost <| abs mile }
+    else
+        Ok { output | erosionRdTotMileChange = MileUnchanged }
+
+
+copyErosionRdTotMile : MileResult -> OutputDetails -> Result OutputError OutputDetails
+copyErosionRdTotMile result output =
+    Ok { output | erosionRdTotMileChange = result }
+
+--======================================================
+
+
+--===================stormSurgeRdTot================================
+loseStormSurgeRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+loseStormSurgeRdTotMile mile output =
+    if mile == 0 then
+        Ok { output | stormSurgeRdTotMileChange = MileUnchanged }
+    else
+        Ok { output | stormSurgeRdTotMileChange = MileLost <| abs mile }
+
+
+gainStormSurgeRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+gainStormSurgeRdTotMile mile output =
+    if mile == 0 then
+        Ok { output | stormSurgeRdTotMileChange = MileUnchanged }
+    else
+        Ok { output | stormSurgeRdTotMileChange = MileProtected <| abs mile }
+
+
+setStormSurgeRdTotMileUnchanged : OutputDetails -> Result OutputError OutputDetails
+setStormSurgeRdTotMileUnchanged output =
+    Ok { output | stormSurgeRdTotMileChange  = MileUnchanged }
+
+
+setStormSurgeRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+setStormSurgeRdTotMile mile output =
+    if mile > 0 then
+        Ok { output | stormSurgeRdTotMileChange = MileLost <| abs mile }
+    else if mile < 0 then
+        Ok { output | stormSurgeRdTotMileChange = MileLost <| abs mile }
+    else
+        Ok { output | stormSurgeRdTotMileChange = MileUnchanged }
+
+
+copyStormSurgeRdTotMile : MileResult -> OutputDetails -> Result OutputError OutputDetails
+copyStormSurgeRdTotMile result output =
+    Ok { output | stormSurgeRdTotMileChange = result }
+
+--======================================================
+
+
+--===================sLRRdTot================================
+loseSLRRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+loseSLRRdTotMile mile output =
+    if mile == 0 then
+        Ok { output | sLRRdTotMileChange = MileUnchanged }
+    else
+        Ok { output | sLRRdTotMileChange = MileLost <| abs mile }
+
+
+gainSLRRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+gainSLRRdTotMile mile output =
+    if mile == 0 then
+        Ok { output | sLRRdTotMileChange = MileUnchanged }
+    else
+        Ok { output | sLRRdTotMileChange = MileProtected <| abs mile }
+
+
+
+setSLRRdTotMileUnchanged : OutputDetails -> Result OutputError OutputDetails
+setSLRRdTotMileUnchanged output =
+    Ok { output | sLRRdTotMileChange  = MileUnchanged }
+
+
+setSLRRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+setSLRRdTotMile mile output =
+    if mile > 0 then
+        Ok { output | sLRRdTotMileChange = MileLost <| abs mile }
+    else if mile < 0 then
+        Ok { output | sLRRdTotMileChange = MileLost <| abs mile }
+    else
+        Ok { output | sLRRdTotMileChange = MileUnchanged }
+
+
+copySLRRdTotMile : MileResult -> OutputDetails -> Result OutputError OutputDetails
+copySLRRdTotMile result output =
+    Ok { output | sLRRdTotMileChange = result }
+
+--======================================================
 
 -- {-| WARNING! Uncommenting this code does not mean it can then just be plugged back in and have it work
 --     I'm leaving it here as a loose guide to the programmer of one way to implement the algorithm for NPV

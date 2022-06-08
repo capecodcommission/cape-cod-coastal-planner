@@ -25,6 +25,7 @@ import {layer as mop} from "./layers/municipally_owned_parcels"
 import {layer as ppr} from "./layers/public_private_roads"
 import {layer as sp} from "./layers/sewered_parcels"
 import {layer as cds} from "./layers/coastal_defense_structures"
+import {layer as llr} from "./layers/low_lying_roads"
 import {layer as fz} from "./layers/flood_zones"
 import {layer as slosh} from "./layers/slosh"
 import {layer as fourty_years} from "./layers/fourty_years"
@@ -45,7 +46,11 @@ import {
     hover as hoverVulnRibbon,
     select as selectVulnRibbon
 } from "./interactions/vulnerability_ribbon";
-
+import {ImageArcGISRest, OSM} from 'ol/source';
+import {Image as ImageLayer, Tile as TileLayer} from 'ol/layer';
+let tileForImage = new TileLayer({
+    source: new OSM(),
+  });
 export function init(onInit) {
     let map = new Map({
         view: _view(),
@@ -82,6 +87,7 @@ export function init(onInit) {
     map.addLayer(littoralCells(map));
     map.addLayer(histDist(map));
     map.addLayer(histPlaces(map));
+    map.addLayer(llr(map));
 
     // hide all layers except base-layers
     map.on("clear_ol_layers", () => {

@@ -128,6 +128,19 @@ resultsHeader output =
 
 resultsMainContent : OutputDetails -> Element MainStyles Variations Msg
 resultsMainContent output =
+    let 
+        selectedRoadMile = 
+            case output.hazard of
+                "Erosion" ->
+                    output.erosionRdTotMileChange
+                "Storm Surge" ->
+                    output.stormSurgeRdTotMileChange
+                "Sea Level Rise" ->
+                    output.sLRRdTotMileChange
+                _ ->
+                    output.erosionRdTotMileChange
+
+    in
     column NoStyle [ height fill ]
         [ scenarioGeneralInfoView output
         , column NoStyle [ paddingXY 20 0 ]
@@ -160,6 +173,15 @@ resultsMainContent output =
             row NoStyle [ spread, height fill, width fill ]
                 [ acreageResultView "Salt Marsh Change" output.saltMarshChange "SM"
                 , acreageResultView "Beach Area Change" output.beachAreaChange "B"
+                ]
+        , if output.name == "No Action" 
+            then
+            row NoStyle [ spread, height fill, width fill, maxHeight (px 30) ]
+                [ mileResultView "Road Length Impacted:" selectedRoadMile "RLNA"
+                ]
+            else
+            row NoStyle [ spread, height fill, width fill, maxHeight (px 30) ]
+                [ mileResultView "Road Length Impacted:" selectedRoadMile "RL"
                 ]
         , if output.name == "No Action" 
             then
@@ -472,6 +494,37 @@ historicalPlacesView hPlaces strat =
         ]
 
 
+mileResultView : String -> MileResult -> String -> Element MainStyles Variations Msg
+mileResultView lbl result metric =
+    let
+        render a ( b, c ) d e =
+            row NoStyle [ width fill, paddingXY 50 0, spread ] --need     justify-content: space-evenly
+                [ h6 (ShowOutput OutputH6Bold) [ center ] <| text d
+                , el (ShowOutput OutputValue) [ center, e ] <| text a
+                , el (ShowOutput OutputValueLbl) [ center, e ] (text b)
+                    |> within [ infoIconView c ]
+                ]
+    in
+    case (result, metric) of
+        (MileUnchanged, "RLNA") ->
+            render "--" ( "NO IMPACT", Just "There is no change in road miles due to the strategy implementation or hazard." ) lbl (vary Secondary False)
+        
+        (MileLost loss, "RLNA") ->
+            render (abbreviateMileageValue loss) ( "MILES IMPACTED", Just "Relative to No Action, there is an anticipated loss in road miles due to the hazard and/or loss related to strategy implementation." ) lbl (vary Secondary True)
+        
+        (MileUnchanged, "RL") ->
+            render "--" ( "NO IMPACT", Just "There is no change in road miles due to the strategy implementation or hazard." ) lbl (vary Secondary False)
+        
+        (MileLost loss, "RL") ->
+            render (abbreviateMileageValue loss) ( "MILES IMPACTED", Just "Relative to No Action, there is an anticipated loss in road miles due to the hazard and/or loss related to strategy implementation." ) lbl (vary Secondary True)
+
+        (MileProtected gain, "RL") ->
+            render (abbreviateMileageValue gain) ( "MILES GAINED", Just "Relative to No Action, there is an anticipated gain in road miles due to strategy implementation and/or avoiding loss caused by the hazard." ) lbl (vary Tertiary True)
+
+        (_, _) ->
+            render "--" ( "NO IMPACT", Just "..." ) lbl (vary Secondary False)
+
+
 errorView : String -> List String -> Element MainStyles Variations Msg
 errorView errTitle errMsgs =
     el NoStyle [ height fill, verticalCenter ] <|
@@ -507,11 +560,16 @@ infoIconView maybeHelpText =
                     el NoStyle [verticalCenter, center] (text "i")
 
         Nothing ->
-            empty        
+            empty
 
 
 abbreviateAcreageValue : Float -> String
 abbreviateAcreageValue num =
+    format usLocale num
+
+
+abbreviateMileageValue : Float -> String
+abbreviateMileageValue num =
     format usLocale num
 
 

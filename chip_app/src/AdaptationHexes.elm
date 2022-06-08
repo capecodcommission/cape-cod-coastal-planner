@@ -26,6 +26,9 @@ type alias AdaptationHex =
     , publicBldgValue : MonetaryValue
     , numCriticalFacilities : Count
     , numHistoricalResources : Count
+    , sLRRdTot : Mile
+    , stormSurgeRdTot : Mile
+    , erosionRdTot : Mile
     }
 
 
@@ -77,6 +80,9 @@ type alias InundationWidth = Float
 
 
 type alias Acreage = Float
+
+
+type alias Mile = Float
 
 
 type alias MonetaryValue = Float
@@ -200,6 +206,21 @@ countHistoricalPlaces hexes =
     hexes
         |> List.foldl (\hex acc -> hex.numHistoricalResources + acc) 0
 
+sumSLRRdTotMile : AdaptationHexes -> Float
+sumSLRRdTotMile hexes =
+    hexes
+        |> List.foldl (\hex acc -> hex.sLRRdTot + acc) 0.0
+
+sumStormSurgeRdTotMile : AdaptationHexes -> Float
+sumStormSurgeRdTotMile hexes =
+    hexes
+        |> List.foldl (\hex acc -> hex.stormSurgeRdTot + acc) 0.0
+
+sumErosionRdTotMile : AdaptationHexes -> Float
+sumErosionRdTotMile hexes =
+    hexes
+        |> List.foldl (\hex acc -> hex.erosionRdTot + acc) 0.0
+
 
 
 isVulnerableToStormSurge : AdaptationHexes -> Bool
@@ -272,6 +293,9 @@ adaptationHexDecoder =
         |> required "PublicBLDGValue" floatOrNullToFloat
         |> required "CritFacCount" D.int
         |> required "HistPlaceCount" D.int
+        |> required "SLRRdTot" floatOrNullToFloat
+        |> required "StormSurgeRdTot" floatOrNullToFloat
+        |> required "ErosionRdTot" floatOrNullToFloat
 
 
 erosionImpactDecoder : Decoder ErosionImpact

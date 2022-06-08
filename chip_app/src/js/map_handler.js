@@ -171,6 +171,14 @@ class MapHandler {
                     this.disableHistoricPlaces(data);
                     break;
 
+                case "render_low_lying_roads":
+                    this.renderLLR(data);
+                    break;
+
+                case "disable_low_lying_roads":
+                    this.disableLLR(data);
+                    break;
+
                 case "reset_all":
                     this.clearLayers()
                     this.clearVulnerabilityRibbon()
@@ -593,6 +601,18 @@ class MapHandler {
     disableHistoricPlaces(data) {
         this.map.dispatchEvent({
             "type": "disable_historic_places"
+        });
+    }
+
+    renderLLR(data) {
+        this.map.dispatchEvent({
+            "type": "render_llr"
+        });
+    }
+
+    disableLLR(data) {
+        this.map.dispatchEvent({
+            "type": "disable_llr"
         });
     }
 

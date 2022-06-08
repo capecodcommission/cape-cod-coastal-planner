@@ -248,6 +248,15 @@ type PlanningLayerStyles
     | CAT2
     | CAT3
     | CAT4
+    | Category1
+    | Category2
+    | Category3
+    | Category4
+    | Category5
+    | Category6
+    | Category7
+    | Category8
+    | Category9
 
 type RibbonStyles
     = LessThanZero
@@ -979,6 +988,42 @@ stylesheet device =
         , Style.style (Rbn SixPlus) 
             [ StyleColor.background <| createStyleColorWithAlpha 164 27 30 1
             , Border.rounded 8
+            ]
+        , Style.style (PL Category1) 
+            [ StyleColor.background <| createStyleColorWithAlpha 255 255 127 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category2) 
+            [ StyleColor.background <| createStyleColorWithAlpha 182 245 88 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category3) 
+            [ StyleColor.background <| createStyleColorWithAlpha 111 235 43 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category4) 
+            [ StyleColor.background <| createStyleColorWithAlpha 58 214 39 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category5) 
+            [ StyleColor.background <| createStyleColorWithAlpha 61 184 103 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category6) 
+            [ StyleColor.background <| createStyleColorWithAlpha 39 156 154 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category7) 
+            [ StyleColor.background <| createStyleColorWithAlpha 31 108 159 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category8) 
+            [ StyleColor.background <| createStyleColorWithAlpha 25 64 140 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category9) 
+            [ StyleColor.background <| createStyleColorWithAlpha 7 7 121 1
+            , Border.rounded 4
             ]
         ]
 
