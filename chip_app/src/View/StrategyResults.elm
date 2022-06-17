@@ -120,7 +120,7 @@ resultsHeader output =
                     paragraph NoStyle [] [ text "SELECTED STRATEGY" ]
                 , h5 (Headings H5) [ verticalCenter ] <|
                     ( el NoStyle [] (text output.name)
-                        |> within [ infoIconView output.description ]
+                        |> within [ infoIconView 0 18 output.description ]
                     )
                 ]
             ]
@@ -139,7 +139,6 @@ resultsMainContent output =
                     output.sLRRdTotMileChange
                 _ ->
                     output.erosionRdTotMileChange
-
     in
     column NoStyle [ height fill ]
         [ scenarioGeneralInfoView output
@@ -209,15 +208,26 @@ scenarioGeneralInfoView output =
                         [ el (ShowOutput ScenarioLabel) [ verticalCenter ] (text a)
                         , el (ShowOutput ScenarioBold) [ verticalCenter ] (text b)
                         , el NoStyle [ verticalCenter ] (text cText)
-                            |> within [ infoIconView d ]
+                            |> within [ infoIconView 0 18 d ]
                         ]
 
                     Nothing ->
                         [ el (ShowOutput ScenarioLabel) [ verticalCenter ] (text a)
                         , el (ShowOutput ScenarioBold) [ verticalCenter ] (text b)
-                            |> within [ infoIconView d ]
+                            |> within [ infoIconView 0 18 d ]
                         ]
-                
+        durationText = 
+            case Hazards.toTypeFromStr output.hazard of
+                        Ok Hazards.Erosion ->
+                            "The planning horizon for erosion is 40 years, in alignment with MA Shoreline Change project's long-term erosion rates." 
+
+                        Ok Hazards.SeaLevelRise ->
+                            "Sea level rise is considered a one-time, immediate-impact event."
+
+                        Ok Hazards.StormSurge ->
+                            "The planning horizon for sea level rise is 40 years, in alignment with the 2-feet of predicted sea level rise factored into the MA Municipal Vulnerability Planning Process."
+                        Err _ ->
+                            ""
     in
     row NoStyle [ height (px 125), paddingXY 25 30 ]
         [ el (ShowOutput OutputDivider) [ width (px 180), height fill, paddingRight 10 ] <|
@@ -243,7 +253,7 @@ scenarioGeneralInfoView output =
                 ]
         , column NoStyle [ paddingLeft 15, spacingXY 0 4 ]
             [ renderDetails "LOCATION:" output.location (Just "area") Nothing
-            , renderDetails "DURATION:" output.duration Nothing (Just "The Cape Cod Coastal Planner's planning horizon for sea level rise is 40 years, in alignment with the 2-feet of predicted sea level rise factored into the MA Municipal Vulnerability Planning Process. The horizon for erosion also reflects 40 years, using the long-term erosion rates calculated in the MA Shoreline Change project. Storm surge is considered a one-time, immediate-impact event.")
+            , renderDetails "DURATION:" output.duration Nothing (Just durationText)
             , renderDetails "SCENARIO SIZE:" (String.fromInt output.scenarioSize) (Just "linear ft.") (Just "The size of the scenario is the length of shoreline selected by the user, with Zones of Impact ranging from 500 to 4,000 contiguous feet.")
             ]
         ]
@@ -256,7 +266,7 @@ monetaryResultView lblPart1 lblPart2 result infoText =
             column NoStyle [ spacing 5, verticalCenter ]
                 [ el (ShowOutput OutputValue) [ center, f ] <| text a 
                 , el (ShowOutput OutputValueLbl) [ center, f ] (text b)
-                    |> within [ infoIconView infoText ]
+                    |> within [ infoIconView 0 18 infoText ]
                 , h6 (ShowOutput OutputH6Bold) [ center ] <| text d
                 , h6 (ShowOutput OutputH6Bold) [ center ] <| text e
                 ]
@@ -285,7 +295,7 @@ acreageResultView lbl result metric =
             column NoStyle [ spacing 5, width fill, verticalCenter ]
                 [ h6 (ShowOutput OutputH6Bold) [ center ] <| text d
                 , el (ShowOutput OutputValueLbl) [ center, e ] (text b)
-                    |> within [ infoIconView c ]
+                    |> within [ infoIconView 0 18 c ]
                 , el (ShowOutput OutputValue) [ center, e ] <| text a
                 ]
     in
@@ -343,7 +353,7 @@ criticalFacilitiesView facilities strat =
                 ]
                 [ el (ShowOutput OutputSmall) [] <| text a
                 , el (ShowOutput OutputSmall) [] <| b
-                ] |> within [ infoIconView (Just d) ]
+                ] |> within [ infoIconView 42 -68 (Just d) ]
     in
     row NoStyle [ height fill, width fill, center, verticalCenter ]
         [ column (ShowOutput OutputDivider) [ spacing 5, paddingRight 15 ]
@@ -401,7 +411,7 @@ rareSpeciesHabitatView habitat strat =
                 , verticalCenter
                 , b
                 ] 
-                [ el NoStyle [] <| text a ] |> within [ infoIconView (Just c) ]
+                [ el NoStyle [] <| text a ] |> within [ infoIconView 55 -68 (Just c) ]
     in
     row NoStyle [ height fill, width fill, center, verticalCenter ]
         [ column (ShowOutput OutputDivider) [ spacing 5, paddingRight 15 ]
@@ -448,7 +458,7 @@ historicalPlacesView hPlaces strat =
                 ]
                 [ el (ShowOutput OutputSmall) [] <| text a
                 , el (ShowOutput OutputSmall) [] <| b
-                ] |> within [ infoIconView (Just d) ]
+                ] |> within [ infoIconView 42 -68 (Just d) ]
     in
     row NoStyle [ height fill, width fill, center, verticalCenter, Attr.paddingRight 12 ]
         [ column (ShowOutput OutputDivider) [ spacing 5, paddingRight 15 ]
@@ -458,35 +468,38 @@ historicalPlacesView hPlaces strat =
         , ( case (hPlaces, strat) of
             (HistoricalPlacesUnchanged num, "NA") ->
                 render 
-                    "--" empty (vary Secondary False) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+                    "--" empty (vary Secondary False) "Hundreds of historic structures or sites dot the coastline and may be vulnerable to one or more coastal hazards. These resources contribute to the region's cultural characteristics and landscape."
 
             (HistoricalPlacesUnchanged num, "ST") ->
                 render 
-                    "--" empty (vary Secondary False) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+                    "--" empty (vary Secondary False) "Hundreds of historic structures or sites dot the coastline and may be vulnerable to one or more coastal hazards. These resources contribute to the region's cultural characteristics and landscape."
 
+            (HistoricalPlacesLostNoNum num, "NA") ->
+                render "" (text "LOST") (vary Secondary True) "Historic structures, threatened by coastal hazards in a No Action Scenario, are impacted."
+            
             (HistoricalPlacesLost num, "NA") ->
-                render (String.fromInt num) (text "LOST") (vary Secondary True) "Historical places threatened by coastal hazards are impacted in a No Action scenario."
+                render (String.fromInt num) (text "LOST") (vary Secondary True) "Historic structures, threatened by coastal hazards in a No Action Scenario, are impacted."
             
             (HistoricalPlacesLost num, "ST") ->
-                render (String.fromInt num) (text "LOST") (vary Secondary True) "Historical places threatened by coastal hazards are impacted in a No Action scenario due to strategy implementation."
+                render (String.fromInt num) (text "LOST") (vary Secondary True) "Historic structures threatened in a No Action Scenario are impacted by the strategy implementation."
 
             (HistoricalPlacesProtected num, "NA") ->
-                render (String.fromInt num) (text "PROT.") (vary Tertiary True) "Historical places with anticipated hazard-induced impacts in a No Action scenario are now protected due to strategy implementation."
+                render (String.fromInt num) (text "PROT.") (vary Tertiary True) "Historic structures threatened by a coastal hazard in a No Action Scenario are now protected due to the strategy implementation."
 
             (HistoricalPlacesProtected num, "ST") ->
-                render (String.fromInt num) (text "PROT.") (vary Tertiary True) "Historical places with anticipated hazard-induced impacts in a No Action scenario are now protected due to strategy implementation."    
+                render (String.fromInt num) (text "PROT.") (vary Tertiary True) "Historic structures threatened by a coastal hazard in a No Action Scenario are now protected due to the strategy implementation."
 
             (HistoricalPlacesPresent num, "NA") ->
-                render (String.fromInt num) empty (vary Secondary False) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+                render (String.fromInt num) empty (vary Secondary False) "Hundreds of historic structures or sites dot the coastline and may be vulnerable to one or more coastal hazards. These resources contribute to the region's cultural characteristics and landscape."
 
             (HistoricalPlacesPresent num, "ST") ->
-                render (String.fromInt num) empty (vary Secondary False) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+                render (String.fromInt num) empty (vary Secondary False) "Hundreds of historic structures or sites dot the coastline and may be vulnerable to one or more coastal hazards. These resources contribute to the region's cultural characteristics and landscape."
 
             (HistoricalPlacesRelocated num, "NA") ->
-                render (String.fromInt num) (text "RELOC.") (vary Tertiary True) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+                render (String.fromInt num) (text "RELOC.") (vary Tertiary True) "Hundreds of historic structures or sites dot the coastline and may be vulnerable to one or more coastal hazards. These resources contribute to the region's cultural characteristics and landscape."
 
             (HistoricalPlacesRelocated num, "ST") ->
-                render (String.fromInt num) (text "RELOC.") (vary Tertiary True) "Historical places are identified by towns through their hazard mitigation planning process, and indicate places where even a slight chance of flooding is too great a threat."
+                render (String.fromInt num) (text "RELOC.") (vary Tertiary True) "Hundreds of historic structures or sites dot the coastline and may be vulnerable to one or more coastal hazards. These resources contribute to the region's cultural characteristics and landscape."
 
             (_, _) ->
                 render (String.fromInt 0) (text "...") (vary Secondary True) "..."
@@ -497,32 +510,60 @@ historicalPlacesView hPlaces strat =
 mileResultView : String -> MileResult -> String -> Element MainStyles Variations Msg
 mileResultView lbl result metric =
     let
+        rMile = 
+            case result of
+                (MileLost rm) ->
+                    abbreviateMileageValue rm
+                (MileProtected rm) ->
+                    abbreviateMileageValue rm
+                (MilePresent rm) ->
+                    abbreviateMileageValue rm
+                (MileRelocated rm) ->
+                    abbreviateMileageValue rm
+                MileUnchanged ->
+                    abbreviateMileageValue 0
+        rStyle = 
+            case rMile of
+                " less than 1/4 " ->
+                    OutputValueMedium
+                _ ->
+                    OutputValue
         render a ( b, c ) d e =
             row NoStyle [ width fill, paddingXY 50 0, spread ] --need     justify-content: space-evenly
                 [ h6 (ShowOutput OutputH6Bold) [ center ] <| text d
-                , el (ShowOutput OutputValue) [ center, e ] <| text a
+                , el (ShowOutput rStyle) [ center, e ] <| text a
                 , el (ShowOutput OutputValueLbl) [ center, e ] (text b)
-                    |> within [ infoIconView c ]
+                    |> within [ infoIconView 0 18 c ]
                 ]
     in
     case (result, metric) of
         (MileUnchanged, "RLNA") ->
-            render "--" ( "NO IMPACT", Just "There is no change in road miles due to the strategy implementation or hazard." ) lbl (vary Secondary False)
+            render "--" ( "NO IMPACT", Just "This output sums the total Road Length (in miles) of roads in the Zone of Impact that are either negatively or positively impacted by either the hazard or strategy." ) lbl (vary Secondary False)
+        (MileUnchanged, "RL") ->
+            render "--" ( "NO IMPACT", Just "This output sums the total Road Length (in miles) of roads in the Zone of Impact that are either negatively or positively impacted by either the hazard or strategy." ) lbl (vary Secondary False)
         
         (MileLost loss, "RLNA") ->
-            render (abbreviateMileageValue loss) ( "MILES IMPACTED", Just "Relative to No Action, there is an anticipated loss in road miles due to the hazard and/or loss related to strategy implementation." ) lbl (vary Secondary True)
-        
-        (MileUnchanged, "RL") ->
-            render "--" ( "NO IMPACT", Just "There is no change in road miles due to the strategy implementation or hazard." ) lbl (vary Secondary False)
-        
+            render (abbreviateMileageValue loss) ( "MILES IMPACTED", Just "Total length of roads (in miles) lost due to strategy implementation or hazard impact." ) lbl (vary Secondary True)
         (MileLost loss, "RL") ->
-            render (abbreviateMileageValue loss) ( "MILES IMPACTED", Just "Relative to No Action, there is an anticipated loss in road miles due to the hazard and/or loss related to strategy implementation." ) lbl (vary Secondary True)
+            render (abbreviateMileageValue loss) ( "MILES IMPACTED", Just "Total length of roads (in miles) lost due to strategy implementation or hazard impact." ) lbl (vary Secondary True)
 
+        (MileProtected gain, "RLNA") -> 
+            render (abbreviateMileageValue gain) ( "MILES PROTECTED", Just "Total length of roads (in miles) protected due to strategy implementation." ) lbl (vary Tertiary True)
         (MileProtected gain, "RL") ->
-            render (abbreviateMileageValue gain) ( "MILES GAINED", Just "Relative to No Action, there is an anticipated gain in road miles due to strategy implementation and/or avoiding loss caused by the hazard." ) lbl (vary Tertiary True)
+            render (abbreviateMileageValue gain) ( "MILES PROTECTED", Just "Total length of roads (in miles) protected due to strategy implementation" ) lbl (vary Tertiary True)
+        
+        (MilePresent gain, "RLNA") -> 
+            render (abbreviateMileageValue gain) ( "MILES PRESENT", Just "This output sums the total Road Length (in miles) of roads in the Zone of Impact that are either negatively or positively impacted by either the hazard or strategy." ) lbl (vary Tertiary True)
+        (MilePresent gain, "RL") ->
+            render (abbreviateMileageValue gain) ( "MILES PRESENT", Just "This output sums the total Road Length (in miles) of roads in the Zone of Impact that are either negatively or positively impacted by either the hazard or strategy." ) lbl (vary Tertiary True)
+
+        (MileRelocated gain, "RLNA") -> 
+            render (abbreviateMileageValue gain) ( "MILES RELOC.", Just "This output sums the total Road Length (in miles) of roads in the Zone of Impact that are either negatively or positively impacted by either the hazard or strategy." ) lbl (vary Tertiary True)
+        (MileRelocated gain, "RL") ->
+            render (abbreviateMileageValue gain) ( "MILES RELOC.", Just "This output sums the total Road Length (in miles) of roads in the Zone of Impact that are either negatively or positively impacted by either the hazard or strategy." ) lbl (vary Tertiary True)
 
         (_, _) ->
-            render "--" ( "NO IMPACT", Just "..." ) lbl (vary Secondary False)
+            render "--" ( "NO IMPACT", Just "There is no change in road miles due to the strategy implementation or hazard...." ) lbl (vary Secondary False)
 
 
 errorView : String -> List String -> Element MainStyles Variations Msg
@@ -551,12 +592,12 @@ footerView =
             ]
     
 
-infoIconView : Maybe String -> Element MainStyles Variations Msg
-infoIconView maybeHelpText =
+infoIconView : Float -> Float -> Maybe String -> Element MainStyles Variations Msg
+infoIconView downVal rightVal maybeHelpText =
     case maybeHelpText of
         Just helpText ->
             circle 6 (ShowOutput OutputInfoIcon) 
-                [ title helpText, alignRight, moveRight 18 ] <| 
+                [ title helpText, alignRight, moveDown downVal, moveRight rightVal ] <| 
                     el NoStyle [verticalCenter, center] (text "i")
 
         Nothing ->
@@ -570,8 +611,10 @@ abbreviateAcreageValue num =
 
 abbreviateMileageValue : Float -> String
 abbreviateMileageValue num =
-    format usLocale num
-
+    if num > 0.249 then
+        format usLocale num
+    else 
+        " less than 1/4 "
 
 abbreviateMonetaryValue : Float -> String
 abbreviateMonetaryValue =

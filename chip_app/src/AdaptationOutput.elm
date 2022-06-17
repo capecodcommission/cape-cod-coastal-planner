@@ -76,7 +76,8 @@ type RareSpeciesHabitat
 
 
 type HistoricalPlaces
-    = HistoricalPlacesLost Int
+    = HistoricalPlacesLostNoNum Int
+    | HistoricalPlacesLost Int
     | HistoricalPlacesProtected Int
     | HistoricalPlacesUnchanged Int
     | HistoricalPlacesPresent Int
@@ -86,6 +87,8 @@ type HistoricalPlaces
 type MileResult
     = MileLost Mile
     | MileProtected Mile
+    | MilePresent Mile
+    | MileRelocated Mile
     | MileUnchanged 
 
 
@@ -137,6 +140,7 @@ getCriticalFacilityCount { criticalFacilities } =
 getHistoricalPlaceCount : OutputDetails -> Int
 getHistoricalPlaceCount { historicalPlaces } =
     case historicalPlaces of
+        HistoricalPlacesLostNoNum count -> count
         HistoricalPlacesLost count -> count
         HistoricalPlacesProtected count -> count
         HistoricalPlacesUnchanged count -> count
@@ -191,28 +195,28 @@ getErosionRdTotMile : OutputDetails -> Float
 getErosionRdTotMile {erosionRdTotMileChange } =
     case erosionRdTotMileChange of
         MileLost value -> value 
-
         MileProtected value -> value
-
+        MilePresent value -> value
+        MileRelocated value -> value
         MileUnchanged -> 0
 
 
 getStormSurgeRdTotMile : OutputDetails -> Float
 getStormSurgeRdTotMile {stormSurgeRdTotMileChange } =
     case stormSurgeRdTotMileChange of
-        MileLost value -> value 
-
+        MileLost value -> value
         MileProtected value -> value
-
+        MilePresent value -> value
+        MileRelocated value -> value
         MileUnchanged -> 0
 
 
 getSLRRdTotMile : OutputDetails -> Float
 getSLRRdTotMile {sLRRdTotMileChange } =
     case sLRRdTotMileChange of
-        MileLost value -> value 
-
+        MileLost value -> value
         MileProtected value -> value
-
+        MilePresent value -> value
+        MileRelocated value -> value
         MileUnchanged -> 0
 

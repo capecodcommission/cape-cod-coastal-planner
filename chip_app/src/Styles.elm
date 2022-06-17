@@ -175,6 +175,7 @@ type OutputStyles
     | OutputDivider
     | OutputSmallItalic
     | OutputH6Bold
+    | OutputValueMedium
     | OutputSmall
     | OutputImpact
     | OutputMultiImpact
@@ -650,6 +651,16 @@ stylesheet device =
             [ Font.size <| scaled 1
             , Font.weight 500
             , Font.typeface fontstack
+            ]
+        , Style.style (ShowOutput OutputValueMedium)
+            [ Font.size 16
+            , Font.weight 100
+            , Font.typeface fontstack
+            , StyleColor.text <| createStyleColorWithAlpha 255 255 255 0.5
+            , variation Secondary
+                [ StyleColor.text palette.mySin ]
+            , variation Tertiary
+                [ StyleColor.text palette.havelockBlue ]
             ]
         , Style.style (ShowOutput OutputSmall)
             [ Font.size 12
