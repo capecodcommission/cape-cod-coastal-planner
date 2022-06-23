@@ -257,7 +257,7 @@ defmodule ChipApi.Seeds do
             ],
             is_active: true,
             beach_width_impact_m: nil,
-            applicability: "TBD-Retrofitting Assets"
+            applicability: "TBD"
         }
         |> Repo.insert!
 
