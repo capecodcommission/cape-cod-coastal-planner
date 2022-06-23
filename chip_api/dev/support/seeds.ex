@@ -228,9 +228,36 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Acquisition of land for new development.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Loss of coastal property values.", display_order: 2}
             ],
-            is_active: false,
+            is_active: true,
             beach_width_impact_m: nil,
-            applicability: "TBD"
+            applicability: "TBD-Managed Relocation"
+        }
+        |> Repo.insert!
+
+        # Retrofitting Assets
+        _retrofitting_sssets = %Adaptation.Strategy{
+            name: "Retrofitting Assets",
+            description: "Retrofitting Assets description",
+            adaptation_categories: [retreat],
+            coastal_hazards: [erosion, storm_surge, sea_level_rise],
+            impact_scales: [site, neighborhood, community, regional],
+            impact_costs: [high],
+            impact_life_spans: [permanent],
+            adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
+            currently_permittable: "Various local and state permits may be required.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Spares existing development from the effects of erosion and flooding.", display_order: 0},
+                %Adaptation.Advantage{name: "Protects future development from flooding.", display_order: 1},
+                %Adaptation.Advantage{name: "Allows for the maintenance or restoration of intertidal habitat.", display_order: 2}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Cost of retrofitting assets.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Acquisition of land for new additions.", display_order: 1},
+                %Adaptation.Disadvantage{name: "Loss of coastal property values.", display_order: 2}
+            ],
+            is_active: true,
+            beach_width_impact_m: nil,
+            applicability: "TBD-Retrofitting Assets"
         }
         |> Repo.insert!
 
