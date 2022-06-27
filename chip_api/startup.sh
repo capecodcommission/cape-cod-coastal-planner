@@ -4,4 +4,4 @@ set -ex
 mix ecto.reset
 # ONLY IF BLANK DATABASE (e.g. PRUNED DOCKER SYSTEM)
 # mix ecto.setup
-# mix phx.server
+mix phx.server
