@@ -14,7 +14,7 @@ config :chip_api, ChipApiWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "8j7cl7qTlB6Hw7x91lHl+X98tiaWKXjNQ9aM44bGEB/S0Om3G0TpGpfhYXjViqmD",
   render_errors: [view: ChipApiWeb.ErrorView, accepts: ~w(html json)],
-  pubsub_server: [name: ChipApi.PubSub,
+  pubsub: [name: ChipApi.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger

@@ -12,8 +12,7 @@ defmodule ChipApi.Application do
       # Start the Ecto repository
       supervisor(ChipApi.Repo, []),
       # Start the endpoint when the application starts
-	  {Phoenix.PubSub, [name: ChipApi.PubSub, adapter: Phoenix.PubSub.PG2]},
-      #supervisor(ChipApiWeb.Endpoint, []),
+      supervisor(ChipApiWeb.Endpoint, []),
       # Start your own worker by calling: ChipApi.Worker.start_link(arg1, arg2, arg3)
       worker(Cachex, [ 
         :littoral_cell_cache, [
@@ -44,5 +43,3 @@ defmodule ChipApi.Application do
     :ok
   end
 end
-
-

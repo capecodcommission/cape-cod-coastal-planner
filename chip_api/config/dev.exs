@@ -65,7 +65,7 @@ config :chip_api, ChipApi.Repo,
   database: "chip_api_dev",
   hostname: "cccpdb",
   port: 5432,
-  pool_size: 10,
-  queue_target: 5000
+  pool_size: 10
 
 import_config "#{Mix.env}.secret.exs"
+#
