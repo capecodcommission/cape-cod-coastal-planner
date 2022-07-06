@@ -229,7 +229,7 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Acquisition of land for new development.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Loss of coastal property values.", display_order: 2}
             ],
-            is_active: true,
+            is_active: false,
             beach_width_impact_m: nil,
             applicability: "TBD-Managed Relocation"
         }
@@ -257,7 +257,7 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Acquisition of land for new additions.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Loss of coastal property values.", display_order: 2}
             ],
-            is_active: true,
+            is_active: false,
             beach_width_impact_m: nil,
             applicability: "TBD"
         }
