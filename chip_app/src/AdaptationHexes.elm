@@ -216,8 +216,8 @@ sumStormSurgeRdTotMile hexes =
     hexes
         |> List.foldl (\hex acc -> hex.stormSurgeRdTot + acc) 0.0
 
-sumErosionRdTotMile : AdaptationHexes -> Float
-sumErosionRdTotMile hexes =
+sumRdTotMile : AdaptationHexes -> Float
+sumRdTotMile hexes =
     hexes
         |> List.foldl (\hex acc -> hex.erosionRdTot + acc) 0.0
 

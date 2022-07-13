@@ -138,7 +138,7 @@ calculateNoActionOutput hexes zoneOfImpact hazard output =
                             -- |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) vulnerableToErosion)
                             |> Result.andThen ((isRareSpeciesHabitatPresent >> loseRareSpeciesHabitat) vulnerableToErosion)
                             |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
-                            |> Result.andThen ((sumErosionRdTotMile >> loseErosionRdTotMile) vulnerableToErosion)
+                            |> Result.andThen ((sumRdTotMile >> loseRdTotMile) vulnerableToErosion)
 
                 Accreting width ->
                     let
@@ -283,7 +283,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                               noActionOutput
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> loseHistoricalPlaces) noActionOutput)
-                        |> Result.andThen ((getErosionRdTotMile >> loseErosionRdTotMile) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> loseRdTotMile) noActionOutput)
 
                 ( Ok Strategies.Undevelopment, Accreting width ) ->
                     output
@@ -317,7 +317,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         
                         |> Result.andThen ((zoiAcreageImpact width >> gainBeachArea) zoneOfImpact)    
                         |> Result.andThen ((getHistoricalPlaceCount >> loseHistoricalPlaces) noActionOutput)
-                        |> Result.andThen ((getErosionRdTotMile >> loseErosionRdTotMile) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> loseRdTotMile) noActionOutput)
 
                 ( Ok Strategies.Undevelopment, NoErosion ) ->
                     output
@@ -343,7 +343,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         --         )
                         --     )
                         |> Result.andThen ((getHistoricalPlaceCount >> loseHistoricalPlaces) noActionOutput)
-                        |> Result.andThen ((getErosionRdTotMile >> loseErosionRdTotMile) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> loseRdTotMile) noActionOutput)
 
                 ( Ok Strategies.OpenSpaceProtection, Eroding width ) ->
                     output
@@ -357,7 +357,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         -- |> Result.andThen ((.rareSpeciesHabitat >> copyRareSpeciesHabitat) noActionOutput)
                         -- |> Result.andThen ((.beachAreaChange >> copyBeachArea) noActionOutput)
                         -- |> Result.andThen ((getHistoricalPlaceCount >> loseHistoricalPlaces) noActionOutput)
-                        -- |> Result.andThen ((getErosionRdTotMile >> loseErosionRdTotMile) noActionOutput)
+                        -- |> Result.andThen ((getRdTotMile >> loseRdTotMile) noActionOutput)
 
                 ( Ok Strategies.OpenSpaceProtection, Accreting width ) ->
                     output
@@ -387,7 +387,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                               noActionOutput
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
-                        |> Result.andThen ((getErosionRdTotMile >> protectErosionRdTotMile) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
 
                 ( Ok Strategies.SaltMarshRestoration, Accreting _ ) ->
                     output
@@ -421,7 +421,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                               noActionOutput
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
-                        |> Result.andThen ((getErosionRdTotMile >> protectErosionRdTotMile) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
 
                 ( Ok Strategies.Revetment, Accreting _ ) ->
                     output
@@ -455,7 +455,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                               noActionOutput
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
-                        |> Result.andThen ((getErosionRdTotMile >> protectErosionRdTotMile) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
 
                 ( Ok Strategies.DuneCreation, Accreting _ ) ->
                     output
@@ -482,7 +482,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen ((.saltMarshChange >> copySaltMarshAcreage) noActionOutput)
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
-                        |> Result.andThen ((getErosionRdTotMile >> protectErosionRdTotMile) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
 
                 ( Ok Strategies.BankStabilization, Accreting _ ) ->
                     output
@@ -514,7 +514,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                               noActionOutput
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
-                        |> Result.andThen ((getErosionRdTotMile >> protectErosionRdTotMile) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
 
                 ( Ok Strategies.LivingShoreline, Accreting _ ) ->
                     output
@@ -548,7 +548,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                               noActionOutput
                             )
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
-                        |> Result.andThen ((getErosionRdTotMile >> protectErosionRdTotMile) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
 
                 ( Ok Strategies.BeachNourishment, Accreting _ ) ->
                     output
@@ -565,6 +565,65 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput
                         |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
 
+                -- Managed Relocation & Retrofitting Assets
+                ( Ok Strategies.ManagedRelocation, Eroding width ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> losePrivateLandValue) noActionOutput)   
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
+
+                ( Ok Strategies.ManagedRelocation, Accreting width ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen ((zoiAcreageImpact width >> gainBeachArea) zoneOfImpact)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
+
+                ( Ok Strategies.ManagedRelocation, NoErosion ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
+                
+                ( Ok Strategies.RetrofittingAssets, Eroding width ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> losePrivateLandValue) noActionOutput)   
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
+
+                ( Ok Strategies.RetrofittingAssets, Accreting width ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen ((zoiAcreageImpact width >> gainBeachArea) zoneOfImpact)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
+
+                ( Ok Strategies.RetrofittingAssets, NoErosion ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
+                -- End of Managed Relocation & Retrofitting Assets
                 ( Ok _, _) ->
                     Err <| BadInput "Cannot calculate output for unknown or invalid strategy type"
 
@@ -692,6 +751,58 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput
                         |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
 
+                -- Managed Relocation & Retrofitting Assets                
+                ( Ok Strategies.ManagedRelocation, VulnSeaRise width ) ->
+                    let
+                        vulnerableToSLR = withSeaLevelRise hexes
+                    in
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> losePrivateLandValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput) 
+                        -- TODO: CHECK IF BELOW SALTMARSH IS CORRECT
+                        |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) vulnerableToSLR)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getSLRRdTotMile >> protectSLRRdTotMile) noActionOutput)
+
+                ( Ok Strategies.ManagedRelocation, NoSeaRise ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getSLRRdTotMile >> protectSLRRdTotMile) noActionOutput)
+                        -- resume on 6/27/2022 (look for yellow cell on xls)
+                ( Ok Strategies.RetrofittingAssets, VulnSeaRise width ) ->
+                    let
+                        vulnerableToSLR = withSeaLevelRise hexes
+                    in
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateLandValue >> getMonetaryValue >> losePrivateLandValue) noActionOutput)
+                        |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) vulnerableToSLR)
+                        |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput)
+                        |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
+
+
+                ( Ok Strategies.RetrofittingAssets, NoSeaRise ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
+
+                -- End of Managed Relocation & Retrofitting Assets
+
+                
                 ( Ok _, _ ) ->
                     Err <| BadInput "Cannot calculate output for unknown or invalid strategy type"
 
@@ -838,6 +949,42 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                     output
                         |> (.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput
                         |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
+
+                -- Managed Relocation & Retrofitting Assets                
+                ( Ok Strategies.ManagedRelocation, True ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getSLRRdTotMile >> protectSLRRdTotMile) noActionOutput)
+
+                ( Ok Strategies.ManagedRelocation, False ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getSLRRdTotMile >> protectSLRRdTotMile) noActionOutput)
+
+                ( Ok Strategies.RetrofittingAssets, True ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
+
+
+                ( Ok Strategies.RetrofittingAssets, False ) ->
+                    output
+                        |> (getCriticalFacilityCount >> protectCriticalFacilities) noActionOutput
+                        |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
+                        |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
+                        |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
+                        |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
+
+                -- End of Managed Relocation & Retrofitting Assets
 
                 ( Ok _, _ ) ->
                     Err <| BadInput "Cannot calculate output for unknown or invalid strategy type"
@@ -1238,56 +1385,56 @@ copyRareSpeciesHabitat habitat output =
 
 
 --===================erosionRdTot================================
-loseErosionRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
-loseErosionRdTotMile mile output =
+loseRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+loseRdTotMile mile output =
     if mile == 0 then
-        Ok { output | erosionRdTotMileChange = MileUnchanged }
+        Ok { output | rdTotMileChange = MileUnchanged }
     else
-        Ok { output | erosionRdTotMileChange = MileLost <| abs mile }
+        Ok { output | rdTotMileChange = MileLost <| abs mile }
 
 
-protectErosionRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
-protectErosionRdTotMile mile output =
+protectRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+protectRdTotMile mile output =
     if mile == 0 then
-        Ok { output | erosionRdTotMileChange = MileUnchanged }
+        Ok { output | rdTotMileChange = MileUnchanged }
     else
-        Ok { output | erosionRdTotMileChange = MileProtected <| abs mile }
+        Ok { output | rdTotMileChange = MileProtected <| abs mile }
 
 
-setErosionRdTotMileUnchanged : OutputDetails -> Result OutputError OutputDetails
-setErosionRdTotMileUnchanged output =
-    Ok { output | erosionRdTotMileChange  = MileUnchanged }
+setRdTotMileUnchanged : OutputDetails -> Result OutputError OutputDetails
+setRdTotMileUnchanged output =
+    Ok { output | rdTotMileChange  = MileUnchanged }
 
 
-flagErosionRdTotMileAsPresent : Mile -> OutputDetails -> Result OutputError OutputDetails
-flagErosionRdTotMileAsPresent mile output =
+flagRdTotMileAsPresent : Mile -> OutputDetails -> Result OutputError OutputDetails
+flagRdTotMileAsPresent mile output =
     if mile == 0 then
-        Ok { output | erosionRdTotMileChange = MileUnchanged }
+        Ok { output | rdTotMileChange = MileUnchanged }
     else
-        Ok { output | erosionRdTotMileChange = MilePresent <| abs mile }
+        Ok { output | rdTotMileChange = MilePresent <| abs mile }
 
 
-relocateErosionRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
-relocateErosionRdTotMile mile output =
+relocateRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+relocateRdTotMile mile output =
     if mile == 0 then
-        Ok { output | erosionRdTotMileChange = MileUnchanged }
+        Ok { output | rdTotMileChange = MileUnchanged }
     else
-        Ok { output | erosionRdTotMileChange = MileRelocated <| abs mile }
+        Ok { output | rdTotMileChange = MileRelocated <| abs mile }
 
 
-setErosionRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
-setErosionRdTotMile mile output =
+setRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+setRdTotMile mile output =
     if mile > 0 then
-        Ok { output | erosionRdTotMileChange = MileLost <| abs mile }
+        Ok { output | rdTotMileChange = MileLost <| abs mile }
     else if mile < 0 then
-        Ok { output | erosionRdTotMileChange = MileLost <| abs mile }
+        Ok { output | rdTotMileChange = MileLost <| abs mile }
     else
-        Ok { output | erosionRdTotMileChange = MileUnchanged }
+        Ok { output | rdTotMileChange = MileUnchanged }
 
 
-copyErosionRdTotMile : MileResult -> OutputDetails -> Result OutputError OutputDetails
-copyErosionRdTotMile result output =
-    Ok { output | erosionRdTotMileChange = result }
+copyRdTotMile : MileResult -> OutputDetails -> Result OutputError OutputDetails
+copyRdTotMile result output =
+    Ok { output | rdTotMileChange = result }
 
 --======================================================
 

@@ -259,7 +259,7 @@ strategyView maybeStrategy =
                     True ->
                         button (AddStrategies StrategiesSidebarListBtn)
                             [ height content
-                            , paddingXY 16 8
+                            , paddingXY 12 3
                             , onClick <| SelectStrategy strategy.id
                             , Attr.id strategy.htmlId
                             ] <| paragraph NoStyle [] [ el NoStyle [] <| Element.text strategy.name ]
@@ -267,7 +267,7 @@ strategyView maybeStrategy =
                     False ->
                         el (AddStrategies StrategiesSidebarListBtnDisabled)
                             [ height content
-                            , paddingXY 16 8
+                            , paddingXY 12 3
                             , Attr.id strategy.htmlId
                             ] <| paragraph NoStyle [] 
                                 [ el NoStyle [ width fill ] <| Element.text strategy.name
@@ -282,7 +282,7 @@ selectedStrategyView maybeStrategy =
             (\strategy ->
                 button (AddStrategies StrategiesSidebarListBtnSelected) 
                     [ height content
-                    , paddingXY 16 8
+                    , paddingXY 12 3
                     , on "keydown" <| D.map HandleStrategyKeyboardEvent decodeKeyboardEvent
                     , Attr.id strategy.htmlId
                     ] <| paragraph NoStyle [] [ Element.text strategy.name ]        

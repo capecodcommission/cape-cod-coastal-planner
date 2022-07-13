@@ -132,13 +132,13 @@ resultsMainContent output =
         selectedRoadMile = 
             case output.hazard of
                 "Erosion" ->
-                    output.erosionRdTotMileChange
+                    output.rdTotMileChange
                 "Storm Surge" ->
                     output.stormSurgeRdTotMileChange
                 "Sea Level Rise" ->
                     output.sLRRdTotMileChange
                 _ ->
-                    output.erosionRdTotMileChange
+                    output.rdTotMileChange
     in
     column NoStyle [ height fill ]
         [ scenarioGeneralInfoView output

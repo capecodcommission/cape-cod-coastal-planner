@@ -41,7 +41,7 @@ type alias OutputDetails =
     , beachAreaChange : AcreageResult
     , rareSpeciesHabitat : RareSpeciesHabitat
     , historicalPlaces : HistoricalPlaces
-    , erosionRdTotMileChange : MileResult
+    , rdTotMileChange : MileResult
     , stormSurgeRdTotMileChange : MileResult
     , sLRRdTotMileChange : MileResult
     }
@@ -111,7 +111,7 @@ defaultOutput =
     , beachAreaChange = AcreageUnchanged
     , rareSpeciesHabitat = HabitatUnchanged
     , historicalPlaces = HistoricalPlacesUnchanged 0
-    , erosionRdTotMileChange = MileUnchanged
+    , rdTotMileChange = MileUnchanged
     , stormSurgeRdTotMileChange = MileUnchanged
     , sLRRdTotMileChange = MileUnchanged
     }
@@ -191,9 +191,9 @@ getRareSpeciesPresence habitat =
         HabitatUnchanged -> False
 
 
-getErosionRdTotMile : OutputDetails -> Float
-getErosionRdTotMile {erosionRdTotMileChange } =
-    case erosionRdTotMileChange of
+getRdTotMile : OutputDetails -> Float
+getRdTotMile {rdTotMileChange } =
+    case rdTotMileChange of
         MileLost value -> value 
         MileProtected value -> value
         MilePresent value -> value
