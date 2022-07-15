@@ -761,7 +761,6 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
                         |> Result.andThen ((.privateLandValue >> getMonetaryValue >> losePrivateLandValue) noActionOutput)
                         |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput) 
-                        -- TODO: CHECK IF BELOW SALTMARSH IS CORRECT
                         |> Result.andThen ((sumSaltMarshAcreage >> loseSaltMarshAcreage) vulnerableToSLR)
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> loseRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
@@ -775,7 +774,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
                         |> Result.andThen ((getSLRRdTotMile >> protectSLRRdTotMile) noActionOutput)
-                        -- resume on 6/27/2022 (look for yellow cell on xls)
+
                 ( Ok Strategies.RetrofittingAssets, VulnSeaRise width ) ->
                     let
                         vulnerableToSLR = withSeaLevelRise hexes
@@ -790,7 +789,6 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen ((zoiAcreageImpact width >> loseBeachArea) zoneOfImpact)
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
                         |> Result.andThen ((getRdTotMile >> protectRdTotMile) noActionOutput)
-
 
                 ( Ok Strategies.RetrofittingAssets, NoSeaRise ) ->
                     output
@@ -943,7 +941,6 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen (setBeachArea <| Details.positiveAcreageImpact zoiTotal details)
                         |> Result.andThen ((getHistoricalPlaceCount >> setHistoricalPlacesUnchanged) noActionOutput)
                         |> Result.andThen ((getStormSurgeRdTotMile >> protectStormSurgeRdTotMile) noActionOutput)
-                        --??? |> Result.andThen ((getStormSurgeRdTotMile >> setStormSurgeRdTotMileUnchanged) noActionOutput)
 
                 ( Ok Strategies.BeachNourishment, False ) ->
                     output
@@ -957,7 +954,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
                         |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
-                        |> Result.andThen ((getSLRRdTotMile >> protectSLRRdTotMile) noActionOutput)
+                        |> Result.andThen ((getStormSurgeRdTotMile >> protectStormSurgeRdTotMile) noActionOutput)
 
                 ( Ok Strategies.ManagedRelocation, False ) ->
                     output
@@ -965,7 +962,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> Result.andThen ((.publicBuildingValue >> getMonetaryValue >> protectPublicBldgValue) noActionOutput)
                         |> Result.andThen ((.privateBuildingValue >> getMonetaryValue >> protectPrivateBldgValue) noActionOutput)
                         |> Result.andThen ((getHistoricalPlaceCount >> protectHistoricalPlaces) noActionOutput)
-                        |> Result.andThen ((getSLRRdTotMile >> protectSLRRdTotMile) noActionOutput)
+                        |> Result.andThen ((getStormSurgeRdTotMile >> protectStormSurgeRdTotMile) noActionOutput)
 
                 ( Ok Strategies.RetrofittingAssets, True ) ->
                     output
@@ -1383,7 +1380,6 @@ copyRareSpeciesHabitat habitat output =
     Ok { output | rareSpeciesHabitat = habitat }
 
 
-
 --===================erosionRdTot================================
 loseRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
 loseRdTotMile mile output =
@@ -1401,42 +1397,42 @@ protectRdTotMile mile output =
         Ok { output | rdTotMileChange = MileProtected <| abs mile }
 
 
-setRdTotMileUnchanged : OutputDetails -> Result OutputError OutputDetails
-setRdTotMileUnchanged output =
-    Ok { output | rdTotMileChange  = MileUnchanged }
+-- setRdTotMileUnchanged : OutputDetails -> Result OutputError OutputDetails
+-- setRdTotMileUnchanged output =
+--     Ok { output | rdTotMileChange  = MileUnchanged }
 
 
-flagRdTotMileAsPresent : Mile -> OutputDetails -> Result OutputError OutputDetails
-flagRdTotMileAsPresent mile output =
-    if mile == 0 then
-        Ok { output | rdTotMileChange = MileUnchanged }
-    else
-        Ok { output | rdTotMileChange = MilePresent <| abs mile }
+-- flagRdTotMileAsPresent : Mile -> OutputDetails -> Result OutputError OutputDetails
+-- flagRdTotMileAsPresent mile output =
+--     if mile == 0 then
+--         Ok { output | rdTotMileChange = MileUnchanged }
+--     else
+--         Ok { output | rdTotMileChange = MilePresent <| abs mile }
 
 
-relocateRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
-relocateRdTotMile mile output =
-    if mile == 0 then
-        Ok { output | rdTotMileChange = MileUnchanged }
-    else
-        Ok { output | rdTotMileChange = MileRelocated <| abs mile }
+-- relocateRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+-- relocateRdTotMile mile output =
+--     if mile == 0 then
+--         Ok { output | rdTotMileChange = MileUnchanged }
+--     else
+--         Ok { output | rdTotMileChange = MileRelocated <| abs mile }
 
 
-setRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
-setRdTotMile mile output =
-    if mile > 0 then
-        Ok { output | rdTotMileChange = MileLost <| abs mile }
-    else if mile < 0 then
-        Ok { output | rdTotMileChange = MileLost <| abs mile }
-    else
-        Ok { output | rdTotMileChange = MileUnchanged }
+-- setRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+-- setRdTotMile mile output =
+--     if mile > 0 then
+--         Ok { output | rdTotMileChange = MileLost <| abs mile }
+--     else if mile < 0 then
+--         Ok { output | rdTotMileChange = MileLost <| abs mile }
+--     else
+--         Ok { output | rdTotMileChange = MileUnchanged }
 
 
-copyRdTotMile : MileResult -> OutputDetails -> Result OutputError OutputDetails
-copyRdTotMile result output =
-    Ok { output | rdTotMileChange = result }
+-- copyRdTotMile : MileResult -> OutputDetails -> Result OutputError OutputDetails
+-- copyRdTotMile result output =
+--     Ok { output | rdTotMileChange = result }
 
---======================================================
+--==================================================================
 
 
 --===================stormSurgeRdTot================================
@@ -1456,40 +1452,40 @@ protectStormSurgeRdTotMile mile output =
         Ok { output | stormSurgeRdTotMileChange = MileProtected <| abs mile }
 
 
-setStormSurgeRdTotMileUnchanged : Mile -> OutputDetails -> Result OutputError OutputDetails
-setStormSurgeRdTotMileUnchanged mile output =
-    Ok { output | stormSurgeRdTotMileChange  = MileUnchanged }
+-- setStormSurgeRdTotMileUnchanged : Mile -> OutputDetails -> Result OutputError OutputDetails
+-- setStormSurgeRdTotMileUnchanged mile output =
+--     Ok { output | stormSurgeRdTotMileChange  = MileUnchanged }
 
 
-flagStormSurgeRdTotMileAsPresent : Mile -> OutputDetails -> Result OutputError OutputDetails
-flagStormSurgeRdTotMileAsPresent mile output =
-    if mile == 0 then
-        Ok { output | stormSurgeRdTotMileChange = MileUnchanged }
-    else
-        Ok { output | stormSurgeRdTotMileChange = MilePresent <| abs mile }
+-- flagStormSurgeRdTotMileAsPresent : Mile -> OutputDetails -> Result OutputError OutputDetails
+-- flagStormSurgeRdTotMileAsPresent mile output =
+--     if mile == 0 then
+--         Ok { output | stormSurgeRdTotMileChange = MileUnchanged }
+--     else
+--         Ok { output | stormSurgeRdTotMileChange = MilePresent <| abs mile }
 
 
-relocateStormSurgeRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
-relocateStormSurgeRdTotMile mile output =
-    if mile == 0 then
-        Ok { output | stormSurgeRdTotMileChange = MileUnchanged }
-    else
-        Ok { output | stormSurgeRdTotMileChange = MileRelocated <| abs mile }
+-- relocateStormSurgeRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+-- relocateStormSurgeRdTotMile mile output =
+--     if mile == 0 then
+--         Ok { output | stormSurgeRdTotMileChange = MileUnchanged }
+--     else
+--         Ok { output | stormSurgeRdTotMileChange = MileRelocated <| abs mile }
 
 
-setStormSurgeRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
-setStormSurgeRdTotMile mile output =
-    if mile > 0 then
-        Ok { output | stormSurgeRdTotMileChange = MileLost <| abs mile }
-    else if mile < 0 then
-        Ok { output | stormSurgeRdTotMileChange = MileLost <| abs mile }
-    else
-        Ok { output | stormSurgeRdTotMileChange = MileUnchanged }
+-- setStormSurgeRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+-- setStormSurgeRdTotMile mile output =
+--     if mile > 0 then
+--         Ok { output | stormSurgeRdTotMileChange = MileLost <| abs mile }
+--     else if mile < 0 then
+--         Ok { output | stormSurgeRdTotMileChange = MileLost <| abs mile }
+--     else
+--         Ok { output | stormSurgeRdTotMileChange = MileUnchanged }
 
 
-copyStormSurgeRdTotMile : MileResult -> OutputDetails -> Result OutputError OutputDetails
-copyStormSurgeRdTotMile result output =
-    Ok { output | stormSurgeRdTotMileChange = result }
+-- copyStormSurgeRdTotMile : MileResult -> OutputDetails -> Result OutputError OutputDetails
+-- copyStormSurgeRdTotMile result output =
+--     Ok { output | stormSurgeRdTotMileChange = result }
 
 --======================================================
 
@@ -1509,43 +1505,50 @@ protectSLRRdTotMile mile output =
         Ok { output | sLRRdTotMileChange = MileUnchanged }
     else
         Ok { output | sLRRdTotMileChange = MileProtected <| abs mile }
+-- protectHistoricalPlaces : Count -> OutputDetails -> Result OutputError OutputDetails
+-- protectHistoricalPlaces hPlaces output =
+--     if hPlaces == 0 then
+--         Ok output
+--     else
+--         abs hPlaces
+--             |> HistoricalPlacesProtected
+--             |> \result -> Ok { output | historicalPlaces = result }
 
 
-
-setSLRRdTotMileUnchanged : OutputDetails -> Result OutputError OutputDetails
-setSLRRdTotMileUnchanged output =
-    Ok { output | sLRRdTotMileChange  = MileUnchanged }
-
-
-flagSLRRdTotMileAsPresent : Mile -> OutputDetails -> Result OutputError OutputDetails
-flagSLRRdTotMileAsPresent mile output =
-    if mile == 0 then
-        Ok { output | sLRRdTotMileChange = MileUnchanged }
-    else
-        Ok { output | sLRRdTotMileChange = MilePresent <| abs mile }
+-- setSLRRdTotMileUnchanged : OutputDetails -> Result OutputError OutputDetails
+-- setSLRRdTotMileUnchanged output =
+--     Ok { output | sLRRdTotMileChange  = MileUnchanged }
 
 
-relocateSLRRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
-relocateSLRRdTotMile mile output =
-    if mile == 0 then
-        Ok { output | sLRRdTotMileChange = MileUnchanged }
-    else
-        Ok { output | sLRRdTotMileChange = MileRelocated <| abs mile }
+-- flagSLRRdTotMileAsPresent : Mile -> OutputDetails -> Result OutputError OutputDetails
+-- flagSLRRdTotMileAsPresent mile output =
+--     if mile == 0 then
+--         Ok { output | sLRRdTotMileChange = MileUnchanged }
+--     else
+--         Ok { output | sLRRdTotMileChange = MilePresent <| abs mile }
 
 
-setSLRRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
-setSLRRdTotMile mile output =
-    if mile > 0 then
-        Ok { output | sLRRdTotMileChange = MileLost <| abs mile }
-    else if mile < 0 then
-        Ok { output | sLRRdTotMileChange = MileLost <| abs mile }
-    else
-        Ok { output | sLRRdTotMileChange = MileUnchanged }
+-- relocateSLRRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+-- relocateSLRRdTotMile mile output =
+--     if mile == 0 then
+--         Ok { output | sLRRdTotMileChange = MileUnchanged }
+--     else
+--         Ok { output | sLRRdTotMileChange = MileRelocated <| abs mile }
 
 
-copySLRRdTotMile : MileResult -> OutputDetails -> Result OutputError OutputDetails
-copySLRRdTotMile result output =
-    Ok { output | sLRRdTotMileChange = result }
+-- setSLRRdTotMile : Mile -> OutputDetails -> Result OutputError OutputDetails
+-- setSLRRdTotMile mile output =
+--     if mile > 0 then
+--         Ok { output | sLRRdTotMileChange = MileLost <| abs mile }
+--     else if mile < 0 then
+--         Ok { output | sLRRdTotMileChange = MileLost <| abs mile }
+--     else
+--         Ok { output | sLRRdTotMileChange = MileUnchanged }
+
+
+-- copySLRRdTotMile : MileResult -> OutputDetails -> Result OutputError OutputDetails
+-- copySLRRdTotMile result output =
+--     Ok { output | sLRRdTotMileChange = result }
 
 --======================================================
 

@@ -202,7 +202,7 @@ getRdTotMile {rdTotMileChange } =
 
 
 getStormSurgeRdTotMile : OutputDetails -> Float
-getStormSurgeRdTotMile {stormSurgeRdTotMileChange } =
+getStormSurgeRdTotMile { stormSurgeRdTotMileChange } =
     case stormSurgeRdTotMileChange of
         MileLost value -> value
         MileProtected value -> value
@@ -212,7 +212,7 @@ getStormSurgeRdTotMile {stormSurgeRdTotMileChange } =
 
 
 getSLRRdTotMile : OutputDetails -> Float
-getSLRRdTotMile {sLRRdTotMileChange } =
+getSLRRdTotMile { sLRRdTotMileChange } =
     case sLRRdTotMileChange of
         MileLost value -> value
         MileProtected value -> value
