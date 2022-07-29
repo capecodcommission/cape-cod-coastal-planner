@@ -432,7 +432,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                                 >> setBeachArea) 
                               noActionOutput
                             )
-                        |> Result.andThen ((getHistoricalPlaceCount >> setHistoricalPlacesUnchanged) noActionOutput)
+                        -- |> Result.andThen ((getHistoricalPlaceCount >> setHistoricalPlacesUnchanged) noActionOutput)
 
                 ( Ok Strategies.Revetment, NoErosion ) ->
                     output
@@ -489,7 +489,7 @@ calculateStrategyOutput hexes zoneOfImpact hazard (strategy, details) output noA
                         |> (getCriticalFacilityCount >> setCriticalFacilitiesUnchanged) noActionOutput
                         |> Result.andThen ((.rareSpeciesHabitat >> getRareSpeciesPresence >> gainRareSpeciesHabitat) noActionOutput)
                         |> Result.andThen ((.beachAreaChange >> copyBeachArea) noActionOutput)
-                        |> Result.andThen ((getHistoricalPlaceCount >> setHistoricalPlacesUnchanged) noActionOutput)
+                        -- |> Result.andThen ((getHistoricalPlaceCount >> setHistoricalPlacesUnchanged) noActionOutput)
 
                 ( Ok Strategies.BankStabilization, NoErosion ) ->
                     Ok output
