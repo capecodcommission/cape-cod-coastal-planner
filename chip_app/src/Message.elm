@@ -38,6 +38,7 @@ type Msg
     | CancelZoneOfImpactSelectionFromDeselect D.Value   
     | PickStrategy
     | CancelPickStrategy
+    | CreateReport
     | SelectPreviousHazard
     | SelectNextHazard
     | SelectStrategy Scalar.Id

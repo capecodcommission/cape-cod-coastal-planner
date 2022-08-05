@@ -31,6 +31,7 @@ stormSurgeIcon cfg =
         [ viewBox 0 0 cfg.width cfg.height
         , width cfg.width
         , height cfg.height
+        , id "svgStyleGuide"
         ]
         [ g
             [ id "StyleGuide" 

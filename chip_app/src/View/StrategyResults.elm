@@ -16,6 +16,7 @@ import AdaptationStrategy.Impacts as Impacts
 import AdaptationOutput exposing (..)
 import FormatNumber.Locales exposing (System(..))
 import Animation exposing (marginRight)
+import Animation exposing (top)
 
 
 view : Result OutputError AdaptationOutput -> Element MainStyles Variations Msg
@@ -30,7 +31,7 @@ view result =
                 [ el NoStyle [ height fill ] empty, footerView ]
 
             Ok (OnlyNoAction output) ->
-                [ 
+                [ --resultsHeader noActionOutput
                 resultsMainContent output
                 , footerView 
                 ]
@@ -81,7 +82,7 @@ view result =
 
 toggleToStrategy : ( OutputDetails, OutputDetails ) -> Element MainStyles Variations Msg
 toggleToStrategy (( noActionOutput, strategyOutput ) as output) =
-    row NoStyle [ height (px 35) ]
+    row StrategyOutputTab [ height (px 50) ]
         [ el (ShowOutput OutputToggleLbl) 
             [ width (percent 35) ] <|
                 el NoStyle [verticalCenter, center] (text "NO ACTION")
@@ -95,7 +96,7 @@ toggleToStrategy (( noActionOutput, strategyOutput ) as output) =
 
 toggleToNoAction : ( OutputDetails, OutputDetails ) -> Element MainStyles Variations Msg
 toggleToNoAction (( noActionOutput, strategyOutput ) as output) =
-    row NoStyle [ height (px 35) ]
+    row StrategyOutputTab [ height (px 50) ]
         [ button (ShowOutput OutputToggleBtn)
             [ onClick <| ShowNoActionOutput output 
             , width (percent 35)
@@ -112,16 +113,17 @@ resultsHeader output =
     let
         scaleDisabled a = vary Disabled (not <| Impacts.hasScale a output.scales)
     in
-    header (ShowOutput OutputHeader) [ height (px 60) ] <|
-        column NoStyle [ height fill, width fill, paddingLeft 25, paddingRight 25, paddingTop 15, paddingBottom 10 ]
+    header (ShowOutput OutputHeader) [ height (px 50) ] <|
+        column NoStyle [ height fill, width fill, paddingLeft 25, paddingRight 25, paddingTop 22, paddingBottom 10 ]
             [ row NoStyle 
                 [ height (percent 45), width fill, spacingXY 15 0 ]
-                [ el (ShowOutput OutputDivider) [ width (px 90), verticalCenter ] <|
-                    paragraph NoStyle [] [ text "SELECTED STRATEGY" ]
-                , h5 (Headings H5) [ verticalCenter ] <|
+                -- [ el (ShowOutput OutputDivider) [ width (px 90), verticalCenter ] <|
+                --     paragraph NoStyle [] [ text "SELECTED STRATEGY" ]
+                -- , h5 (Headings H5) [ verticalCenter ] <|
+                [ h5 (Headings H5) [ verticalCenter ] <|
                     ( el NoStyle [] (text output.name)
                         |> within [ infoIconView 0 18 output.description ]
-                    )
+                    ) 
                 ]
             ]
 
@@ -144,7 +146,7 @@ resultsMainContent output =
         [ scenarioGeneralInfoView output
         , column NoStyle [ paddingXY 20 0 ]
             [ h6 (ShowOutput OutputH6Bold) [] <| text "SCENARIO OUTPUTS"
-            , paragraph (ShowOutput OutputSmallItalic) [] 
+            , paragraph (ShowOutput OutputSmallItalic) [id "aaaaa"] 
                 [ text "All outputs are relative to the user"
                 , text " taking no action within the planning area." 
                 ]
@@ -231,8 +233,8 @@ scenarioGeneralInfoView output =
     in
     row NoStyle [ height (px 125), paddingXY 25 30 ]
         [ el (ShowOutput OutputDivider) [ width (px 180), height fill, paddingRight 10 ] <|
-            row NoStyle [height fill, spacingXY 8 0]
-                [ el NoStyle [ center, verticalCenter, height fill  ] <|
+            row NoStyle [height fill, spacingXY 8 0, id "hazIcon"]
+                [ el NoStyle [ center, verticalCenter, height fill ] <|
                     ( case Hazards.toTypeFromStr output.hazard of
                         Ok Hazards.Erosion ->
                             erosionIconConfig |> erosionIcon |> html 
@@ -529,7 +531,7 @@ mileResultView lbl result metric =
                 _ ->
                     OutputValue
         render a ( b, c ) d e =
-            row NoStyle [ width fill, paddingXY 50 0, spread ] --need     justify-content: space-evenly
+            row NoStyle [ width fill, paddingXY 22 0, spread ] --need     justify-content: space-evenly
                 [ h6 (ShowOutput OutputH6Bold) [ center ] <| text d
                 , el (ShowOutput rStyle) [ center, e ] <| text a
                 , el (ShowOutput OutputValueLbl) [ center, e ] (text b)
@@ -589,6 +591,21 @@ footerView =
                 , height (px 42)
                 , title "Back to strategy selection"
                 ] <| text "back"
+                
+            , button CancelButton
+                [ onClick CancelPickStrategy
+                , width (px 175)
+                , height (px 42)
+                , title "Clear strategy"
+                -- ] <| text "clear"
+                ] (text "clear")
+
+            , button ExportButton
+                [ onClick CreateReport
+                , width (px 100)
+                , height (px 42)
+                , title "Export PDF"
+                ] <| text "export"
             ]
     
 

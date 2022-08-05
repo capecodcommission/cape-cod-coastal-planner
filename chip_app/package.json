@@ -53,7 +53,10 @@
     "url-loader": "^4.1.1",
     "workbox-webpack-plugin": "^6.5.3",
     "webpack": "^5.70.0",
-    "webpack-dev-server": "^4.7.4"
+    "webpack-dev-server": "^4.7.4",
+    "html2canvas":"^1.4.1",
+    "jspdf": "^2.5.1",
+    "html-to-image": "^1.9.0"
   },
   "scripts": {
     "build": "node scripts/build.js",

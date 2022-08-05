@@ -17,6 +17,10 @@ port logErrorCmd : E.Value -> Cmd msg
 
 port olCmd : E.Value -> Cmd msg
 
+port jsCmd : E.Value -> Cmd msg
+
+type AppJsCmd
+    = CreateReportCmd
 
 type OpenLayersCmd
     = InitMap
@@ -63,6 +67,13 @@ type OpenLayersCmd
     | RenderLLR
     | DisableLLR
 
+encodeAppJsCmd : AppJsCmd -> E.Value
+encodeAppJsCmd cmd =
+    case cmd of
+        CreateReportCmd ->
+            E.object
+                [ ( "cmd", E.string "create_report" )
+                ]
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value

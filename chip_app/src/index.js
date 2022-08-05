@@ -1,6 +1,7 @@
 import './main.css';
 import { Elm } from './Main.elm';
 import MapHandler from "./js/map_handler";
+import AppHandler from "./js/app_handler";
 import { logError } from "./js/misc";
 import closePath from "./img/close.png";
 import trianglePath from "./img/triangle.png";
@@ -18,6 +19,9 @@ window.chip = window.chip || {};
 document.addEventListener("DOMContentLoaded", () => {
     chip.mapHandler = new MapHandler({
         onInit: onMapHandlerInit
+    });
+    chip.appHandler = new AppHandler({
+        onInit: onAppHandlerInit
     });
     chip.app = Elm.Main.init({
         node: document.getElementById('myapp'),
@@ -59,6 +63,9 @@ document.addEventListener("DOMContentLoaded", () => {
     chip.app.ports.olCmd.subscribe(cmdData => {
         chip.mapHandler.onCmd(cmdData);
     });
+    chip.app.ports.jsCmd.subscribe(cmdData => {
+        chip.appHandler.onCmd(cmdData);
+    });
 });
 
 function onMapHandlerInit(map) {
@@ -66,6 +73,11 @@ function onMapHandlerInit(map) {
     map.on("olSub", ({sub, data}) => {
         chip.app.ports.olSub.send({sub, data});
     });
+}function onAppHandlerInit(map) {
+    // subscribe to map events to send to Elm
+    // map.on("olSub", ({sub, data}) => {
+    //     chip.app.ports.olSub.send({sub, data});
+    // });
 }
 
 // Uncomment to enable as PWA. We had issues with the offline caching when enabled by default and since it's

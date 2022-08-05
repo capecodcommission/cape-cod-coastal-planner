@@ -35,7 +35,9 @@ view config (titleText, childViews) =
             ]
         )
         (sidebar (Sidebar SidebarContainer)
-            [ height fill, width (px 550) ]
+            [ height fill
+            , width (px 550)
+            ,  id "rightSideBar"  ]
             ( headerView titleText config.trianglePath config.rightSidebarToggleFx config.zoneOfImpact
                 :: childViews
             ) 
@@ -52,15 +54,17 @@ headerView titleText togglePath fx zoi =
         ( h5 (Headings H5) 
             [ center, verticalCenter ] 
             ( text titleText 
-            ) |> onLeft
-                [ case titleText of 
-                    "STRATEGY OUTPUT" ->
-                        button CancelButton
-                            [ onClick CancelPickStrategy, width (px 75), height (px 42), moveLeft 50 ]
-                            ( text "clear" )
-                    _ ->
-                        el NoStyle [] empty    
-                ]
+            ) 
+                |> onLeft
+                -- [ case titleText of 
+                --     "STRATEGY OUTPUT" ->
+                --         button CancelButton
+                --             [ onClick CancelPickStrategy, width (px 75), height (px 42), moveLeft 50 ]
+                --             ( text "clear" )
+                --     _ ->
+                --         el NoStyle [] empty    
+                -- ]
+                [ el NoStyle [] empty ]
         )
     ) |> onLeft
         [ case zoi of

@@ -1619,6 +1619,9 @@ updateModel msg model =
                 Closed ->
                     ( model |> expandInundationSection, Cmd.none )
 
+        CreateReport ->
+            -- ( model, Cmd.none )
+            ( model, jsCmd <| encodeAppJsCmd (CreateReportCmd) )
         
 
 
@@ -2034,6 +2037,7 @@ viewBody app =
                                     StrategiesModal.view model model.adaptationInfo zoi
                                 ( _, _ ) ->
                                     el NoStyle [] empty
+                            , el NoStyle [ id "pdfReport", width (percent 100) ] empty
                             ]
                     ]
 
@@ -2052,7 +2056,7 @@ headerView ({ device } as model) =
             [ column NoStyle
                 [ verticalCenter, center, width fill]
                 [ decorativeImage NoStyle
-                    [width (px 375), height (px 65), alignLeft]
+                    [width (px 375), height (px 65), alignLeft, id "logoImg"]
                     { src = model.paths.logoPath } 
                 ]
             , column NoStyle

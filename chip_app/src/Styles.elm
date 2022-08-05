@@ -13,6 +13,8 @@ import Element.Input as Input exposing (ChoiceState)
 import Element exposing (Device)
 import View.Helpers exposing (adjustOnHeight, adjustOnWidth)
 import Html exposing (b)
+import Style.Background exposing (noRepeat)
+import Style.Background exposing (natural)
 
 
 scaled =
@@ -37,6 +39,7 @@ palette =
     , blueStone = createStyleColor 25 52 70
     , alto = createStyleColor 218 218 218
     , shadedScale = createStyleColor 41 48 58
+    , bigstone = createStyleColor 19 39 52
     }
 colorPalette =
     { elephant = createOriColor 10 40 51
@@ -55,6 +58,9 @@ colorPalette =
     , alto = createOriColor 218 218 218
     , shadedScale = createOriColor 41 48 58
     }
+styleHippieBlue : Style.Color
+styleHippieBlue =
+    createStyleColor 83 168 172
 styleWhite : Style.Color
 styleWhite =
     createStyleColor 255 255 255
@@ -85,12 +91,13 @@ createOriColor r g b =
 
 fontstack : List Font
 fontstack =
-    [ Font.font "Montserrat", Font.font "Open Sans", Font.font "Tahoma", Font.sansSerif ]
+    [ Font.font "Montserrat", Font.font "Open Sans", Font.font "Tahoma", Font.sansSerif]
 
 
 fontstack2 : List Font
 fontstack2 =
-    [ Font.font "Montserrat" ]
+    [ Font.importUrl { url="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700", name="Montserrat"} ]
+
 
 type MainStyles
     = NoStyle
@@ -105,7 +112,9 @@ type MainStyles
     | Modal ModalStyles
     | Zoi ZoneOfImpactStyles
     | ActionButton
+    | ExportButton
     | CancelButton
+    | StrategyOutputTab
     | CloseIcon
     | FontLeft
     | FontRight
@@ -470,7 +479,8 @@ stylesheet device =
                 ]
             ]
         , Style.style (AddStrategies StrategiesSidebarList)
-            [ Font.size 20
+            [ Font.size 18
+            , Font.weight 500
             , Font.typeface fontstack
             ]
         , Style.style (AddStrategies StrategiesSidebarListBtn)
@@ -630,14 +640,20 @@ stylesheet device =
             ]
         , Style.style (ShowOutput OutputToggleBtn)
             [ Font.letterSpacing 2.33
-            , StyleColor.background palette.alto
+            , StyleColor.background palette.bigstone
+            , Font.bold
+            , StyleColor.text palette.hippieBlue
             , Font.typeface fontstack
             ]
+            --RGB(81,165,169)
         , Style.style (ShowOutput OutputToggleLbl)
             [ Font.center
             , Font.letterSpacing 2.33
-            , Font.typeface fontstack
-            , StyleColor.background <| createStyleColorWithAlpha 19 39 52 1
+            , Font.typeface fontstack2
+            , Font.bold
+            , StyleColor.text palette.bigstone
+            -- , StyleColor.background <| createStyleColorWithAlpha 19 39 52 1
+            , StyleColor.background <| createStyleColorWithAlpha 83 168 172 1
             ]
         , Style.style (ShowOutput OutputHeader)
             [ StyleColor.background <| createStyleColorWithAlpha 19 39 52 1
@@ -653,8 +669,8 @@ stylesheet device =
             , Font.typeface fontstack
             ]
         , Style.style (ShowOutput OutputValueMedium)
-            [ Font.size 16
-            , Font.weight 100
+            [ Font.size 18
+            , Font.weight 500
             , Font.typeface fontstack
             , StyleColor.text <| createStyleColorWithAlpha 255 255 255 0.5
             , variation Secondary
@@ -664,7 +680,7 @@ stylesheet device =
             ]
         , Style.style (ShowOutput OutputSmall)
             [ Font.size 12
-            , Font.weight 100
+            , Font.weight 500
             , Font.typeface fontstack
             ]
         , Style.style (ShowOutput OutputSmallItalic)
@@ -740,6 +756,7 @@ stylesheet device =
             ]
         , Style.style (ShowOutput OutputValueLbl)
             [ Font.size 12
+            , Font.weight 500
             , Font.letterSpacing 2.33
             , Font.typeface fontstack
             , StyleColor.text <| createStyleColorWithAlpha 255 255 255 0.5
@@ -756,6 +773,7 @@ stylesheet device =
             , StyleColor.background <| createStyleColorWithAlpha 0 0 0 0
             , Font.weight 500
             , Font.typeface fontstack
+            , Font.size 14
             , variation Secondary
                 [ StyleColor.background palette.mySin 
                 , StyleColor.border palette.mySin
@@ -806,7 +824,7 @@ stylesheet device =
             ]
         , Style.style (Modal IntroWelcome)
             [ StyleColor.text styleWhite
-            , Font.size 20
+            , Font.size 18
             , Font.justify
             , Font.typeface fontstack
             ]
@@ -850,7 +868,8 @@ stylesheet device =
             , Style.cursor "pointer"
             ]
         , Style.style (Sidebar SidebarFooter)
-            [ StyleColor.background styleBlack
+            -- [ StyleColor.background styleBlack
+            [ StyleColor.background  <| createStyleColorWithAlpha 19 39 52 1
             , Font.typeface fontstack
             ]
         , Style.style (Sidebar SidebarLeftToggle)
@@ -875,6 +894,31 @@ stylesheet device =
                 , StyleColor.text <| darkenColor -0.45 colorPalette.walnut
                 , Transition.all
                 ]
+            ]
+        , Style.style ExportButton
+            [ Font.typeface fontstack
+            , Font.uppercase
+            , Font.bold
+            , Font.size 14
+            , Font.lineHeight 1.4
+            , Font.letterSpacing 2.33
+            , StyleColor.text palette.walnut
+            , StyleColor.background palette.mySin
+            , Border.rounded 8
+            , Transition.all
+            -- , Background.imageWith  { src="/export_icon.png", position=( 0, 0 ), repeat=noRepeat, size=natural}
+            , variation Disabled
+                [ StyleColor.background <| darkenColor 0.15 colorPalette.mySin
+                , StyleColor.text <| darkenColor -0.45 colorPalette.walnut
+                , Transition.all
+                -- , Background.imageWith  <|{ src : "", position : ( 0, 0 ), repeat : noRepeat, size : natural}
+                
+                ]
+            -- , Background.imageWith  { src="/static/media/export_icon.png", position=( 0, 0 ), repeat=noRepeat, size=natural}
+            ]
+        , Style.style StrategyOutputTab
+            [ Border.all 3
+            , StyleColor.border styleHippieBlue
             ]
         , Style.style CancelButton
             [ Font.typeface fontstack
