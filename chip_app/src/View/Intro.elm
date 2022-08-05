@@ -72,7 +72,7 @@ headerView config =
     row (Modal IntroHeader)
         [ spacingXY 0 5, width fill]
         [ decorativeImage NoStyle
-            [width fill, height (px 200), alignLeft]
+            [width fill, height (px 180), alignLeft]
             { src = config.paths.welcome_lighthouse } 
         , decorativeImage CloseIcon 
             [ alignRight
@@ -101,7 +101,7 @@ mainView config =
             [width (px 400), height (px 75), moveRight 25]
             { src = config.paths.logoPath } 
         , textLayout (Modal IntroWelcome)
-            [paddingTop 25, paddingBottom 10] 
+            [paddingTop 18, paddingBottom 10] 
             [ paragraph NoStyle
                 []
                 [ el (ShowOutput ScenarioBold) [] <| text "Welcome! " 
@@ -117,14 +117,14 @@ mainView config =
         , textLayout (Modal IntroDisclaimer)
             [center]
             [ paragraph NoStyle
-                []
+                [paddingTop 10]
                 [ text "First time user? Tutorial Video "
                 , newTab "https://www.youtube.com/watch?v=mqsXjOeDAZg" <| el (Zoi ZoiCallout) [] (text "Here")
                 , text "."
                 ]
             ]
         , el NoStyle 
-            [paddingTop 25, paddingBottom 10] <| hairline (PL Line) 
+            [paddingTop 20, paddingBottom 10] <| hairline (PL Line) 
         , textLayout (Modal IntroDisclaimer)
             [spacing 5] 
             [ paragraph NoStyle

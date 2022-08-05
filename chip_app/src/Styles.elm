@@ -824,13 +824,13 @@ stylesheet device =
             ]
         , Style.style (Modal IntroWelcome)
             [ StyleColor.text styleWhite
-            , Font.size 18
+            , Font.size 17
             , Font.justify
             , Font.typeface fontstack
             ]
         , Style.style (Modal IntroDisclaimer)
             [ StyleColor.text palette.alto
-            , Font.size 15
+            , Font.size 14
             , Font.justify
             , Font.typeface fontstack
             ]
