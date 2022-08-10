@@ -2096,7 +2096,7 @@ getRightSidebarChildViews model =
         Just zoi ->
             model.calculationOutput
                 |> Maybe.map 
-                    (\output -> ( "STRATEGY OUTPUT", [ Results.view output ] ))
+                    (\output -> ( "STRATEGY OUTPUT", [ Results.view output model.paths ] ))
                 |> Maybe.withDefault 
                     ("ZONE OF IMPACT"
                     , [ ZOI.view model.device model.zoiPath zoi ]

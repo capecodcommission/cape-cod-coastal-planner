@@ -279,7 +279,9 @@ class AppHandler {
         //     doc.addImage(img, "PNG", 30, 30, 168, 65);
         //     doc.save("p&lstatement.pdf");
         //   })
-        htmlToImage.toPng(node, {canvasWidth: imgWidth, canvasHeight: imgHeight, filter: this.filterElement })
+        
+        // htmlToImage.toPng(node, {canvasWidth: imgWidth, canvasHeight: imgHeight, filter: this.filterElement })
+        htmlToImage.toPng(node, {canvasWidth: imgWidth, canvasHeight: imgHeight })
         .then(function (dataUrl) {
             var img = new Image();
             img.src = dataUrl;

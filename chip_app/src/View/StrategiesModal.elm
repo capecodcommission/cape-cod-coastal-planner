@@ -653,7 +653,6 @@ coastalHazardView hazard matched =
                 , { erosionIconConfig | color = Color.rgb 79 88 98 }
                     |> erosionIcon 
                     |> html
-            
                 )
 
             ( Ok Hazards.SeaLevelRise, True ) ->

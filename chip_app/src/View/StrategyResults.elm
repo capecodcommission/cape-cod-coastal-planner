@@ -17,10 +17,10 @@ import AdaptationOutput exposing (..)
 import FormatNumber.Locales exposing (System(..))
 import Animation exposing (marginRight)
 import Animation exposing (top)
+import Types exposing (Paths)
 
-
-view : Result OutputError AdaptationOutput -> Element MainStyles Variations Msg
-view result =
+view : Result OutputError AdaptationOutput -> Paths -> Element MainStyles Variations Msg
+view result paths=
     column NoStyle
         [ height fill, width fill ]
         ( case result of
@@ -32,21 +32,21 @@ view result =
 
             Ok (OnlyNoAction output) ->
                 [ --resultsHeader noActionOutput
-                resultsMainContent output
+                resultsMainContent output paths
                 , footerView 
                 ]
 
             Ok (ShowNoAction noActionOutput strategyOutput) ->
                 [ toggleToStrategy ( noActionOutput, strategyOutput )
                 , resultsHeader noActionOutput
-                , resultsMainContent noActionOutput
+                , resultsMainContent noActionOutput paths
                 , footerView
                 ]
 
             Ok (ShowStrategy noActionOutput strategyOutput) ->
                 [ toggleToNoAction ( noActionOutput, strategyOutput )
                 , resultsHeader strategyOutput
-                , resultsMainContent strategyOutput
+                , resultsMainContent strategyOutput paths
                 , footerView
                 ]
 
@@ -128,8 +128,8 @@ resultsHeader output =
             ]
 
 
-resultsMainContent : OutputDetails -> Element MainStyles Variations Msg
-resultsMainContent output =
+resultsMainContent : OutputDetails -> Paths -> Element MainStyles Variations Msg
+resultsMainContent output paths=
     let 
         selectedRoadMile = 
             case output.hazard of
@@ -143,7 +143,7 @@ resultsMainContent output =
                     output.rdTotMileChange
     in
     column NoStyle [ height fill ]
-        [ scenarioGeneralInfoView output
+        [ scenarioGeneralInfoView output paths
         , column NoStyle [ paddingXY 20 0 ]
             [ h6 (ShowOutput OutputH6Bold) [] <| text "SCENARIO OUTPUTS"
             , paragraph (ShowOutput OutputSmallItalic) [id "aaaaa"] 
@@ -200,8 +200,8 @@ resultsMainContent output =
         ]
 
 
-scenarioGeneralInfoView : OutputDetails -> Element MainStyles Variations Msg
-scenarioGeneralInfoView output =
+scenarioGeneralInfoView : OutputDetails -> Paths -> Element MainStyles Variations Msg
+scenarioGeneralInfoView output paths =
     let
         renderDetails a b c d =
             row NoStyle [ spacingXY 8 0 ] <|
@@ -237,13 +237,33 @@ scenarioGeneralInfoView output =
                 [ el NoStyle [ center, verticalCenter, height fill ] <|
                     ( case Hazards.toTypeFromStr output.hazard of
                         Ok Hazards.Erosion ->
-                            erosionIconConfig |> erosionIcon |> html 
-
+                            -- erosionIconConfig |> erosionIcon |> html 
+                            image (AddStrategies StrategiesHazardPicker) 
+                                [ center
+                                , width (percent 70)
+                                ] 
+                                { src = paths.erosionPath
+                                , caption = "Erosion"
+                                }
                         Ok Hazards.SeaLevelRise ->
-                            seaLevelRiseIconConfig |> seaLevelRiseIcon |> html
+                            -- seaLevelRiseIconConfig |> seaLevelRiseIcon |> html
+                            image (AddStrategies StrategiesHazardPicker) 
+                                [ center
+                                , width (percent 70)
+                                ] 
+                                { src = paths.slrPath
+                                , caption = "Sea Level Rise"
+                                }
 
                         Ok Hazards.StormSurge ->
-                            stormSurgeIconConfig |> stormSurgeIcon |> html
+                            -- stormSurgeIconConfig |> stormSurgeIcon |> html
+                            image (AddStrategies StrategiesHazardPicker) 
+                                [ center
+                                , width (percent 70)
+                                ] 
+                                { src = paths.ssPath
+                                , caption = "Storm Surge"
+                                }
 
                         Err _ ->
                             empty

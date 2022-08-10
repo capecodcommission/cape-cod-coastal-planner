@@ -10,7 +10,6 @@ import TypedSvg.Attributes.InPx exposing (height, strokeWidth, width, x, y)
 import TypedSvg.Types exposing (Paint(..), FillRule(..), Transform(..))
 
 import Styles exposing (..)
-import Element exposing (image)
 
 type alias ErosionIconConfig =
     { color : Color
@@ -46,15 +45,7 @@ erosionIcon cfg =
             , circlePath cfg.color
             ] 
         ]
-    -- image (AddStrategies StrategiesHazardPicker) 
-    --     [ center
-    --     , width (percent 20)
-    --     , title hazard.name
-    --     ] 
-    --     { 
-    --         src = erosionPath
-    --     }
-        
+
 
 erosion : ErosionIconConfig -> Svg msg
 erosion { color } =
