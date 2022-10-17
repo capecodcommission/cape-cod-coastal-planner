@@ -11,6 +11,7 @@ import View.Helpers exposing (title, adjustOnHeight, renderAnimation)
 import Styles exposing (..)
 import ShorelineLocation as SL
 import View.SeaLevelRise as SLR
+import View.StormtidePathways as SP
 import View.Infrastructure as IF
 import View.Inundation as Inundation
 import View.Erosion as Erosion
@@ -71,6 +72,20 @@ view :
         , histDistClicked : Openness
         , histPlacesClicked : Openness
         , llrClicked : Openness
+        , stpOpenness : Openness
+        , stpToggleFx : Animation.State
+        , stpFx : Animation.State
+        , stp0ftClicked : Openness
+        , stp1ftClicked : Openness
+        , stp2ftClicked : Openness
+        , stp3ftClicked : Openness
+        , stp4ftClicked : Openness
+        , stp5ftClicked : Openness
+        , stp6ftClicked : Openness
+        , stp7ftClicked : Openness
+        , stp8ftClicked : Openness
+        , stp9ftClicked : Openness
+        , stp10ftClicked : Openness
     } 
     -> Device 
     -> Paths 
@@ -80,6 +95,7 @@ view config device paths =
     [ height fill ]
     [ Vuln.view config device paths "Vulnerability Ribbon" ToggleVulnRibbon
     , SLR.view config device paths "Sea Level Rise" ToggleSLRSection 
+    , SP.view config device paths "Stormtide Pathways" ToggleSTPSection 
     , IF.view config device paths "Infrastructure" ToggleInfraSection 
     , Erosion.view config device paths "Erosion" ToggleErosionSection
     , Inundation.view config device paths "Inundation" ToggleInundationSection

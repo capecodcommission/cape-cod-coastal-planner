@@ -86,6 +86,7 @@ type alias Env =
     , agsHexUrl : String
     , agsCritUrl : String
     , agsAPIUrl : String
+    , agsSTPPointUrl : String
     }
 
 
@@ -97,6 +98,7 @@ decodeEnv =
         |> required "agsHexUrl" D.string
         |> required "agsCritUrl" D.string
         |> required "agsAPIUrl" D.string
+        |> required "agsSTPPointUrl" D.string
 
 
 type Openness

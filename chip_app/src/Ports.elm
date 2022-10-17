@@ -30,11 +30,15 @@ type OpenLayersCmd
     | ClearZoneOfImpact
     | RenderLocationHexes (Result Http.Error D.Value)
     | RenderCritFac 
+    | STPPointLoaded (Result Http.Error D.Value)
     | DisableCritFac 
+    | DisableStormtidePathwaysPoints 
     | RenderDR (String)
     | DisableDR (String)
     | RenderSLR (String)
     | DisableSLR (String)
+    | RenderSTP (String)
+    | DisableSTP (String)
     | RenderMOP 
     | DisableMOP
     | RenderPPR
@@ -118,9 +122,20 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "render_critical_facilities" )
                 ]
 
+        STPPointLoaded response ->
+            E.object
+                [ ( "cmd", E.string "render_stormtide_pathways_points" )
+                , ( "data", encodeRawResponse response )
+                ]
+
         DisableCritFac ->
             E.object
                 [ ( "cmd", E.string "disable_critical_facilities" )
+                ]
+
+        DisableStormtidePathwaysPoints ->
+            E.object
+                [ ( "cmd", E.string "disable_stormtide_pathways_points" )
                 ]
             
         RenderDR level ->
@@ -146,6 +161,19 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "disable_sea_level_rise" )
                 , ("data", E.string level)
                 ]
+
+        RenderSTP level ->
+            E.object
+                [ ( "cmd", E.string "render_stp" )
+                , ("data", E.string level)
+                ]
+        
+        DisableSTP level ->
+            E.object
+                [ ( "cmd", E.string "disable_stormtide_pathways" )
+                , ("data", E.string level)
+                ]
+
 
         RenderMOP ->
             E.object

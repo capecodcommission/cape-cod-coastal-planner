@@ -242,6 +242,47 @@ getHexesForZoneOfImpact env geometry  =
             }
 
 --
+-- STORMTIDE PATHWAYS POINT QUERY
+--
+
+sendGetSTPPointRequest : Env -> String -> Cmd Msg
+sendGetSTPPointRequest env feet=
+        getSTPPoint env feet
+
+getSTPPoint : Env -> String -> Cmd Msg
+getSTPPoint env feet =
+    let
+        qs =
+            [ string "f" "pjson"
+            , string "returnGeometry" "true"
+            , string "spatialRel" "esriSpatialRelIntersects"
+            , string "geometryType" "esriGeometryPoint"
+            , string "outFields" "*"
+            , string "outSR" "3857"
+            , string "where" ("Plane_CCCP > 0 and Plane_CCCP <=" ++ feet)
+            ]
+        getUrl =
+            env.agsSTPPointUrl ++ toQuery qs
+    in
+        Http.request
+         { method = "GET"
+         , headers = [ Http.header "Accept" "application/json, text/javascript, */*; q=0.01" ]
+         , url = getUrl
+         , body = Http.emptyBody
+         , expect = Http.expectJson handleGetSTPPointResponse D.value
+         , timeout = Nothing
+         , tracker = Nothing
+         }
+handleGetSTPPointResponse : Result Http.Error D.Value -> Msg
+handleGetSTPPointResponse result =
+    case result of
+        Ok _ ->
+            LoadSTPPointResponse result
+        Err err ->
+            Noop
+
+
+--
 -- CRITICAL FACILITIES (FEATURE SERVICE)
 --
 

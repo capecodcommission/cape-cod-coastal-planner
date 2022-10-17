@@ -53,11 +53,14 @@ type Msg
     | ToggleLeftSidebar
     | ToggleCritFac
     | LoadCritFacResponse (Result Http.Error D.Value)
+    | LoadSTPPointResponse (Result Http.Error D.Value)
     | ToggleSLRSection
+    | ToggleSTPSection
     | ToggleInfraSection
     | ToggleErosionSection
     | ToggleDR String
     | ToggleSLRLayer String
+    | ToggleSTPLayer String
     | ToggleMOPLayer
     | LoadMOPResponse (Result Http.Error D.Value)
     | TogglePPRLayer

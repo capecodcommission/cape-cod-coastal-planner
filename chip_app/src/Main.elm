@@ -90,11 +90,15 @@ type alias Model =
     , leftSidebarFx : Animation.State
     , leftSidebarToggleFx : Animation.State
     , slrPath : String
+    --, spPath : String
     , ssPath : String
     , paths : Paths
     , slrOpenness : Openness
     , slrFx : Animation.State
     , slrToggleFx : Animation.State
+    , stpOpenness : Openness
+    , stpFx : Animation.State
+    , stpToggleFx : Animation.State
     , infraOpenness : Openness
     , infraFx : Animation.State
     , infraToggleFx : Animation.State
@@ -143,6 +147,17 @@ type alias Model =
     , histDistClicked : Openness
     , histPlacesClicked : Openness
     , llrClicked : Openness
+    , stp0ftClicked : Openness
+    , stp1ftClicked : Openness
+    , stp2ftClicked : Openness
+    , stp3ftClicked : Openness
+    , stp4ftClicked : Openness
+    , stp5ftClicked : Openness
+    , stp6ftClicked : Openness
+    , stp7ftClicked : Openness
+    , stp8ftClicked : Openness
+    , stp9ftClicked : Openness
+    , stp10ftClicked : Openness
     }
 
 
@@ -190,6 +205,8 @@ initialModel flags key =
         (Animation.style <| .rotateZero <| Animations.toggleStates)
         -- slr image
         flags.slrPath
+        -- sp image
+        --flags.spPath
         -- storm surge image
         flags.ssPath
         -- paths object
@@ -197,6 +214,10 @@ initialModel flags key =
         -- SLR Section
         Closed
         (Animation.style <| .closed <| Animations.slrStates)
+        (Animation.style <| .rotate180 <| Animations.toggleStates)
+        -- STP (Stormtide Pathways) Section
+        Closed
+        (Animation.style <| .closed <| Animations.stpStates)
         (Animation.style <| .rotate180 <| Animations.toggleStates)
         -- Infrastructure Section
         Closed
@@ -289,6 +310,28 @@ initialModel flags key =
         -- Historic Places clicked
         Closed
         -- Low Lying Roads clicked
+        Closed
+        -- stp0ft clicked
+        Closed
+        -- stp1ft clicked
+        Closed
+        -- stp2ft clicked
+        Closed
+        -- stp3ft clicked
+        Closed
+        -- stp4ft clicked
+        Closed
+        -- stp5ft clicked
+        Closed
+        -- stp6ft clicked
+        Closed
+        -- stp7ft clicked
+        Closed
+        -- stp8ft clicked
+        Closed
+        -- stp9ft clicked
+        Closed
+        -- stp10ft clicked
         Closed
 
 init : D.Value -> Url.Url -> Nav.Key -> ( App, Cmd Msg )
@@ -1105,10 +1148,352 @@ updateModel msg model =
                             )
                 _ ->
                     (model, Cmd.none)
+        ToggleSTPLayer level ->
+                    case level of
+                        "0" -> 
+                            case model.stp0ftClicked of 
+                                Open ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Closed 
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (DisableSTP level) 
+                                    )
+                                Closed ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Open  
+                                                , layerClicked = Open
+                                                , stp1ftClicked = Closed
+                                                , stp2ftClicked = Closed
+                                                , stp3ftClicked = Closed
+                                                , stp4ftClicked = Closed
+                                                , stp5ftClicked = Closed
+                                                , stp6ftClicked = Closed
+                                                , stp7ftClicked = Closed
+                                                , stp8ftClicked = Closed
+                                                , stp9ftClicked = Closed
+                                                , stp10ftClicked = Closed
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (RenderSTP level) 
+                                    )
+                        "1" -> 
+                            case model.stp1ftClicked of 
+                                Open ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp1ftClicked = Closed 
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (DisableSTP level) 
+                                    )
+                                Closed ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Closed  
+                                                , layerClicked = Open
+                                                , stp1ftClicked = Open
+                                                , stp2ftClicked = Closed
+                                                , stp3ftClicked = Closed
+                                                , stp4ftClicked = Closed
+                                                , stp5ftClicked = Closed
+                                                , stp6ftClicked = Closed
+                                                , stp7ftClicked = Closed
+                                                , stp8ftClicked = Closed
+                                                , stp9ftClicked = Closed
+                                                , stp10ftClicked = Closed
+                                            }
+                                    -- , olCmd <| encodeOpenLayersCmd (RenderSTP level) 
+                                    , Cmd.batch [ olCmd <| encodeOpenLayersCmd (RenderSTP level), sendGetSTPPointRequest model.env level ]                                    
+                                    )
+                        "2" -> 
+                            case model.stp2ftClicked of 
+                                Open ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp2ftClicked = Closed 
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (DisableSTP level) 
+                                    )
+                                Closed ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Closed  
+                                                , layerClicked = Open
+                                                , stp1ftClicked = Closed
+                                                , stp2ftClicked = Open
+                                                , stp3ftClicked = Closed
+                                                , stp4ftClicked = Closed
+                                                , stp5ftClicked = Closed
+                                                , stp6ftClicked = Closed
+                                                , stp7ftClicked = Closed
+                                                , stp8ftClicked = Closed
+                                                , stp9ftClicked = Closed
+                                                , stp10ftClicked = Closed
+                                            }
+                                    -- , olCmd <| encodeOpenLayersCmd (RenderSTP level) 
+                                    , Cmd.batch [ olCmd <| encodeOpenLayersCmd (RenderSTP level), sendGetSTPPointRequest model.env level ]                                    
+                                    )
+                        "3" -> 
+                            case model.stp3ftClicked of 
+                                Open ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp3ftClicked = Closed 
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (DisableSTP level) 
+                                    )
+                                Closed ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Closed  
+                                                , layerClicked = Open
+                                                , stp1ftClicked = Closed
+                                                , stp2ftClicked = Closed
+                                                , stp3ftClicked = Open
+                                                , stp4ftClicked = Closed
+                                                , stp5ftClicked = Closed
+                                                , stp6ftClicked = Closed
+                                                , stp7ftClicked = Closed
+                                                , stp8ftClicked = Closed
+                                                , stp9ftClicked = Closed
+                                                , stp10ftClicked = Closed
+                                            }
+                                    -- , olCmd <| encodeOpenLayersCmd (RenderSTP level) 
+                                    , Cmd.batch [ olCmd <| encodeOpenLayersCmd (RenderSTP level), sendGetSTPPointRequest model.env level ]                                    
+                                    )
+                        "4" -> 
+                            case model.stp4ftClicked of 
+                                Open ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp4ftClicked = Closed 
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (DisableSTP level) 
+                                    )
+                                Closed ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Closed  
+                                                , layerClicked = Open
+                                                , stp1ftClicked = Closed
+                                                , stp2ftClicked = Closed
+                                                , stp3ftClicked = Closed
+                                                , stp4ftClicked = Open
+                                                , stp5ftClicked = Closed
+                                                , stp6ftClicked = Closed
+                                                , stp7ftClicked = Closed
+                                                , stp8ftClicked = Closed
+                                                , stp9ftClicked = Closed
+                                                , stp10ftClicked = Closed
+                                            }
+                                    -- , olCmd <| encodeOpenLayersCmd (RenderSTP level) 
+                                    , Cmd.batch [ olCmd <| encodeOpenLayersCmd (RenderSTP level), sendGetSTPPointRequest model.env level ]                                    
+                                    )
+                        "5" -> 
+                            case model.stp5ftClicked of 
+                                Open ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp5ftClicked = Closed 
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (DisableSTP level) 
+                                    )
+                                Closed ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Closed  
+                                                , layerClicked = Open
+                                                , stp1ftClicked = Closed
+                                                , stp2ftClicked = Closed
+                                                , stp3ftClicked = Closed
+                                                , stp4ftClicked = Closed
+                                                , stp5ftClicked = Open
+                                                , stp6ftClicked = Closed
+                                                , stp7ftClicked = Closed
+                                                , stp8ftClicked = Closed
+                                                , stp9ftClicked = Closed
+                                                , stp10ftClicked = Closed
+                                            }
+                                    -- , olCmd <| encodeOpenLayersCmd (RenderSTP level) 
+                                    , Cmd.batch [ olCmd <| encodeOpenLayersCmd (RenderSTP level), sendGetSTPPointRequest model.env level ]                                    
+                                    )
+                        "6" -> 
+                            case model.stp6ftClicked of 
+                                Open ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp6ftClicked = Closed 
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (DisableSTP level) 
+                                    )
+                                Closed ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Closed  
+                                                , layerClicked = Open
+                                                , stp1ftClicked = Closed
+                                                , stp2ftClicked = Closed
+                                                , stp3ftClicked = Closed
+                                                , stp4ftClicked = Closed
+                                                , stp5ftClicked = Closed
+                                                , stp6ftClicked = Open
+                                                , stp7ftClicked = Closed
+                                                , stp8ftClicked = Closed
+                                                , stp9ftClicked = Closed
+                                                , stp10ftClicked = Closed
+                                            }
+                                    -- , olCmd <| encodeOpenLayersCmd (RenderSTP level) 
+                                    , Cmd.batch [ olCmd <| encodeOpenLayersCmd (RenderSTP level), sendGetSTPPointRequest model.env level ]                                    
+                                    )
+                        "7" -> 
+                            case model.stp7ftClicked of 
+                                Open ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp7ftClicked = Closed 
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (DisableSTP level) 
+                                    )
+                                Closed ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Closed  
+                                                , layerClicked = Open
+                                                , stp1ftClicked = Closed
+                                                , stp2ftClicked = Closed
+                                                , stp3ftClicked = Closed
+                                                , stp4ftClicked = Closed
+                                                , stp5ftClicked = Closed
+                                                , stp6ftClicked = Closed
+                                                , stp7ftClicked = Open
+                                                , stp8ftClicked = Closed
+                                                , stp9ftClicked = Closed
+                                                , stp10ftClicked = Closed
+                                            }
+                                    -- , olCmd <| encodeOpenLayersCmd (RenderSTP level) 
+                                    , Cmd.batch [ olCmd <| encodeOpenLayersCmd (RenderSTP level), sendGetSTPPointRequest model.env level ]                                    
+                                    )
+                        "8" -> 
+                            case model.stp8ftClicked of 
+                                Open ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp8ftClicked = Closed 
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (DisableSTP level) 
+                                    )
+                                Closed ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Closed  
+                                                , layerClicked = Open
+                                                , stp1ftClicked = Closed
+                                                , stp2ftClicked = Closed
+                                                , stp3ftClicked = Closed
+                                                , stp4ftClicked = Closed
+                                                , stp5ftClicked = Closed
+                                                , stp6ftClicked = Closed
+                                                , stp7ftClicked = Closed
+                                                , stp8ftClicked = Open
+                                                , stp9ftClicked = Closed
+                                                , stp10ftClicked = Closed
+                                            }
+                                    -- , olCmd <| encodeOpenLayersCmd (RenderSTP level) 
+                                    , Cmd.batch [ olCmd <| encodeOpenLayersCmd (RenderSTP level), sendGetSTPPointRequest model.env level ]                                    
+                                    )
+                        "9" -> 
+                            case model.stp9ftClicked of 
+                                Open ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp9ftClicked = Closed 
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (DisableSTP level) 
+                                    )
+                                Closed ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Closed  
+                                                , layerClicked = Open
+                                                , stp1ftClicked = Closed
+                                                , stp2ftClicked = Closed
+                                                , stp3ftClicked = Closed
+                                                , stp4ftClicked = Closed
+                                                , stp5ftClicked = Closed
+                                                , stp6ftClicked = Closed
+                                                , stp7ftClicked = Closed
+                                                , stp8ftClicked = Closed
+                                                , stp9ftClicked = Open
+                                                , stp10ftClicked = Closed
+                                            }
+                                    -- , olCmd <| encodeOpenLayersCmd (RenderSTP level) 
+                                    , Cmd.batch [ olCmd <| encodeOpenLayersCmd (RenderSTP level), sendGetSTPPointRequest model.env level ]                                    
+                                    )
+                        "10" -> 
+                            case model.stp10ftClicked of 
+                                Open ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp10ftClicked = Closed 
+                                            }
+                                    , olCmd <| encodeOpenLayersCmd (DisableSTP level) 
+                                    )
+                                Closed ->
+                                    ( model 
+                                        |> \m -> 
+                                            { m 
+                                                | stp0ftClicked = Closed  
+                                                , layerClicked = Open
+                                                , stp1ftClicked = Closed
+                                                , stp2ftClicked = Closed
+                                                , stp3ftClicked = Closed
+                                                , stp4ftClicked = Closed
+                                                , stp5ftClicked = Closed
+                                                , stp6ftClicked = Closed
+                                                , stp7ftClicked = Closed
+                                                , stp8ftClicked = Closed
+                                                , stp9ftClicked = Closed
+                                                , stp10ftClicked = Open
+                                            }
+                                    -- , olCmd <| encodeOpenLayersCmd (RenderSTP level) 
+                                    , Cmd.batch [ olCmd <| encodeOpenLayersCmd (RenderSTP level), sendGetSTPPointRequest model.env level ]                                    
+                                    )
+
+                        _ ->
+                            (model, Cmd.none)
 
         LoadCritFacResponse response ->
             ( model
             , olCmd <| encodeOpenLayersCmd (RenderCritFac)
+            )
+        -- LoadSTPPointResponse response ->
+        --     ( model
+        --     , olCmd <| encodeOpenLayersCmd (RenderSTPPoint)
+        --     )
+        LoadSTPPointResponse response ->
+            ( model
+            , olCmd <| encodeOpenLayersCmd (STPPointLoaded response)
             )
 
         LoadMOPResponse response ->
@@ -1123,6 +1508,14 @@ updateModel msg model =
 
                 Closed ->
                     ( model |> expandSLRLayer, Cmd.none )
+
+        ToggleSTPSection ->
+            case model.stpOpenness of
+                Open ->
+                    ( model |> collapseSTPLayer, Cmd.none )
+
+                Closed ->
+                    ( model |> expandSTPLayer, Cmd.none )
 
         ToggleInfraSection ->
             case model.infraOpenness of
@@ -1199,6 +1592,7 @@ updateModel msg model =
                             }
                     , olCmd <| encodeOpenLayersCmd (RenderSP) 
                     )
+
 
         ToggleCDSLayer ->
             case model.cdsClicked of 
@@ -1412,6 +1806,17 @@ updateModel msg model =
                         , histDistClicked = Closed
                         , histPlacesClicked = Closed
                         , llrClicked = Closed
+                        , stp0ftClicked = Closed
+                        , stp1ftClicked = Closed
+                        , stp2ftClicked = Closed
+                        , stp3ftClicked = Closed
+                        , stp4ftClicked = Closed
+                        , stp5ftClicked = Closed
+                        , stp6ftClicked = Closed
+                        , stp7ftClicked = Closed
+                        , stp8ftClicked = Closed
+                        , stp9ftClicked = Closed
+                        , stp10ftClicked = Closed
                     }
             , olCmd <| encodeOpenLayersCmd (ClearLayers)
             )
@@ -1841,6 +2246,34 @@ collapseSLRLayer model =
             Animation.interrupt
                 [ Animation.toWith (Animation.speed { perSecond = 20.0 }) <| .rotate180 <| Animations.toggleStates ]
                 model.slrToggleFx
+    }
+
+expandSTPLayer : Model -> Model
+expandSTPLayer model =
+    { model
+        | stpOpenness = Open
+        , stpFx =
+            Animation.interrupt
+                [ Animation.to <| .open <| Animations.stpStates ]
+                model.stpFx
+        , stpToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
+                model.stpToggleFx
+    }
+
+collapseSTPLayer : Model -> Model
+collapseSTPLayer model =
+    { model
+        | stpOpenness = Closed
+        , stpFx =
+            Animation.interrupt
+                [ Animation.to <| .closed <| Animations.stpStates ]
+                model.stpFx
+        , stpToggleFx =
+            Animation.interrupt
+                [ Animation.toWith (Animation.speed { perSecond = 20.0 }) <| .rotate180 <| Animations.toggleStates ]
+                model.stpToggleFx
     }
 
 expandInfraLayer : Model -> Model
