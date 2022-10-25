@@ -94,9 +94,9 @@ view config device paths =
   column NoStyle
     [ height fill ]
     [ Vuln.view config device paths "Vulnerability Ribbon" ToggleVulnRibbon
-    , SLR.view config device paths "Sea Level Rise" ToggleSLRSection 
-    , SP.view config device paths "Stormtide Pathways" ToggleSTPSection 
     , IF.view config device paths "Infrastructure" ToggleInfraSection 
-    , Erosion.view config device paths "Erosion" ToggleErosionSection
+    , SLR.view config device paths "Sea Level Rise" ToggleSLRSection 
+    , SP.view config device paths "Stormtide Pathways" ToggleSTPSection
     , Inundation.view config device paths "Inundation" ToggleInundationSection
+    , Erosion.view config device paths "Erosion" ToggleErosionSection
     ]

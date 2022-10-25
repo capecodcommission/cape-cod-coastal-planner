@@ -27,7 +27,7 @@ export function layer(map) {
         style: (feature, resolution) => {
             let circleStyle =  new Style({
                 image: new Circle({
-                    radius: 3,
+                    radius: 7,
                     fill: new Fill({color: 'blue'}),
                     stroke: new Stroke({
                         color: [7, 7, 112],
@@ -43,7 +43,7 @@ export function layer(map) {
                     width: 1
                   }),
                   points: 3,
-                  radius: 7,
+                  radius: 10,
                 //   rotation: Math.PI / 4,
                   angle: 0,
                 }),
