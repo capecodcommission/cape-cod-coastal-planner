@@ -92,7 +92,7 @@ class AppHandler {
         // doc.text(cccDesc4, descRectangleX+10, descRectangleY+62, {align:'center'});
         // doc.text(cccDesc5, descRectangleX+10, descRectangleY+76, {align:'center'});
         let footerText1 = "www.capecodcoast.org";
-        let footerText2 = "Funded by a NOAA Coastal Resilience Grant awared to the Cape Cod Commission and partner agencies."
+        let footerText2 = "Funded by a NOAA Coastal Resilience Grant awarded to the Cape Cod Commission and partner agencies."
         doc.textWithLink(footerText1, footerRectagleX+10, footerRectangleY+15, {url:footerText1});
         doc.text(footerText2, footerRectagleX+420, footerRectangleY+15)
 
@@ -124,11 +124,12 @@ class AppHandler {
         // if (this.hasDST(currentdate)){   //if DST (Daylight Saving time) is in effect
         //     currentdate.setHours(currentdate.getHours()+1);
         // }
+        let currentYear = currentdate.getFullYear();
         let currentMonth = currentdate.toLocaleString('default', { month: 'long' });
         currentdate.setMonth(currentdate.getMonth()+1); //since month values are 0~11
         let datetime = currentMonth + " "
         +  String(currentdate.getDate()).padStart(2, '0')  + ", " 
-        +  currentdate.getFullYear() + " "  
+        +  currentYear + " "  
         +  String(currentdate.getHours()).padStart(2, '0') + ":"
         +  String(currentdate.getMinutes()).padStart(2, '0') + ":"
         +  String(currentdate.getSeconds()).padStart(2, '0');

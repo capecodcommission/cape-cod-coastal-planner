@@ -98,7 +98,7 @@ baselineInfo =
         |> with SL.lengthMiles
         |> with SL.impervPercent
         |> with SL.criticalFacilitiesCount
-        |> with SL.historicalPlacesCount
+        -- |> with SL.historicalPlacesCount
         |> with SL.coastalStructuresCount
         |> with SL.workingHarbor
         |> with SL.publicBuildingsCount

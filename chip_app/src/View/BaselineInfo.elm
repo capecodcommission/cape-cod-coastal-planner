@@ -143,9 +143,9 @@ mainContentView { device } info =
                     "Critical facilities:"
                     --(toString info.criticalFacilitiesCount)
                     (String.fromInt info.criticalFacilitiesCount)
-                , infoRowView
-                    "Historical places:"
-                    (String.fromInt info.historicalPlacesCount)
+                -- , infoRowView
+                --     "Historical places:"
+                --     (String.fromInt info.historicalPlacesCount)
                 , infoRowView
                     "Coastal structures:"
                     (String.fromInt info.coastalStructuresCount)
