@@ -16,6 +16,8 @@ view :
   { config
         | slrOpenness : Openness
         , slrToggleFx : Animation.State
+        , stpOpenness : Openness
+        , stpToggleFx : Animation.State
         , critFacClicked : Openness
         , slrFx : Animation.State
         , dr1ftClicked : Openness

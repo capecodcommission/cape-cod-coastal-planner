@@ -221,7 +221,7 @@ scenarioGeneralInfoView output paths =
         durationText = 
             case Hazards.toTypeFromStr output.hazard of
                         Ok Hazards.Erosion ->
-                            "The planning horizon for erosion is 40 years, in alignment with MA Shoreline Change project's long-term erosion rates." 
+                            "The Cape Cod Coastal Planner's planning horizon for sea level rise is 40 years, in alignment with the 2-feet of predicted sea level rise factored into the MA Municipal Vulnerability Planning Process. The horizon for erosion also reflects 40 years, using the long-term erosion rates calculated in the MA Shoreline Change project. Storm surge is considered a one-time, immediate-impact event." 
 
                         Ok Hazards.SeaLevelRise ->
                             "Sea level rise is considered a one-time, immediate-impact event."

@@ -541,7 +541,7 @@ updateModel msg model =
                                 model.titleRibbonFX
                         , vulnFX =
                             Animation.interrupt
-                                [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotate90 <| Animations.toggleStates ]
+                                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate90 <| Animations.toggleStates ]
                                 model.vulnFX
                         , vulnLegendFX =
                             Animation.interrupt
@@ -789,6 +789,7 @@ updateModel msg model =
                 , leftSidebarToggleFx = Animation.update animMsg model.leftSidebarToggleFx
                 , slrFx = Animation.update animMsg model.slrFx
                 , slrToggleFx = Animation.update animMsg model.slrToggleFx
+                , stpToggleFx = Animation.update animMsg model.stpToggleFx
                 , infraFx = Animation.update animMsg model.infraFx
                 , infraToggleFx = Animation.update animMsg model.infraToggleFx
                 , erosionFx = Animation.update animMsg model.erosionFx
@@ -1893,7 +1894,7 @@ updateModel msg model =
                                 | vulnRibbonClicked = Closed 
                                 , vulnFX =
                                     Animation.interrupt
-                                        [ Animation.toWith (Animation.speed { perSecond = 10.0 }) <| .rotate180 <| Animations.toggleStates ]
+                                        [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
                                         model.vulnFX
                                 , vulnLegendFX =
                                     Animation.interrupt
@@ -2244,7 +2245,7 @@ collapseSLRLayer model =
                 model.slrFx
         , slrToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 20.0 }) <| .rotate180 <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
                 model.slrToggleFx
     }
 
@@ -2272,7 +2273,7 @@ collapseSTPLayer model =
                 model.stpFx
         , stpToggleFx =
             Animation.interrupt
-                [ Animation.toWith (Animation.speed { perSecond = 20.0 }) <| .rotate180 <| Animations.toggleStates ]
+                [ Animation.toWith (Animation.speed { perSecond = 5.0 }) <| .rotate180 <| Animations.toggleStates ]
                 model.stpToggleFx
     }
 
@@ -2569,6 +2570,7 @@ animations model =
     , model.leftSidebarToggleFx 
     , model.slrFx
     , model.slrToggleFx
+    , model.stpToggleFx
     , model.infraFx
     , model.infraToggleFx
     , model.erosionFx
