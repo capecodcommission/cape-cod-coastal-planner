@@ -27,10 +27,6 @@ services:
   cccpdb:
     container_name: cccpdb
     image: postgres:11
-<<<<<<< HEAD
-    
-=======
->>>>>>> master
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
