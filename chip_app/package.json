@@ -67,6 +67,11 @@
     "reactor": "elm reactor",
     "test": "elm-test",
     "analyse": "elm-analyse -s",
+<<<<<<< HEAD
     "api": "elm-graphql http://cccpapidev:9000/api --base ChipApi"
+=======
+     "api": "graphqelm http://cccpapi:4000/api --base ChipApi"
+>>>>>>> master
   }
 }
+
