@@ -1,10 +1,11 @@
 module AdaptationOutput exposing (..)
 
 import Http
-import Graphqelm.Http as GHttp
+import Graphql.Http as GHttp
 import AdaptationStrategy.StrategyDetails exposing (StrategyDetails)
 import AdaptationStrategy.Impacts exposing (..)
 import AdaptationHexes exposing (..)
+import Json.Decode exposing (float)
 
 
 type AdaptationOutput 
@@ -39,6 +40,10 @@ type alias OutputDetails =
     , saltMarshChange : AcreageResult
     , beachAreaChange : AcreageResult
     , rareSpeciesHabitat : RareSpeciesHabitat
+    , historicalPlaces : HistoricalPlaces
+    , rdTotMileChange : MileResult
+    , stormSurgeRdTotMileChange : MileResult
+    , sLRRdTotMileChange : MileResult
     }
 
 
@@ -70,6 +75,22 @@ type RareSpeciesHabitat
     | HabitatUnchanged
 
 
+type HistoricalPlaces
+    = HistoricalPlacesLostNoNum Int
+    | HistoricalPlacesLost Int
+    | HistoricalPlacesProtected Int
+    | HistoricalPlacesUnchanged Int
+    | HistoricalPlacesPresent Int
+    | HistoricalPlacesRelocated Int
+
+
+type MileResult
+    = MileLost Mile
+    | MileProtected Mile
+    | MilePresent Mile
+    | MileRelocated Mile
+    | MileUnchanged 
+
 
 defaultOutput : OutputDetails
 defaultOutput =
@@ -89,6 +110,10 @@ defaultOutput =
     , saltMarshChange = AcreageUnchanged
     , beachAreaChange = AcreageUnchanged
     , rareSpeciesHabitat = HabitatUnchanged
+    , historicalPlaces = HistoricalPlacesUnchanged 0
+    , rdTotMileChange = MileUnchanged
+    , stormSurgeRdTotMileChange = MileUnchanged
+    , sLRRdTotMileChange = MileUnchanged
     }
 
 
@@ -110,6 +135,17 @@ getCriticalFacilityCount { criticalFacilities } =
         FacilitiesUnchanged count -> count
         FacilitiesPresent count -> count
         FacilitiesRelocated count -> count
+
+
+getHistoricalPlaceCount : OutputDetails -> Int
+getHistoricalPlaceCount { historicalPlaces } =
+    case historicalPlaces of
+        HistoricalPlacesLostNoNum count -> count
+        HistoricalPlacesLost count -> count
+        HistoricalPlacesProtected count -> count
+        HistoricalPlacesUnchanged count -> count
+        HistoricalPlacesPresent count -> count
+        HistoricalPlacesRelocated count -> count
 
 
 getMonetaryValue : MonetaryResult -> MonetaryValue
@@ -153,3 +189,34 @@ getRareSpeciesPresence habitat =
         HabitatLost -> True
         HabitatGained -> True
         HabitatUnchanged -> False
+
+
+getRdTotMile : OutputDetails -> Float
+getRdTotMile {rdTotMileChange } =
+    case rdTotMileChange of
+        MileLost value -> value 
+        MileProtected value -> value
+        MilePresent value -> value
+        MileRelocated value -> value
+        MileUnchanged -> 0
+
+
+getStormSurgeRdTotMile : OutputDetails -> Float
+getStormSurgeRdTotMile { stormSurgeRdTotMileChange } =
+    case stormSurgeRdTotMileChange of
+        MileLost value -> value
+        MileProtected value -> value
+        MilePresent value -> value
+        MileRelocated value -> value
+        MileUnchanged -> 0
+
+
+getSLRRdTotMile : OutputDetails -> Float
+getSLRRdTotMile { sLRRdTotMileChange } =
+    case sLRRdTotMileChange of
+        MileLost value -> value
+        MileProtected value -> value
+        MilePresent value -> value
+        MileRelocated value -> value
+        MileUnchanged -> 0
+

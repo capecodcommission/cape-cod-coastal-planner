@@ -259,7 +259,7 @@ strategyView maybeStrategy =
                     True ->
                         button (AddStrategies StrategiesSidebarListBtn)
                             [ height content
-                            , paddingXY 16 8
+                            , paddingXY 12 3
                             , onClick <| SelectStrategy strategy.id
                             , Attr.id strategy.htmlId
                             ] <| paragraph NoStyle [] [ el NoStyle [] <| Element.text strategy.name ]
@@ -267,7 +267,7 @@ strategyView maybeStrategy =
                     False ->
                         el (AddStrategies StrategiesSidebarListBtnDisabled)
                             [ height content
-                            , paddingXY 16 8
+                            , paddingXY 12 3
                             , Attr.id strategy.htmlId
                             ] <| paragraph NoStyle [] 
                                 [ el NoStyle [ width fill ] <| Element.text strategy.name
@@ -282,7 +282,7 @@ selectedStrategyView maybeStrategy =
             (\strategy ->
                 button (AddStrategies StrategiesSidebarListBtnSelected) 
                     [ height content
-                    , paddingXY 16 8
+                    , paddingXY 12 3
                     , on "keydown" <| D.map HandleStrategyKeyboardEvent decodeKeyboardEvent
                     , Attr.id strategy.htmlId
                     ] <| paragraph NoStyle [] [ Element.text strategy.name ]        
@@ -435,7 +435,7 @@ categoryView index ( category, matched ) =
             else 
                 category.imagePathInactive
     in
-    ( "category_view_" ++ (toString <| getId category.id)
+    ( "category_view_" ++ (getId category.id)
     , Keyed.column NoStyle
         [ width (px 84), height (px 100) ]
         [ case srcPath of
@@ -637,7 +637,7 @@ coastalHazardsRowView views =
 
 coastalHazardView : CoastalHazard -> Bool -> ( String, Element MainStyles Variations Msg) 
 coastalHazardView hazard matched =
-    ("coastal_hazard_view_" ++ (toString <| getId hazard.id)
+    ("coastal_hazard_view_" ++ (getId hazard.id)
     , Keyed.column NoStyle
         [ width (percent (1/3 * 100)), center, verticalCenter ]
         [ case (Hazards.toType hazard, matched) of
@@ -653,7 +653,6 @@ coastalHazardView hazard matched =
                 , { erosionIconConfig | color = Color.rgb 79 88 98 }
                     |> erosionIcon 
                     |> html
-            
                 )
 
             ( Ok Hazards.SeaLevelRise, True ) ->

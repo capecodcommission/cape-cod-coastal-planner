@@ -1,0 +1,104 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js install
+
+PATH: 
+  C:\instantclient_32;C:\instantclient_64;C:\Program Files (x86)\RSA SecurID Token Common;C:\Program Files\RSA SecurID Token Common;C:\Python39\Scripts\;C:\Python39\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\ProgramData\chocolatey\bin;C:\Users\yoonsik.chung\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files (x86)\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files\Azure Data Studio\bin;C:\Program Files\Git\cmd;C:\Users\yoonsik.chung\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\PuTTY\;C:\Program Files (x86)\dotnet\;C:\Program Files (x86)\Yarn\bin\;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools;C:\Program Files (x86)\oracle\instantclient_19_12;C:\Python27\ArcGIS10.7\Scripts;C:\Program Files\RSA SecurID Token Common\;C:\Users\;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\erl-24.1.7\bin;C:\Program Files (x86)\Elixir\bin;C:\WINDOWS\system32\config\systemprofile\.mix\escripts;C:\Program Files (x86)\Elm\0.19.1\bin;C:\Program Files\RSA SecurID Token Common\;C:\Users\yoonsik.chung\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\yoonsik.chung\.dotnet\tools;C:\Users\yoonsik.chung\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\yoonsik.chung\AppData\Local\Yarn\bin;C:\Users\yoonsik.chung\AppData\Roaming\npm;C:\Program Files\nodejs\node_modules\@angular\cli\bin;c:\users\yoonsik.chung\.local\bin;C:\Program Files (x86)\BrowserStackLocal\
+
+Yarn version: 
+  1.22.5
+
+Node version: 
+  16.14.2
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/elm-explorations%2ftest: Request "https://registry.yarnpkg.com/elm-explorations%2ftest" returned a 405
+      at Request.params.callback [as _callback] (C:\Program Files (x86)\Yarn\lib\cli.js:66106:18)
+      at Request.self.callback (C:\Program Files (x86)\Yarn\lib\cli.js:140749:22)
+      at Request.emit (node:events:526:28)
+      at Request.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:141721:10)
+      at Request.emit (node:events:526:28)
+      at IncomingMessage.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:141643:12)
+      at Object.onceWrapper (node:events:645:28)
+      at IncomingMessage.emit (node:events:538:35)
+      at endReadableNT (node:internal/streams/readable:1345:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+
+npm manifest: 
+  {
+    "name": "chip_app",
+    "version": "0.0.1",
+    "description": "Cape Cod Coastal Planner",
+    "main": "index.js",
+    "author": "Cape Cod Commission",
+    "license": "ISC",
+    "private": true,
+    "dependencies": {
+      "@turf/turf": "^6.5.0",
+      "elm-phoenix-websocket-ports": "^1.0.1",
+      "lodash.debounce": "^4.0.8",
+      "normalize.css": "^8.0.0",
+      "ol": "5.1.3",
+      "phoenix": "^1.3.0",
+      "proj4": "^2.4.4"
+    },
+    "devDependencies": {
+      "@babel/core": "7.17.8",
+      "@babel/plugin-transform-runtime": "7.17.0",
+      "@babel/preset-env": "7.16.11",
+      "@babel/runtime": "7.17.8",
+      "@dillonkearns/elm-graphql": "4.0.2",
+      "assets-webpack-plugin": "^7.1.1",
+      "autoprefixer": "^8.0.0",
+      "babel-cli": "^6.26.0",
+      "babel-core": "^6.26.0",
+      "babel-loader": "^8.2.4",
+      "babel-plugin-transform-runtime": "^6.23.0",
+      "babel-preset-env": "^1.7.0",
+      "babel-runtime": "^6.26.0",
+      "chalk": "^3.0.0",
+      "connect-history-api-fallback": "^1.6.0",
+      "css-loader": "^3.6.0",
+      "dotenv": "^8.2.0",
+      "elm": "^0.19.1-5",
+      "elm-analyse": "^0.16.5",
+      "elm-format": "^0.8.5",
+      "elm-hot-loader": "0.5.4",
+      "elm-explorations/test": "^0.19.1",
+      "elm-webpack-loader": "^8.0.0",
+      "file-loader": "^6.2.0",
+      "html-webpack-plugin": "^5.5.0",
+      "http-proxy-middleware": "^2.0.4",
+      "mini-css-extract-plugin": "2.6.0",
+      "minimist": "1.2.6",
+      "node-elm-compiler": "5.0.5",
+      "postcss-loader": "4.2.0",
+      "react-dev-utils": "^12.0.0",
+      "react-error-overlay": "^6.0.10",
+      "string-replace-loader": "^3.1.0",
+      "style-loader": "^3.3.1",
+      "sw-precache-webpack-plugin": "^1.0.0",
+      "url-loader": "^4.1.1",
+      "webpack": "^5.70.0",
+      "webpack-dev-server": "^4.7.4"
+    },
+    "scripts": {
+      "build": "node scripts/build.js",
+      "start": "node scripts/start.js",
+      "package": "elm-package",
+      "make": "elm make",
+      "repl": "elm repl",
+      "reactor": "elm reactor",
+      "test": "elm-test",
+      "analyse": "elm-analyse -s",
+      "api": "elm-graphql http://cccpapidev:9000/api --base ChipApi"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

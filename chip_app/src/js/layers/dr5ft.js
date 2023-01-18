@@ -1,45 +1,40 @@
 "use strict";
 
-import TileLayer from "ol/layer/Tile";
-import XYZ from "ol/source/XYZ";
+import {Image as ImageLayer} from 'ol/layer';
+import Dynamic from "ol/source/ImageArcGISRest";
 
-export function layer(map) {
-    let source = _source();
 
-    let layer = new TileLayer({
-        visible: false,
-        preload: 4,
-        opacity: 0.5,
-        source: source
-    });
-    layer.set("name", "disconnected_roads_5ft");
+/**
+ * Image Layer functions
+ **/
 
-    map.on("render_dr5ft", ({data}) => {
-        layer.setVisible(true);
-    });
+ export function layer(map) {
+   
+  let customParams = {};
+  customParams["LAYERS"] = "show:15";
+  let url = process.env.ELM_APP_AGS_DR_FIVE;
 
-    map.on("disable_dr5ft", () => {
-        layer.setVisible(false);
-    });
-
-    return layer;
-}
-
-function _source() {
-    // let url = process.env.ELM_APP_AGS_SLR_TWO;
-    // if (!url) {
-    //     throw Error("Must configure environment variable `ELM_APP_AGS_WORLD_SLR_TWO`!");
-    // }
-    let source = new XYZ({
+  let dynamicLayer = new ImageLayer({
+      visible: false,
+      source: new Dynamic({
         crossOrigin: "anonymous",
-        url: process.env.ELM_APP_AGS_DR_FIVE,
-        maxZoom: 16,
-        minZoom: 3,
-        opaque: false,
-        transition: 4,
-        tileLoadFunction: (imageTile, src) => {
-            imageTile.getImage().src = src;
+        ratio: 1,
+        params: customParams,
+        url: url,
+        imageLoadFunction: (image, src) => {
+          image.getImage().src = src;
         }
+      })
     });
-    return source;
+    dynamicLayer.set("name", "disconnected_roads_5ft");
+    dynamicLayer.setOpacity(0.7);
+    map.on("render_dr5ft", ({data}) => {
+      dynamicLayer.setVisible(true)
+  });
+
+  map.on("disable_dr5ft", () => {
+      dynamicLayer.setVisible(false)
+  });
+  return dynamicLayer;
+  
 }

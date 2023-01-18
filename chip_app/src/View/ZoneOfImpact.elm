@@ -46,9 +46,9 @@ view device zoiPath zoi  =
                         ]
             , column (Zoi ZoiStat) [ height fill, center, verticalCenter, spacingXY 0 5 ] 
                     [ el NoStyle [ alignBottom ] <|
-                        text ("Selections: " ++ toString zoi.numSelected ++ " of 8")
+                        text ("Selections: " ++ String.fromInt zoi.numSelected ++ " of 8")
                         , el NoStyle [ alignTop ] <|
-                            text ("Shoreline Extent: " ++ toString zoi.beachLengths.total ++ " ft.")
+                            text ("Shoreline Extent: " ++ String.fromInt zoi.beachLengths.total ++ " ft.")
                     ]
             , footer (Sidebar SidebarFooter) [ alignBottom, height (px 90) ] <|
                     row NoStyle

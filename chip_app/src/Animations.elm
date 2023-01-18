@@ -18,6 +18,11 @@ type alias SLRStates =
     , closed : List Animation.Property
     }
 
+type alias STPStates =
+    { open : List Animation.Property
+    , closed : List Animation.Property
+    }
+
 type alias InfraStates =
     { open : List Animation.Property
     , closed : List Animation.Property
@@ -114,6 +119,13 @@ slrStates =
         [ Animation.left (Animation.px 0.0) ]    
     }
 
+stpStates : STPStates
+stpStates =
+    { open =
+        [ Animation.left (Animation.px 10.0) ]
+    , closed =
+        [ Animation.left (Animation.px 0.0) ]    
+    }
 infraStates : InfraStates
 infraStates =
     { open =

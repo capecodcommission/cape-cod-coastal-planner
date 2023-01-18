@@ -25,7 +25,7 @@ view :
   -> Element MainStyles Variations Msg
 view model =
   column NoStyle
-    [ height fill, width fill, inlineStyle [("pointer-events","none")], alignRight ]
+    [ height fill, width fill, inlineStyle "pointer-events""none", alignRight ]
     [ el NoStyle 
       ( renderAnimation model.menuFX
           [ height fill

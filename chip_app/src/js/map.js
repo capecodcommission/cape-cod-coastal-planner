@@ -9,6 +9,18 @@ import {layer as massImagery} from "./layers/mass_imagery";
 import {layer as littoralCells} from "./layers/littoral_cells";
 import {layer as vulnRibbon} from "./layers/vulnerability_ribbon";
 import {layer as critFac} from "./layers/critical_facilities"
+import {layer as pathwaysPoints} from "./layers/pathways_points"
+// import {layer as pathways0ft} from "./layers/pathways0ft"
+import {layer as pathways1ft} from "./layers/pathways1ft"
+import {layer as pathways2ft} from "./layers/pathways2ft"
+import {layer as pathways3ft} from "./layers/pathways3ft"
+import {layer as pathways4ft} from "./layers/pathways4ft"
+import {layer as pathways5ft} from "./layers/pathways5ft"
+import {layer as pathways6ft} from "./layers/pathways6ft"
+import {layer as pathways7ft} from "./layers/pathways7ft"
+import {layer as pathways8ft} from "./layers/pathways8ft"
+import {layer as pathways9ft} from "./layers/pathways9ft"
+import {layer as pathways10ft} from "./layers/pathways10ft"
 import {layer as dr1ft} from "./layers/dr1ft"
 import {layer as dr2ft} from "./layers/dr2ft"
 import {layer as dr3ft} from "./layers/dr3ft"
@@ -25,6 +37,7 @@ import {layer as mop} from "./layers/municipally_owned_parcels"
 import {layer as ppr} from "./layers/public_private_roads"
 import {layer as sp} from "./layers/sewered_parcels"
 import {layer as cds} from "./layers/coastal_defense_structures"
+import {layer as llr} from "./layers/low_lying_roads"
 import {layer as fz} from "./layers/flood_zones"
 import {layer as slosh} from "./layers/slosh"
 import {layer as fourty_years} from "./layers/fourty_years"
@@ -45,7 +58,11 @@ import {
     hover as hoverVulnRibbon,
     select as selectVulnRibbon
 } from "./interactions/vulnerability_ribbon";
-
+import {ImageArcGISRest, OSM} from 'ol/source';
+import {Image as ImageLayer, Tile as TileLayer} from 'ol/layer';
+let tileForImage = new TileLayer({
+    source: new OSM(),
+  });
 export function init(onInit) {
     let map = new Map({
         view: _view(),
@@ -76,12 +93,25 @@ export function init(onInit) {
     map.addLayer(dr3ft(map));
     map.addLayer(dr2ft(map));
     map.addLayer(dr1ft(map));
+    // map.addLayer(pathways0ft(map));
+    map.addLayer(pathways1ft(map));
+    map.addLayer(pathways2ft(map));
+    map.addLayer(pathways3ft(map));
+    map.addLayer(pathways4ft(map));
+    map.addLayer(pathways5ft(map));
+    map.addLayer(pathways6ft(map));
+    map.addLayer(pathways7ft(map));
+    map.addLayer(pathways8ft(map));
+    map.addLayer(pathways9ft(map));
+    map.addLayer(pathways10ft(map));
     map.addLayer(sti(map));
     map.addLayer(critFac(map));
+    map.addLayer(pathwaysPoints(map));
     map.addLayer(vulnRibbon(map));
     map.addLayer(littoralCells(map));
     map.addLayer(histDist(map));
     map.addLayer(histPlaces(map));
+    map.addLayer(llr(map));
 
     // hide all layers except base-layers
     map.on("clear_ol_layers", () => {

@@ -210,10 +210,11 @@ defmodule ChipApi.Seeds do
         # Managed Relocation, for the time being at least, is being treated the same as Undevelopment. Leaving this here though in case that changes.
         _managed_relocation = %Adaptation.Strategy{
             name: "Managed Relocation",
-            description: "Gradually moving development and infrastructure away from the coastline and areas of projected loss due to flooding and sea level rise.",
+            description: "Phased removal of development and infrastructure away from coastal areas threatened by flooding, sea level rise, or erosion, and relocation to higher ground.",
             adaptation_categories: [retreat],
             coastal_hazards: [erosion, storm_surge, sea_level_rise],
-            impact_scales: [site, neighborhood, community, regional],
+            impact_scales: [site, neighborhood, community],
+            strategy_placement: anywhere,
             impact_costs: [high],
             impact_life_spans: [permanent],
             adaptation_benefits: [habitat, water_quality, carbon_storage, aesthetics, flood_management, recreation_tourism],
@@ -228,9 +229,37 @@ defmodule ChipApi.Seeds do
                 %Adaptation.Disadvantage{name: "Acquisition of land for new development.", display_order: 1},
                 %Adaptation.Disadvantage{name: "Loss of coastal property values.", display_order: 2}
             ],
-            is_active: false,
+            is_active: true,
             beach_width_impact_m: nil,
-            applicability: "TBD"
+            applicability: "Expect this strategy to provide long-term protection of a structure or asset, while also allowing for restoration of the coastal environment, but at potentially high, short-term cost and effort."
+        }
+        |> Repo.insert!
+
+        # Retrofitting Assets
+        _retrofitting_assets = %Adaptation.Strategy{
+            name: "Retrofitting Assets",
+            description: "This strategy can include floodproofing roads or structures through elevation or other methods that do not require relocation. The strategy may also benefit the continued operation and delivery of utilities",
+            adaptation_categories: [accommodate],
+            coastal_hazards: [erosion, storm_surge, sea_level_rise],
+            impact_scales: [site, neighborhood, community],
+            strategy_placement: anywhere,
+            impact_costs: [medium_cost],
+            impact_life_spans: [medium_life_span],
+            adaptation_benefits: [flood_management, recreation_tourism],
+            currently_permittable: "Yes, ranges from building permit to various state and local permits.",
+            adaptation_advantages: [
+                %Adaptation.Advantage{name: "Helps improve resiliency of existing development to flooding.", display_order: 0},
+                %Adaptation.Advantage{name: "Preserves property values.", display_order: 1},
+                %Adaptation.Advantage{name: "May prolong life of access roads and utilities.", display_order: 2}
+            ],
+            adaptation_disadvantages: [
+                %Adaptation.Disadvantage{name: "Offers little to no coastal habitat improvements.", display_order: 0},
+                %Adaptation.Disadvantage{name: "Maintains development within coastal hazard areas, putting people and environment at risk.", display_order: 1},
+                %Adaptation.Disadvantage{name: "May offer false sense of security as retrofits are not a guarantee against loss.", display_order: 2}
+            ],
+            is_active: true,
+            beach_width_impact_m: nil,
+            applicability: "Expect this strategy to allow for the continued operation of the asset through modifications that will make it more resilient to the effects of flooding. The strategy will likely have a short lifespan as coastal hazards intensify and move landward."
         }
         |> Repo.insert!
 

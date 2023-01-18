@@ -94,6 +94,55 @@ export function getCoastalColors(feature) {
     }
 };
 
+const lowLyingRoadsColors = {
+    category1: "#FFFF7F",
+    category2: "#B6F558",
+    category3: "#6FEB2B",
+    category4: "#3AD627",
+    category5: "#3DB867",
+    category6: "#279C9A",
+    category7: "#1F6C9F",
+    category8: "#19408C",
+    category9: "#070779"
+};
+
+export function getLowLyingRoadsColors(feature) {
+    if (!feature || !(typeof feature.get === 'function')) return "#3399CC";
+    
+    let probValue = feature.get("Prob_2070");
+    
+    console.log ("getLowLyingRoadsColors");
+    if (probValue < 0.2) {
+        console.log (probValue);
+        return lowLyingRoadsColors.category1;
+    } else if (probValue >= 0.2 && probValue < 0.5) {
+        console.log (probValue);
+        return lowLyingRoadsColors.category2;
+    } else if (probValue >= 0.5 && probValue < 1) {
+        console.log (probValue);
+        return lowLyingRoadsColors.category3;
+    } else if (probValue >= 1 && probValue < 2) {
+        console.log (probValue);
+        return lowLyingRoadsColors.category4;
+    } else if (probValue >= 2 && probValue < 5) {
+        console.log (probValue);
+        return lowLyingRoadsColors.category5;
+    } else if (probValue >= 5 && probValue < 10) {
+        console.log (probValue);
+        return lowLyingRoadsColors.category6;
+    } else if (probValue >= 10 && probValue < 20) {
+        console.log (probValue);
+        return lowLyingRoadsColors.category7;
+    } else if (probValue >= 20 && probValue < 100) {
+        console.log (probValue);
+        return lowLyingRoadsColors.category8;
+    } else if (probValue >= 100) {
+        console.log (probValue);
+        return lowLyingRoadsColors.category9;
+    } 
+        
+};
+
 const pprColors = {
     private: "#9c9c9c",
     public: "#000000"

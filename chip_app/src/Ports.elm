@@ -17,6 +17,10 @@ port logErrorCmd : E.Value -> Cmd msg
 
 port olCmd : E.Value -> Cmd msg
 
+port jsCmd : E.Value -> Cmd msg
+
+type AppJsCmd
+    = CreateReportCmd
 
 type OpenLayersCmd
     = InitMap
@@ -26,11 +30,15 @@ type OpenLayersCmd
     | ClearZoneOfImpact
     | RenderLocationHexes (Result Http.Error D.Value)
     | RenderCritFac 
+    | STPPointLoaded (Result Http.Error D.Value)
     | DisableCritFac 
+    | DisableStormtidePathwaysPoints 
     | RenderDR (String)
     | DisableDR (String)
     | RenderSLR (String)
     | DisableSLR (String)
+    | RenderSTP (String)
+    | DisableSTP (String)
     | RenderMOP 
     | DisableMOP
     | RenderPPR
@@ -60,6 +68,16 @@ type OpenLayersCmd
     | DisableHistDist
     | RenderHistPlaces
     | DisableHistPlaces
+    | RenderLLR
+    | DisableLLR
+
+encodeAppJsCmd : AppJsCmd -> E.Value
+encodeAppJsCmd cmd =
+    case cmd of
+        CreateReportCmd ->
+            E.object
+                [ ( "cmd", E.string "create_report" )
+                ]
 
 
 encodeOpenLayersCmd : OpenLayersCmd -> E.Value
@@ -104,9 +122,20 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "render_critical_facilities" )
                 ]
 
+        STPPointLoaded response ->
+            E.object
+                [ ( "cmd", E.string "render_stormtide_pathways_points" )
+                , ( "data", encodeRawResponse response )
+                ]
+
         DisableCritFac ->
             E.object
                 [ ( "cmd", E.string "disable_critical_facilities" )
+                ]
+
+        DisableStormtidePathwaysPoints ->
+            E.object
+                [ ( "cmd", E.string "disable_stormtide_pathways_points" )
                 ]
             
         RenderDR level ->
@@ -132,6 +161,19 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "disable_sea_level_rise" )
                 , ("data", E.string level)
                 ]
+
+        RenderSTP level ->
+            E.object
+                [ ( "cmd", E.string "render_stp" )
+                , ("data", E.string level)
+                ]
+        
+        DisableSTP level ->
+            E.object
+                [ ( "cmd", E.string "disable_stormtide_pathways" )
+                , ("data", E.string level)
+                ]
+
 
         RenderMOP ->
             E.object
@@ -288,6 +330,17 @@ encodeOpenLayersCmd cmd =
                 [ ( "cmd", E.string "disable_historic_places" )
 
                 ]
+
+        RenderLLR ->
+            E.object
+                [ ( "cmd", E.string "render_low_lying_roads" )
+                ]
+
+        DisableLLR ->
+            E.object
+                [ ( "cmd", E.string "disable_low_lying_roads" )
+                ]
+
             
 
 
@@ -297,6 +350,8 @@ encodeOpenLayersCmd cmd =
 
 
 port olSub : (D.Value -> msg) -> Sub msg
+
+port closeOutputPanelSub : (D.Value -> msg) -> Sub msg
 
 
 decodeOpenLayersSub : D.Value -> Msg

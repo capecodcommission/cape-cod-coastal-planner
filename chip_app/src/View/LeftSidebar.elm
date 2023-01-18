@@ -42,6 +42,18 @@ view :
         , structuresClicked : Openness
         , histDistClicked : Openness
         , histPlacesClicked : Openness
+        , llrClicked : Openness
+        , stp0ftClicked : Openness
+        , stp1ftClicked : Openness
+        , stp2ftClicked : Openness
+        , stp3ftClicked : Openness
+        , stp4ftClicked : Openness
+        , stp5ftClicked : Openness
+        , stp6ftClicked : Openness
+        , stp7ftClicked : Openness
+        , stp8ftClicked : Openness
+        , stp9ftClicked : Openness
+        , stp10ftClicked : Openness
     }
     -> (String, List (Element MainStyles Variations Msg))
     -> Element MainStyles Variations Msg
@@ -93,6 +105,19 @@ headerView : {
         , structuresClicked : Openness
         , histDistClicked : Openness
         , histPlacesClicked : Openness
+        , llrClicked : Openness
+        , stp0ftClicked : Openness
+        , stp1ftClicked : Openness
+        , stp2ftClicked : Openness
+        , stp3ftClicked : Openness
+        , stp4ftClicked : Openness
+        , stp5ftClicked : Openness
+        , stp6ftClicked : Openness
+        , stp7ftClicked : Openness
+        , stp8ftClicked : Openness
+        , stp9ftClicked : Openness
+        , stp10ftClicked : Openness
+
     } -> String -> String -> Animation.State -> Element MainStyles Variations Msg
 headerView config titleText togglePath fx =
     ( header (Sidebar SidebarHeader) 
@@ -126,6 +151,18 @@ headerView config titleText togglePath fx =
                     || config.structuresClicked == Open
                     || config.histDistClicked == Open
                     || config.histPlacesClicked == Open
+                    || config.llrClicked == Open 
+                    || config.stp0ftClicked == Open
+                    || config.stp1ftClicked == Open
+                    || config.stp2ftClicked == Open
+                    || config.stp3ftClicked == Open
+                    || config.stp4ftClicked == Open
+                    || config.stp5ftClicked == Open
+                    || config.stp6ftClicked == Open
+                    || config.stp7ftClicked == Open
+                    || config.stp8ftClicked == Open
+                    || config.stp9ftClicked == Open
+                    || config.stp10ftClicked == Open
                     ) 
                     then
                         button CancelButton

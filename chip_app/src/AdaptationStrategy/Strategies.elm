@@ -34,6 +34,8 @@ type StrategyType
     | BankStabilization
     | LivingShoreline
     | BeachNourishment
+    | ManagedRelocation
+    | RetrofittingAssets
 
 
 toType : Strategy -> Result String StrategyType
@@ -61,6 +63,10 @@ toTypeFromStr strategyName =
         "living shoreline" -> Ok LivingShoreline
 
         "beach nourishment" -> Ok BeachNourishment
+
+        "managed relocation" -> Ok ManagedRelocation
+        
+        "retrofitting assets" -> Ok RetrofittingAssets
 
         badName -> Err badName
 

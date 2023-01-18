@@ -3,16 +3,15 @@ module Types exposing (..)
 import Animation
 import Animations exposing (..)
 import Http exposing (..)
-import Graphqelm.Http as GHttp
+import Graphql.Http as GHttp
 import RemoteData exposing (RemoteData)
 import ChipApi.Scalar as Scalar
-import Window
 import Dict exposing (Dict)
 import List.Zipper as Zipper exposing (Zipper)
 import Json.Encode as E
 import Json.Encode.Extra as EEx
 import Json.Decode as D exposing (Decoder)
-import Json.Decode.Pipeline exposing (decode, required, custom, hardcoded)
+import Json.Decode.Pipeline exposing (required, custom, hardcoded)
 
 
 type alias Flags =
@@ -20,7 +19,7 @@ type alias Flags =
     , closePath : String
     , trianglePath : String
     , zoiPath : String
-    , size : Window.Size
+    , size : WindowSize
     , slrPath : String
     , ssPath : String
     , paths : Paths
@@ -39,10 +38,15 @@ type alias Paths =
         , welcome_lighthouse : String
     }
 
+type alias WindowSize =
+    { width : Int
+    , height : Int
+    }
 
-decodeWindowSize : Decoder Window.Size
+
+decodeWindowSize : Decoder WindowSize
 decodeWindowSize =
-    D.map2 Window.Size
+    D.map2 WindowSize
         (D.field "width" D.int)
         (D.field "height" D.int)
 
@@ -64,7 +68,7 @@ decodeFlags =
 
 decodeFlags2 : Decoder Paths
 decodeFlags2 =
-    decode Paths
+    D.succeed Paths
         |> required "slrPath" D.string
         |> required "ssPath" D.string
         |> required "closePath" D.string
@@ -82,17 +86,19 @@ type alias Env =
     , agsHexUrl : String
     , agsCritUrl : String
     , agsAPIUrl : String
+    , agsSTPPointUrl : String
     }
 
 
 decodeEnv : Decoder Env
 decodeEnv =
-    decode Env
+    D.succeed Env
         |> required "agsLittoralCellUrl" D.string
         |> required "agsVulnerabilityRibbonUrl" D.string
         |> required "agsHexUrl" D.string
         |> required "agsCritUrl" D.string
         |> required "agsAPIUrl" D.string
+        |> required "agsSTPPointUrl" D.string
 
 
 type Openness
@@ -132,6 +138,28 @@ dictFromGqlList fn gqlList =
         |> Dict.fromList
 
 
+-- encodeRawResponse : Result Http.Error D.Value -> E.Value
+-- encodeRawResponse response =
+--     case response of
+--         Ok value ->
+--             E.object [ ( "response", value ) ]
+
+--         Err (BadUrl err) ->
+--             E.object [ ( "error", E.string <| "bad url: " ++ err ) ]
+
+--         Err Timeout ->
+--             E.object [ ( "error", E.string "http timeout" ) ]
+
+--         Err NetworkError ->
+--             E.object [ ( "error", E.string "network error" ) ]
+
+--         Err (BadStatus status) ->
+--             --E.object [ ( "error", E.string <| "bad status: " ++ toString status ) ]
+--             E.object [ ( "error", E.string <| "Bad status: " ++ " (" ++ String.fromInt status ++ ")" ) ]
+
+--         Err (BadBody err) ->
+--             E.object [ ( "error", E.string <| "bad payload: " ++ err ) ]
+
 encodeRawResponse : Result Http.Error D.Value -> E.Value
 encodeRawResponse response =
     case response of
@@ -147,12 +175,12 @@ encodeRawResponse response =
         Err NetworkError ->
             E.object [ ( "error", E.string "network error" ) ]
 
-        Err (BadStatus { status }) ->
-            E.object [ ( "error", E.string <| "bad status: " ++ toString status ) ]
+        Err (BadStatus status) ->
+            --E.object [ ( "error", E.string <| "bad status: " ++ toString status ) ]
+            E.object [ ( "error", E.string <| "Bad status: " ++ " (" ++ String.fromInt status ++ ")" ) ]
 
-        Err (BadPayload err { status }) ->
+        Err (BadBody err) ->
             E.object [ ( "error", E.string <| "bad payload: " ++ err ) ]
-
 
 type alias VulnerabilityRibbon =
     Dict Int RibbonSegment
@@ -176,7 +204,7 @@ encodeVulnerabilityRibbon ribbon =
             ribbon |> Dict.toList |> List.map Tuple.second
     in
         E.object
-            [ ( "features", E.list <| List.map encodeRibbonSegment ribbonList ) ]
+            [ ( "features", E.list encodeRibbonSegment ribbonList ) ]
 
 
 encodeRibbonSegment : RibbonSegment -> E.Value
@@ -307,3 +335,12 @@ metersPerFoot = 0.3048
 
 acresPerSqMeter : Float
 acresPerSqMeter = 0.000247105
+
+
+stringFromBool : Bool -> String
+stringFromBool value =
+    case value of
+        True -> 
+            "True"
+        False -> 
+            "False"

@@ -51,20 +51,45 @@ const geojsonformat = new GeoJSON();
 const esrijsonformat = new EsriJSON();
 
 function _onUpdate(evt, layer) {
+
     let zoneOfImpact = evt.shape;
+    let isDeselect = evt.deselected;
     let features = layer.getSource().getFeatures();
     if (features && features.length > 0) {
         let existingSelection = geojsonformat.writeFeaturesObject(features);
         let newSelection = geojsonformat.writeFeatureObject(evt.shape);
-        let unionedSelection = union(newSelection, ...existingSelection.features);
-        zoneOfImpact = geojsonformat.readFeatureFromObject(unionedSelection);        
+        if (isDeselect == 0){   // if it is select event
+            //let unionedSelection = union(newSelection, ...existingSelection.features);
+            // somehow "..." above create wrong unioned shape
+            let unionedSelection = union(newSelection, existingSelection.features[0]);
+            if(existingSelection.features.length > 1){
+                existingSelection.features.forEach((item, i) => {
+                    if(i > 0){
+                        unionedSelection=union(unionedSelection,item);
+                    }
+                });
+            }
+            zoneOfImpact = geojsonformat.readFeatureFromObject(unionedSelection); 
+        }
+        else {   // if it is deselect event
+            
+            zoneOfImpact = geojsonformat.readFeatureFromObject(newSelection);
+        }
+               
     }
     layer.getSource().clear();
-    layer.getSource().addFeature(zoneOfImpact);
+    let hasFeatures = false;
+    let stripped = { rings: [] };
+    if (zoneOfImpact.values_)
+        hasFeatures = true;
+    if(hasFeatures){
+        layer.getSource().addFeature(zoneOfImpact);
 
-    let esrijson = esrijsonformat.writeFeatureObject(zoneOfImpact);
-    let stripped = { rings: esrijson.geometry.rings };
+        let esrijson = esrijsonformat.writeFeatureObject(zoneOfImpact);
+        stripped = { rings: esrijson.geometry.rings };
 
+    }
+    
     let num_selected = evt.target.get("num_selected") || 0;
     evt.target.getMap().dispatchEvent({
         "type": "olSub",

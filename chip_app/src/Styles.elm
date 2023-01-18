@@ -1,9 +1,9 @@
 module Styles exposing (..)
 
-import Color exposing (..)
-import Color.Manipulate exposing (..)
+import Color as OriColor exposing (Color, hsla, rgba, toHsla, toRgba)
+import Color.Manipulate as CEx
 import Style exposing (..)
-import Style.Color as Color
+import Style.Color as StyleColor
 import Style.Border as Border
 import Style.Font as Font
 import Style.Transition as Transition
@@ -12,6 +12,9 @@ import Style.Background as Background
 import Element.Input as Input exposing (ChoiceState)
 import Element exposing (Device)
 import View.Helpers exposing (adjustOnHeight, adjustOnWidth)
+import Html exposing (b)
+import Style.Background exposing (noRepeat)
+import Style.Background exposing (natural)
 
 
 scaled =
@@ -21,32 +24,80 @@ scaled =
 {-| Palette colors named using <http://chir.ag/projects/name-that-color>
 -}
 palette =
-    { elephant = rgb 10 40 51
-    , chambray = rgb 54 77 127
-    , havelockBlue = rgb 85 126 216
-    , malibu = rgb 93 151 255
-    , mySin = rgb 255 182 18
-    , persimmon = rgb 255 85 85
-    , walnut = rgb 108 67 26
-    , red = rgb 255 18 18
-    , hippieBlue = rgb 83 168 172
-    , mediumRedViolet = rgb 165 56 165
-    , apple = rgb 112 173 71
-    , cadetBlue = rgb 155 166 191
-    , blueStone = rgb 25 52 70
-    , alto = rgb 218 218 218
-    , shadedScale = rgb 41 48 58
+    { elephant = createStyleColor 10 40 51
+    , chambray = createStyleColor 54 77 127
+    , havelockBlue = createStyleColor 85 126 216
+    , malibu = createStyleColor 93 151 255
+    , mySin = createStyleColor 255 182 18
+    , persimmon = createStyleColor 255 85 85
+    , walnut = createStyleColor 108 67 26
+    , red = createStyleColor 255 18 18
+    , hippieBlue = createStyleColor 83 168 172
+    , mediumRedViolet = createStyleColor 165 56 165
+    , apple = createStyleColor 112 173 71
+    , cadetBlue = createStyleColor 155 166 191
+    , blueStone = createStyleColor 25 52 70
+    , alto = createStyleColor 218 218 218
+    , shadedScale = createStyleColor 41 48 58
+    , bigstone = createStyleColor 19 39 52
     }
+colorPalette =
+    { elephant = createOriColor 10 40 51
+    , chambray = createOriColor 54 77 127
+    , havelockBlue = createOriColor 85 126 216
+    , malibu = createOriColor 93 151 255
+    , mySin = createOriColor 255 182 18
+    , persimmon = createOriColor 255 85 85
+    , walnut = createOriColor 108 67 26
+    , red = createOriColor 255 18 18
+    , hippieBlue = createOriColor 83 168 172
+    , mediumRedViolet = createOriColor 165 56 165
+    , apple = createOriColor 112 173 71
+    , cadetBlue = createOriColor 155 166 191
+    , blueStone = createOriColor 25 52 70
+    , alto = createOriColor 218 218 218
+    , shadedScale = createOriColor 41 48 58
+    }
+styleHippieBlue : Style.Color
+styleHippieBlue =
+    createStyleColor 83 168 172
+styleWhite : Style.Color
+styleWhite =
+    createStyleColor 255 255 255
+styleRed : Style.Color
+styleRed =
+    createStyleColor 255 0 0
+styleOrange : Style.Color
+styleOrange =
+    createStyleColor 255 215 0
+styleBlack : Style.Color
+styleBlack =
+    createStyleColor 0 0 0
+scaleFrom255 : Int -> Float
+scaleFrom255 c =
+    toFloat c / 255
+createStyleColor : Int -> Int -> Int -> Style.Color
+createStyleColor r g b =
+     Style.rgb (scaleFrom255 r) (scaleFrom255 g) (scaleFrom255 b)
+
+createStyleColorWithAlpha : Int -> Int -> Int -> Float -> Style.Color
+createStyleColorWithAlpha r g b a =
+     Style.rgba (scaleFrom255 r) (scaleFrom255 g) (scaleFrom255 b) a
+
+createOriColor : Int -> Int -> Int -> OriColor.Color
+createOriColor r g b =
+     OriColor.rgb (scaleFrom255 r) (scaleFrom255 g) (scaleFrom255 b) 
 
 
 fontstack : List Font
 fontstack =
-    [ Font.font "Montserrat", Font.font "Open Sans", Font.font "Tahoma", Font.sansSerif ]
+    [ Font.font "Montserrat", Font.font "Open Sans", Font.font "Tahoma", Font.sansSerif]
 
 
 fontstack2 : List Font
 fontstack2 =
-    [ Font.font "Montserrat" ]
+    [ Font.importUrl { url="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700", name="Montserrat"} ]
+
 
 type MainStyles
     = NoStyle
@@ -61,7 +112,9 @@ type MainStyles
     | Modal ModalStyles
     | Zoi ZoneOfImpactStyles
     | ActionButton
+    | ExportButton
     | CancelButton
+    | StrategyOutputTab
     | CloseIcon
     | FontLeft
     | FontRight
@@ -131,6 +184,8 @@ type OutputStyles
     | OutputDivider
     | OutputSmallItalic
     | OutputH6Bold
+    | OutputValueMedium
+    | OutputSmall
     | OutputImpact
     | OutputMultiImpact
     | OutputAddresses
@@ -203,6 +258,15 @@ type PlanningLayerStyles
     | CAT2
     | CAT3
     | CAT4
+    | Category1
+    | Category2
+    | Category3
+    | Category4
+    | Category5
+    | Category6
+    | Category7
+    | Category8
+    | Category9
 
 type RibbonStyles
     = LessThanZero
@@ -224,42 +288,64 @@ choiceStateToVariation state =
 
         Input.SelectedInBox ->
             InputSelectedInBox
+fadeColor : Float -> OriColor.Color -> Style.Color
+fadeColor alpha color =
+    let
+        c = OriColor.toRgba color
+    in
+    Style.rgba c.red c.green c.blue alpha
 
+darkenColor : Float -> OriColor.Color -> Style.Color
+darkenColor val color =
+    let
+        c = OriColor.toRgba color
+    in
+    OriColor.fromRgba c
+        |> CEx.darken val
+        |> convertColor
 
+convertColor : OriColor.Color -> Style.Color
+convertColor color =
+    OriColor.toRgba color
+        |> (\{ red, green, blue, alpha } ->
+                Style.rgba red green blue alpha
+           )
+
+        
 stylesheet : Device -> StyleSheet MainStyles Variations
 stylesheet device =
     Style.styleSheet
         [ Style.style NoStyle []
-        , Style.style Test [ Color.background palette.mySin ]
+        , Style.style Test [ StyleColor.background palette.mySin ]
         , Style.style MainContent
-            [ Color.background palette.elephant
+            [ StyleColor.background palette.elephant
             , Style.hover
                 [ Style.cursor "default" ]
             ]
         , Style.style (Header HeaderBackground)
-            [ Color.background palette.blueStone
+            [ StyleColor.background palette.blueStone
             ]
         , Style.style (Header HeaderBackgroundRounded)
-            [ Color.background palette.blueStone
+            [ StyleColor.background palette.blueStone
             , Border.rounded 20.0
             ]
         , Style.style (Header HeaderTitle)
-            [ Color.text white
+            [ StyleColor.text styleWhite
             , Font.size 24.0
             , Font.bold
             , Font.typeface fontstack
             , Font.letterSpacing 1.0
             ]
         , Style.style (Header ScaleHeader)
-            [ Color.text white
+            [ StyleColor.text styleWhite
             , Font.size 18.0
             , Font.bold
             , Font.typeface fontstack
             , Font.letterSpacing 1.0
             ]
         , Style.style (Header HeaderMenu)
-            [ Color.background <| rgba 0 0 0 0.9
-            , Color.text white
+            [ StyleColor.background <| createStyleColorWithAlpha 83 168 172 0.4
+            , StyleColor.text styleWhite
             , Font.size 22.0
             , Font.typeface fontstack
             , Border.rounded 8.0
@@ -272,30 +358,34 @@ stylesheet device =
                 , Border.roundBottomRight 0.0
                 ]
             , variation SelectMenuError
-                [ Color.text palette.persimmon
+                [ StyleColor.text palette.persimmon
                 ]
             ]
         , Style.style (Header HeaderSubMenu)
-            [ Color.background <| rgba 0 0 0 0.9
+            [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0.9
+            , Style.pseudo "before"
+                [ StyleColor.border styleWhite
+                ]
             ]
         , Style.style (Header HeaderMenuItem)
-            [ Color.text white
+            [ StyleColor.text styleWhite
             , Font.size 18.0
             , Font.typeface fontstack
             , Style.hover
-                [ Color.background <| fadeOut 0.7 palette.havelockBlue ]
+                -- [ StyleColor.background <| fadeColor -0.7 colorPalette.havelockBlue ]
+                [ StyleColor.background <| createStyleColorWithAlpha 85 126 216 0.7 ]
             , variation InputIdle
-                [ Color.background <| rgba 0 0 0 0.7 ]
+                [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0.7 ]
             , variation InputSelected
-                [ Color.text palette.havelockBlue
-                , Color.background <| rgba 0 0 0 0.7
+                [ StyleColor.text palette.havelockBlue
+                , StyleColor.background <| createStyleColorWithAlpha 0 0 0 0.7
                 , Style.hover
-                    [ Color.text white ]
+                    [ StyleColor.text styleWhite ]
                 ]
             , variation InputFocused []
             , variation InputSelectedInBox
                 [ Style.hover
-                    [ Color.background <| rgba 0 0 0 0.0 ]
+                    [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0.0 ]
                 ]
             , variation LastMenuItem
                 [ Border.roundBottomLeft 8.0
@@ -303,78 +393,78 @@ stylesheet device =
                 ]
             ]
         , Style.style (Header HeaderMenuError)
-            [ Color.text palette.persimmon
+            [ StyleColor.text palette.persimmon
             , Font.size 14.0
             , Font.typeface fontstack
             ]
         , Style.style (Baseline BaselineInfoBtn)
-            [ Color.background <| rgba 0 0 0 0
-            , Color.text white
-            , Color.border white
+            [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0
+            , StyleColor.text styleWhite
+            , StyleColor.border styleWhite
             , Font.size 22.0
             , Font.typeface fontstack
             , Border.rounded 50.0
             , Border.all 2
             , Transition.all
             , Style.hover
-                [ Color.text palette.mySin
-                , Color.border palette.mySin
+                [ StyleColor.text palette.mySin
+                , StyleColor.border palette.mySin
                 , Transition.all
                 ]
             ] 
         , Style.style MenuButton
-            [ Color.background <| rgba 0 0 0 0
-            , Color.text white
+            [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0
+            , StyleColor.text styleWhite
             , Font.size 30.0
             , Font.typeface fontstack
             , Transition.all
             , Style.hover
-                [ Color.text palette.mySin
-                , Color.border palette.mySin
+                [ StyleColor.text palette.mySin
+                , StyleColor.border palette.mySin
                 , Transition.all
                 ]
             ]    
         , Style.style (Baseline BaselineInfoBtnClicked)
-            [ Color.background <| rgba 0 0 0 0
-            , Color.text orange
-            , Color.border orange
+            [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0
+            , StyleColor.text styleOrange
+            , StyleColor.border styleOrange
             , Font.size 22.0
             , Font.typeface fontstack
             , Border.rounded 50.0
             , Border.all 2
             , Transition.all
             , Style.hover
-                [ Color.text palette.mySin
-                , Color.border palette.mySin
+                [ StyleColor.text palette.mySin
+                , StyleColor.border palette.mySin
                 , Transition.all
                 ]
             ]      
         , Style.style (Baseline BaselineInfoHeader)
-            [ Color.background palette.blueStone
-            , Color.text white
+            [ StyleColor.background palette.blueStone
+            , StyleColor.text styleWhite
             , Font.typeface fontstack
             , Border.roundTopLeft 4
             , Border.roundTopRight 4
             ]
         , Style.style (Baseline BaselineInfoText)
-            [ Color.text white
+            [ StyleColor.text styleWhite
             , Font.size 16
             , Font.typeface fontstack
             , Font.lineHeight 1.29
             ]
         , Style.style (Baseline BaselineInfoImage)
-            [ Background.gradientRight [Background.step white, Background.step black]
+            [ Background.gradientRight [Background.step styleWhite, Background.step styleBlack]
             ]
         , Style.style (AddStrategies StrategiesSidebar)
-            [ Color.text white
-            , Color.border white
+            [ StyleColor.text styleWhite
+            , StyleColor.border styleWhite
             , Border.right 1
             , Border.solid
             , Font.typeface fontstack
             , Font.lineHeight 1.4
             ]
         , Style.style (AddStrategies StrategiesSidebarHeader)
-            [ Color.background palette.hippieBlue
+            [ StyleColor.background palette.hippieBlue
             , Font.size 24
             , Font.center
             , Font.typeface fontstack
@@ -389,34 +479,36 @@ stylesheet device =
                 ]
             ]
         , Style.style (AddStrategies StrategiesSidebarList)
-            [ Font.size 20
+            [ Font.size 18
+            , Font.weight 500
             , Font.typeface fontstack
             ]
         , Style.style (AddStrategies StrategiesSidebarListBtn)
-            [ Color.background <| rgba 0 0 0 0
-            , Color.text white
+            [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0
+            , StyleColor.text styleWhite
             , Font.alignLeft
             , Font.typeface fontstack
             ]
         , Style.style (AddStrategies StrategiesSidebarListBtnDisabled)
-            [ Color.background <| rgba 0 0 0 0
-            , Color.text <| rgba 255 255 255 0.5
+            [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0
+            , StyleColor.text <| createStyleColorWithAlpha 255 255 255 0.5
             , Font.alignLeft
             , Font.typeface fontstack
             ]
         , Style.style (AddStrategies StrategiesSidebarListBtnSelected)
-            [ Color.background <| fadeOut 0.7 palette.havelockBlue
-            , Color.text white
+            -- [ StyleColor.background <| fadeColor -0.7 colorPalette.havelockBlue
+            [ StyleColor.background <| createStyleColorWithAlpha 85 126 216 0.7 
+            , StyleColor.text styleWhite
             , Font.alignLeft
             , Font.typeface fontstack
             ]
         , Style.style (AddStrategies StrategiesSidebarFooter)
-            [ Color.background black
+            [ StyleColor.background styleBlack
             , Border.roundBottomLeft 4
             ]
         , Style.style (AddStrategies StrategiesDetailsHeader)
-            [ Color.background palette.blueStone
-            , Color.text white
+            [ StyleColor.background palette.blueStone
+            , StyleColor.text styleWhite
             , Border.roundTopRight 4
             , Style.hover
                 [ Style.cursor "default" ]
@@ -442,47 +534,47 @@ stylesheet device =
             , Font.bold
             ]
         , Style.style (AddStrategies StrategiesDetailsCategories)
-            [ Color.text white
+            [ StyleColor.text styleWhite
             , Font.typeface fontstack
             , Font.size 10
             , Font.bold
             , Font.letterSpacing 1.44
             , variation Disabled
-                [ Color.text palette.malibu
+                [ StyleColor.text palette.malibu
                 ]
             ]
         , Style.style (AddStrategies StrategiesDetailsCategoryCircle)
-            [ Color.background white
-            , Color.border white
+            [ StyleColor.background styleWhite
+            , StyleColor.border styleWhite
             , Border.all 1.5
             , Border.solid
             , variation Secondary
-                [ Color.background white
-                , Color.border white
+                [ StyleColor.background styleWhite
+                , StyleColor.border styleWhite
                 ]
             , variation Tertiary
-                [ Color.background white
-                , Color.border white
+                [ StyleColor.background styleWhite
+                , StyleColor.border styleWhite
                 ]
             , variation Disabled
-                [ Color.background <| rgba 0 0 0 0
-                , Color.border palette.alto
+                [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0
+                , StyleColor.border palette.alto
                 ]
             ]
         , Style.style (AddStrategies StrategiesDetailsMain)
-            [ Color.text white
+            [ StyleColor.text styleWhite
             , Font.typeface fontstack
             , Style.hover
                 [ Style.cursor "default" ]
             ]
         , Style.style (AddStrategies StrategiesDetailsHeading)
-            [ Color.text palette.hippieBlue
+            [ StyleColor.text palette.hippieBlue
             , Font.typeface fontstack
             , Font.size (scaled 1)
             , Font.weight 800
             , Font.lineHeight 1.4
             , variation Secondary
-                [ Color.text palette.hippieBlue
+                [ StyleColor.text palette.hippieBlue
                 ]
             ]
         , Style.style (AddStrategies StrategiesDetailsHazards)
@@ -490,42 +582,42 @@ stylesheet device =
             , Font.letterSpacing 1.24
             , Font.weight 400
             , Font.typeface fontstack
-            , Color.text white
+            , StyleColor.text styleWhite
             , variation Disabled
-                [ Color.text <| rgba 255 255 255 0.5 ]
+                [ StyleColor.text <| createStyleColorWithAlpha 255 255 255 0.5 ]
             ]
         , Style.style (AddStrategies StrategiesDetailsHazardsCircle)
-            [ Color.border white
+            [ StyleColor.border styleWhite
             , Border.all 1.2
             , Border.solid
             , variation Disabled
-                [ Color.border <| rgba 255 255 255 0.5 ]
+                [ StyleColor.border <| createStyleColorWithAlpha 255 255 255 0.5 ]
             ]
         , Style.style (AddStrategies StrategiesDetailsBenefits)
             [ Font.size 11
             , Font.weight 400
             , Font.typeface fontstack
-            , Color.text white
+            , StyleColor.text styleWhite
             , variation Disabled
-                [ Color.text <| rgba 255 255 255 0.5 ]
+                [ StyleColor.text <| createStyleColorWithAlpha 255 255 255 0.5 ]
             ]
         , Style.style (AddStrategies StrategiesDetailsDescription)
-            [ Color.text white
+            [ StyleColor.text styleWhite
             , Font.typeface fontstack
             , Font.size 16
             , Font.lineHeight 1.4
             , variation Secondary
-                [ Color.text palette.havelockBlue
+                [ StyleColor.text palette.havelockBlue
                 , Font.bold
                 ]
             ]
         , Style.style (AddStrategies StrategiesDetailsTextList)
-            [ Color.text white
+            [ StyleColor.text styleWhite
             , Font.typeface fontstack
             , Font.size 16
             , Font.lineHeight 1.5
             , variation Secondary
-                [ Color.text palette.havelockBlue
+                [ StyleColor.text palette.havelockBlue
                 , Font.bold
                 , Font.size 18
                 ]
@@ -536,37 +628,58 @@ stylesheet device =
             , Font.typeface fontstack
             ]
         , Style.style (Zoi ZoiCallout)
-            [ Color.text palette.havelockBlue
+            [ StyleColor.text palette.havelockBlue
             , Font.bold
             , Font.typeface fontstack
             ]
         , Style.style (Zoi ZoiStat)
             [ Font.size 20
-            , Color.text palette.havelockBlue
+            , StyleColor.text palette.havelockBlue
             , Font.letterSpacing 1
             , Font.typeface fontstack
             ]
         , Style.style (ShowOutput OutputToggleBtn)
             [ Font.letterSpacing 2.33
-            , Color.background palette.alto
+            , StyleColor.background palette.bigstone
+            , Font.bold
+            , StyleColor.text palette.hippieBlue
             , Font.typeface fontstack
             ]
+            --RGB(81,165,169)
         , Style.style (ShowOutput OutputToggleLbl)
             [ Font.center
             , Font.letterSpacing 2.33
-            , Font.typeface fontstack
-            , Color.background <| rgba 19 39 52 1
+            , Font.typeface fontstack2
+            , Font.bold
+            , StyleColor.text palette.bigstone
+            -- , StyleColor.background <| createStyleColorWithAlpha 19 39 52 1
+            , StyleColor.background <| createStyleColorWithAlpha 83 168 172 1
             ]
         , Style.style (ShowOutput OutputHeader)
-            [ Color.background <| rgba 19 39 52 1
+            [ StyleColor.background <| createStyleColorWithAlpha 19 39 52 1
             ]
         , Style.style (ShowOutput OutputDivider)
             [ Border.right 2
             , Border.solid
-            , Color.border white
+            , StyleColor.border styleWhite
             ]
         , Style.style (ShowOutput OutputH6Bold)
             [ Font.size <| scaled 1
+            , Font.weight 500
+            , Font.typeface fontstack
+            ]
+        , Style.style (ShowOutput OutputValueMedium)
+            [ Font.size 18
+            , Font.weight 500
+            , Font.typeface fontstack
+            , StyleColor.text <| createStyleColorWithAlpha 255 255 255 0.5
+            , variation Secondary
+                [ StyleColor.text palette.mySin ]
+            , variation Tertiary
+                [ StyleColor.text palette.havelockBlue ]
+            ]
+        , Style.style (ShowOutput OutputSmall)
+            [ Font.size 12
             , Font.weight 500
             , Font.typeface fontstack
             ]
@@ -580,21 +693,21 @@ stylesheet device =
             , Font.lineHeight 1.4
             , Font.center
             , Font.typeface fontstack
-            , Color.text white
+            , StyleColor.text styleWhite
             , Font.weight 600
-            , Color.background palette.hippieBlue
+            , StyleColor.background palette.hippieBlue
             , variation Secondary
-                [ Color.background palette.hippieBlue ]
+                [ StyleColor.background palette.hippieBlue ]
             ]
         , Style.style (ShowOutput OutputMultiImpact)
             [ Font.size 11
             , Font.lineHeight 1.4
             , Font.center
             , Font.typeface fontstack
-            , Color.text palette.chambray
-            , Color.background <| rgba 255 255 255 0.9
+            , StyleColor.text palette.chambray
+            , StyleColor.background <| createStyleColorWithAlpha 255 255 255 0.9
             , Border.solid
-            , Color.border palette.chambray
+            , StyleColor.border palette.chambray
             , Border.right 1
             , Border.bottom 1
             , variation Secondary 
@@ -610,8 +723,8 @@ stylesheet device =
                 , Border.bottom 0
                 ]
             , variation Disabled
-                [ Color.background <| rgba 41 48 58 0.9
-                , Color.text <| rgba 255 255 255 0.5
+                [ StyleColor.background <| createStyleColorWithAlpha 41 48 58 0.9
+                , StyleColor.text <| createStyleColorWithAlpha 255 255 255 0.5
                 ]
             ]
         , Style.style (ShowOutput OutputAddresses)
@@ -635,43 +748,45 @@ stylesheet device =
             [ Font.size 22
             , Font.weight 500
             , Font.typeface fontstack
-            , Color.text <| rgba 255 255 255 0.5
+            , StyleColor.text <| createStyleColorWithAlpha 255 255 255 0.5
             , variation Secondary
-                [ Color.text palette.mySin ]
+                [ StyleColor.text palette.mySin ]
             , variation Tertiary
-                [ Color.text palette.havelockBlue ]
+                [ StyleColor.text palette.havelockBlue ]
             ]
         , Style.style (ShowOutput OutputValueLbl)
             [ Font.size 12
+            , Font.weight 500
             , Font.letterSpacing 2.33
             , Font.typeface fontstack
-            , Color.text <| rgba 255 255 255 0.5
+            , StyleColor.text <| createStyleColorWithAlpha 255 255 255 0.5
             , variation Secondary
-                [ Color.text palette.mySin ]
+                [ StyleColor.text palette.mySin ]
             , variation Tertiary
-                [ Color.text palette.havelockBlue ]
+                [ StyleColor.text palette.havelockBlue ]
             ]
         , Style.style (ShowOutput OutputValueBox)
             [ Border.all 2
             , Border.solid
             , Border.rounded 8
-            , Color.border <| rgba 255 255 255 0.5
-            , Color.background <| rgba 0 0 0 0
+            , StyleColor.border <| createStyleColorWithAlpha 255 255 255 0.5
+            , StyleColor.background <| createStyleColorWithAlpha 0 0 0 0
             , Font.weight 500
             , Font.typeface fontstack
+            , Font.size 14
             , variation Secondary
-                [ Color.background palette.mySin 
-                , Color.border palette.mySin
-                , Color.text <| rgba 0 0 0 0.9
+                [ StyleColor.background palette.mySin 
+                , StyleColor.border palette.mySin
+                , StyleColor.text <| createStyleColorWithAlpha 0 0 0 0.9
                 ]
             , variation Tertiary
-                [ Color.background palette.havelockBlue 
-                , Color.border palette.havelockBlue
+                [ StyleColor.background palette.havelockBlue 
+                , StyleColor.border palette.havelockBlue
                 ]
             ]
         , Style.style (ShowOutput OutputInfoIcon)
-            [ Color.background palette.cadetBlue
-            , Color.text white
+            [ StyleColor.background palette.cadetBlue
+            , StyleColor.text styleWhite
             , Font.size 8
             , Font.lineHeight 1
             , Font.center
@@ -688,76 +803,77 @@ stylesheet device =
         , Style.style (Headings H5) <| headingStyle 2
         , Style.style (Headings H6) <| headingStyle 1
         , Style.style Popup
-            [ Color.background palette.chambray
-            , Color.text white
+            [ StyleColor.background palette.chambray
+            , StyleColor.text styleWhite
             ]
         , Style.style (Modal ModalBackground)
-            [ Color.background <| rgba 0 0 0 0.59 ]
+            [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0.59 ]
         , Style.style (Modal MethodsResourcesBackground)
-            [ Color.background <| rgba 25 52 70 0.75 ]
+            [ StyleColor.background <| createStyleColorWithAlpha 25 52 70 0.75 ]
         , Style.style (Modal ModalContainer)
-            [ Color.background <| rgba 0 0 0 0.9
+            [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0.9
             , Border.rounded 4
             ]
         , Style.style (Modal IntroHeader)
-            [ Color.background <| rgba 41 84 112 1
+            [ StyleColor.background <| createStyleColorWithAlpha 41 84 112 1 
             , Border.rounded 4
             ]
         , Style.style (Modal IntroBody)
-            [ Color.background palette.blueStone
+            [ StyleColor.background palette.blueStone
             , Border.rounded 4     
             ]
         , Style.style (Modal IntroWelcome)
-            [ Color.text white
-            , Font.size 20
+            [ StyleColor.text styleWhite
+            , Font.size 17
             , Font.justify
             , Font.typeface fontstack
             ]
         , Style.style (Modal IntroDisclaimer)
-            [ Color.text palette.alto
-            , Font.size 15
+            [ StyleColor.text palette.alto
+            , Font.size 14
             , Font.justify
             , Font.typeface fontstack
             ]
         , Style.style (Modal MethodsResourcesModal)
-            [ Color.text white
+            [ StyleColor.text styleWhite
             , Font.size 14
             , Font.typeface fontstack
             , Font.justify
             ]
         , Style.style (Modal MethodsResourcesModalHeading)
-            [ Color.text palette.hippieBlue
+            [ StyleColor.text palette.hippieBlue
             , Font.size 18
             , Font.center
             , Font.weight 800
             , Font.typeface fontstack
             ]
         , Style.style (Sidebar SidebarContainer)
-            [ Color.background <| Color.rgba 0 0 0 0.9
-            , Color.text white
+            [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 0.9
+            , StyleColor.text styleWhite
             , Font.typeface fontstack
             ]
         , Style.style MenuContainer
-            [ Color.background palette.blueStone
-            , Color.text white
+            [ StyleColor.background palette.blueStone
+            , StyleColor.text styleWhite
             , Font.typeface fontstack
             , Font.size 25
             ]
         , Style.style (Sidebar SidebarHeader)
-            [ Color.background palette.blueStone
+            [ StyleColor.background palette.blueStone
             ]
         , Style.style (Sidebar SidebarToggle)
-            [ Color.background palette.blueStone
+            [ StyleColor.background palette.blueStone
             , Border.roundTopLeft 36
             , Border.roundBottomLeft 36
             , Style.cursor "pointer"
             ]
         , Style.style (Sidebar SidebarFooter)
-            [ Color.background black
+            -- [ StyleColor.background styleBlack
+            [ StyleColor.background  <| createStyleColorWithAlpha 19 39 52 1
             , Font.typeface fontstack
             ]
         , Style.style (Sidebar SidebarLeftToggle)
-            [ Color.background palette.blueStone
+            [ StyleColor.background palette.blueStone
             , Border.roundTopRight 36
             , Border.roundBottomRight 36
             , Style.cursor "pointer"
@@ -769,15 +885,40 @@ stylesheet device =
             , Font.size 14
             , Font.lineHeight 1.4
             , Font.letterSpacing 2.33
-            , Color.text palette.walnut
-            , Color.background palette.mySin
+            , StyleColor.text palette.walnut
+            , StyleColor.background palette.mySin
             , Border.rounded 8
             , Transition.all
             , variation Disabled
-                [ Color.background <| darken 0.15 palette.mySin
-                , Color.text <| lighten 0.45 palette.walnut
+                [ StyleColor.background <| darkenColor 0.15 colorPalette.mySin
+                , StyleColor.text <| darkenColor -0.45 colorPalette.walnut
                 , Transition.all
                 ]
+            ]
+        , Style.style ExportButton
+            [ Font.typeface fontstack
+            , Font.uppercase
+            , Font.bold
+            , Font.size 14
+            , Font.lineHeight 1.4
+            , Font.letterSpacing 2.33
+            , StyleColor.text palette.walnut
+            , StyleColor.background palette.mySin
+            , Border.rounded 8
+            , Transition.all
+            -- , Background.imageWith  { src="/export_icon.png", position=( 0, 0 ), repeat=noRepeat, size=natural}
+            , variation Disabled
+                [ StyleColor.background <| darkenColor 0.15 colorPalette.mySin
+                , StyleColor.text <| darkenColor -0.45 colorPalette.walnut
+                , Transition.all
+                -- , Background.imageWith  <|{ src : "", position : ( 0, 0 ), repeat : noRepeat, size : natural}
+                
+                ]
+            -- , Background.imageWith  { src="/static/media/export_icon.png", position=( 0, 0 ), repeat=noRepeat, size=natural}
+            ]
+        , Style.style StrategyOutputTab
+            [ Border.all 3
+            , StyleColor.border styleHippieBlue
             ]
         , Style.style CancelButton
             [ Font.typeface fontstack
@@ -786,13 +927,13 @@ stylesheet device =
             , Font.size 14
             , Font.lineHeight 1.4
             , Font.letterSpacing 2.33
-            , Color.text white
-            , Color.background palette.red
+            , StyleColor.text styleWhite
+            , StyleColor.background palette.red
             , Border.rounded 8
             , Transition.all
             , variation Disabled
-                [ Color.background <| darken 0.15 palette.red
-                , Color.text <| lighten 0.15 palette.red
+                [ StyleColor.background <| darkenColor 0.15 colorPalette.red
+                , StyleColor.text <| darkenColor -0.15 colorPalette.red
                 , Transition.all
                 ]
             ]
@@ -804,13 +945,13 @@ stylesheet device =
             , Font.lineHeight 1.4
             , Font.letterSpacing 2.33
             , Font.center
-            , Color.text white
-            , Color.background <| palette.hippieBlue
+            , StyleColor.text styleWhite
+            , StyleColor.background <| palette.hippieBlue
             , Border.rounded 8
             , Transition.all
             , variation Disabled
-                [ Color.background <| darken 0.15 palette.mySin
-                , Color.text <| lighten 0.45 palette.walnut
+                [ StyleColor.background <| darkenColor 0.15 colorPalette.mySin
+                , StyleColor.text <| darkenColor 0.45 colorPalette.walnut
                 , Transition.all
                 ]
             ]
@@ -818,102 +959,138 @@ stylesheet device =
             [ Style.cursor "pointer" ]
         , Style.style FontLeft [ Font.alignLeft ]
         , Style.style FontRight [ Font.alignRight ]
-        , Style.style Hairline [ Color.background palette.chambray ]
-        , Style.style MethodsResourcesBackgroundLine [ Color.background <| rgba 54 77 127 0.75 ]
+        , Style.style Hairline [ StyleColor.background palette.chambray ]
+        , Style.style MethodsResourcesBackgroundLine [ StyleColor.background <| createStyleColorWithAlpha 54 77 127 0.75 ]
         , Style.style CircleBullet
-            [ Color.background white
-            , Color.border white
+            [ StyleColor.background styleWhite
+            , StyleColor.border styleWhite
             ]
         , Style.style (PL Line) 
-            [ Color.background white
+            [ StyleColor.background styleWhite
             ]
         , Style.style (PL Clicked) 
-            [ Color.background red
+            [ StyleColor.background styleRed
             , Border.rounded 8
             ]
         , Style.style (PL RoadsPrivate) 
-            [ Color.background <| Color.rgba 156 156 156 1
+            [ StyleColor.background <| createStyleColorWithAlpha 156 156 156 1
             , Border.rounded 8
             ]
         , Style.style (PL RoadsPublic) 
-            [ Color.background <| Color.rgba 0 0 0 1
+            [ StyleColor.background <| createStyleColorWithAlpha 0 0 0 1
             , Border.rounded 8
             ]
         , Style.style (PL Groins) 
-            [ Color.background <| Color.rgba 117 112 179 1
+            [ StyleColor.background <| createStyleColorWithAlpha 117 112 179 1
             , Border.rounded 8
             ]
         , Style.style (PL Revetment) 
-            [ Color.background <| Color.rgba 27 158 119 1
+            [ StyleColor.background <| createStyleColorWithAlpha 27 158 119 1
             , Border.rounded 8
             ]
         , Style.style (PL Jetty) 
-            [ Color.background <| Color.rgba 217 95 2 1
+            [ StyleColor.background <| createStyleColorWithAlpha 217 95 2 1
             , Border.rounded 8
             ]
         , Style.style (PL Accretion) 
-            [ Color.background <| Color.rgba 209 255 115 1
+            [ StyleColor.background <| createStyleColorWithAlpha 209 255 115 1
             , Border.rounded 8
             ]
         , Style.style (PL Erosion) 
-            [ Color.background <| Color.rgba 255 127 127 1
+            [ StyleColor.background <| createStyleColorWithAlpha 255 127 127 1
             , Border.rounded 8
             ]
         , Style.style (PL FZA) 
-            [ Color.background <| Color.rgba 255 170 0 1
+            [ StyleColor.background <| createStyleColorWithAlpha 255 170 0 1
             , Border.rounded 8
             ]
         , Style.style (PL FZAE) 
-            [ Color.background <| Color.rgba 255 170 0 1
+            [ StyleColor.background <| createStyleColorWithAlpha 255 170 0 1
             , Border.rounded 8
             ]
         , Style.style (PL FZAO) 
-            [ Color.background <| Color.rgba 255 170 0 1
+            [ StyleColor.background <| createStyleColorWithAlpha 255 170 0 1
             , Border.rounded 8
             ]
         , Style.style (PL FZVE) 
-            [ Color.background <| Color.rgba 230 0 0 1
+            [ StyleColor.background <| createStyleColorWithAlpha 230 0 0 1
             , Border.rounded 8
             ]
         , Style.style (PL CAT1) 
-            [ Color.background <| Color.rgba 255 190 232 1
+            [ StyleColor.background <| createStyleColorWithAlpha 255 190 232 1
             , Border.rounded 8
             ]
         , Style.style (PL CAT2) 
-            [ Color.background <| Color.rgba 255 0 197 1
+            [ StyleColor.background <| createStyleColorWithAlpha 255 0 197 1
             , Border.rounded 8
             ]
         , Style.style (PL CAT3) 
-            [ Color.background <| Color.rgba 168 0 132 1
+            [ StyleColor.background <| createStyleColorWithAlpha 168 0 132 1
             , Border.rounded 8
             ]
         , Style.style (PL CAT4) 
-            [ Color.background <| Color.rgba 197 0 255 1
+            [ StyleColor.background <| createStyleColorWithAlpha 197 0 255 1
             , Border.rounded 8
             ]
         , Style.style (Rbn LessThanZero) 
-            [ Color.background <| Color.rgba 245 200 171 1
+            [ StyleColor.background <| createStyleColorWithAlpha 245 200 171 1
             , Border.rounded 8
             ]
         , Style.style (Rbn OneToFive) 
-            [ Color.background <| Color.rgba 243 117 92 1
+            [ StyleColor.background <| createStyleColorWithAlpha 243 117 92 1
             , Border.rounded 8
             ]
         , Style.style (Rbn SixPlus) 
-            [ Color.background <| Color.rgba 164 27 30 1
+            [ StyleColor.background <| createStyleColorWithAlpha 164 27 30 1
             , Border.rounded 8
+            ]
+        , Style.style (PL Category1) 
+            [ StyleColor.background <| createStyleColorWithAlpha 255 255 127 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category2) 
+            [ StyleColor.background <| createStyleColorWithAlpha 182 245 88 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category3) 
+            [ StyleColor.background <| createStyleColorWithAlpha 111 235 43 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category4) 
+            [ StyleColor.background <| createStyleColorWithAlpha 58 214 39 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category5) 
+            [ StyleColor.background <| createStyleColorWithAlpha 61 184 103 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category6) 
+            [ StyleColor.background <| createStyleColorWithAlpha 39 156 154 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category7) 
+            [ StyleColor.background <| createStyleColorWithAlpha 31 108 159 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category8) 
+            [ StyleColor.background <| createStyleColorWithAlpha 25 64 140 1
+            , Border.rounded 4
+            ]
+        , Style.style (PL Category9) 
+            [ StyleColor.background <| createStyleColorWithAlpha 7 7 121 1
+            , Border.rounded 4
             ]
         ]
 
 
 headingStyle scale =
-    [ Color.text white
+    [ StyleColor.text styleWhite
     , Font.size (scaled scale)
     , Font.typeface fontstack
     , Font.weight 300
     , Font.lineHeight 1.4
     , variation Secondary
-        [ Color.text palette.havelockBlue
+        [ StyleColor.text palette.havelockBlue
         , Font.weight 400
         ]
     ]

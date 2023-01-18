@@ -1,11 +1,12 @@
 'use strict';
 
 const autoprefixer = require('autoprefixer');
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+const { GenerateSW } = require('workbox-webpack-plugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
-const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
+//const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+//const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const AssetsPlugin = require('assets-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const getClientEnvironment = require('./env');
@@ -81,12 +82,20 @@ module.exports = {
     pathinfo: true,
 
     // Generated JS files.
-    filename: 'static/js/[name].[chunkhash:8].js'
+    filename: 'static/js/[name].[chunkhash:8].js',
+    clean: true
   },
 
   resolve: {
     modules: ['node_modules'],
-    extensions: ['.js', '.elm']
+    extensions: ['.js', '.elm'],
+    fallback: {
+        dgram: false,
+        fs: false,
+        net: false,
+        tls: false,
+        child_process: false
+      }
   },
 
   module: {
@@ -97,32 +106,33 @@ module.exports = {
         test: /\.js$/,
         exclude: [/elm-stuff/, /node_modules/],
         loader: require.resolve('babel-loader'),
-        query: {
+        options: {
           // Latest stable ECMAScript features
           presets: [
             [
-              require.resolve('babel-preset-env'),
+              require.resolve('@babel/preset-env'),
               {
                 targets: {
                   // React parses on ie 9, so we should too
                   ie: 9,
                   // We currently minify with uglify
                   // Remove after https://github.com/mishoo/UglifyJS2/issues/448
-                  uglify: true
+                  //uglify: true
                 },
                 // Disable polyfill transforms
                 useBuiltIns: false,
                 // Do not transform modules to CJS
-                modules: false
+                modules: false,
+                forceAllTransforms: true
               }
             ]
           ],
           plugins: [
             [
-              require.resolve('babel-plugin-transform-runtime'),
+              require.resolve('@babel/plugin-transform-runtime'),
               {
                 helpers: false,
-                polyfill: false,
+                //polyfill: false,
                 regenerator: true
               }
             ]
@@ -140,7 +150,7 @@ module.exports = {
           // module system.
           {
             loader: require.resolve('string-replace-loader'),
-            query: {
+            options: {
               search: '%PUBLIC_URL%',
               replace: publicUrl,
               flags: 'g'
@@ -153,13 +163,14 @@ module.exports = {
               // If ELM_DEBUGGER was set to "true", enable it. Otherwise
               // for invalid values, "false" and as a default, disable it
               debug: process.env.ELM_DEBUGGER === 'true' ? true : false,
-              pathToMake: paths.elmMake
+              //pathToMake: paths.elmMake
+              pathToElm: 'node_modules/.bin/elm'
             }
           }
         ]
       },
 
-      {
+     /*{
         test: /\.css$/,
         use: ExtractTextPlugin.extract(
           Object.assign(
@@ -194,8 +205,18 @@ module.exports = {
             extractTextPluginOptions
           )
         )
+      },*/
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: extractTextPluginOptions
+          },
+          "css-loader",
+          "postcss-loader"
+        ],
       },
-
       {
         exclude: [/\.html$/, /\.js$/, /\.elm$/, /\.css$/, /\.json$/, /\.svg$/],
         loader: require.resolve('url-loader'),
@@ -220,10 +241,9 @@ module.exports = {
 
     new DefinePlugin(env.stringified),
 
-    new InterpolateHtmlPlugin(env.raw),
-
+    new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
     // Minify the compiled JavaScript.
-    new UglifyJsPlugin({
+    /*new UglifyJsPlugin({
       compress: Object.assign(
         {
           warnings: false
@@ -233,7 +253,7 @@ module.exports = {
       output: {
         comments: false
       }
-    }),
+    }),*/
 
     new HtmlWebpackPlugin({
       inject: true,
@@ -253,48 +273,31 @@ module.exports = {
     }),
 
     // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
-    new ExtractTextPlugin({
+    new MiniCssExtractPlugin({
       filename: cssFilename
     }),
-
+    
     // Generate a service worker script that will precache, and keep up to date,
     // the HTML & assets that are part of the Webpack build.
-    new SWPrecacheWebpackPlugin({
-      // By default, a cache-busting query parameter is appended to requests
-      // used to populate the caches, to ensure the responses are fresh.
-      // If a URL is already hashed by Webpack, then there is no concern
-      // about it being stale, and the cache-busting can be skipped.
-      dontCacheBustUrlsMatching: /\.\w{8}\./,
-      filename: 'service-worker.js',
-      logger(message) {
-        if (message.indexOf('Total precache size is') === 0) {
-          // This message occurs for every build and is a bit too noisy.
-          return;
-        }
-        if (message.indexOf('Skipping static resource') === 0) {
-          // This message obscures real errors so we ignore it.
-          // https://github.com/facebookincubator/create-react-app/issues/2612
-          return;
-        }
-        console.log(message);
-      },
-      minify: true,
+    new GenerateSW({
       // For unknown URLs, fallback to the index page
       navigateFallback: publicUrl + '/index.html',
       // Ignores URLs starting from /__ (useful for Firebase):
-      // https://github.com/facebookincubator/create-react-app/issues/2237#issuecomment-302693219
-      navigateFallbackWhitelist: [/^(?!\/__).*/],
-      // Don't precache sourcemaps (they're large) and build asset manifest:
-      staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/]
-    })
+      // https://github.com/facebookincubator/
+      //  create-react-app/issues/2237#issuecomment-302693219
+      navigateFallbackAllowlist: [/^(?!\/__).*/],
+      // Don’t precache sourcemaps (they’re large) and build
+      // asset manifest:
+      exclude: [/\.map$/, /asset-manifest\.json$/],
+    }),
   ],
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
-  node: {
+  /*node: {
     dgram: 'empty',
     fs: 'empty',
     net: 'empty',
     tls: 'empty',
     child_process: 'empty'
-  }
+  }*/
 };

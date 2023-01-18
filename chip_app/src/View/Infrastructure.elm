@@ -16,6 +16,8 @@ view :
   { config
         | slrOpenness : Openness
         , slrToggleFx : Animation.State
+        , stpOpenness : Openness
+        , stpToggleFx : Animation.State
         , critFacClicked : Openness
         , slrFx : Animation.State
         , slr2ftClicked : Openness
@@ -29,6 +31,7 @@ view :
         , structuresClicked : Openness
         , histDistClicked : Openness
         , histPlacesClicked : Openness
+        , llrClicked : Openness
     } 
     -> Device 
     -> Paths 
@@ -88,6 +91,7 @@ infraDetails :
         , structuresClicked : Openness
         , histDistClicked : Openness
         , histPlacesClicked : Openness
+        , llrClicked : Openness
     } 
     -> Paths 
     -> Element MainStyles Variations Msg
@@ -194,6 +198,24 @@ infraDetails config paths =
                 {src = paths.downArrow}
             , text "Historic Places" |> within [ infoIconView (Just "Cape Cod has a wealth of historic resources, from its buildings and historic villages to its cultural landscapes and archaeological sites.") ]
             ]
+        
+        , paragraph CloseIcon [onClick ToggleLLRLayer] 
+            [ decorativeImage
+                ( case config.llrClicked of 
+                    Open -> 
+                        (PL Clicked)
+                    Closed ->
+                        (NoStyle)
+                ) 
+                [height (px 20), width (px 20), moveDown 5, spacing 5] 
+                {src = paths.downArrow}
+            , text "Low Lying Roads" |> within [ infoIconView (Just "This layer depicts outputs from the Massachusetts Coast Flood Risk Model, a predictive model showing the 50 year probability of road segments being inundated with water under storm surge and sea level rise scenarios.") ]
+            ]
+        , case config.llrClicked of 
+            Open ->
+                llrLegend paths
+            Closed -> 
+                (el NoStyle [] empty )
         ]
 
 pprLegend : Paths -> Element MainStyles Variations Msg
@@ -240,6 +262,71 @@ cdsLegend paths =
                 [height (px 20), width (px 20), moveDown 5, spacing 5]
                 (Element.text "")
             , text "Jetty"
+            ]
+        ]
+
+llrLegend : Paths -> Element MainStyles Variations Msg
+llrLegend paths =
+    textLayout 
+        NoStyle 
+        [ verticalCenter, spacing 5, paddingXY 32 0 ]
+        [ paragraph 
+            NoStyle 
+            []
+            [ button
+                (PL Category1)
+                [height (px 10), width (px 10), moveUp 5, spacingXY 2 0]
+                (Element.text "")
+            , el (NoStyle) [ spacingXY 10 0 ] <| text "0.1% "
+            , button
+                (PL Category4)
+                [height (px 10), width (px 10), moveUp 5, spacingXY 2 0]
+                (Element.text "")
+            -- , text "1.0% "
+            , el (NoStyle) [ spacingXY 10 0 ] <| text "1.0% "
+            , button
+                (PL Category7)
+                [height (px 10), width (px 10), moveUp 5, spacingXY 2 0]
+                (Element.text "")
+            , text "10% "
+            ]
+        , paragraph 
+            NoStyle 
+            []
+            [ button
+                (PL Category2)
+                [height (px 10), width (px 10), moveUp 5, spacingXY 2 0]
+                (Element.text "")
+            , el (NoStyle) [ spacingXY 10 0 ] <| text "0.2% "
+            , button
+                (PL Category5)
+                [height (px 10), width (px 10), moveUp 5, spacingXY 2 0]
+                (Element.text "")
+            , el (NoStyle) [ spacingXY 10 0 ] <| text "2.0% "
+            , button
+                (PL Category8)
+                [height (px 10), width (px 10), moveUp 5, spacingXY 2 0]
+                (Element.text "")
+            , text "20% "
+            ]
+        , paragraph 
+            NoStyle 
+            []
+            [ button
+                (PL Category3)
+                [height (px 10), width (px 10), moveUp 5, spacingXY 2 0]
+                (Element.text "")
+            , el (NoStyle) [ spacingXY 10 0 ] <| text "0.5% "
+            , button
+                (PL Category6)
+                [height (px 10), width (px 10), moveUp 5, spacingXY 2 0]
+                (Element.text "")
+            , el (NoStyle) [ spacingXY 10 0 ] <| text "5.0% "
+            , button
+                (PL Category9)
+                [height (px 10), width (px 10), moveUp 5, spacingXY 2 0]
+                (Element.text "")
+            , text "100%   "
             ]
         ]
 

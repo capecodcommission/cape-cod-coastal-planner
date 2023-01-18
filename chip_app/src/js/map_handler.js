@@ -56,8 +56,16 @@ class MapHandler {
                     this.renderCriticalFacilities(data);
                     break;
 
+                case "render_stormtide_pathways_points":
+                    this.renderStormtidePathwaysPoints(data);
+                    break;
+
                 case "disable_critical_facilities":
                     this.disableCriticalFacilities(data);
+                    break;
+
+                case "disable_stormtide_pathways_points":                    
+                    this.disableSTP(data);
                     break;
                 
                 case "render_disconnected_roads":
@@ -77,6 +85,15 @@ class MapHandler {
                 case "disable_sea_level_rise":
                     this.disableSLR(data);
                     this.disableDisconnectedRoads(data);
+                    break;
+
+                case "render_stp":
+                    this.renderSTP(data);
+                    this.disableSTPLayers(data)
+                    break;
+
+                case "disable_stormtide_pathways":
+                    this.disableSTP(data);
                     break;
 
                 case "render_municipally_owned_parcels":
@@ -169,6 +186,14 @@ class MapHandler {
             
                 case "disable_historic_places":
                     this.disableHistoricPlaces(data);
+                    break;
+
+                case "render_low_lying_roads":
+                    this.renderLLR(data);
+                    break;
+
+                case "disable_low_lying_roads":
+                    this.disableLLR(data);
                     break;
 
                 case "reset_all":
@@ -279,6 +304,13 @@ class MapHandler {
     renderCriticalFacilities(data) {
         this.map.dispatchEvent({
             "type": "render_critical_facilities",
+            "data": data
+        });
+    }
+
+    renderStormtidePathwaysPoints(data) {
+        this.map.dispatchEvent({
+            "type": "stormtide_pathways_points_loaded",
             "data": data
         });
     }
@@ -476,6 +508,177 @@ class MapHandler {
         }
     }
 
+    renderSTP(data) {
+
+        switch (data) {
+
+            case "0":
+                this.map.dispatchEvent({
+                    "type": "render_stp0ft",
+                    "data": data
+                });
+                break
+
+            case "1":
+                this.map.dispatchEvent({
+                    "type": "render_stp1ft",
+                    "data": data
+                });
+                break
+    
+            case "2":
+                this.map.dispatchEvent({
+                    "type": "render_stp2ft",
+                    "data": data
+                });
+                break
+
+            case "3":
+                this.map.dispatchEvent({
+                    "type": "render_stp3ft",
+                    "data": data
+                });
+                break
+
+            case "4":
+                this.map.dispatchEvent({
+                    "type": "render_stp4ft",
+                    "data": data
+                });
+                break
+
+            case "5":
+                this.map.dispatchEvent({
+                    "type": "render_stp5ft",
+                    "data": data
+                });
+                break
+
+            case "6":
+                this.map.dispatchEvent({
+                    "type": "render_stp6ft",
+                    "data": data
+                });
+                break
+
+                case "7":
+                    this.map.dispatchEvent({
+                        "type": "render_stp7ft",
+                        "data": data
+                    });
+                    break
+    
+                case "8":
+                    this.map.dispatchEvent({
+                        "type": "render_stp8ft",
+                        "data": data
+                    });
+                    break
+    
+                case "9":
+                    this.map.dispatchEvent({
+                        "type": "render_stp9ft",
+                        "data": data
+                    });
+                    break
+    
+                case "10":
+                    this.map.dispatchEvent({
+                        "type": "render_stp10ft",
+                        "data": data
+                    });
+                    break
+        }
+    }
+
+    disableSTP(data) {
+        
+        this.map.dispatchEvent({
+            "type": "disable_stormtide_pathways_points",
+            "data": data
+        });
+
+        switch (data) {
+
+            case "0":
+                this.map.dispatchEvent({
+                    "type": "disable_stp0ft",
+                    "data": data
+                });
+                break
+
+            case "1":
+                this.map.dispatchEvent({
+                    "type": "disable_stp1ft",
+                    "data": data
+                });
+                break
+
+            case "2":
+                this.map.dispatchEvent({
+                    "type": "disable_stp2ft",
+                    "data": data
+                });
+                break
+
+            case "3":
+                this.map.dispatchEvent({
+                    "type": "disable_stp3ft",
+                    "data": data
+                });
+                break
+
+            case "4":
+                this.map.dispatchEvent({
+                    "type": "disable_stp4ft",
+                    "data": data
+                });
+                break
+
+            case "5":
+                this.map.dispatchEvent({
+                    "type": "disable_stp5ft",
+                    "data": data
+                });
+                break
+
+            case "6":
+                this.map.dispatchEvent({
+                    "type": "disable_stp6ft",
+                    "data": data
+                });
+                break
+
+                case "7":
+                    this.map.dispatchEvent({
+                        "type": "disable_stp7ft",
+                        "data": data
+                    });
+                    break
+    
+                case "8":
+                    this.map.dispatchEvent({
+                        "type": "disable_stp8ft",
+                        "data": data
+                    });
+                    break
+    
+                case "9":
+                    this.map.dispatchEvent({
+                        "type": "disable_stp9ft",
+                        "data": data
+                    });
+                    break
+    
+                case "10":
+                    this.map.dispatchEvent({
+                        "type": "disable_stp10ft",
+                        "data": data
+                    });
+                    break
+        }
+    }
+
     renderMOP(data) {
         this.map.dispatchEvent({
             "type": "render_mop"
@@ -596,6 +799,18 @@ class MapHandler {
         });
     }
 
+    renderLLR(data) {
+        this.map.dispatchEvent({
+            "type": "render_llr"
+        });
+    }
+
+    disableLLR(data) {
+        this.map.dispatchEvent({
+            "type": "disable_llr"
+        });
+    }
+
     getRibbonLayer() {
         let layers = this.map.getLayers().getArray().filter(l => {
             return l.get("name") === "vulnerability_ribbon";
@@ -632,6 +847,20 @@ class MapHandler {
                 });
             }
         })
+    }
+    disableSTPLayers(data) {
+
+        const disSTPLayers = ["disable_stp1ft", "disable_stp2ft", "disable_stp3ft", "disable_stp4ft", "disable_stp5ft", "disable_stp6ft", "disable_stp7ft", "disable_stp8ft", "disable_stp9ft", "disable_stp10ft"]
+        
+        disSTPLayers.map((layer) => {
+            if (layer != "disable_stp" + data + "ft") {
+                this.map.dispatchEvent({
+                    "type": layer,
+                    "data": data
+                });
+            }
+        })
+
     }
 
     resetView() {

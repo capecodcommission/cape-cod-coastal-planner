@@ -1,61 +1,41 @@
 "use strict";
 
-import TileLayer from "ol/layer/Tile";
-import XYZ from "ol/source/XYZ";
+import {Image as ImageLayer} from 'ol/layer';
+import Dynamic from "ol/source/ImageArcGISRest";
 
-export function layer(map) {
-    let source = _source();
 
-    let layer = new TileLayer({
-        visible: false,
-        preload: 4,
-        opacity: 0.5,
-        source: source
-    });
-    layer.set("name", "sea_level_rise_3ft");
+/**
+ * Image Layer functions
+ **/
 
-    map.on("render_slr3ft", ({data}) => {
-      onRenderSLR(data, layer, source);
-    });
+ export function layer(map) {
+   
+  let customParams = {};
+  customParams["LAYERS"] = "show:8";
+  let url = process.env.ELM_APP_AGS_SLR_THREE;
 
-    map.on("disable_slr3ft", () => {
-      disableSLR(layer, source);
-    });
-
-    return layer;
-}
-
-function _source() {
-    // let url = process.env.ELM_APP_AGS_SLR_TWO;
-    // if (!url) {
-    //     throw Error("Must configure environment variable `ELM_APP_AGS_WORLD_SLR_TWO`!");
-    // }
-    let source = new XYZ({
+  let dynamicLayer = new ImageLayer({
+      visible: false,
+      source: new Dynamic({
         crossOrigin: "anonymous",
-        url: process.env.ELM_APP_AGS_SLR_THREE,
-        maxZoom: 16,
-        minZoom: 3,
-        opaque: false,
-        transition: 4,
-        tileLoadFunction: (imageTile, src) => {
-            imageTile.getImage().src = src;
+        ratio: 1,
+        params: customParams,
+        url: url,
+        imageLoadFunction: (image, src) => {
+          image.getImage().src = src;
         }
+      })
     });
-    return source;
+    dynamicLayer.set("name", "sea_level_rise_3ft");
+    dynamicLayer.setOpacity(0.7);
+    map.on("render_slr3ft", ({data}) => {
+      dynamicLayer.setVisible(true)
+  });
+
+  map.on("disable_slr3ft", () => {
+      dynamicLayer.setVisible(false)
+  });
+  return dynamicLayer;
+  
 }
 
-function onRenderSLR(data, layer, source) {
-  // decode esri json to ol features
-  // let features = esrijsonformat.readFeaturesFromObject(data.response);
-  
-  // source.addFeatures(features);
-  layer.setVisible(true);
-}
-
-function disableSLR(layer, source) {
-  // decode esri json to ol features
-  // let features = esrijsonformat.readFeaturesFromObject(data.response);
-  
-  // source.addFeatures(features);
-  layer.setVisible(false);
-}

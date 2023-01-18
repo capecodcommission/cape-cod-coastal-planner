@@ -9,15 +9,15 @@ items:
       kompose.version: 1.19.0 (f63a961c)
     creationTimestamp: null
     labels:
-      io.kompose.service: cccpapiuat
-    name: cccpapiuat
+      io.kompose.service: cccpapidev
+    name: cccpapidev
   spec:
     ports:
-    - name: "9001"
-      port: 9001
-      targetPort: 9001
+    - name: "9000"
+      port: 9000
+      targetPort: 9000
     selector:
-      io.kompose.service: cccpapiuat
+      io.kompose.service: cccpapidev
   status:
     loadBalancer: {}
 - apiVersion: v1
@@ -29,15 +29,15 @@ items:
       kompose.version: 1.19.0 (f63a961c)
     creationTimestamp: null
     labels:
-      io.kompose.service: cccpfrontuat
-    name: cccpfrontuat
+      io.kompose.service: cccpfrontdev
+    name: cccpfrontdev
   spec:
     ports:
     - name: "3002"
       port: 3002
       targetPort: 80
     selector:
-      io.kompose.service: cccpfrontuat
+      io.kompose.service: cccpfrontdev
   status:
     loadBalancer: {}
 - apiVersion: extensions/v1beta1
@@ -49,8 +49,8 @@ items:
       kompose.version: 1.19.0 (f63a961c)
     creationTimestamp: null
     labels:
-      io.kompose.service: cccpapiuat
-    name: cccpapiuat
+      io.kompose.service: cccpapidev
+    name: cccpapidev
   spec:
     replicas: 1
     strategy: {}
@@ -62,13 +62,13 @@ items:
           kompose.version: 1.19.0 (f63a961c)
         creationTimestamp: null
         labels:
-          io.kompose.service: cccpapiuat
+          io.kompose.service: cccpapidev
       spec:
         containers:
-        - image: ccccontainers.azurecr.io/cccp-api:latest
-          name: cccpapiuat
+        - image: ccccontainers.azurecr.io/cccp-api:dev
+          name: cccpapidev
           ports:
-          - containerPort: 9001
+          - containerPort: 9000
           resources: {}
         restartPolicy: Always
   status: {}
@@ -137,8 +137,8 @@ items:
       kompose.version: 1.19.0 (f63a961c)
     creationTimestamp: null
     labels:
-      io.kompose.service: cccpfrontuat
-    name: cccpfrontuat
+      io.kompose.service: cccpfrontdev
+    name: cccpfrontdev
   spec:
     replicas: 1
     strategy: {}
@@ -150,11 +150,11 @@ items:
           kompose.version: 1.19.0 (f63a961c)
         creationTimestamp: null
         labels:
-          io.kompose.service: cccpfrontuat
+          io.kompose.service: cccpfrontdev
       spec:
         containers:
-        - image: ccccontainers.azurecr.io/cccp-front:latest
-          name: cccpfrontuat
+        - image: ccccontainers.azurecr.io/cccp-front:dev
+          name: cccpfrontdev
           ports:
           - containerPort: 80
           resources: {}
