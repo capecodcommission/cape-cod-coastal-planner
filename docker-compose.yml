@@ -2,32 +2,31 @@ version: "3.1"
 
 services:
 
-  cccpfrontdev:
-    container_name: cccpfrontdev
+  cccpfrontuat:
+    container_name: cccpfrontuat
     build: "./chip_app"
     image: ccccontainers.azurecr.io/cccp-front:latest
     depends_on:
       - cccpdb
-      - cccpapidev
+      - cccpapiuat
     ports:
       - 3002:80
     volumes:
       - ./chip_app/src:/app/src:rw
       - ./chip_app/.env:/app/.env:rw
     
-  cccpapidev:
-    container_name: cccpapidev
+  cccpapiuat:
+    container_name: cccpapiuat
     build: "./chip_api"
     image: ccccontainers.azurecr.io/cccp-api:latest
     depends_on:
       - cccpdb
     ports:
-      - 9000:9000
+      - 9001:9001
 
   cccpdb:
     container_name: cccpdb
     image: postgres:11
-    
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
