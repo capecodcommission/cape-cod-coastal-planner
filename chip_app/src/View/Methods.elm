@@ -101,7 +101,6 @@ mainView :
         , paths : Paths
     } 
     -> Element MainStyles Variations Msg
-
 mainView config =
     column NoStyle
         [ ]
