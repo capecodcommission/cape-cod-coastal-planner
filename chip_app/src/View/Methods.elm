@@ -101,7 +101,6 @@ mainView :
         , paths : Paths
     } 
     -> Element MainStyles Variations Msg
-
 mainView config =
     column NoStyle
         [ ]
@@ -115,7 +114,7 @@ mainView config =
                         ]
                 , row NoStyle
                     [width fill, center, paddingBottom 10]
-                        [ newTab "https://barnstablecounty.sharepoint.com/:b:/g/dept/commission/team/EYXGq3UkHN9DgSR3Stb-GSUBqZPa8fL1ooaAgBCTgWbPsA?e=onPb48" <| el SelectShorelineButton [ width fill, height (px 26),paddingXY 6 3 ] (text "Download Methods") ]
+                        [ newTab "https://barnstablecounty.sharepoint.com/:b:/g/dept/commission/team/EU4naQqTixpHsqGPxKuUocgBFZSdoGQ5hoVF8TX-khBLNw?e=ekulXC" <| el SelectShorelineButton [ width fill, height (px 26),paddingXY 6 3 ] (text "Download Methods") ]
                 ]
         ]
         
